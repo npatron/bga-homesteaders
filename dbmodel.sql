@@ -35,36 +35,37 @@
 
 --- ### PLAYER INFORMATION ###
 --- PUBLIC ITEMS ---
+ALTER TABLE `player` ADD `player_first` BOOLEAN NOT NULL DEFAULT '0';
 --- Workers 
-ALTER TABLE `player` ADD `workers` tinyint NOT NULL DEFAULT '1';
+ALTER TABLE `player` ADD `workers` int(11) NOT NULL DEFAULT '1';
 --- Railroad Advancement
-ALTER TABLE 'player' ADD 'railroadAdvancement' tinyint NOT NULL DEFAULT '0';
+ALTER TABLE 'player' ADD 'railroadAdvancement' int(11) NOT NULL DEFAULT '0';
 --- HIDDEN ITEMS ---
 --- Silver
-ALTER TABLE `player` ADD `silver` tinyint NOT NULL DEFAULT '6';
+ALTER TABLE `player` ADD `silver` int(11) NOT NULL DEFAULT '6';
 --- Wood
-ALTER TABLE `player` ADD `wood` tinyint NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `wood` int(11) NOT NULL DEFAULT '0';
 --- Food
-ALTER TABLE `player` ADD `food` tinyint NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `food` int(11) NOT NULL DEFAULT '0';
 --- Steel
-ALTER TABLE `player` ADD `steel` tinyint NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `steel` int(11) NOT NULL DEFAULT '0';
 --- Gold
-ALTER TABLE `player` ADD `gold` tinyint NOT NULL DEFAULT '0'; 
+ALTER TABLE `player` ADD `gold` int(11) NOT NULL DEFAULT '0'; 
 --- Copper
-ALTER TABLE `player` ADD `copper`  tinyint NOT NULL DEFAULT '0'; 
+ALTER TABLE `player` ADD `copper` int(11) NOT NULL DEFAULT '0'; 
 --- Adorable Cow Figurines
-ALTER TABLE `player` ADD 'livestock'  tinyint NOT NULL DEFAULT '0'; 
+ALTER TABLE `player` ADD 'livestock' int(11) NOT NULL DEFAULT '0'; 
 --- Debt chits
-ALTER TABLE `player` ADD `debt` tinyint NOT NULL DEFAULT '0'; 
+ALTER TABLE `player` ADD `debt` int(11) NOT NULL DEFAULT '0'; 
 --- Trade chits
-ALTER TABLE `player` ADD `tradeTokens` tinyint NOT NULL DEFAULT '0'; 
+ALTER TABLE `player` ADD `tradeTokens` int(11) NOT NULL DEFAULT '0'; 
 --- Victory point chits
-ALTER TABLE `player` ADD `vPTokens` tinyint NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `vPTokens` int(11) NOT NULL DEFAULT '0';
 --- Bid token location
-ALTER TABLE `player` ADD `bidPosition` tinyint NOT NULL DEFAULT '0';
+ALTER TABLE `player` ADD `bidPosition` int(11) NOT NULL DEFAULT '0';
 
-CREATE TABLE IF NOT EXISTS `building` (
-  `id` tinyint NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `buildings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(16) NOT NULL,
   `stage` int(11) NOT NULL,
   `pointValue` int(11) NOT NULL,
@@ -72,3 +73,13 @@ CREATE TABLE IF NOT EXISTS `building` (
   `income` int(11),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+CREATE TABLE IF NOT EXISTS `auctionTile` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rounds` int(11) NOT NULL,
+  `auction` varchar(16) NOT NULL,
+  `buildingType` varchar(16) NOT NULL,
+  `bonus` varchar(16) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+

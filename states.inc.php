@@ -80,6 +80,26 @@
 */
 
 //    !! It is not a good idea to modify this file when a game is running !!
+if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, since it is included multiple times
+    define("STATE_START_ROUND", 10);
+    define("STATE_PLACE_WORKERS", 20);
+    define("STATE_INCOME", 22);
+    define("STATE_PAY_WORKERS", 23);
+    define("STATE_AUCTION", 30);
+    define("STATE_2_PLAYER_DUMMY_BID", 31);
+    define("STATE_PLAYER_BID", 32);
+    define("STATE_PASS_BONUS", 33);
+    define("STATE_NEXT_BID", 34);
+    define("STATE_BEGIN_BUILDING", 40);
+    define("STATE_PAY_AUCTION", 41);
+    define("STATE_CHOOSE_BUILDING", 42);
+    define("STATE_RESOLVE_BUILDING", 43);
+    define("STATE_CHOOSE_BONUS", 44);
+    define("STATE_RESOLVE_BONUS", 45);
+    define("STATE_NEXT_BUILDING", 46);
+    define("STATE_END_ROUND", 49);
+    define("STATE_END_GAME", 99);
+}
 
  
 $machinestates = array(
@@ -87,14 +107,14 @@ $machinestates = array(
     // The initial state. Please do not modify.
     1 => array(
         "name" => "gameSetup",
-        "description" => "",
+        "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array( "" => 100 )
+        "transitions" => array( "" => STATE_START_ROUND )
     ),
     
     /*****************
-     * 1) Setup => 100 
+     * 1) Setup 
      *   a) remove bid markers (winner of auction 1 is new start player this round)
      *   b) remove old auction markers and reveal next auction markers
      *   c) in stage 5 remove "settlement" cards from building supply, and add "town" cards to building supply
@@ -102,66 +122,66 @@ $machinestates = array(
      * 
      ****************/
 
-    100 => array(
+    STATE_START_ROUND => array(
         "name" => "startRound", 
-        "description" => '',
+        "description" => clienttranslate('Setup round ${roundNumber}'),
         "type" => "game",
         "action" => "stStartRound",
         "updateGameProgression" => true,   
-        "transitions" => array( "" => 200 )
+        "transitions" => array( "" => STATE_PLACE_WORKERS )
     ),
 
     /**************** 
-     * 2) Income => 200
+     * 2) Income 
      *   a) allocate workers (can do asyncronously)
      *   b) collect Income
      *   c) Pay workers (optional decision window here for trading and using gold/silver)
      * 
      ****************/
 
-    200 => array(
+    STATE_PLACE_WORKERS => array(
         "name" => "allocateWorkers",
         "description" => clienttranslate('Some players must allocate workers'),
         "descriptionmyturn" => clienttranslate('${you} must allocate workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
         "args" => "argWorkersPlacement",
-        "possibleactions" => array( "trade", "done" ),
-        "transitions" => array( "trade" => 202, "done" => 203 )
+        "possibleactions" => array( "Wait For Player Order", "done", "trade" ),
+        "transitions" => array( "done" => STATE_INCOME, "loopback" => STATE_PLACE_WORKERS )
     ),
 
-    202 => array(
-        "name" => "tr",
-        "description" => clienttranslate('Some players must allocate workers'),
-        "descriptionmyturn" => clienttranslate('${you} must allocate workers'),
+    /*202 => array(
+        "name" => "trade",
+        "description" => clienttranslate('Some players may trade'),
+        "descriptionmyturn" => clienttranslate('${you} may trade'),
         "type" => "multipleactiveplayer",
-        "action" => "stPlaceWorkers",
+        "action" => "stTrade",
         "args" => "argWorkersPlacement",
-        "possibleactions" => array( "stPlaceWorkers", "pass" ),
-        "transitions" => array( "stPlaceWorkers" => 202, "pass" => 103 )
-    ),
+        "possibleactions" => array( "buy", "sell", "pass" ),
+        "transitions" => array("pass" => STATE_INCOME )
+    ),*/
 
-    203 => array(
-        "name" => "income",
-        "description" =>  '',
+    STATE_INCOME => array(
+        "name" => "collectIncome",
+        "description" =>  clienttranslate('collect income'),
         "type" => "game",
-        "action" => "collectIncome",
+        "action" => "stCollectIncome",
         "updateGameProgression" => true,   
-        "transitions" => array( "" => 210 )
+        "transitions" => array( "" => STATE_PAY_WORKERS )
     ),
     
-    210 => array(
-        "name" => "allocateWorkers",
+    STATE_PAY_WORKERS => array(
+        "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),
         "descriptionmyturn" => clienttranslate('${you} must choose how to pay workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPayWorkers",
         "args" => "argWorkersPlacement",
-        "possibleactions" => array( "done" ),
-        "transitions" => array( "done" => 300 )
+        "possibleactions" => array( "+ Gold", "- Gold", "Take Loan", "Trade", "Done" ),
+        "transitions" => array( "Done" => STATE_AUCTION, "loopback" => STATE_PAY_WORKERS )
     ),
 
-    /* 3) Auction => 300
+    /* 3) Auction 
      *   a) bidding 
      *     - each player places bid marker on valid bid or passes
      *     - keep going clockwise until everyone is either winning an auction or has passed.
@@ -176,37 +196,47 @@ $machinestates = array(
      *                        if neutral player wins auction 1, then start player is passed to next player 
      
      */
-    300 => array(
+    STATE_AUCTION  => array(
+        "name" => "beginAuction",
+        "description" => '',
+        "type" => "game",
+        "action" => "stBeginAuction",
+        "updateGameProgression" => true,
+        "transitions" => array( "" => STATE_PLAYER_BID)
+    ),
+
+    STATE_PLAYER_BID => array(
         "name" => "playerTurn",
         "description" => clienttranslate('${actplayer} must bid on auction or pass'),
         "descriptionmyturn" => clienttranslate('${you} must bid on auction or pass'),
         "type" => "activeplayer",
         "action" => "stUpdateBid",
         "args" => "bidLocation",
-        "possibleactions" => array( "bid", "pass" ),
-        "transitions" => array( "bid" => 302, "pass" => 301 )
+        "possibleactions" => array( "pass" ),
+        "transitions" => array( "bid" => STATE_NEXT_BID, "pass" => STATE_PASS_BONUS )
     ),
 
-    301 => array(
+    STATE_PASS_BONUS => array(
         "name" => "getPassBenefits",
         "description" => clienttranslate('${actplayer} must choose a rail bonus'),
         "descriptionmyturn" => clienttranslate('${you} must choose a rail bonus'),
         "type" => "activeplayer",
         "args" => "bonus",
         "possibleactions" => array( "choose" ),
-        "transitions" => array( "choose" => 302 )
+        "transitions" => array( "choose" => STATE_NEXT_BID )
     ),
 
-    302 => array(
+    STATE_NEXT_BID => array(
         "name" => "nextBid",
         "description" => '',
         "type" => "game",
+        "action" => "stNextBid",
         "updateGameProgression" => true,
-        "transitions" => array( "" => 400, "auctionPass" => 410 )
+        "transitions" => array( "nextBid" => STATE_PLAYER_BID, "auctionEnd" => STATE_BEGIN_BUILDING )
     ),
 
     /**
-     * Building Phase => 400
+     * Building Phase 
      *   - each player who won an auction (in auction order) must pay for auction.
      *   - they may trade resources (if they have chits) or take loans as necessary
      *   - they can pay the auction with silver, or gold (with gold being worth 5 silver, but not recieving any change)
@@ -217,26 +247,26 @@ $machinestates = array(
      *           they may collect and pay for the additional railroad or recieve the worker
      */
 
-    400 => array(
+    STATE_NEXT_BUILDING => array(
         "name" => "buildingPhase",
         "description" => '',
         "type" => "game",
         "action" => "stBuildingPhase",
         "updateGameProgression" => true,
-        "transitions" => array( "auctionWin" => 401, "auctionPass" => 410 )
+        "transitions" => array( "auctionWon" => STATE_BEGIN_BUILDING, "auctionPassed" => STATE_NEXT_BUILDING, "endRound" => STATE_END_ROUND )
     ),
 
-    401 => array(
+    STATE_PAY_AUCTION => array(
         "name" => "playerTurn",
         "description" => clienttranslate('${actplayer} must pay for auction'),
         "descriptionmyturn" => clienttranslate('${you} must pay for auction'),
         "type" => "activeplayer",
         "args" => "paymentMethod",
         "possibleactions" => array( "trade", "takeLoan", "pay" ),
-        "transitions" => array( "trade" => 402, "loan" => 403, "pay" => 410 )
+        "transitions" => array( "" => STATE_CHOOSE_BUILDING, )
     ),
 
-    402 => array(
+    /*402 => array(
         "name" => "trade",
         "description" => clienttranslate('${actplayer} may trade resources'),
         "descriptionmyturn" => clienttranslate('${you} may trade resources'),
@@ -254,20 +284,20 @@ $machinestates = array(
         "action" => "stTakeLoan",
         "updateGameProgression" => true,
         "transitions" => array( "" => 401)
-    ),
+    ),*/
 
-    410 => array(
+    STATE_CHOOSE_BUILDING => array(
         "name" => "chooseBuildingToBuild",
         "description" => clienttranslate('${actplayer} may choose a(n) ${type} building to build'),
         "descriptionmyturn" => clienttranslate('${you} may choose a(n) ${type} building to build'),
         "type" => "activeplayer",
         "args" => "buildingToBuild",
         "action" => "stBuild",
-        "possibleactions" => array( "trade", "choose", "takeLoan" ),
-        "transitions" => array( "trade" => 412, "choose" => 420, "takeLoan" => 413 )
+        "possibleactions" => array( "trade", "choose", "takeLoan", "do not build" ),
+        "transitions" => array(  "choose" => STATE_RESOLVE_BUILDING, "do not build" => STATE_RESOLVE_BUILDING )
     ),
 
-    412 => array(
+    /*412 => array(
         "name" => "trade",
         "description" => clienttranslate('${actplayer} may trade resources'),
         "descriptionmyturn" => clienttranslate('${you} may trade resources'),
@@ -285,43 +315,43 @@ $machinestates = array(
         "action" => "stTakeLoan",
         "updateGameProgression" => true,
         "transitions" => array( "" => 401)
-    ),
+    ),*/
 
-    420 =>  array(
+    STATE_RESOLVE_BUILDING =>  array(
         "name" => "getBonus",
         "description" => '',
         "type" => "game",
-        "action" => "stgetBonus",
+        "action" => "stGetBonus",
         "updateGameProgression" => true,
-        "transitions" => array( "bonusChoice" => 421, "nextAuction" => 400)
+        "transitions" => array( "bonusChoice" => STATE_CHOOSE_BONUS, "nextAuction" => STATE_NEXT_BUILDING)
     ),
 
-    412 => array(
+    STATE_CHOOSE_BONUS => array(
         "name" => "bonusChoice",
         "description" => clienttranslate('${actplayer} may get Bonus ${bonusText}'),
         "descriptionmyturn" => clienttranslate('${you} may get Bonus ${bonusText}'),
         "type" => "activeplayer",
         "args" => "trades",
-        "action" => "stTrade",
+        "action" => "stChooseBonus",
         "possibleactions" => array( "done" ),
-        "transitions" => array( "done" => 401 )
+        "transitions" => array( "done" => STATE_NEXT_BUILDING)
     ),
     
     // end of Round, 
     // if round 10, go to game end, (and scoring?)
 
-    499 => array(
+    STATE_END_ROUND => array(
         "name" => "endRound",
         "description" => '',
         "type" => "game",
         "action" => "stEndRound",
         "updateGameProgression" => true,
-        "transitions" => array( "endGame" => 999, "nextRound" => 100 )
+        "transitions" => array( "endGame" => STATE_END_GAME, "nextRound" => STATE_START_ROUND )
     ),
 
     // Final state.
     // Please do not modify (and do not overload action/args methods).
-    999 => array(
+    STATE_END_GAME => array(
         "name" => "gameEnd",
         "description" => clienttranslate("End of game"),
         "type" => "manager",
@@ -330,6 +360,4 @@ $machinestates = array(
     )
 
 );
-
-
 
