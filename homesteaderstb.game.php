@@ -58,8 +58,7 @@ class homesteaderstb extends Table
     protected function setupNewGame( $players, $options = array() )
     {    
         // Set the colors of the players with HTML color code
-        // The default below is red/green/blue/orange/brown
-        // The number of colors defined here must correspond to the maximum number of players allowed for the gams
+        // values are red/green/blue/yellow
         $gameinfos = self::getGameinfos();
         $default_colors = $gameinfos['player_colors'];
  
@@ -221,18 +220,89 @@ class homesteaderstb extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
     
-    /*
     
-    Example for game state "MyGameState":
+    
+    //Example for game state "MyGameState":
 
-    function stMyGameState()
+    function stStartRound()
     {
         // Do some stuff ...
         
         // (very often) go to another gamestate
-        $this->gamestate->nextState( 'some_gamestate_transition' );
+        $this->gamestate->nextState( STATE_START_ROUND );
     }    
-    */
+
+    function stPlaceWorkers()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_INCOME );
+    }
+
+    function stCollectIncome()
+    {
+        // collect income
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_PAY_WORKERS );
+    }
+
+    function stPayWorkers()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_AUCTION );
+    }
+
+    function stNextBid()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_PLAYER_BID );
+    }
+
+    function stBuildingPhase()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_BEGIN_BUILDING );
+    }
+
+    function stBuild()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_RESOLVE_BUILDING );
+    }
+
+    function stGetBonus()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_CHOOSE_BONUS );
+    }
+
+    function stChooseBonus()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_NEXT_BUILDING );
+    }
+
+    function stEndRound()
+    {
+        // Do some stuff ...
+        
+        // (very often) go to another gamestate
+        $this->gamestate->nextState( STATE_END_GAME );
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
