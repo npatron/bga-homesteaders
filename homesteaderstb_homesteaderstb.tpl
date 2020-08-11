@@ -24,20 +24,46 @@
     
     Please REMOVE this comment before publishing your game on BGA
 -->
-
-
-This is your game interface. You can edit this HTML in your ".tpl" file.
-
-
 <script type="text/javascript">
 
 // Javascript HTML templates
 
-/*
-// Example:
-var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_ID}"></div>';
+<!-- BEGIN player -->
+    <div class="playertable whiteblock playertable_{DIR}">
+        <div class="playertablename" style="color:#{PLAYER_COLOR}">
+            {PLAYER_NAME}
+        </div>
+        <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
+        </div>
+        <div class="playertablepoints" id="playertablecard_{score}">
+        </div>
+        
+        <div class="playertablesilver" id="player_resource_{silver}">
+        </div>
+        <div class="playertablegold" id="player_resource_{gold}">
+        </div>
+        <div class="playertablewood" id="player_resource_{wood}">
+        </div>
+        <div class="playertablefood" id="player_resource_{food}">
+        </div>
+        <div class="playertablesteel" id="player_resource_{steel}">
+        </div>
+        <div class="playertablecopper" id="player_resource_{steel}">
+        </div>
+        <div class="playertablelivestock" id="player_resource_{steel}">
+        </div>
+        <div class="playertabledebt" id="player_resource_{debt}">
+        </div>
+        <div class="playertabletradeTokens" id="player_resource_{tradeTokens}">
+        </div>
+        <div class="playertablevptokens" id="player_resource_{vPTokens}">
+        </div>
+    </div>
+<!-- END player -->
 
-*/
+var jstpl_buildings = '<div class="buildings" id="buildings_${player_id}" style="background-position:-${x}px -${y}px">\
+                        </div>';
+
 
 </script>  
 

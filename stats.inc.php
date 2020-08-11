@@ -55,41 +55,39 @@ $stats_type = array(
         "turns_number" => array("id"=> 10,
                     "name" => totranslate("Number of turns"),
                     "type" => "int" ),
+        "outbids_in_auctions" => array("id"=> 11,
+                    "name" => totranslate("Number of times any player was outbid"),
+                    "type" => "int" ),
 
-/*
-        Examples:
-
-
-        "table_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("table test stat 1"), 
-                                "type" => "int" ),
-                                
-        "table_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("table test stat 2"), 
-                                "type" => "float" )
-*/  
     ),
     
     // Statistics existing for each player
     "player" => array(
-
-        "turns_number" => array("id"=> 10,
-                    "name" => totranslate("Number of turns"),
+        "buildings_bought" => array("id"=> 12,
+                    "name" => totranslate("Number of buildings built"),
                     "type" => "int" ),
-    
-/*
-        Examples:    
-        
-        
-        "player_teststat1" => array(   "id"=> 10,
-                                "name" => totranslate("player test stat 1"), 
-                                "type" => "int" ),
-                                
-        "player_teststat2" => array(   "id"=> 11,
-                                "name" => totranslate("player test stat 2"), 
-                                "type" => "float" )
-
-*/    
+        "residential_bought" => array("id"=> 13,
+                    "name" => totranslate("Number of residential buildings built"),
+                    "type" => "int" ),
+        "industrial_bought" => array("id"=> 14,
+                    "name" => totranslate("Number of industrial buildings built"),
+                    "type" => "int" ),
+        "commercial_bought" => array("id"=> 15,
+                    "name" => totranslate("Number of commercial buildings built"),
+                    "type" => "int" ),
+        "special_bought" => array("id"=> 16,
+                    "name" => totranslate("Number of special buildings built"),
+                    "type" => "int" ),
+        "auctions_won" => array("id"=> 17,
+                    "name" => totranslate("Number of auctions won"),
+                    "type" => "int" ),
+        "spent_on_auctions" => array("id"=> 18,
+                    "name" => totranslate("Amount spent on auctions"),
+                    "type" => "int" ),
+        "times_outbid" => array("id"=> 19,
+                    "name" => totranslate("Number of times outbid on auctions"),
+                    "type" => "int" ),
+                        
     )
 
 );
