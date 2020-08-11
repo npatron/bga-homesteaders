@@ -28,7 +28,7 @@
 --- Workers
 ALTER TABLE `player` ADD `workers` tinyint NOT NULL DEFAULT '0';
 ---
-ALTER TABLE 'player' ADD 'railroadAdvancement' tinying NOT NULL DEFAULT '0';
+ALTER TABLE 'player' ADD 'railroadAdvancement' tinyint NOT NULL DEFAULT '0';
 --- Silver
 ALTER TABLE `player` ADD `silver` tinyint NOT NULL DEFAULT '0';
 --- Wood
