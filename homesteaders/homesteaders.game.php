@@ -2,13 +2,13 @@
  /**
   *------
   * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
-  * homesteaderstb implementation : © Nick Patron <nick.theboot@gmail.com>
+  * Homesteaders implementation : © <Your name here> <Your email address here>
   * 
   * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
   * See http://en.boardgamearena.com/#!doc/Studio for more information.
   * -----
   * 
-  * homesteaderstb.game.php
+  * homesteaders.game.php
   *
   * This is the main file for your game logic.
   *
@@ -20,7 +20,7 @@
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 
 
-class homesteaderstb extends Table
+class Homesteaders extends Table
 {
 	function __construct( )
 	{
@@ -32,16 +32,12 @@ class homesteaderstb extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         
+ 
         self::initGameStateLabels( array( 
-            "round_number" => 10,
-            "selected_worker" => 11,
-            "building_selected" => 12,
-            "bid_selected" => 13,
-            "phase" => 14,
-        ) );        
-
-//        $this->buildings = self::getNew("module.common.building")
-//        $this->buildings = init( "building" );
+            "firstPlayerId"          => 10,
+            "turnCount"             => 11,
+            "currentStage"          => 12
+        ) );       
 	}
 	
     protected function getGameName( )
@@ -51,7 +47,36 @@ class homesteaderstb extends Table
     }	
 
     /*
-        setupNewGame:
+        //.........................................................
+        //.....GGGGGGG.......AAAAA....MMMMMM...MMMMMM.EEEEEEEEEEE..
+        //...GGGGGGGGGG......AAAAA....MMMMMM...MMMMMM.EEEEEEEEEEE..
+        //..GGGGGGGGGGGG....AAAAAA....MMMMMM...MMMMMM.EEEEEEEEEEE..
+        //..GGGGG..GGGGG....AAAAAAA...MMMMMMM.MMMMMMM.EEEE.........
+        //.GGGGG....GGG....AAAAAAAA...MMMMMMM.MMMMMMM.EEEE.........
+        //.GGGG............AAAAAAAA...MMMMMMM.MMMMMMM.EEEEEEEEEE...
+        //.GGGG..GGGGGGGG..AAAA.AAAA..MMMMMMMMMMMMMMM.EEEEEEEEEE...
+        //.GGGG..GGGGGGGG.AAAAAAAAAA..MMMMMMMMMMMMMMM.EEEEEEEEEE...
+        //.GGGGG.GGGGGGGG.AAAAAAAAAAA.MMMMMMMMMMMMMMM.EEEE.........
+        //..GGGGG....GGGG.AAAAAAAAAAA.MMMM.MMMMM.MMMM.EEEE.........
+        //..GGGGGGGGGGGG.GAAA....AAAA.MMMM.MMMMM.MMMM.EEEEEEEEEEE..
+        //...GGGGGGGGGG..GAAA.....AAAAMMMM.MMMMM.MMMM.EEEEEEEEEEE..
+        //.....GGGGGGG..GGAAA.....AAAAMMMM.MMMMM.MMMM.EEEEEEEEEEE..
+        //.........................................................
+        //...............................................................
+        //...SSSSSSS....EEEEEEEEEEE.TTTTTTTTTTTUUUU...UUUU..PPPPPPPPP....
+        //..SSSSSSSSS...EEEEEEEEEEE.TTTTTTTTTTTUUUU...UUUU..PPPPPPPPPP...
+        //..SSSSSSSSSS..EEEEEEEEEEE.TTTTTTTTTTTUUUU...UUUU..PPPPPPPPPPP..
+        //.SSSSS..SSSS..EEEE...........TTTT....UUUU...UUUU..PPPP...PPPP..
+        //.SSSSS........EEEE...........TTTT....UUUU...UUUU..PPPP...PPPP..
+        //..SSSSSSS.....EEEEEEEEEE.....TTTT....UUUU...UUUU..PPPPPPPPPPP..
+        //...SSSSSSSSS..EEEEEEEEEE.....TTTT....UUUU...UUUU..PPPPPPPPPP...
+        //.....SSSSSSS..EEEEEEEEEE.....TTTT....UUUU...UUUU..PPPPPPPPP....
+        //........SSSSS.EEEE...........TTTT....UUUU...UUUU..PPPP.........
+        //.SSSS....SSSS.EEEE...........TTTT....UUUU...UUUU..PPPP.........
+        //.SSSSSSSSSSSS.EEEEEEEEEEE....TTTT....UUUUUUUUUUU..PPPP.........
+        //..SSSSSSSSSS..EEEEEEEEEEE....TTTT.....UUUUUUUUU...PPPP.........
+        //...SSSSSSSS...EEEEEEEEEEE....TTTT......UUUUUUU....PPPP.........
+        //...............................................................
         
         This method is called only once, when a new game is launched.
         In this method, you must setup the game according to the game rules, so that
@@ -60,18 +85,21 @@ class homesteaderstb extends Table
     protected function setupNewGame( $players, $options = array() )
     {    
         // Set the colors of the players with HTML color code
-        // values are red/green/blue/yellow
+        // The default below is red/green/blue/orange/brown
+        // The number of colors defined here must correspond to the maximum number of players allowed for the gams
         $gameinfos = self::getGameinfos();
-        $default_colors = $gameinfos['player_colors'];
+        
  
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_name, player_avatar) VALUES ";
+        $default_colors = $gameinfos['player_colors'];
+
+        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
         $values = array();
         foreach( $players as $player_id => $player )
         {
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$start_points','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
+            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -81,123 +109,49 @@ class homesteaderstb extends Table
         /************ Start the game initialization *****/
 
         // Init global values with their initial values
-        self::setGameStateInitialValue( 'round_number', 0 );
-        self::setGameStateInitialValue( 'selected_worker', 0 );
-        self::setGameStateInitialValue( 'building_selected', 0 );
-        self::setGameStateInitialValue( 'bid_selected', 0 );
-        self::setGameStateInitialValue( 'phase', 0 );
+        //self::setGameStateInitialValue( 'my_first_global_variable', 0 );
         
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
-        self::initStat( 'table', 'turns_number', 0 );
-        self::initStat( 'table', 'outbids_in_auctions', 0 );
-        self::initStat( 'player', 'buildings_bought', 0 );
-        self::initStat( 'player', 'residential_bought', 0 );
-        self::initStat( 'player', 'industrial_bought', 0 );
-        self::initStat( 'player', 'commercial_bought', 0 );
-        self::initStat( 'player', 'special_bought', 0 );
-        self::initStat( 'player', 'auctions_won', 0 );
-        self::initStat( 'player', 'spent_on_auctions', 0 );
-        self::initStat( 'player', 'times_outbid', 0 );
+        //self::initStat( 'table', 'table_teststat1', 0 );    // Init a table statistics
+        //self::initStat( 'player', 'player_teststat1', 0 );  // Init a player statistics (for all players)
 
 
-        // TODO: setup the initial game situation here
-        // create building Tiles (in sql)
-        $sql = "INSERT INTO buildings (building_name, building_type, building_stage, building_location) VALUES ";
-        $values=array();
-        // homestead
-        for($i = 1; $i <count($players); $i++) {
-            $values[] = "('Homestead','r', '1', '$i')";
-        }
-        // for 2 player remove all duplicates except farm market, and foundry
-        for($i = 0; $i <count($players) && $i <3; $i++) {
-            $values[] = "('Farm','r', '1', '0')";
-            $values[] = "('Foundry','i', '1', '0')";
-            $values[] = "('Market','c', '1', '0')";
-        }
-        //has 2 copies in 3-4 player
-        for($i = 1; $i <count($players) && $i <3; $i++) {
-            $values[] = "('Ranch','r', '2', '0')";
-            $values[] = "('General Store','c', '2', '0')";
-            $values[] = "('Gold Mine','i', '2', '0')";
-            $values[] = "('Copper Mine','i', '2', '0')";
-            $values[] = "('River Port','i', '2', '0')";
 
-            $values[] = "('Workshop','r', '3', '0')";
-            $values[] = "('Depot','c', '3', '0')";
-            $values[] = "('Forge','i', '3', '0')";
+        // Give Each Player Starting Resources (No difference for starting players)
+        /*
+        foreach player
+            give 1 Worker
+            give 6 silver
+            Initialize Railroad starting -> already initalized to start in database
+        */
+        foreach( $players as $player_id => $player )
+        {
+            
+            $sql="UPDATE player SET workers=1 where player_id =.$player_id";
+            $sql="UPDATE player SET silver=6 where player_id =.$player_id";
+            
 
-            $values[] = "('Dude Ranch','r', '4', '0')";
-            $values[] = "('Restaraunt','c', '4', '0')";
-            $values[] = "('Terminal','c', '4', '0')";
-            $values[] = "('Train Station','i', '4', '0')";
-        }
-        $values[] = "('Grain Mill','c','1', '0')";
-        $values[] = "('Steel Mill','i','1', '0')";
-        $values[] = "('Boarding House','r','2', '0')";
-        $values[] = "('Railworkers House','r','2', '0')";
-        $values[] = "('Grain Mill','c','2', '0')";
 
-        $values[] = "('Church','r','3', '0')";
-        $values[] = "('Bank','c','3', '0')";
-        $values[] = "('Stables','c','3', '0')";
-        $values[] = "('Meatpacking Plant','i','3', '0')";
-        $values[] = "('Rodeo','s','3', '0')";
-        $values[] = "('Factory','s','3', '0')";
-        $values[] = "('Fairgrounds','s','3', '0')";
-        $values[] = "('Lawyer','s','3', '0')";
 
-        $values[] = "('Town Hall','r','4', '0')";
-        $values[] = "('Circus','s','4', '0')";
-        $values[] = "('Rail Yard','s','4', '0')";
+        //SET UP AUCTION TILES
+        $auction_tiles = array ();
+
+        //Create the two/three auction piles
+        $auction_pile1 = array ();
+        $auction_pile2 = array ();
+        $acution_pile3 = array ();
+
+        // Setup Auction Tiles - different for 2/3 or 4 player game
+        /*
+        Setup Auction 1 Tiles in ORder
+        Randomize Auction 2 Tiles according to stage
+        If 4 Player Game 
+            Randomize Auction 3 Tiles according to stage
+        */
+
         
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
 
-        $sql = "INSERT INTO auction_one ( token_order, token_state ) VALUES ";
-        $values=array();
-        for ($i = 0; $i <10; $i++){
-            $values[] = "('$i','1')";
-        }
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
-
-        $sql = "INSERT INTO auction_two (token_order, token_state) VALUES ";
-        $values=array();
-        $order1 = array("0","1","2","3");
-        $order2 = array("4","5","6","7");
-        $order3 = array("8","9");
-        shuffle($order1);
-        shuffle($order2);
-        shuffle($order3);
-        for ($i = 0; $i <4; $i++){
-            $values[] = "(".$order1[$i]."', '0')";
-        }
-        for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order2[$i]."','0')";
-        }
-        for ($i = 0; $i <2; $i++){
-            $values[] = "('".$order3[$i]."','0')";
-        }
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
-
-        $sql = "INSERT INTO auction_three (token_order, token_state) VALUES ";
-        $values=array();
-        shuffle($order1);
-        shuffle($order2);
-        shuffle($order3);
-        for ($i = 0; $i <4; $i++){
-            $values[] = "(1,'".$order1[$i]."','0')";
-        }
-        for ($i = 0; $i <4; $i++){
-            $values[] = "(2,'".$order2[$i]."','0')";
-        }
-        for ($i = 0; $i <2; $i++){
-            $values[] = "(3,'".$order3[$i]."','0')";
-        }        
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -264,7 +218,7 @@ class homesteaderstb extends Table
 
     /*
         Each time a player is doing some game action, one of the methods below is called.
-        (note: each method below must match an input method in homesteaderstb.action.php)
+        (note: each method below must match an input method in homesteaders.action.php)
     */
 
     /*
@@ -330,89 +284,22 @@ class homesteaderstb extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
     
+    /*
     
-    
-    //Example for game state "MyGameState":
+    Example for game state "MyGameState":
 
-    function stStartRound()
+    function stMyGameState()
     {
         // Do some stuff ...
         
         // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_START_ROUND );
+        $this->gamestate->nextState( 'some_gamestate_transition' );
     }    
-
-    function stPlaceWorkers()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_INCOME );
-    }
-
-    function stCollectIncome()
-    {
-        // collect income
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_PAY_WORKERS );
-    }
-
-    function stPayWorkers()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_AUCTION );
-    }
-
-    function stNextBid()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_PLAYER_BID );
-    }
-
-    function stBuildingPhase()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_BEGIN_BUILDING );
-    }
-
-    function stBuild()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_RESOLVE_BUILDING );
-    }
-
-    function stGetBonus()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_CHOOSE_BONUS );
-    }
-
-    function stChooseBonus()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_NEXT_BUILDING );
-    }
-
-    function stEndRound()
-    {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_END_GAME );
-    }
+    */
+    // this will make all players multiactive just before entering the state
+   function st_MultiPlayerInit() {
+        $this->gamestate->setAllPlayersMultiactive();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
