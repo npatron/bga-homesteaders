@@ -20,7 +20,7 @@
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 
 
-class homesteaderstb extends Table
+class homesteaders extends Table
 {
 	function __construct( )
 	{
@@ -66,12 +66,12 @@ class homesteaderstb extends Table
  
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_name, player_avatar) VALUES ";
+        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
         $values = array();
         foreach( $players as $player_id => $player )
         {
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$start_points','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
+            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -162,16 +162,16 @@ class homesteaderstb extends Table
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
-        $sql = "INSERT INTO auction_two (token_order, token_state) VALUES ";
+        $sql = "INSERT INTO auction_two ( token_order, token_state ) VALUES ";
         $values=array();
-        $order1 = array("0","1","2","3");
-        $order2 = array("4","5","6","7");
-        $order3 = array("8","9");
+        $order1 = array('0','1','2','3');
+        $order2 = array('4','5','6','7');
+        $order3 = array('8','9');
         shuffle($order1);
         shuffle($order2);
         shuffle($order3);
         for ($i = 0; $i <4; $i++){
-            $values[] = "(".$order1[$i]."', '0')";
+            $values[] = "('".$order1[$i]."', '0')";
         }
         for ($i = 0; $i <4; $i++){
             $values[] = "('".$order2[$i]."','0')";
@@ -182,19 +182,19 @@ class homesteaderstb extends Table
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
-        $sql = "INSERT INTO auction_three (token_order, token_state) VALUES ";
+        $sql = "INSERT INTO auction_three ( token_order, token_state ) VALUES ";
         $values=array();
         shuffle($order1);
         shuffle($order2);
         shuffle($order3);
         for ($i = 0; $i <4; $i++){
-            $values[] = "(1,'".$order1[$i]."','0')";
+            $values[] = "('".$order1[$i]."','0')";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "(2,'".$order2[$i]."','0')";
+            $values[] = "('".$order2[$i]."','0')";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "(3,'".$order3[$i]."','0')";
+            $values[] = "('".$order3[$i]."','0')";
         }        
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
