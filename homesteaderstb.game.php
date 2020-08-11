@@ -20,7 +20,7 @@
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 
 
-class homesteaders extends Table
+class homesteaderstb extends Table
 {
 	function __construct( )
 	{
@@ -66,12 +66,12 @@ class homesteaders extends Table
  
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
+        $sql = "INSERT INTO player (player_id, player_color, player_name, player_avatar) VALUES ";
         $values = array();
         foreach( $players as $player_id => $player )
         {
             $color = array_shift( $default_colors );
-            $values[] = "('".$player_id."','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
+            $values[] = "('".$player_id."','$start_points','$color','".$player['player_canal']."','".addslashes( $player['player_name'] )."','".addslashes( $player['player_avatar'] )."')";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -159,14 +159,14 @@ class homesteaders extends Table
         $bonus=array("","","","","worker","worker","worker","","copperforpoints","livestockforpoints");
         $values=array();
         for ($i = 0; $i <10; $i++){
-            $values[] = "('$i','".$types[$i]."','".$bonus[$i]."')";
+            $values[] = "('$i',".$types[$i].",".$bonus[$i].")";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
         $sql = "INSERT INTO auction_two (token_order, auction_buy_type, auction_bonus) VALUES ";
-        $types=array("r","i","rics","","rc","ic","is","rs","ci","rs");
-        $bonus=array("","","","worker_rail","","","","woodforrail","foodforpoints","foodforpoints");
+        $types=array('r','i','rics','','rc','ic','is','rs','ci','rs');
+        $bonus=array('','','','worker_rail','','','','woodforrail','foodforpoints','foodforpoints');
         $values=array();
         $order1 = array("0","1","2","3");
         $order2 = array("4","5","6","7");
@@ -175,13 +175,13 @@ class homesteaders extends Table
         shuffle($order2);
         shuffle($order3);
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order1[$i]."','".$types[$i]."','".$bonus[$i]."')";
+            $values[] = "(".$order1[$i]."',".$types[$i].",".$bonus[$i].")";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order2[$i]."','".$types[$i+4]."','".$bonus[$i+4]."')";
+            $values[] = "('".$order2[$i]."',".$types[$i+4].",".$bonus[$i+4].")";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "('".$order3[$i]."','".$types[$i+8]."','".$bonus[$i+8]."')";
+            $values[] = "('".$order3[$i]."',".$types[$i+8].",".$bonus[$i+8].")";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -194,13 +194,13 @@ class homesteaders extends Table
         shuffle($order2);
         shuffle($order3);
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order1[$i]."','".$types[$i]."','".$bonus[$i]."')";
+            $values[] = "(1,'".$order1[$i]."',".$types[$i].",".$bonus[$i].")";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order2[$i]."','".$types[$i+4]."','".$bonus[$i+4]."')";
+            $values[] = "(2,'".$order2[$i]."',".$types[$i+4].",".$bonus[$i+4].")";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "('".$order3[$i]."','".$types[$i+8]."','".$bonus[$i+8]."')";
+            $values[] = "(3,'".$order3[$i]."',".$types[$i+8].",".$bonus[$i+8].")";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );

@@ -1,7 +1,7 @@
 
 -- ------
 -- BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
--- homesteaderstb implementation : © © Nick Patron <nick.theboot@gmail.com>
+-- homesteaderstb implementation : © Nick Patron <patron.nick@gmail.com>
 -- 
 -- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -18,17 +18,6 @@
 -- Note: The database schema is created from this file when the game starts. If you modify this file,
 --       you have to restart a game to see your changes in database.
 
--- Example 1: create a standard "card" table to be used with the "Deck" tools (see example game "hearts"):
-
--- CREATE TABLE IF NOT EXISTS `card` (
---   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
---   `card_type` varchar(16) NOT NULL,
---   `card_type_arg` int(11) NOT NULL,
---   `card_location` varchar(16) NOT NULL,
---   `card_location_arg` int(11) NOT NULL,
---   PRIMARY KEY (`card_id`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
 -- building_stage 1 (settlement), 2 (settlement or town), 3 (town), 4 (city)
 CREATE TABLE IF NOT EXISTS buildings (
   building_id TINYINT NOT NULL AUTO_INCREMENT,
@@ -44,7 +33,9 @@ CREATE TABLE IF NOT EXISTS buildings (
 CREATE TABLE IF NOT EXISTS auction_one (
   id INT(11) NOT NULL AUTO_INCREMENT,
   token_order INT(11) NOT NULL,
-  token_state INT(11) NOT NULL,
+  token_state INT(11) NOT NULL DEFAULT '1',
+  auction_buy_type VARCHAR(12) NOT NULL,
+  auction_bonus VARCHAR(12) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -53,7 +44,9 @@ CREATE TABLE IF NOT EXISTS auction_one (
 CREATE TABLE IF NOT EXISTS auction_two (
   id INT(11) NOT NULL AUTO_INCREMENT,
   token_order INT(11) NOT NULL,
-  token_state INT(11) NOT NULL,
+  token_state INT(11) NOT NULL DEFAULT '0',
+  auction_buy_type VARCHAR(12) NOT NULL,
+  auction_bonus VARCHAR(12) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -62,7 +55,9 @@ CREATE TABLE IF NOT EXISTS auction_two (
 CREATE TABLE IF NOT EXISTS auction_three (
   id INT(11) NOT NULL AUTO_INCREMENT,
   token_order INT(11) NOT NULL,
-  token_state INT(11) NOT NULL,
+  token_state INT(11) NOT NULL DEFAULT '0',
+  auction_buy_type VARCHAR(12) NOT NULL,
+  auction_bonus VARCHAR(12) NOT NULL,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
