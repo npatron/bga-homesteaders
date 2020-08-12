@@ -8,7 +8,7 @@
   * See http://en.boardgamearena.com/#!doc/Studio for more information.
   * -----
   * 
-  * homesteaderstb.game.php
+  * homesteaders.game.php
   *
   * This is the main file for your game logic.
   *
@@ -103,20 +103,20 @@ class homesteaders extends Table
 
         // TODO: setup the initial game situation here
         // create building Tiles (in sql)
-        $sql = "INSERT INTO buildings (building_name, building_type, building_stage, building_location) VALUES ";
+        $sql = "INSERT INTO buildings (name, type, stage, location, cost, income, worker_income, vps, build_bonus, special) VALUES ";
         $values=array();
-        // homestead
-        for($i = 1; $i <count($players); $i++) {
-            $values[] = "('Homestead','r', '1', '$i')";
+        // homestead (assigned to each player by player_id)
+        foreach( $players as $player_id => $player ) {
+            $values[] = "('Homestead','r', '0', '".$player_id."','','ss','wood_vp','0','','')";
         }
-        // for 2 player remove all duplicates except farm market, and foundry
-        for($i = 0; $i <count($players) && $i <3; $i++) {
+        // these building have 2 copies in 2 player, and 3 copies in 3-4 player
+        for($i = 0; $i < count($players) && $i <3; $i++) {
             $values[] = "('Farm','r', '1', '0')";
             $values[] = "('Foundry','i', '1', '0')";
             $values[] = "('Market','c', '1', '0')";
         }
-        //has 2 copies in 3-4 player
-        for($i = 1; $i <count($players) && $i <3; $i++) {
+        //these building have 2 copies in 3-4 player
+        for($i = 1; $i < count($players) && $i <3; $i++) {
             $values[] = "('Ranch','r', '2', '0')";
             $values[] = "('General Store','c', '2', '0')";
             $values[] = "('Gold Mine','i', '2', '0')";
@@ -156,7 +156,7 @@ class homesteaders extends Table
 
         $sql = "INSERT INTO auction_one ( token_order, auction_buy_type, auction_bonus ) VALUES ";
         $types=array("rc","i","c","ri","c","r","i","rics","rics","rics");
-        $bonus=array("","","","","worker","worker","worker","","copperforpoints","livestockforpoints");
+        $bonus=array("","","","","worker","worker","worker","","copper_pts","livestock_pts");
         $values=array();
         for ($i = 0; $i <10; $i++){
             $values[] = "('$i','".$types[$i]."','".$bonus[$i]."')";
@@ -166,7 +166,7 @@ class homesteaders extends Table
 
         $sql = "INSERT INTO auction_two (token_order, auction_buy_type, auction_bonus) VALUES ";
         $types=array("r","i","rics","","rc","ic","is","rs","ci","rs");
-        $bonus=array("","","","worker_rail","","","","woodforrail","foodforpoints","foodforpoints");
+        $bonus=array("","","","worker_rail","","","","wood_rail","food_pts","food_pts");
         $values=array();
         $order1 = array("0","1","2","3");
         $order2 = array("4","5","6","7");
@@ -188,7 +188,7 @@ class homesteaders extends Table
 
         $sql = "INSERT INTO auction_three (token_order, auction_buy_type, auction_bonus) VALUES ";
         $types=array('r','c','i','','r','c','i','rics','rc','');
-        $bonus=array('','','','worker_rail','','','woodforrail','','foodforpoints','foodforpoints');
+        $bonus=array('','','','worker_rail','','','wood_rail','','food_pts','food_pts');
         $values=array();
         shuffle($order1);
         shuffle($order2);
@@ -236,11 +236,16 @@ class homesteaders extends Table
     
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score FROM player ";
+        $sql = "SELECT player_id id, player_score score, player_workers workers, player_railroad_advancement railroad FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
+
+        $sql = "SELECT building_id id, building_name name, building_location owner FROM buildings";
+        $result['buildings'] = self::getCollectionFromDb( $sql );
   
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
-  
+        $sql = "SELECT player_id id, player_silver silver, player_wood wood, player_food food, player_steel steel, player_gold gold, player_copper copper, player_livestock livestock, player_debt dept, player_trade_tokens trade_token, player_vp_tokens vp_token  FROM player WHERE player_id in ($current_player_id)";
+        $result['currentplayer'] = self::getCollectionFromDb( $sql );
+        
         return $result;
     }
 
@@ -256,9 +261,8 @@ class homesteaders extends Table
     */
     function getGameProgression()
     {
-        // TODO: compute and return the game progression
-
-        return 0;
+        $gameprogress = self::getGameStateValue('round_number') * 10;
+        return $gameprogress;
     }
 
 
@@ -350,25 +354,27 @@ class homesteaders extends Table
 
     function stStartRound()
     {
-        // Do some stuff ...
+        // update round number.
+        // set auctions for this round to be visible, and in right spots
+        // clear any bid tokens
         
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_START_ROUND );
+        $this->gamestate->nextState( STATE_PLACE_WORKERS );
     }    
 
     function stPlaceWorkers()
     {
-        // Do some stuff ...
+        // for each player have them place workers (then press done)
         
-        // (very often) go to another gamestate
         $this->gamestate->nextState( STATE_INCOME );
     }
 
     function stCollectIncome()
     {
-        // collect income
-        
-        // (very often) go to another gamestate
+        $current_player_id = self::getCurrentPlayerId();  
+        // collect income from buildings & rails
+
+        $sql = "SELECT buildings mybuildings FROM buildings where building_location in ($current_player_id)";
+        $result = self::getCollectionFromDb( $sql );
         $this->gamestate->nextState( STATE_PAY_WORKERS );
     }
 

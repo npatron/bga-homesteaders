@@ -21,10 +21,16 @@
 -- building_stage 1 (settlement), 2 (settlement or town), 3 (town), 4 (city)
 CREATE TABLE IF NOT EXISTS buildings (
   building_id TINYINT NOT NULL AUTO_INCREMENT,
-  building_name VARCHAR(20) NOT NULL,
-  building_type VARCHAR(20) NOT NULL,
-  building_stage TINYINT NOT NULL,
-  building_location VARCHAR(20) NOT NULL,
+  name VARCHAR(20) NOT NULL,
+  type VARCHAR(20) NOT NULL,
+  stage TINYINT NOT NULL,
+  location VARCHAR(20) NOT NULL DEFAULT 0,
+  cost VARCHAR(20) NOT NULL,
+  income VARCHAR(20) NOT NULL,
+  worker_income VARCHAR(20) NOT NULL,
+  points TINYINT NOT NULL,
+  build_bonus VARCHAR(20) NOT NULL,
+  special VARCHAR(20) NOT NULL,
   PRIMARY KEY (building_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
