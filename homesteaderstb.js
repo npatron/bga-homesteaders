@@ -48,12 +48,25 @@ function (dojo, declare) {
         {
             console.log( "Starting game setup" );
             
+            this.playerCount = 0;
             // Setting up player boards
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
-                         
-                // TODO: Setting up players boards if needed
+
+                var player_info_div = $('player_board_'+player_id);
+
+                this.playersBuildingStock[player_id] = this.buildTechStock(gamedatas.buildings, 'buildings_'+player_id);
+                
+                if (gamedatas.firstPlayer == player_id){
+                    dojo.removeClass("misc_first_"+player_id, "noshow")
+                }
+
+                this.auctionIcon[player_id] = "icon_auction_"+player.color_name;
+
+                this.trainIcon[player_id] = "icon_train_"+player.color_name;
+                
+                ++this.playerCount;
             }
             
             // TODO: Set up your game interface here, according to "gamedatas"
@@ -151,12 +164,20 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Utility methods
         
-        /*
-        
-            Here, you can defines some utility methods that you can use everywhere in your javascript
-            script.
-        
-        */
+        buildBuildingTileStock: function(buildings)
+        {
+            var stock = new ebg.stock();
+            stock.create( this, 20, 98, 144 );
+            stock.image_items_per_row = 10;
+            stock.setSelectionMode(0);
+            stock.setSelectionAppearance('class');
+
+            for(var buildingKey in buildings){
+                var building = buildings[buildingKey];
+                var imgId = () 
+            }
+
+        }
 
 
         ///////////////////////////////////////////////////
