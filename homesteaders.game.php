@@ -34,12 +34,12 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("AUCTION_BOARD", 1);
 
   define("AUCTION_STATE_FACEDOWN", 0);
-  define("AUCTION_STATE_FACEUP", 1);
+  define("AUCTION_STATE_FACEUP",   1);
 
   define("AUCTION_LOC_DISCARD", 0);
-  define("AUCTION_LOC_DECK1", 1);
-  define("AUCTION_LOC_DECK2", 2);
-  define("AUCTION_LOC_DECK3", 3);
+  define("AUCTION_LOC_DECK1",   1);
+  define("AUCTION_LOC_DECK2",   2);
+  define("AUCTION_LOC_DECK3",   3);
 
   // Auction tiles
   define("AUCTION1_1",  1);
@@ -381,6 +381,36 @@ class homesteaders extends Table
         (note: each method below must match an input method in homesteaderstb.action.php)
     */
 
+    function takeLoan()
+    {
+        self::checkAction( 'takeLoan' );
+
+        $player_id = self::getCurrentPlayerId();
+        $sql = "SELECT player_id id, player_silver silver FROM player WHERE player_id in ($player_id)";
+        
+        self::notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'card_name' => $card_name,
+            'card_id' => $card_id
+        ) );
+    }
+
+    function trade( $trade1, $trade2 )
+    {
+        self::checkAction( 'trade' );
+        
+        $player_id = self::getActivePlayerId();
+        
+        // do a thing
+
+        self::notifyAllPlayers( "cardPlayed", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'card_name' => $card_name,
+            'card_id' => $card_id
+        ) );
+    }
     /*
     
     Example:
