@@ -50,54 +50,31 @@
 
 
 #board {
-    background-image: url('img/AuctionBoard.jpg');
-    position: relative;
+   background-image: url('img/AuctionBoard.jpg');
+   position: relative;
 	width: 520px;
 	height: 384px;
 	background-size: 520px auto;
-    margin: auto;
-    /*max-width: 980px;
-    overflow-x: auto;
-	overflow-y: visible;*/
+   margin: auto;
+   max-width: 980px;
+   overflow-x: auto;
+	overflow-y: visible;
 }
 
-.round_token {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    border-radius: 8px;
-    z-index: 1;
-}
 
-.color_ffa500 {
-    background-color: #ffa500;  
- }
- 
- .color_0000ff {
-     background-color: #0000ff; 
- }
- 
- .color_008000 {
-     background-color: #008000; 
- }
- 
- .color_ff0000 {
-     background-color: #ff0000; 
- }
-
- #bid_slot_A1_B3{
+ .bid_slot_A1_B3{
     top: 210px;
     left: 35px;
     height: 40px;
     width: 36px;
  }
- #bid_slot_A1_B4{
+ .bid_slot_A1_B4{
     top: 174px;
     left: 35px;
     height: 36px;
     width: 36px;
  }
- #bid_slot_A1_B5{
+ .bid_slot_A1_B5{
     top: 138px;
     left: 35px;
     height: 36px;
@@ -250,21 +227,42 @@
     width: 44px;
  }
 
- #auction1_tile_pile {
+ .auction1_tile_pile {
     top: 70px;
     left: 70px;
     height: 175px;
     width: 105px;
  }
- #auction2_tile_pile {
+ .auction2_tile_pile {
     top: 70px;
     left: 225px;
     height: 175px;
     width: 105px;
  }
- #auction3_tile_pile {
+ .auction3_tile_pile {
     top: 70px;
     left: 380px;
     height: 175px;
     width: 105px;
  }
+
+ .color_ffa500 {
+   background-color: #ffa500;  
+}
+
+.color_0000ff {
+    background-color: #0000ff; 
+}
+
+.color_008000 {
+    background-color: #008000; 
+}
+
+.color_ff0000 {
+    background-color: #ff0000; 
+}
+
+.tile {
+   box-shadow: -3px -3px 3px grey inset;
+   border-radius: 6px;
+}

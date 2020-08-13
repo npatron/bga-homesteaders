@@ -26,6 +26,11 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("BUILDING_LOC_PLAYER",  2);
   define("BUILDING_LOC_DISCARD", 3);
 
+  define("STAGE_SETTLEMENT", 1);
+  define("STAGE_SETTLEMENT_TOWN", 2);
+  define("STAGE_TOWN", 3);
+  define("STAGE_CITY", 4);
+
   define("AUCTION_BOARD", 1);
 
   define("AUCTION_STATE_FACEDOWN", 0);
@@ -326,7 +331,7 @@ class homesteaders extends Table
         $values=array();
         //first auction is in order, and all face-up
         for ($i = 0; $i <10; $i++){
-            $values[] = "('$i','$i','".AUCTION_LOC_DECK1."','".AUCTION_STATE_FACEUP."')";
+            $values[] = "('$i','$i','".$AUCTION_LOC_DECK1."','".$AUCTION_STATE_FACEUP."')";
         }
 
         //second auction has 1-4 , 5-8, and 9-10 shuffled
@@ -337,13 +342,13 @@ class homesteaders extends Table
         shuffle($order2);
         shuffle($order3);
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+11)."','".$order1[$i]."','".AUCTION_LOC_DECK2."','".AUCTION_STATE_FACEDOWN."')";
+            $values[] = "('".($i+11)."','".$order1[$i]."','".$AUCTION_LOC_DECK2."','".$AUCTION_STATE_FACEDOWN."')";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+15)."','".$order2[$i]."','".AUCTION_LOC_DECK2."','".AUCTION_STATE_FACEDOWN."')";
+            $values[] = "('".($i+15)."','".$order2[$i]."','".$AUCTION_LOC_DECK2."','".$AUCTION_STATE_FACEDOWN."')";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "('".($i+19)."','".$order3[$i]."','".AUCTION_LOC_DECK2."','".AUCTION_STATE_FACEDOWN."')";
+            $values[] = "('".($i+19)."','".$order3[$i]."','".$AUCTION_LOC_DECK2."','".$AUCTION_STATE_FACEDOWN."')";
         }
 
         if ($playerCount>2){
@@ -352,13 +357,13 @@ class homesteaders extends Table
             shuffle($order2);
             shuffle($order3);
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+21)."','".$order1[$i]."','".AUCTION_LOC_DECK3."','".AUCTION_STATE_FACEDOWN."')";
+                $values[] = "('".($i+21)."','".$order1[$i]."','".$AUCTION_LOC_DECK3."','".$AUCTION_STATE_FACEDOWN."')";
             }
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+25)."','".$order2[$i]."','".AUCTION_LOC_DECK3."','".AUCTION_STATE_FACEDOWN."')";
+                $values[] = "('".($i+25)."','".$order2[$i]."','".$AUCTION_LOC_DECK3."','".$AUCTION_STATE_FACEDOWN."')";
             }
             for ($i = 0; $i <2; $i++){
-                $values[] = "('".($i+29)."','".$order3[$i]."','".AUCTION_LOC_DECK3."','".AUCTION_STATE_FACEDOWN."')";
+                $values[] = "('".($i+29)."','".$order3[$i]."','".$AUCTION_LOC_DECK3."','".$AUCTION_STATE_FACEDOWN."')";
             }   
         }
         $sql .= implode( $values, ',' );
@@ -445,8 +450,44 @@ class homesteaders extends Table
 
     function stStartRound()
     {
-        $round_number = self::getGameStateValue('round_number');
-        self::setGameStateValue('round_number', $round_number + 1);
+        $round_number = self::getGameStateValue('round_number') + 1;
+        self::setGameStateValue('round_number', $round_number);
+
+        //rd 1 setup buildings
+        if($round_number == 1){
+            // add 'settlement' and 'settlement/town' buildings
+            $sql = "UPDATE buildings SET location = '".$BUILDING_LOC_OFFER."' WHERE stage in ('".$STAGE_SETTLEMENT."','".$STAGE_SETTLEMENT_TOWN."');";
+            self::DbQuery( $sql );
+        }
+        //rd 5 setup buildings
+        if($round_number == 5){
+            // add town buildings
+            $sql = "UPDATE buildings SET location = '".$BUILDING_LOC_OFFER."' WHERE stage = '".$STAGE_TOWN."';";
+            self::DbQuery( $sql );
+            // remove settlement buildings (not owned)
+            $sql = "UPDATE buildings SET location = '".$BUILDING_LOC_DISCARD."' WHERE stage = '".$STAGE_SETTLEMENT."' AND location = '".$BUILDING_LOC_OFFER"';";
+            self::DbQuery( $sql );
+        }
+        //rd 9 setup buildings
+        if($round_number == 9){
+            // clear all buildings
+            $sql = "UPDATE buildings SET location = '".$BUILDING_LOC_DISCARD."' WHERE location = '".$BUILDING_LOC_OFFER."';";
+            self::DbQuery( $sql );
+            // add city buildings
+            $sql = "UPDATE buildings SET location = '".$BUILDING_LOC_OFFER."' WHERE stage = '".$STAGE_CITY."';";
+            self::DbQuery( $sql );
+        }
+
+        // update Auctions.
+        if ($round_number>1){
+            $last_round = $round_number -1;
+            $sql = "UPDATE auction_tiles SET location = '".$AUCTION_LOC_DISCARD."' WHERE order = '".$last_round."';";
+            self::DbQuery( $sql );
+        }
+        $sql = "UPDATE auction_tiles SET state = '".$AUCTION_STATE_FACEUP."' WHERE order = '".$round_number."';";
+        self::DbQuery( $sql );
+        
+        
         $this->gamestate->nextState( STATE_PLACE_WORKERS );
     }    
 
