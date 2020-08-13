@@ -19,6 +19,95 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 
+  define("BUILDING_COUNT", 32);
+  
+  define("BUILDING_LOC_FUTURE",  0);
+  define("BUILDING_LOC_OFFER",   1);
+  define("BUILDING_LOC_PLAYER",  2);
+  define("BUILDING_LOC_DISCARD", 3);
+
+  define("AUCTION_BOARD", 1);
+
+  define("AUCTION_STATE_FACEDOWN", 0);
+  define("AUCTION_STATE_FACEUP", 1);
+
+  define("AUCTION_LOC_DISCARD", 0);
+  define("AUCTION_LOC_DECK1", 1);
+  define("AUCTION_LOC_DECK2", 2);
+  define("AUCTION_LOC_DECK3", 3);
+
+  // Auction tiles
+  define("AUCTION1_1",  1);
+  define("AUCTION1_2",  2);
+  define("AUCTION1_3",  3);
+  define("AUCTION1_4",  4);
+  define("AUCTION1_5",  5);
+  define("AUCTION1_6",  6);
+  define("AUCTION1_7",  7);
+  define("AUCTION1_8",  8);
+  define("AUCTION1_9",  9);
+  define("AUCTION1_10", 10);
+
+  define("AUCTION2_1",  11);
+  define("AUCTION2_2",  12);
+  define("AUCTION2_3",  13);
+  define("AUCTION2_4",  14);
+  define("AUCTION2_5",  15);
+  define("AUCTION2_6",  16);
+  define("AUCTION2_7",  17);
+  define("AUCTION2_8",  18);
+  define("AUCTION2_9",  19);
+  define("AUCTION2_10", 20);
+
+  define("AUCTION3_1",  21);
+  define("AUCTION3_2",  22);
+  define("AUCTION3_3",  23);
+  define("AUCTION3_4",  24);
+  define("AUCTION3_5",  25);
+  define("AUCTION3_6",  26);
+  define("AUCTION3_7",  27);
+  define("AUCTION3_8",  28);
+  define("AUCTION3_9",  29);
+  define("AUCTION3_10", 30);
+  
+  // Buildings
+  define("BUILDING_HOMESTEAD", 1);
+  // Settlement
+  define("BUILDING_GRAIN_MILL", 2);
+  define("BUILDING_FARM" ,      3);
+  define("BUILDING_MARKET" ,    4);
+  define("BUILDING_FOUNDRY" ,   5);
+  define("BUILDING_STEEL_MILL", 6);
+  // Settlement or TOWN
+  define("BUILDING_BOARDING_HOUSE" ,   7);
+  define("BUILDING_RAILWORKERS_HOUSE", 8);
+  define("BUILDING_RANCH",             9);
+  define("BUILDING_TRADING_POST",      10);
+  define("BUILDING_GENERAL_STORE",     11);
+  define("BUILDING_GOLD MINE",         12);
+  define("BUILDING_COPPER_MINE",       13);
+  define("BUILDING_RIVER_PORT",        14);
+  // Town
+  define("BUILDING_CHURCH",            15);
+  define("BUILDING_WORKSHOP",          16);
+  define("BUILDING_DEPOT",             17);
+  define("BUILDING_STABLES",           18);
+  define("BUILDING_BANK",              19);
+  define("BUILDING_MEATPACKING_PLANT", 20);
+  define("BUILDING_FORGE",             21);
+  define("BUILDING_FACTORY",           22);
+  define("BUILDING_RODEO",             23);
+  define("BUILDING_LAWYER",            24);
+  define("BUILDING_FAIRGROUNDS",       25);
+  // City
+  define("BUILDING_DUDE_RANCH",    26);
+  define("BUILDING_TOWN_HALL",     27);
+  define("BUILDING_TERMINAL",      28);
+  define("BUILDING_RESTARAUNT",    29);
+  define("BUILDING_TRAIN_STATION", 30);
+  define("BUILDING_CIRCUS",        31);
+  define("BUILDING_RAIL_YARD",     32);
+
 
 class homesteaders extends Table
 {
@@ -33,11 +122,12 @@ class homesteaders extends Table
         parent::__construct();
         
         self::initGameStateLabels( array( 
-            "round_number" => 10,
-            "selected_worker" => 11,
-            "building_selected" => 12,
-            "bid_selected" => 13,
-            "phase" => 14,
+            "round_number"      => 10,
+            "first_player"      => 11, 
+            "selected_worker"   => 12,
+            "building_selected" => 13,
+            "bid_selected"      => 14,
+            "phase"             => 15,
         ) );        
 
 //        $this->buildings = self::getNew("module.common.building")
@@ -82,6 +172,7 @@ class homesteaders extends Table
 
         // Init global values with their initial values
         self::setGameStateInitialValue( 'round_number', 0 );
+        self::setGameStateInitialValue( 'first_player', 0 );
         self::setGameStateInitialValue( 'selected_worker', 0 );
         self::setGameStateInitialValue( 'building_selected', 0 );
         self::setGameStateInitialValue( 'bid_selected', 0 );
@@ -100,9 +191,8 @@ class homesteaders extends Table
         self::initStat( 'player', 'spent_on_auctions', 0 );
         self::initStat( 'player', 'times_outbid', 0 );
 
-
-        // TODO: setup the initial game situation here
         // create building Tiles (in sql)
+<<<<<<< Updated upstream
         $sql = "INSERT INTO buildings (name, type, stage, location, cost, income, worker_income, vps, build_bonus, special) VALUES ";
         $values=array();
         // homestead (assigned to each player by player_id)
@@ -202,19 +292,26 @@ class homesteaders extends Table
         for ($i = 0; $i <2; $i++){
             $values[] = "('".$order3[$i]."','".$types[$i+8]."','".$bonus[$i+8]."')";
         }
+=======
+        self::createBuildings($players);
+
+        self::createAuctonTiles(count($players));
+
+        $sql = "INSERT INTO resources (player_id) VALUES ";
+        $values = array();
+        foreach( $players as $player_id => $player )
+            $values[] = "(".$player_id.")";
+>>>>>>> Stashed changes
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
-        // Activate first player (which is in general a good idea :) )
-        shuffle($color);
-		
-		do {
-			$startColor=array_pop($colors);
-			$startId=self::getUniqueValueFromDb("SELECT player_id FROM player WHERE player_color='$startColor'");
-		} while ($startId==null);
-		
-		$this->gamestate->changeActivePlayer($startId);
+        self::placeAuctionCards();
+        self::placeBuildingCards();
+        
         $this->activeNextPlayer();
+        self::setGameStateValue('first_player', self::getActivePlayerId());
+
+        self::setGameStateValue('current_phase', STATE_START_ROUND);
 
         /************ End of the game initialization *****/
     }
@@ -270,9 +367,105 @@ class homesteaders extends Table
 //////////// Utility functions
 ////////////    
 
-    /*
-        In this space, you can put any utility methods useful for your game logic
-    */
+    function createBuildings($players){
+        
+        $sql = "INSERT INTO buildings (building_id, type, stage, location, player_id) VALUES ";
+        $values=array();
+        // homestead (assigned to each player by player_id)
+        foreach( $players as $player_id => $player ) {
+            $values[] = "('1', '0', '0', '3', '".$player_id."')";
+        }
+        $sql .= implode( $values, ',' );
+        self::DbQuery( $sql );
+
+        $sql = "INSERT INTO buildings (building_id, type, stage) VALUES ";
+        $values=array();
+        // these building have 2 copies in 2 player, and 3 copies in 3-4 player
+        for($i = 0; $i < count($players) && $i <3; $i++) {
+            $values[] = "('3','0','1')";
+            $values[] = "('5','2','1')";
+            $values[] = "('4','1','1')";
+        }
+        //these building have 2 copies in 3-4 player
+        for($i = 1; $i < count($players) && $i <3; $i++) {
+            $values[] = "('9', '0','2')";
+            $values[] = "('11','1','2')";
+            $values[] = "('12','2','2')";
+            $values[] = "('13','2','2')";
+            $values[] = "('14','2','2')";
+            $values[] = "('16','0','3')";
+            $values[] = "('17','1','3')";
+            $values[] = "('21','2','3')";
+            $values[] = "('26','0','4')";
+            $values[] = "('29','1','4')";
+            $values[] = "('28','1','4')";
+            $values[] = "('30','2','4')";
+        }
+        //all other buildings
+        $values[] = "('2', '1','1')";
+        $values[] = "('6', '2','1')";
+        $values[] = "('7', '0','2')";
+        $values[] = "('8', '0','2')";
+        $values[] = "('10','1','2')";
+        $values[] = "('15','0','3')";
+        $values[] = "('16','1','3')";
+        $values[] = "('18','1','3')";
+        $values[] = "('20','2','3')";
+        $values[] = "('22','3','3')";
+        $values[] = "('23','3','3')";
+        $values[] = "('24','3','3')";
+        $values[] = "('25','3','3')";
+        $values[] = "('27','0','4')";
+        $values[] = "('31','3','4')";
+        $values[] = "('32','3','4')";
+
+        $sql .= implode( $values, ',' );
+        self::DbQuery( $sql );
+    }
+
+    function createAuctionTiles($playerCount){
+        $sql = "INSERT INTO auction_tiles ( auction_id, order, location, state ) VALUES ";
+        $values=array();
+        //first auction is in order, and all face-up
+        for ($i = 0; $i <10; $i++){
+            $values[] = "('$i','$i','".AUCTION_LOC_DECK1."','".AUCTION_STATE_FACEUP."')";
+        }
+
+        //second auction has 1-4 , 5-8, and 9-10 shuffled
+        $order1 = array('1','2','3','4');
+        $order2 = array('5','6','7','8');
+        $order3 = array('9','10');
+        shuffle($order1);
+        shuffle($order2);
+        shuffle($order3);
+        for ($i = 0; $i <4; $i++){
+            $values[] = "('".($i+11)."','".$order1[$i]."','".AUCTION_LOC_DECK2."','".AUCTION_STATE_FACEDOWN."')";
+        }
+        for ($i = 0; $i <4; $i++){
+            $values[] = "('".($i+15)."','".$order2[$i]."','".AUCTION_LOC_DECK2."','".AUCTION_STATE_FACEDOWN."')";
+        }
+        for ($i = 0; $i <2; $i++){
+            $values[] = "('".($i+19)."','".$order3[$i]."','".AUCTION_LOC_DECK2."','".AUCTION_STATE_FACEDOWN."')";
+        }
+
+        if ($playerCount>2){
+            $sql = "INSERT INTO auction_three (token_order, auction_buy_type, auction_bonus) VALUES ";
+            shuffle($order1);
+            shuffle($order2);
+            shuffle($order3);
+            for ($i = 0; $i <4; $i++){
+                $values[] = "('".($i+21)."','".$order1[$i]."','".AUCTION_LOC_DECK3."','".AUCTION_STATE_FACEDOWN."')";
+            }
+            for ($i = 0; $i <4; $i++){
+                $values[] = "('".($i+25)."','".$order2[$i]."','".AUCTION_LOC_DECK3."','".AUCTION_STATE_FACEDOWN."')";
+            }
+            for ($i = 0; $i <2; $i++){
+                $values[] = "('".($i+29)."','".$order3[$i]."','".AUCTION_LOC_DECK3."','".AUCTION_STATE_FACEDOWN."')";
+            }   
+        }
+        $sql .= implode( $values, ',' );
+        self::DbQuery( $sql );
+    }
 
 
 

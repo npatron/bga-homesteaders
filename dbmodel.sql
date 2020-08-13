@@ -18,71 +18,43 @@
 -- Note: The database schema is created from this file when the game starts. If you modify this file,
 --       you have to restart a game to see your changes in database.
 
--- building_stage 1 (settlement), 2 (settlement or town), 3 (town), 4 (city)
+-- This color name is used to create css classes
+ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
+
 CREATE TABLE IF NOT EXISTS buildings (
-  building_id TINYINT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(20) NOT NULL,
-  type VARCHAR(20) NOT NULL,
-  stage TINYINT NOT NULL,
-  location VARCHAR(20) NOT NULL DEFAULT 0,
-  cost VARCHAR(20) NOT NULL,
-  income VARCHAR(20) NOT NULL,
-  worker_income VARCHAR(20) NOT NULL,
-  points TINYINT NOT NULL,
-  build_bonus VARCHAR(20) NOT NULL,
-  special VARCHAR(20) NOT NULL,
-  PRIMARY KEY (building_id)
+  `building_key` INT(3) NOT NULL AUTO_INCREMENT,
+  `building_id`  INT(2) NOT NULL             COMMENT 'Identity of Building',
+  `type`         INT(1) NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
+  `stage`        INT(1) NOT NULL             COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
+  `location`     INT(1) NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
+  `player_id`    INT(8) NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
+  PRIMARY KEY (`building_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
--- Auction tiles for Auction one
--- for auction one the order is fixed
-CREATE TABLE IF NOT EXISTS auction_one (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  token_order INT(11) NOT NULL,
-  token_state INT(11) NOT NULL DEFAULT '1',
-  auction_buy_type VARCHAR(12) NOT NULL,
-  auction_bonus VARCHAR(12) NOT NULL,
-  PRIMARY KEY (id)
+-- Auction tiles 
+CREATE TABLE IF NOT EXISTS auction_tiles (
+  `auction_key` INT(2) NOT NULL AUTO_INCREMENT,
+  `auction_id`  INT(2) NOT NULL COMMENT 'Identity of Auction tile',
+  `order`       INT(2) NOT NULL COMMENT 'order of Auction in Deck (1-10)',
+  `location`    INT(1) NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3',
+  `state`       INT(1) NOT NULL COMMENT 'state: 0-face-Down, 1-face-Up',
+  PRIMARY KEY (`auction_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
--- Auction tiles for Auction two
--- for auction 2-3 the order is random by stage
-CREATE TABLE IF NOT EXISTS auction_two (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  token_order INT(11) NOT NULL,
-  token_state INT(11) NOT NULL DEFAULT '0',
-  auction_buy_type VARCHAR(12) NOT NULL,
-  auction_bonus VARCHAR(12) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- Auction tiles for Auction three
--- for auction 2-3 the order is random by stage
-CREATE TABLE IF NOT EXISTS auction_three (
-  id INT(11) NOT NULL AUTO_INCREMENT,
-  token_order INT(11) NOT NULL,
-  token_state INT(11) NOT NULL DEFAULT '0',
-  auction_buy_type VARCHAR(12) NOT NULL,
-  auction_bonus VARCHAR(12) NOT NULL,
-  PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- Example 2: add a custom field to the standard "player" table
--- ALTER TABLE `player` ADD `player_my_custom_field` INT UNSIGNED NOT NULL DEFAULT '0';
-
---- ### PLAYER INFORMATION ###
---- PUBLIC ITEMS ---
---ALTER TABLE `player` ADD `player_first` BOOLEAN NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_workers` INT(11) UNSIGNED NOT NULL DEFAULT '1';
-ALTER TABLE `player` ADD `player_railroad_advancement` INT(11) NOT NULL DEFAULT '0';
---- HIDDEN ITEMS ---
-ALTER TABLE `player` ADD `player_silver` INT(11) UNSIGNED NOT NULL DEFAULT '6';
-ALTER TABLE `player` ADD `player_wood` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_food` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_steel` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_gold` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_copper` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_livestock` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_debt` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_trade_tokens` INT(11) UNSIGNED NOT NULL DEFAULT '0';
-ALTER TABLE `player` ADD `player_vp_tokens` INT(11) UNSIGNED NOT NULL DEFAULT '0';
+CREATE TABLE IF NOT EXISTS resources {
+`player_id`    INT(8) UNSIGNED NOT NULL,
+`silver`       INT(3) UNSIGNED NOT NULL DEFAULT '6',
+`workers`      INT(3) UNSIGNED NOT NULL DEFAULT '1',
+`rail_adv`     INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`rail_tiles`   INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`wood`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`food`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`steel`        INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`gold`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`copper`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`cow`          INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`debt`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`trade_tokens` INT(2) UNSIGNED NOT NULL DEFAULT '0',
+`vp_tokens`    INT(3) UNSIGNED NOT NULL DEFAULT '0',
+PRIMARY KEY (`player_id`)
+} ENGINE=InnoDB DEFAULT CHARSET=utf8;
