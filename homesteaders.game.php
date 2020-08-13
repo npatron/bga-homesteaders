@@ -192,107 +192,6 @@ class homesteaders extends Table
         self::initStat( 'player', 'times_outbid', 0 );
 
         // create building Tiles (in sql)
-<<<<<<< Updated upstream
-        $sql = "INSERT INTO buildings (name, type, stage, location, cost, income, worker_income, vps, build_bonus, special) VALUES ";
-        $values=array();
-        // homestead (assigned to each player by player_id)
-        foreach( $players as $player_id => $player ) {
-            $values[] = "('Homestead','r', '0', '".$player_id."','','ss','wood_vp','0','','')";
-        }
-        // these building have 2 copies in 2 player, and 3 copies in 3-4 player
-        for($i = 0; $i < count($players) && $i <3; $i++) {
-            $values[] = "('Farm','r', '1', '0')";
-            $values[] = "('Foundry','i', '1', '0')";
-            $values[] = "('Market','c', '1', '0')";
-        }
-        //these building have 2 copies in 3-4 player
-        for($i = 1; $i < count($players) && $i <3; $i++) {
-            $values[] = "('Ranch','r', '2', '0')";
-            $values[] = "('General Store','c', '2', '0')";
-            $values[] = "('Gold Mine','i', '2', '0')";
-            $values[] = "('Copper Mine','i', '2', '0')";
-            $values[] = "('River Port','i', '2', '0')";
-
-            $values[] = "('Workshop','r', '3', '0')";
-            $values[] = "('Depot','c', '3', '0')";
-            $values[] = "('Forge','i', '3', '0')";
-
-            $values[] = "('Dude Ranch','r', '4', '0')";
-            $values[] = "('Restaraunt','c', '4', '0')";
-            $values[] = "('Terminal','c', '4', '0')";
-            $values[] = "('Train Station','i', '4', '0')";
-        }
-        $values[] = "('Grain Mill','c','1', '0')";
-        $values[] = "('Steel Mill','i','1', '0')";
-        $values[] = "('Boarding House','r','2', '0')";
-        $values[] = "('Railworkers House','r','2', '0')";
-        $values[] = "('Grain Mill','c','2', '0')";
-
-        $values[] = "('Church','r','3', '0')";
-        $values[] = "('Bank','c','3', '0')";
-        $values[] = "('Stables','c','3', '0')";
-        $values[] = "('Meatpacking Plant','i','3', '0')";
-        $values[] = "('Rodeo','s','3', '0')";
-        $values[] = "('Factory','s','3', '0')";
-        $values[] = "('Fairgrounds','s','3', '0')";
-        $values[] = "('Lawyer','s','3', '0')";
-
-        $values[] = "('Town Hall','r','4', '0')";
-        $values[] = "('Circus','s','4', '0')";
-        $values[] = "('Rail Yard','s','4', '0')";
-        
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
-
-        $sql = "INSERT INTO auction_one ( token_order, auction_buy_type, auction_bonus ) VALUES ";
-        $types=array("rc","i","c","ri","c","r","i","rics","rics","rics");
-        $bonus=array("","","","","worker","worker","worker","","copper_pts","livestock_pts");
-        $values=array();
-        for ($i = 0; $i <10; $i++){
-            $values[] = "('$i','".$types[$i]."','".$bonus[$i]."')";
-        }
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
-
-        $sql = "INSERT INTO auction_two (token_order, auction_buy_type, auction_bonus) VALUES ";
-        $types=array("r","i","rics","","rc","ic","is","rs","ci","rs");
-        $bonus=array("","","","worker_rail","","","","wood_rail","food_pts","food_pts");
-        $values=array();
-        $order1 = array("0","1","2","3");
-        $order2 = array("4","5","6","7");
-        $order3 = array("8","9");
-        shuffle($order1);
-        shuffle($order2);
-        shuffle($order3);
-        for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order1[$i]."','".$types[$i]."','".$bonus[$i]."')";
-        }
-        for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order2[$i]."','".$types[$i+4]."','".$bonus[$i+4]."')";
-        }
-        for ($i = 0; $i <2; $i++){
-            $values[] = "('".$order3[$i]."','".$types[$i+8]."','".$bonus[$i+8]."')";
-        }
-        $sql .= implode( $values, ',' );
-        self::DbQuery( $sql );
-
-        $sql = "INSERT INTO auction_three (token_order, auction_buy_type, auction_bonus) VALUES ";
-        $types=array('r','c','i','','r','c','i','rics','rc','');
-        $bonus=array('','','','worker_rail','','','wood_rail','','food_pts','food_pts');
-        $values=array();
-        shuffle($order1);
-        shuffle($order2);
-        shuffle($order3);
-        for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order1[$i]."','".$types[$i]."','".$bonus[$i]."')";
-        }
-        for ($i = 0; $i <4; $i++){
-            $values[] = "('".$order2[$i]."','".$types[$i+4]."','".$bonus[$i+4]."')";
-        }
-        for ($i = 0; $i <2; $i++){
-            $values[] = "('".$order3[$i]."','".$types[$i+8]."','".$bonus[$i+8]."')";
-        }
-=======
         self::createBuildings($players);
 
         self::createAuctonTiles(count($players));
@@ -301,7 +200,6 @@ class homesteaders extends Table
         $values = array();
         foreach( $players as $player_id => $player )
             $values[] = "(".$player_id.")";
->>>>>>> Stashed changes
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
@@ -547,10 +445,8 @@ class homesteaders extends Table
 
     function stStartRound()
     {
-        // update round number.
-        // set auctions for this round to be visible, and in right spots
-        // clear any bid tokens
-        
+        $round_number = self::getGameStateValue('round_number');
+        self::setGameStateValue('round_number', $round_number + 1);
         $this->gamestate->nextState( STATE_PLACE_WORKERS );
     }    
 
