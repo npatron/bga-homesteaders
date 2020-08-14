@@ -41,20 +41,20 @@ CREATE TABLE IF NOT EXISTS auction_tiles (
   PRIMARY KEY (`auction_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS resources {
-`player_id`    INT(8) UNSIGNED NOT NULL,
-`silver`       INT(3) UNSIGNED NOT NULL DEFAULT '6',
-`workers`      INT(3) UNSIGNED NOT NULL DEFAULT '1',
-`rail_adv`     INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`rail_tiles`   INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`wood`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`food`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`steel`        INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`gold`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`copper`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`cow`          INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`debt`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`trade_tokens` INT(2) UNSIGNED NOT NULL DEFAULT '0',
-`vp_tokens`    INT(3) UNSIGNED NOT NULL DEFAULT '0',
-PRIMARY KEY (`player_id`)
-} ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS resources ()
+  `player_id`    INT(8) UNSIGNED NOT NULL,
+  `silver`       INT(3) UNSIGNED NOT NULL DEFAULT '6',
+  `workers`      INT(3) UNSIGNED NOT NULL DEFAULT '1',
+  `rail_adv`     INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `rail_tiles`   INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `wood`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `food`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `steel`        INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `gold`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `copper`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `cow`          INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `debt`         INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `trade_tokens` INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `vp_tokens`    INT(3) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`player_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

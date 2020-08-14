@@ -50,7 +50,7 @@
 
 
 #board {
-   background-image: url('img/AuctionBoard.jpg');
+   background-image: url('img/auctionBoard.jpg');
    position: relative;
 	width: 520px;
 	height: 384px;
@@ -288,7 +288,7 @@
    width: 144px;
    height: 196px;
    position: relative;
-   background-image: url('img/buildingTiles144x196.png');
+   background-image: url('img/buildingTiles_144x196.png');
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
@@ -319,7 +319,7 @@
    height: 48px;
    position: absolute;
    background-size: auto;
-   background-image: url('img/tokens48x48.png');
+   background-image: url('img/tokens_48x48.png');
 }
 
 .score_text {

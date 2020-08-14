@@ -9,7 +9,7 @@
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
 -------
 
-    homesteaderstb_homesteaderstb.tpl
+    homesteaderstb_homesteaders.tpl
     
     This is the HTML template of your game.
     

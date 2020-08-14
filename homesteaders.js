@@ -1,15 +1,15 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * homesteaderstb implementation : © © Nick Patron <nick.theboot@gmail.com>
+ * homesteaderstb implementation : © Nick Patron <nick.theboot@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  * -----
  *
- * homesteaderstb.js
+ * homesteaders.js
  *
- * homesteaderstb user interface script
+ * homesteaders user interface script
  * 
  * In this file, you are describing the logic of your user interface, in Javascript language.
  *
