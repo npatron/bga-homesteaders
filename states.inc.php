@@ -46,7 +46,6 @@ $machinestates = array(
         "transitions" => array( "" => STATE_START_ROUND )
     ),
 
-
     STATE_START_ROUND => array(
         "name" => "startRound", 
         "description" => clienttranslate('Setup round ${roundNumber}'),
@@ -56,7 +55,6 @@ $machinestates = array(
         "transitions" => array( "" => STATE_PLACE_WORKERS )
     ),
 
-
     STATE_PLACE_WORKERS => array(
         "name" => "allocateWorkers",
         "description" => clienttranslate('Some players must allocate workers'),
@@ -64,11 +62,10 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
         "args" => "argWorkersPlacement",
-        "possibleactions" => array( "Wait For Player Order", "done", "trade" ),
+        "possibleactions" => array( "placeWorker", "done" ),
         "transitions" => array( "done" => STATE_INCOME, "loopback" => STATE_PLACE_WORKERS )
     ),
 
-  
     STATE_INCOME => array(
         "name" => "collectIncome",
         "description" =>  clienttranslate('collect income'),

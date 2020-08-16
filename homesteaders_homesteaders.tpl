@@ -10,24 +10,47 @@
 -------
 
     homesteaderstb_homesteaders.tpl
-    
-    This is the HTML template of your game.
-    
-    Everything you are writing in this file will be displayed in the HTML page of your game user interface,
-    in the "main game zone" of the screen.
-    
-    You can use in this template:
-    _ variables, with the format {MY_VARIABLE_ELEMENT}.
-    _ HTML block, with the BEGIN/END format
-    
-    See your "view" PHP file to check how to set variables and control blocks
-    
-    Please REMOVE this comment before publishing your game on BGA
 -->
 <script type="text/javascript">
 
-// Javascript HTML templates
 
+<div id="board" class="shadow">
+    <div id="bid_slot_A1_B3"> </div>
+    <div id="bid_slot_A1_B4"> </div>
+    <div id="bid_slot_A1_B5"> </div>
+    <div id="bid_slot_A1_B6"> </div>
+    <div id="bid_slot_A1_B7"> </div>
+    <div id="bid_slot_A1_B9"> </div>
+    <div id="bid_slot_A1_B12"> </div>
+    <div id="bid_slot_A1_B16"> </div>
+    <div id="bid_slot_A1_B21"> </div>
+    <div id="auction1_tile_pile"> </div>
+
+    <div id="bid_slot_A2_B3"> </div>
+    <div id="bid_slot_A2_B4"> </div>
+    <div id="bid_slot_A2_B5"> </div>
+    <div id="bid_slot_A2_B6"> </div>
+    <div id="bid_slot_A2_B7"> </div>
+    <div id="bid_slot_A2_B9"> </div>
+    <div id="bid_slot_A2_B12"> </div>
+    <div id="bid_slot_A2_B16"> </div>
+    <div id="bid_slot_A2_B21"> </div>
+    <div id="auction2_tile_pile"> </div>
+
+    <div id="bid_slot_A3_B3"> </div>
+    <div id="bid_slot_A3_B4"> </div>
+    <div id="bid_slot_A3_B5"> </div>
+    <div id="bid_slot_A3_B6"> </div>
+    <div id="bid_slot_A3_B7"> </div>
+    <div id="bid_slot_A3_B9"> </div>
+    <div id="bid_slot_A3_B12"> </div>
+    <div id="bid_slot_A3_B16"> </div>
+    <div id="bid_slot_A3_B21"> </div>
+    <div id="auction3_tile_pile"> </div>
+
+
+
+</div>
 <!-- BEGIN player -->
     <div class="playertable whiteblock playertable_{DIR}">
         <div class="playertablename" style="color:#{PLAYER_COLOR}">

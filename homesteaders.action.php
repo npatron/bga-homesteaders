@@ -37,7 +37,22 @@
             $this->view = "homesteaders_homesteaders";
             self::trace( "Complete reinitialization of board game" );
       }
-  	} 
+    } 
+
+    public function placeWorker($worker_id, $building_id, ) {
+      self::setAjaxMode();
+      $worker_id = self::getArg('worker_ids', AT_alphanum, true);
+      $place_id = self::getArg('place_id', AT_alphanum, true);
+      $choices = self::getArg('choices', AT_alphanum, false, null);
+      $this->game->action_placeWorker( $worker_ids, $place_id, $choices );
+      self::ajaxResponse( );
+   }
+
+   public function pass() {
+      self::setAjaxMode();
+      $this->game->action_pass(  );
+      self::ajaxResponse( );
+   }
   	
   	// TODO: defines your action entry points there
 
