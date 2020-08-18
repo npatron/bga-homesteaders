@@ -116,6 +116,7 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("TYPE_INDUSTRIAL",  2);
   define("TYPE_SPECIAL",     3);
 
+  //resources
   define("NONE",   0);
   define("WOOD",   1);
   define("STEEL",  2);
@@ -123,7 +124,7 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("COPPER", 4);
   define("FOOD",   5);
   define("COW",    6);
-
+  
 
 class homesteaders extends Table
 {
@@ -211,7 +212,7 @@ class homesteaders extends Table
 
         self::createBuildings($players);
 
-        self::createAuctonTiles(count($players));
+        self::createAuctionTiles(count($players));
 
         $values = array();
         foreach( $players as $player_id => $player ){
@@ -294,30 +295,40 @@ class homesteaders extends Table
 //////////// Utility functions
 ////////////    
 
+    function placeAuctionCards (){
+
+    }
+
+    function placeBuildingCards() {
+
+    }
+    
     function createBuildings($players){
         
-        $sql = "INSERT INTO buildings (building_id, type, stage, location, player_id) VALUES ";
+        $sql = "INSERT INTO buildings (building_id, building_type, stage, location, player_id) VALUES ";
         $values=array();
         // homestead (assigned to each player by player_id)
         foreach( $players as $player_id => $player ) {
-            $values[] = "('".BUILDING_HOMESTEAD."', '0', '0', '3', '".$player_id."')";
+            $values[] = "('".BUILDING_HOMESTEAD."', '".TYPE_RESIDENTIAL."', '0', '3', '".$player_id."')";
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
-        $sql = "INSERT INTO buildings (building_id, type, stage, cost) VALUES ";
+        $sql = "INSERT INTO buildings (building_id, building_type, stage, cost) VALUES ";
         $values=array();
         // these building have 2 copies in 2 player, and 3 copies in 3-4 player
-        for($i = 0; $i < count($players) && $i <3; $i++) {
-            $values[] = "('".BUILDING_FARM ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT ."','".WOOD."')";
-            $values[] = "('".BUILDING_MARKET."','".TYPE_COMMERCIAL."','".STAGE_SETTLEMENT ."','".WOOD."')";
-            $values[] = "('".BUILDING_FOUNDRY."','",TYPE_INDUSTRIAL."','".STAGE_SETTLEMENT."','".NONE."')";
+        for($i = 0; $i < count($players) && $i <3; $i++) 
+        {
+            $values[] = "('".BUILDING_FARM   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT."','".WOOD."')";
+            $values[] = "('".BUILDING_MARKET ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT."','".WOOD."')";
+            $values[] = "('".BUILDING_FOUNDRY."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT."','".NONE."')";
         }
         //these building have 2 copies in 3-4 player
-        for($i = 1; $i < count($players) && $i <3; $i++) {
-            $values[] = "('".BUILDING_RANCH        ."','",TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT     ."','".WOOD.STEEL.FOOD."')";
+        for($i = 1; $i < count($players) && $i <3; $i++) 
+        {
+            $values[] = "('".BUILDING_RANCH        ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT     ."','".WOOD.STEEL.FOOD."')";
             $values[] = "('".BUILDING_GENERAL_STORE."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".STEEL."')";
-            $values[] = "('".BUILDING_GOLD_MINE    ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD..STEEL."')";
+            $values[] = "('".BUILDING_GOLD_MINE    ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL."')";
             $values[] = "('".BUILDING_COPPER_MINE  ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD.STEEL."')";
             $values[] = "('".BUILDING_RIVER_PORT   ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD."')";
             $values[] = "('".BUILDING_WORKSHOP     ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".STEEL."')";
@@ -338,7 +349,7 @@ class homesteaders extends Table
         $values[] = "('".BUILDING_WORKSHOP         ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".STEEL."')";
         $values[] = "('".BUILDING_STABLES          ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".COW."')";
         $values[] = "('".BUILDING_MEATPACKING_PLANT."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".WOOD.COW."')";
-        $values[] = "('".BUILDING_FACTORY          ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".STEEL.STEEL,COPPER."')";
+        $values[] = "('".BUILDING_FACTORY          ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".STEEL.STEEL.COPPER."')";
         $values[] = "('".BUILDING_RODEO            ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".FOOD.COW."')";
         $values[] = "('".BUILDING_LAWYER           ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.GOLD.COW."')";
         $values[] = "('".BUILDING_FAIRGROUNDS      ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.WOOD.COPPER.COW."')";
@@ -492,10 +503,10 @@ class homesteaders extends Table
             FOOD  =>  '0',
             COW   =>  '0',
         );
-        if ($cost != '0') {
-           for ($i =0; $i < strlen($cost); $i++){
-                $building_cost[$cost[$i]] ++;
-            }
+        if ($cost == "0") 
+            return $building_cost;
+        for ($i =0; $i < strlen($cost); $i++){
+            $building_cost[$cost[$i]] ++;
         }
         return $building_cost;
     }
@@ -569,16 +580,51 @@ class homesteaders extends Table
         ) );
     }
 
-    selectWorker()
+    function selectWorkerDestination($selectedWorker, $building_key, $building_slot) {
+        self::checkAction( "placeWorkers" );
+        $player_id = self::getCurrentPlayerId();
+        $slotRequiredWorkers = 1;
+        $building = getBuildingFromKey($building_key);
+        if ($building['building_id'] == BUILD_RIVER_PORT){
+            $slotRequiredWorkers = 2;
+        }
 
-    placeWorker($worker_id, $building_Id, $building_slot)
+        if (count($selectedWorker)> $slotRequiredWorkers)
+            throw new BgaUserException( self::_("Too many workers selected.") );
+
+        // if not enough workers are selected, select un-assigned workers (controlled by player)
+        if(count($selectedWorker)<$slotRequiredWorkers){
+            $workers = getUnusedWorkers($player_id);
+            if (count($workers) + count($selectedWorker)<$slotRequiredWorkers)
+               throw new BgaUserException( self::_("You Must select worker(s) to move") );
+            $selectedWorker += $worker;
+        } 
+        
+        if (done== false){
+        }
+    }
+
+    function getUnusedWorkers($player_id){
+        $workers = array();
+        $sql = "SELECT * `workers` WHERE `player_id`='".$player_id."'";
+        $player_workers = self::getCollectionFromDB( $sql);
+        foreach($player_workers as $worker_key => $worker ){
+            if ($worker[`building_key`] == '0'){
+                $workers += $worker
+            }
+        }
+        return workers;
+    }
+ 
+    function placeWorker($worker_key, $building_key, $building_slot)
     {
         self::checkAction( "placeWorkers" );
         $player_id = self::getCurrentPlayerId();
-
+        $sql = "UPDATE `workers` SET `building_id`='".$building_key."' `player_id`='".$player_id."' WHERE `worker_key`='".$worker_key."'";
+        self::DbQuery( $sql );
     }
 
-    function buy_building( $player_id, $building_key )
+    function buyBuilding( $player_id, $building_key )
     {
         $afford = canPlayerAffordBuilding ($player_id, $building_key);
         if ($afford){
@@ -590,9 +636,15 @@ class homesteaders extends Table
             return true;
         } else {
             $this->notifyPlayer( $player_id, "notEnoughResources", clienttranslate( '${you} do not have enough resources to buy building ${building_key} ' ),
-            array('player_id' => $player_id,'player_name' => self::getActivePlayerName(),'building_key' => getBuildingNameFromKey($building_key),) ); )
-            return false
+            array('player_id' => $player_id,'player_name' => self::getActivePlayerName(),'building_key' => getBuildingNameFromKey($building_key),) );
+            return false;
         } 
+    }
+
+    function donePlacingWorkers (){
+        $currentPhase = self::getGameStateValue('current_phase');
+            
+        $this->gamestate->setPlayerNonMultiactive( $currentPlayerId, "done" );
     }
 
     
@@ -650,10 +702,10 @@ class homesteaders extends Table
         //rd 5 setup buildings
         if($round_number == 5){
             // add town buildings
-            $sql = "UPDATE buildings SET `location` = '".BUILDING_LOC_OFFER."' WHERE stage = '".STAGE_TOWN."';";
+            $sql = "UPDATE `buildings` SET `location` = '".BUILDING_LOC_OFFER."' WHERE stage = '".STAGE_TOWN."'";
             self::DbQuery( $sql );
             // remove settlement buildings (not owned)
-            $sql = "UPDATE buildings SET `location` = '".BUILDING_LOC_DISCARD."' WHERE stage = '".STAGE_SETTLEMENT."' AND location = '".BUILDING_LOC_OFFER"';";
+            $sql = "UPDATE `buildings` SET `location` = '".BUILDING_LOC_DISCARD."' WHERE stage = '".STAGE_SETTLEMENT."' AND location = '".BUILDING_LOC_OFFER."'";
             self::DbQuery( $sql );
         }
         //rd 9 setup buildings
@@ -680,7 +732,7 @@ class homesteaders extends Table
 
     function stPlaceWorkers()
     {
-        $this->gamestate->setAllPlayersMultiactive();
+        $this->gamestate->setAllPlayersMultiactive( "Done");
         // for each player have them place workers (then press done)
         
         $this->gamestate->nextState( STATE_INCOME );

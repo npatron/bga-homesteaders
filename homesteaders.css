@@ -59,7 +59,7 @@
 }
 
 
- .bid_slot_A1_B3{
+ #bid_slot_A1_B3{
     top: 210px;
     left: 35px;
     height: 40px;
@@ -223,41 +223,45 @@
     height: 36px;
     width: 44px;
  }
- .first_player_tile
+ 
+ .first_player_tile {
 
- .auction1_tile_pile {
+ }
+
+.playertable_points {
+
+ }
+ .auction_tiles {
+   height: 175px;
+   width: 105px;
+ }
+ #auction1_tile_pile {
     top: 70px;
     left: 70px;
-    height: 175px;
-    width: 105px;
  }
- .auction2_tile_pile {
+ #auction2_tile_pile {
     top: 70px;
     left: 225px;
-    height: 175px;
-    width: 105px;
- }
- .auction3_tile_pile {
+}
+ #auction3_tile_pile {
     top: 70px;
     left: 380px;
-    height: 175px;
-    width: 105px;
- }
-
-.color_ffff00 {
-   background-color: #ffff00;  
 }
 
-.color_0000ff {
-    background-color: #0000ff; 
+.color_yellow {
+   background-color: yellow;  
 }
 
-.color_008000 {
-    background-color: #008000; 
+.color_blue {
+    background-color: blue; 
 }
 
-.color_ff0000 {
-    background-color: #ff0000; 
+.color_green {
+    background-color: green; 
+}
+
+.color_red {
+    background-color: red; 
 }
 
 .res_red {
@@ -284,14 +288,7 @@
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
-.building_tile {
-   width: 144px;
-   height: 196px;
-   position: relative;
-   background-image: url('img/buildingTiles_144x196.png');
-   box-shadow: -3px -3px 3px grey inset;
-   border-radius: 6px;
-}
+
 
 .tile_tip {
    border-radius:4px;
@@ -354,94 +351,94 @@
    visibility:visible;
 }
 
-.auction_tile_1 { /* Auction 1*/
+#auction_tile_1 { /* Auction 1*/
    background-position: 0px 0px;
 }
-.auction_tile_2 {
+#auction_tile_2 {
    background-position: -144px -0px;
 }
-.auction_tile_3 {
+#auction_tile_3 {
    background-position: -288px -0px;
 }
-.auction_tile_4 {
+#auction_tile_4 {
    background-position: -432px -0px;
 }
-.auction_tile_5 {
+#auction_tile_5 {
    background-position: -576px -0px;
 }
-.auction_tile_6 {
+#auction_tile_6 {
    background-position: -720px -0px;
 }
-.auction_tile_7 {
+#auction_tile_7 {
    background-position: -864px -0px;
 }
-.auction_tile_8 {
+#auction_tile_8 {
    background-position: -1008px -0px;
 }
-.auction_tile_9 {
+#auction_tile_9 {
    background-position: -1152px -0px;
 }
-.auction_tile_10 {
+#auction_tile_10 {
    background-position: -1296px -0px;
 }
-.auction_tile_11 {/* Auction 2*/
+#auction_tile_11 {/* Auction 2*/
    background-position: -0px -196px;
 }
-.auction_tile_12 {
+#auction_tile_12 {
    background-position: -144px -196px;
 }
-.auction_tile_13 {
+#auction_tile_13 {
    background-position: -288px -196px;
 }
-.auction_tile_14 {
+#auction_tile_14 {
    background-position: -432px -196px;
 }
-.auction_tile_15 {
+#auction_tile_15 {
    background-position: -576px -196px;
 }
-.auction_tile_16 {
+#auction_tile_16 {
    background-position: -720px -196px;
 }
-.auction_tile_17 {
+#auction_tile_17 {
    background-position: -864px -196px;
 }
-.auction_tile_18 {
+#auction_tile_18 {
    background-position: -1008px -196px;
 }
-.auction_tile_19 {
+#auction_tile_19 {
    background-position: -1152px -196px;
 }
-.auction_tile_20 {
+#auction_tile_20 {
    background-position: -1296px -196px;
 }
-.auction_tile_21 { /* Auction 3*/
+#auction_tile_21 { /* Auction 3*/
    background-position: -0px -392px;
 }
-.auction_tile_22 {
+#auction_tile_22 {
    background-position: -144px -392px;
 }
-.auction_tile_23 {
+#auction_tile_23 {
    background-position: -288px -392px;
 }
-.auction_tile_24 {
+#auction_tile_24 {
    background-position: -432px -392px;
 }
-.auction_tile_25 {
+#auction_tile_25 {
    background-position: -576px -392px;
 }
-.auction_tile_26 {
+#auction_tile_26 {
    background-position: -720px -392px;
 }
-.auction_tile_27 {
+#auction_tile_27 {
    background-position: -864px -392px;
 }
-.auction_tile_28 {
+#auction_tile_28 {
    background-position: -1008px -392px;
 }
-.auction_tile_29 {
+#auction_tile_29 {
    background-position: -1152px -392px;
 }
-.auction_tile_30 {
+#auction_tile_30 {
    background-position: -1296px -392px;
 }
 
@@ -449,112 +446,120 @@
 /*=========================
     Building card images
   =========================*/
+.building_tile {
+   width: 144px;
+   height: 196px;
+   position: relative;
+   background-image: url('img/buildingTiles_144x196.png');
+   box-shadow: -3px -3px 3px grey inset;
+   border-radius: 6px;
+}
 
-.build_tile_hs_yellow { /* Yellow Homestead */
+#build_tile_hs_yellow { /* Yellow Homestead */
    background-position: 0px 0px;
 }
-.build_tile_hs_red { /* Red Homestead */
+#build_tile_hs_red { /* Red Homestead */
    background-position: -144px 0px;
 }
-.build_tile_hs_green { /* Green Homestead */
+#build_tile_hs_green { /* Green Homestead */
    background-position: -288px 0px;
 }
-.build_tile_hs_blue { /* Blue Homestead */
+#build_tile_hs_blue { /* Blue Homestead */
    background-position: -432px 0px;
 }
-.build_tile_2 { /* Grain Mill */
+#build_tile_2 { /* Grain Mill */
    background-position: -576px 0px;
 }
-.build_tile_3 { /* Farm */
+#build_tile_3 { /* Farm */
    background-position: -720px 0px;
 }
-.build_tile_4 { /* Market */
+#build_tile_4 { /* Market */
    background-position: -864px 0px;
 }
-.build_tile_5 { /* Foundry */
+#build_tile_5 { /* Foundry */
    background-position: -1008px 0px;
 }
-.build_tile_6 { /* Steel Mill */
+#build_tile_6 { /* Steel Mill */
    background-position: -1152px 0px;
 }
-.build_tile_7 { /* Boarding House */
+#build_tile_7 { /* Boarding House */
    background-position: 0px -196px;
 }
-.build_tile_8 { /* Railworkers House */
+#build_tile_8 { /* Railworkers House */
    background-position: -144px -196px;
 }
-.build_tile_9 { /* Ranch */
+#build_tile_9 { /* Ranch */
    background-position: -288px -196px;
 }
-.build_tile_10 { /* Trading Post */
+#build_tile_10 { /* Trading Post */
    background-position: -432px -196px;
 }
-.build_tile_11 { /* General Store */
+#build_tile_11 { /* General Store */
    background-position: -576px -196px;
 }
-.build_tile_12 { /* Gold Mine */
+#build_tile_12 { /* Gold Mine */
    background-position: -720px -196px;
 }
-.build_tile_13 { /* Copper Mine */
+#build_tile_13 { /* Copper Mine */
    background-position: -864px -196px;
 }
-.build_tile_14 { /* River Port */
+#build_tile_14 { /* River Port */
    background-position: -1008px -196px;
 }
-.build_tile_15 { /* Church */
+#build_tile_15 { /* Church */
    background-position: -1152px -196px;
 }
-.build_tile_16 { /* Workshop */
+#build_tile_16 { /* Workshop */
    background-position: -0px -392px;
 }
-.build_tile_17 { /* Depot */
+#build_tile_17 { /* Depot */
    background-position: -144px -392px;
 }
-.build_tile_18 { /* Stables */
+#build_tile_18 { /* Stables */
    background-position: -288px -392px;
 }
-.build_tile_19 { /* Bank */
+#build_tile_19 { /* Bank */
    background-position: -432px -392px;
 }
-.build_tile_20 { /* Meatpacking Plant */
+#build_tile_20 { /* Meatpacking Plant */
    background-position: -576px -392px;
 }
-.build_tile_21 { /* Forge */
+#build_tile_21 { /* Forge */
    background-position: -720px -392px;
 }
-.build_tile_22 { /* Factory */
+#build_tile_22 { /* Factory */
    background-position: -864px -392px;
 }
-.build_tile_23 { /* Rodeo */
+#build_tile_23 { /* Rodeo */
    background-position: -1008px -392px;
 }
-.build_tile_24 { /* Lawyer */
+#build_tile_24 { /* Lawyer */
    background-position: -1152px -392px;
 }
-.build_tile_25 { /* Fairgrounds */
+#build_tile_25 { /* Fairgrounds */
    background-position: -0px -588px;
 }
-.build_tile_26 { /* Dude Ranch */
+#build_tile_26 { /* Dude Ranch */
    background-position: -144px -588px;
 }
-.build_tile_27 { /* Town Hall */
+#build_tile_27 { /* Town Hall */
    background-position: -288px -588px;
 }
-.build_tile_28 { /* Terminal */
+#build_tile_28 { /* Terminal */
    background-position: -432px -588px;
 }
-.build_tile_29 { /* Restaraunt */
+#build_tile_29 { /* Restaraunt */
    background-position: -576px -588px;
 }
-.build_tile_30 { /* Train Station */
+#build_tile_30 { /* Train Station */
    background-position: -720px -588px;
 }
-.build_tile_31 { /* Circus */
+#build_tile_31 { /* Circus */
    background-position: -864px -588px;
 }
-.build_tile_32 { /* Rail Yard */
+#build_tile_32 { /* Rail Yard */
    background-position: -1008px -588px;
 }
-.build_tile_first { /* First Player */
+#first_player_tile { /* First Player */
    background-position: -1152px -588px;
 }

@@ -63,7 +63,7 @@ $machinestates = array(
         "action" => "stPlaceWorkers",
         "args" => "argWorkersPlacement",
         "possibleactions" => array( "placeWorker", "done" ),
-        "transitions" => array( "done" => STATE_INCOME, "loopback" => STATE_PLACE_WORKERS )
+        "transitions" => array( "done" => STATE_INCOME )
     ),
 
     STATE_INCOME => array(

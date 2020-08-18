@@ -39,19 +39,31 @@
       }
     } 
 
-    public function placeWorker($worker_id, $building_id, ) {
+    public function selectWorkerDestination( ) {
       self::setAjaxMode();
-      $worker_id = self::getArg('worker_ids', AT_alphanum, true);
-      $place_id = self::getArg('place_id', AT_alphanum, true);
-      $choices = self::getArg('choices', AT_alphanum, false, null);
-      $this->game->action_placeWorker( $worker_ids, $place_id, $choices );
+      $building_key = self::getArg('building_key', AT_alphanum, true);
+      $building_slot = self::getArg('building_slot', AT_alphanum, true, null);
+      $this->game->selectWorkerDestination( $worker_key, $place_id, $choices );
       self::ajaxResponse( );
    }
 
    public function pass() {
       self::setAjaxMode();
-      $this->game->action_pass(  );
+      $this->game->action_pass( );
       self::ajaxResponse( );
+   }
+
+   public function donePlacingWorker()
+   {
+       self::setAjaxMode();     
+
+       // Retrieve argument (key of order card to discard)
+       $orderCardKey = self::getArg( "orderCard", AT_posint, true );
+
+       // Perform the discard
+       $this->game->discardOrderCard( $orderCardKey );
+
+       self::ajaxResponse( );
    }
   	
   	// TODO: defines your action entry points there
