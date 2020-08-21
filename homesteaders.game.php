@@ -19,7 +19,7 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   
-  define("AUCTION_BOARD", 1);
+  //define("AUCTION_BOARD", 1);
 
   define("AUCTION_STATE_FACEDOWN", 0);
   define("AUCTION_STATE_FACEUP",   1);
@@ -223,12 +223,7 @@ class homesteaders extends Table
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
 
-        // tokens
-        $sql = "INSERT INTO `tokens` (player_id) VALUES ";
-        $sql .= implode( $values, ',' );        
-        self::DbQuery( $sql );
-
-        // workers
+        // create 1 worker for each player.
         $sql = "INSERT INTO `workers` (player_id) VALUES ";
         $sql .= implode( $values, ',' );        
         self::DbQuery( $sql );
@@ -261,15 +256,18 @@ class homesteaders extends Table
     
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score, player_workers workers, player_railroad_advancement railroad FROM player ";
+        $sql = "SELECT `player_id` id, `player_score` score, `color_name` color FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
-        $sql = "SELECT building_id id, building_name name, building_location owner FROM buildings";
+        $sql = "SELECT * FROM buildings";
         $result['buildings'] = self::getCollectionFromDb( $sql );
   
+        $sql = "SELECT * FROM `workers`";
+        $result['workers'] = self::getCollectionFromDb( $sql );
+
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
         $sql = "SELECT * FROM `resources` WHERE player_id ='".$current_player_id."'";
-        $result['currentplayer'] = self::getCollectionFromDb( $sql );
+        $result['playerResources'] = self::getCollectionFromDb( $sql );
         
         return $result;
     }

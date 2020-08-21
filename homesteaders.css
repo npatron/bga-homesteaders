@@ -223,27 +223,49 @@
     height: 36px;
     width: 44px;
  }
- 
- .first_player_tile {
 
+ .selectable {
+   border-style: dotted;
+   border-color: blue;
+   border-width: 3px;
+   box-sizing: content-box;
+   cursor:pointer;
  }
 
-.playertable_points {
-
+ .selected {
+   border-style: solid;
+   border-color:red;
+   border-width: 2px;
+   box-sizing: content-box;
+   box-sizing: content-box;
+   cursor:pointer;
  }
+
+ .highlighted {
+   border-style: dotted;
+   border-color:black;
+   border-width: 3px;
+   box-sizing: content-box;
+   cursor:pointer;
+ }
+
+ .token_zone {
+   box-sizing: content-box;
+ }
+
  .auction_tiles {
    height: 175px;
    width: 105px;
  }
- #auction1_tile_pile {
+ #auction1_tile_zone {
     top: 70px;
     left: 70px;
  }
- #auction2_tile_pile {
+ #auction2_tile_zone {
     top: 70px;
     left: 225px;
 }
- #auction3_tile_pile {
+ #auction3_tile_zone {
     top: 70px;
     left: 380px;
 }
