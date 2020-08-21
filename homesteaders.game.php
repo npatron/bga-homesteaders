@@ -268,7 +268,7 @@ class homesteaders extends Table
         $result['buildings'] = self::getCollectionFromDb( $sql );
   
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
-        $sql = "SELECT player_id id, player_silver silver, player_wood wood, player_food food, player_steel steel, player_gold gold, player_copper copper, player_livestock livestock, player_debt dept, player_trade_tokens trade_token, player_vp_tokens vp_token  FROM player WHERE player_id in ($current_player_id)";
+        $sql = "SELECT * FROM `resources` WHERE player_id ='".$current_player_id."'";
         $result['currentplayer'] = self::getCollectionFromDb( $sql );
         
         return $result;
@@ -362,12 +362,12 @@ class homesteaders extends Table
     }
 
     function addWorker($player_id){
-        $sql = "INSERT INTO `workers` (player_id) VALUES (".$player_id.");";
+        $sql = "INSERT INTO `workers` (`player_id`) VALUES (".$player_id.");";
         self::DbQuery( $sql );
     }
 
     function createAuctionTiles($playerCount){
-        $sql = "INSERT INTO auctions ( auction_id, position, location, state ) VALUES ";
+        $sql = "INSERT INTO `auctions` ( `auction_id`, `position`, `location`, `state` ) VALUES ";
         $values=array();
         //first auction is in order, and all face-up
         for ($i = 1; $i <11; $i++){
@@ -515,12 +515,12 @@ class homesteaders extends Table
         $building_cost = getBuildingCostFromKey ($building_key);
         $sql = "SELECT * `resources` WHERE `player_id` =".$player_id;
         $player_resources = self::getObjectFromDB($sql);
-        $enough =            ($player_resources['wood']   >= building_cost[WOOD]);
-        $enough = $enough && ($player_resources['steel']  >= building_cost[STEEL]);
-        $enough = $enough && ($player_resources['gold']   >= building_cost[GOLD]);
-        $enough = $enough && ($player_resources['copper'] >= building_cost[COPPER]);
-        $enough = $enough && ($player_resources['food']   >= building_cost[FOOD]);
-        $enough = $enough && ($player_resources['cow']    >= building_cost[COW]);
+        $enough =            ($player_resources['wood']   >= $building_cost[WOOD]);
+        $enough = $enough && ($player_resources['steel']  >= $building_cost[STEEL]);
+        $enough = $enough && ($player_resources['gold']   >= $building_cost[GOLD]);
+        $enough = $enough && ($player_resources['copper'] >= $building_cost[COPPER]);
+        $enough = $enough && ($player_resources['food']   >= $building_cost[FOOD]);
+        $enough = $enough && ($player_resources['cow']    >= $building_cost[COW]);
         return $enough;
     }
 
@@ -647,6 +647,124 @@ class homesteaders extends Table
         $this->gamestate->setPlayerNonMultiactive( $currentPlayerId, "done" );
     }
 
+    function collectIncome() {
+        $sql = "SELECT * FROM `resources` WHERE `player_id` = '".$player_id."'";
+        $resources = self::getCollectionFromDB( $sql );
+        foreach ( $resources as $player_id => $player_resource ){
+            $sql = "SELECT * FROM `building` WHERE `player_id` = '".$player_id."'";
+            $player_buildings = self::getCollectionFromDB( $sql );
+            $sql = "SELECT * FROM `workers` WHERE `player_id` = '".$player_id."'";
+            $player_workers = self::getCollectionFromDB( $sql );
+
+            $player_resource['silver'] += $player_resource['rail_tiles'];
+            foreach( $player_buildings as $building_key => $building ) {
+                switch($building['building_id']) {
+                    case BUILDING_HOMESTEAD: 
+                    case BUILDING_BOARDING_HOUSE:
+                    case BUILDING_DEPOT:
+                        $player_resource['silver'] += 2;
+                        break;
+                    case BUILDING_GRAIN_MILL:
+                        $player_resource['food'] += 1;
+                        break;
+                    case BUILDING_MARKET:
+                    case BUILDING_GENERAL_STORE:
+                        $player_resource['trade'] += 1;
+                        break;
+                    case BUILDING_STEEL_MILL:
+                        $player_resource['steel'] += 1;
+                        break;
+                    case BUILDING_RAILWORKERS_HOUSE:
+                        $player_resource['silver'] += 1;
+                        $player_resource['trade']  += 1;
+                        break;
+                    case BUILDING_TRADING_POST:
+                        $player_resource['trade'] += 2;
+                        break;
+                    case BUILDING_CHURCH:
+                    case BUILDING_FACTORY:
+                    case BUILDING_LAWYER:
+                        $player_resource['vp'] += 2;
+                        break;
+                    case BUILDING_WORKSHOP:
+                        $player_resource['vp'] += 1;
+                        break;
+                    case BUILDING_STABLES:
+                        $player_resource['trade'] += 1;
+                        $player_resource['vp'] += 1;
+                        break;
+                    case BUILDING_BANK:
+                        $player_resource['debt'] -= 1;
+                        break;
+                    case BUILDING_RODEO:
+                        $player_resource['silver'] += min($player_resource['workers'], 5);
+                        break;
+                    case BUILDING_FAIRGROUNDS:
+                        $player_resource['gold'] += 1;
+                        break;
+                }
+            }
+            foreach($player_workers as $worker_key => $worker ) {
+                switch($worker['building_key']){
+                    case BUILDING_HOMESTEAD:
+                        if ($worker['building_slot'] == 1){
+                            $player_resource['wood'] += 1;
+                        } else {
+                            $player_resource['vp'] += 1;
+                        }
+                        break;
+                    case BUILDING_FARM:
+                        if (worker['building_slot'] == 1){
+                            $player_resource['trade'] += 1;
+                            $player_resource['silver'] += 2;
+                        } else {
+                            $player_resource['food'] += 1;
+                        }
+                        break;
+                    case BUILDING_MARKET:
+                        $player_resource['silver'] += 2;
+                        break;
+                    case BUILDING_FOUNDRY:
+                        $player_resource['steel'] += 1;
+                        break;
+                    case BUILDING_RANCH:
+                        $player_resource['cow'] += 1;
+                        break;
+                    case BUILDING_GOLD_MINE:
+                        $player_resource['gold'] += 1;
+                        break;
+                    case BUILDING_COPPER_MINE:
+                        $player_resource['copper'] += 1;
+                        break;
+                    case BUILDING_RIVER_PORT:
+                        if (worker['building_slot'] == 2){
+                            $player_resource['gold'] += 1;
+                        } 
+                        break;
+                    case BUILDING_MEATPACKING_PLANT:
+                    case BUILDING_FORGE:
+                        $player_resource['vp'] += 2;
+                        break;
+                }
+            }
+            if ($player_resource['dept']==-1){
+                $player_resource['dept'] = 0;
+                $player_resource['silver'] += 2;
+            }
+            $sql = "UPDATE `resource` SET ";
+            foreach($player_resource as $res => $inc){
+                $sql .= "`".$res."`='".$inc."', ";
+            }
+            $sql .= "'= WHERE `player_id`='".$player_id."' ";
+            self::DbQuery( $sql );
+        }
+    }
+
+    function makeBid($player_id, $bid_slot){
+        $sql = "UPDATE `resource` SET `bid_loc` = '".$bid_slot."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
+    }
+
     
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
@@ -692,7 +810,7 @@ class homesteaders extends Table
     {
         $round_number = self::getGameStateValue('round_number') + 1;
         self::setGameStateValue('round_number', $round_number);
-
+        
         //rd 1 setup buildings
         if($round_number == 1){
             // add 'settlement' and 'settlement/town' buildings
@@ -735,40 +853,51 @@ class homesteaders extends Table
         $this->gamestate->setAllPlayersMultiactive( "Done");
         // for each player have them place workers (then press done)
         
-        $this->gamestate->nextState( STATE_INCOME );
+        $this->gamestate->setAllPlayersNonMultiactive( STATE_INCOME );
     }
 
     function stCollectIncome()
     {
-
-        collectBuildingIncome();
-        collectWorkerIncome();
-
-
-        $sql = "SELECT buildings mybuildings FROM buildings where building_location in ($current_player_id)";
-        $result = self::getCollectionFromDb( $sql );
+        collectIncome();
+        
         $this->gamestate->nextState( STATE_PAY_WORKERS );
     }
 
     function stPayWorkers()
     {
-        // Do some stuff ...
+        // if player has gold or trade token, 
+        // make them active to trade and,
+        // choose to pay workers with gold or silver (no change for gold)
+        $this->gamestate->setAllPlayersMultiactive( "Done");
         
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_AUCTION );
+        $this->gamestate->setAllPlayersNonMultiactive( STATE_AUCTION );
+    }
+
+    function stBeginAuction(){
+        $first_player = self::getGameStateValue('first_player');
+        $this->gamestate->changeActivePlayer( $first_player );
+
+        $this->gamestate->setAllPlayersNonMultiactive( STATE_PLAYER_BID );
     }
 
     function stNextBid()
     {
-        // Do some stuff ...
-        
-        // (very often) go to another gamestate
+        $active_player = $this->getActivePlayerId();
+
+        // if able to bid (not passed or winning):
+        // highlight bid options, (think it's a js action)
+        // allow them to select a bid location or pass.
+        makeBid($player_id, $bid_slot); 
         $this->gamestate->nextState( STATE_PLAYER_BID );
+
+        // or pass
+        $this->gamestate->nextState( STATE_PASS_BONUS );
     }
 
     function stBuildingPhase()
     {
-        // Do some stuff ...
+        
+        // figure out winner of auctions, 
         
         // (very often) go to another gamestate
         $this->gamestate->nextState( STATE_BEGIN_BUILDING );
