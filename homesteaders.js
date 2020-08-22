@@ -127,8 +127,7 @@ function (dojo, declare) {
             if (playerCount >2) ; // do something with the zone 3.
 
             // storage for buildings
-            this.building_zone = new ebg.zone();
-            this.building_discard_zone = new ebg.zone();
+            
 
             //player zones
             this.buildings_zone_yellow = new ebg.zone();
@@ -227,7 +226,7 @@ function (dojo, declare) {
             }
 
             // TODO: Set up your game interface here, according to "gamedatas"
-            
+            this.create_building_zones();
  
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -334,6 +333,7 @@ function (dojo, declare) {
                 var imgId = () 
             }
 
+            
         }
 
 
