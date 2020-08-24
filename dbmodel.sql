@@ -43,12 +43,13 @@ CREATE TABLE IF NOT EXISTS `buildings` (
 
 -- Auction tiles 
 CREATE TABLE IF NOT EXISTS `auctions` (
-  `auction_key`      INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `auction_id`       INT(2) UNSIGNED NOT NULL COMMENT 'Identity of Auction tile',
   `position`         INT(2) UNSIGNED NOT NULL COMMENT 'position of Auction in Deck (1-10)',
   `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3',
   `state`            INT(1) UNSIGNED NOT NULL COMMENT 'state: 0-face-Down, 1-face-Up',
-  PRIMARY KEY (`auction_key`)
+  `build_type`       INT(2) UNSIGNED DEFAULT 0 NOT NULL COMMENT '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE',
+  `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Bonus: 0-No, 1-Yes,',
+  PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `resources` (
