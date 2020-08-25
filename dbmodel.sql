@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   `stage`         INT(1) UNSIGNED NOT NULL             COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
   `cost`          VARCHAR(16)     NOT NULL DEFAULT '0' COMMENT 'cost: list of_ separated costs (0-non, 1-wood, 2-steel,3-gold,4-copper,5-food,6-cow,7-debt)',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
-  `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
+  `player_color`  INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   PRIMARY KEY (`building_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -50,12 +50,12 @@ CREATE TABLE IF NOT EXISTS `auctions` (
   `build_type`       INT(2) UNSIGNED DEFAULT 0 NOT NULL COMMENT '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE',
   `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Bonus: 0-No, 1-Yes,',
   PRIMARY KEY (`auction_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB ;
 
 CREATE TABLE IF NOT EXISTS `resources` (
   `player_id`  INT(8) UNSIGNED NOT NULL,
   `silver`     INT(3) UNSIGNED NOT NULL DEFAULT '6',
-  `workers`    INT(3) UNSIGNED NOT NULL DEFAULT '1',
+  `workers`    INT(3) UNSIGNED NOT NULL DEFAULT '0',
   `rail_tiles` INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `wood`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `food`       INT(2) UNSIGNED NOT NULL DEFAULT '0',

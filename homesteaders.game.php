@@ -64,42 +64,47 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("AUCTION3_10", 30);
   
   // Buildings
-  define("BUILDING_HOMESTEAD", 1);
+  define("BUILDING_HOMESTEAD_YELLOW", 1);
+  define("BUILDING_HOMESTEAD_RED", 2);
+  define("BUILDING_HOMESTEAD_GREEN", 3);
+  define("BUILDING_HOMESTEAD_BLUE", 4);
   // Settlement
-  define("BUILDING_GRAIN_MILL", 2);
-  define("BUILDING_FARM" ,      3);
-  define("BUILDING_MARKET" ,    4);
-  define("BUILDING_FOUNDRY" ,   5);
-  define("BUILDING_STEEL_MILL", 6);
+  define("BUILDING_GRAIN_MILL", 5);
+  define("BUILDING_FARM" ,      6);
+  define("BUILDING_MARKET" ,    7);
+  define("BUILDING_FOUNDRY" ,   8);
+  define("BUILDING_STEEL_MILL", 9);
   // Settlement or TOWN
-  define("BUILDING_BOARDING_HOUSE" ,   7);
-  define("BUILDING_RAILWORKERS_HOUSE", 8);
-  define("BUILDING_RANCH",             9);
-  define("BUILDING_TRADING_POST",      10);
-  define("BUILDING_GENERAL_STORE",     11);
-  define("BUILDING_GOLD_MINE",         12);
-  define("BUILDING_COPPER_MINE",       13);
-  define("BUILDING_RIVER_PORT",        14);
+  define("BUILDING_BOARDING_HOUSE" ,   10);
+  define("BUILDING_RAILWORKERS_HOUSE", 11);
+  define("BUILDING_RANCH",             12);
+  define("BUILDING_TRADING_POST",      13);
+  define("BUILDING_GENERAL_STORE",     14);
+  define("BUILDING_GOLD_MINE",         15);
+  define("BUILDING_COPPER_MINE",       16);
+  define("BUILDING_RIVER_PORT",        17);
   // Town
-  define("BUILDING_CHURCH",            15);
-  define("BUILDING_WORKSHOP",          16);
-  define("BUILDING_DEPOT",             17);
-  define("BUILDING_STABLES",           18);
-  define("BUILDING_BANK",              19);
-  define("BUILDING_MEATPACKING_PLANT", 20);
-  define("BUILDING_FORGE",             21);
-  define("BUILDING_FACTORY",           22);
-  define("BUILDING_RODEO",             23);
-  define("BUILDING_LAWYER",            24);
-  define("BUILDING_FAIRGROUNDS",       25);
+  define("BUILDING_CHURCH",            18);
+  define("BUILDING_WORKSHOP",          19);
+  define("BUILDING_DEPOT",             20);
+  define("BUILDING_STABLES",           21);
+  define("BUILDING_BANK",              22);
+  define("BUILDING_MEATPACKING_PLANT", 23);
+  define("BUILDING_FORGE",             24);
+  define("BUILDING_FACTORY",           25);
+  define("BUILDING_RODEO",             26);
+  define("BUILDING_LAWYER",            27);
+  define("BUILDING_FAIRGROUNDS",       28);
   // City
-  define("BUILDING_DUDE_RANCH",    26);
-  define("BUILDING_TOWN_HALL",     27);
-  define("BUILDING_TERMINAL",      28);
-  define("BUILDING_RESTARAUNT",    29);
-  define("BUILDING_TRAIN_STATION", 30);
-  define("BUILDING_CIRCUS",        31);
-  define("BUILDING_RAIL_YARD",     32);
+  define("BUILDING_DUDE_RANCH",    29);
+  define("BUILDING_TOWN_HALL",     30);
+  define("BUILDING_TERMINAL",      31);
+  define("BUILDING_RESTARAUNT",    32);
+  define("BUILDING_TRAIN_STATION", 33);
+  define("BUILDING_CIRCUS",        34);
+  define("BUILDING_RAIL_YARD",     35);
+  
+  define("FIRST_PLAYER_TILE",      36);
 
   define("BUILDING_LOC_FUTURE",  0);
   define("BUILDING_LOC_OFFER",   1);
@@ -124,7 +129,7 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("COPPER", 4);
   define("FOOD",   5);
   define("COW",    6);
-
+  
   define("NO_BID",     0);
   define("BID_A1_B3",  1);
   define("BID_A1_B4",  2);
@@ -155,8 +160,8 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("BID_A3_B12", 27);
   define("BID_A3_B16", 28);
   define("BID_A3_B21", 29);
-  
-  
+
+
 
 class homesteaders extends Table
 {
@@ -184,8 +189,6 @@ class homesteaders extends Table
             "bonus_option"      => 20,
         ) );        
 
-//        $this->buildings = self::getNew("module.common.building")
-//        $this->buildings = init( "building" );
 	}
 	
     protected function getGameName( )
@@ -224,8 +227,8 @@ class homesteaders extends Table
         $number_auctions = 2;
         if (count($players) == 4) 
             $number_auctions = 3;
-            
         
+            
         /************ Start the game initialization *****/
 
         // Init global values with their initial values
@@ -237,7 +240,9 @@ class homesteaders extends Table
         self::setGameStateInitialValue( 'phase', 0 );
         self::setGameStateInitialValue( 'number_auctions', $number_auctions );
         self::setGameStateInitialValue( 'auction_next', 1 );
+        self::setGameStateInitialValue( 'last_bid', 0 );
         self::setGameStateInitialValue( 'players_passed', 0 );
+        self::setGameStateInitialValue( 'bonus_option', 0 );
         
         // Init game statistics
         // (note: statistics used in this file must be defined in your stats.inc.php file)
@@ -271,9 +276,6 @@ class homesteaders extends Table
         $sql = "INSERT INTO `workers` (player_id) VALUES ";
         $sql .= implode( $values, ',' );        
         self::DbQuery( $sql );
-
-        self::placeAuctionCards();
-        self::placeBuildingCards();
         
         $this->activeNextPlayer();
         self::setGameStateValue('first_player', self::getActivePlayerId());
@@ -303,16 +305,24 @@ class homesteaders extends Table
         $sql = "SELECT `player_id` id, `player_score` score, `color_name` color FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
 
-        $sql = "SELECT * FROM buildings";
+        $sql = "SELECT * FROM `buildings` where `location` in (1,2)";
         $result['buildings'] = self::getCollectionFromDb( $sql );
   
         $sql = "SELECT * FROM `workers`";
         $result['workers'] = self::getCollectionFromDb( $sql );
 
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
-        $sql = "SELECT * FROM `resources` WHERE player_id ='".$current_player_id."'";
-        $result['playerResources'] = self::getCollectionFromDb( $sql );
-        
+        $sql = "SELECT `player_id` id, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `debt`, `trade_tokens`, `vp_tokens` FROM `resources` WHERE player_id = $current_player_id";
+        $result['player_resources'] = self::getCollectionFromDb( $sql );
+
+        $sql = "SELECT `player_id` id, `workers`, `rail_tiles`, `bid_loc`, `rail_adv` FROM `resources` ";
+        $result['public_resources'] = self::getCollectionFromDb( $sql );
+
+        $sql = "SELECT `auction_id`, `position`, `location`, `state`, `build_type`, `bonus` FROM `auctions` WHERE `location` IN (1,2,3) ";
+        $result['auctions'] = self::getCollectionFromDb( $sql );
+
+        $result['round_number'] = self::getGameStateValue( 'round_number' );
+
         return $result;
     }
 
@@ -337,13 +347,6 @@ class homesteaders extends Table
 //////////// Utility functions
 ////////////    
 
-    function placeAuctionCards (){
-
-    }
-
-    function placeBuildingCards() {
-
-    }
     
     function createBuildings($players){
         
@@ -351,7 +354,15 @@ class homesteaders extends Table
         $values=array();
         // homestead (assigned to each player by player_id)
         foreach( $players as $player_id => $player ) {
-            $values[] = "('".BUILDING_HOMESTEAD."', '".TYPE_RESIDENTIAL."', '0', '3', '".$player_id."')";
+            if ($player['color_name'] == 'yellow'){
+                $values[] = "('".BUILDING_HOMESTEAD_YELLOW."', '".TYPE_RESIDENTIAL."', '0', '3', '".$player_id."')";
+            } else if ($player['color_name'] == 'red'){
+                $values[] = "('".BUILDING_HOMESTEAD_RED."', '".TYPE_RESIDENTIAL."', '0', '3', '".$player_id."')";
+            } else if ($player['color_name'] == 'green'){
+                $values[] = "('".BUILDING_HOMESTEAD_GREEN."', '".TYPE_RESIDENTIAL."', '0', '3', '".$player_id."')";
+            } else if ($player['color_name'] == 'blue'){
+                $values[] = "('".BUILDING_HOMESTEAD_BLUE."', '".TYPE_RESIDENTIAL."', '0', '3', '".$player_id."')";
+            }
         }
         $sql .= implode( $values, ',' );
         self::DbQuery( $sql );
@@ -416,7 +427,7 @@ class homesteaders extends Table
                         1, 2, 4, 0, 1, 2, 4,15, 3, 0);
         $bonus = array( 0, 0, 0, 0, 1, 1, 1, 0, 1, 1,
                         0, 0, 0, 1, 0, 0, 0, 1, 1, 1,
-                        0, 0, 0, 1, 0, 0, 1, 0, 1, 1);        
+                        0, 0, 0, 1, 0, 0, 1, 0, 1, 1); 
         $values=array();
         //first auction is in order, and all face-up
         for ($i = 1; $i <11; $i++){
@@ -473,7 +484,10 @@ class homesteaders extends Table
     function getBuildingNameFromId($building_Id){
         switch($building_Id)
         {
-            case BUILDING_HOMESTEAD:
+            case BUILDING_HOMESTEAD_YELLOW:
+            case BUILDING_HOMESTEAD_RED:
+            case BUILDING_HOMESTEAD_GREEN:
+            case BUILDING_HOMESTEAD_BLUE:
                 return clienttranslate( 'Homestead' );
             case BUILDING_GRAIN_MILL:
                 return clienttranslate( 'Grain Mill' );
@@ -569,7 +583,7 @@ class homesteaders extends Table
         $enough = $enough && ($player_resources['copper'] >= $building_cost[COPPER]);
         $enough = $enough && ($player_resources['food']   >= $building_cost[FOOD]);
         $enough = $enough && ($player_resources['cow']    >= $building_cost[COW]);
-        return $enough;
+return $enough;
     }
 
     function payForBuilding($player_id, $building_key){
@@ -707,7 +721,10 @@ class homesteaders extends Table
             $player_resource['silver'] += $player_resource['rail_tiles'];
             foreach( $player_buildings as $building_key => $building ) {
                 switch($building['building_id']) {
-                    case BUILDING_HOMESTEAD: 
+                    case BUILDING_HOMESTEAD_YELLOW:
+                    case BUILDING_HOMESTEAD_RED:
+                    case BUILDING_HOMESTEAD_GREEN:
+                    case BUILDING_HOMESTEAD_BLUE:
                     case BUILDING_BOARDING_HOUSE:
                     case BUILDING_DEPOT:
                         $player_resource['silver'] += 2;
@@ -754,7 +771,10 @@ class homesteaders extends Table
             }
             foreach($player_workers as $worker_key => $worker ) {
                 switch($worker['building_key']){
-                    case BUILDING_HOMESTEAD:
+                    case BUILDING_HOMESTEAD_YELLOW:
+                    case BUILDING_HOMESTEAD_RED:
+                    case BUILDING_HOMESTEAD_GREEN:
+                    case BUILDING_HOMESTEAD_BLUE:
                         if ($worker['building_slot'] == 1){
                             $player_resource['wood'] += 1;
                         } else {
@@ -885,7 +905,7 @@ class homesteaders extends Table
     {
         $round_number = self::getGameStateValue('round_number') + 1;
         self::setGameStateValue('round_number', $round_number);
-        
+
         //rd 1 setup buildings
         if($round_number == 1){
             // add 'settlement' and 'settlement/town' buildings
@@ -934,20 +954,20 @@ class homesteaders extends Table
     function stCollectIncome()
     {
         collectIncome();
-        
+
         $this->gamestate->nextState( STATE_PAY_WORKERS );
     }
 
     function stPayWorkers()
     {
-        // if player has gold or trade token, 
+         // if player has gold or trade token, 
         // make them active to trade and,
         // choose to pay workers with gold or silver (no change for gold)
         $this->gamestate->setAllPlayersMultiactive( "Done");
         
         $this->gamestate->setAllPlayersNonMultiactive( STATE_AUCTION );
     }
-
+    
     function stBeginAuction(){
         self::clearBids();
 
@@ -965,10 +985,10 @@ class homesteaders extends Table
         } else if (self::canPlayersBid($active_player)) {
             $this->activeNextPlayer();
         } else {
-            $this->gamestate->nextState( STATE_PLAYER_BID );
-        }
-//            makeBid($player_id, $bid_slot);   
+        $this->gamestate->nextState( STATE_PLAYER_BID );
     }
+    //            makeBid($player_id, $bid_slot);   
+}
 
     function stBuildingPhase()
     {
@@ -1016,7 +1036,6 @@ class homesteaders extends Table
             $this->gamestate->nextState( STATE_RESOLVE_BUILDING );
         }
         
-        // (very often) go to another gamestate
     }
 
     function stGetBonus()

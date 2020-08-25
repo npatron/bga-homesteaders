@@ -9,7 +9,6 @@
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
 -------
 
-    homesteaderstb_homesteaders.tpl
 -->
 <script type="text/javascript">
 
@@ -58,6 +57,11 @@
 <div id="building_zone"> 
     <div id="build_tile_{BUILD_ID}" class="building_tile"> </div>
 </div>
+<div id="player_zone_{color}"></div>
+<div id="player_zone_{color}"></div>
+<div id="player_zone_{color}"></div>
+<div id="player_zone_{color}"></div>
+
 
 <!-- BEGIN player -->
     <div class="playertable whiteblock playertable_{DIR}">

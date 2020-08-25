@@ -1,7 +1,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * homesteaderstb implementation : © Nick Patron <nick.theboot@gmail.com>
+ * homesteaders implementation : © Nick Patron <nick.theboot@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -19,7 +19,8 @@ define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
-    "ebg/zone"
+    "ebg/zone",
+    "ebg/stock"
 ],
 function (dojo, declare) {
 
@@ -116,46 +117,50 @@ function (dojo, declare) {
 
     return declare("bgagame.homesteaders", ebg.core.gamegui, {
         constructor: function(){
-            console.log('homesteaderstb constructor');
+            console.log('homesteaders constructor');
 
             // zone control
             this.limbo_zone = new ebg.zone();
             // auction tile zones
-            this.auction_zone1 = new ebg.zone();
-            this.auction_zone2 = new ebg.zone();
-            this.auction_zone3 = new ebg.zone();
-            if (playerCount >2) ; // do something with the zone 3.
-
+            this.auction_zone_height = 175;
+            this.auction_zone_width = 105;
+            // indexed by location [discard-0, Auctions-(1,2,3)]
+            this.auction_tile_stock = [];              
+            for (var i = 0; i <= 3; i++){ 
+                this.auction_tile_stock[i] = new ebg.stock();
+            }
+            // auction bid zones
+            this.bid_zone_height = 36;
+            this.bid_zone_width = 36;
+            var bid_vals = [3,4,5,6,7,9,12,16,21];
+            this.bid_zone = []; 
+            for(var i in bid_vals){
+                this.bid_zone[i] = new ebg.zone();
+            }
             // storage for buildings
             
-
             //player zones
-            this.buildings_zone_yellow = new ebg.zone();
-            this.buildings_zone_blue   = new ebg.zone();
-            this.buildings_zone_red    = new ebg.zone();
-            this.buildings_zone_green  = new ebg.zone();
-            this.tokens_zone_yellow = new ebg.zone();
-            this.tokens_zone_blue   = new ebg.zone();
-            this.tokens_zone_red    = new ebg.zone();
-            this.tokens_zone_green  = new ebg.zone();
+            this.building_zone = [];
+            this.main_building_zone  = new ebg.stock();
+            this.token_zone = [];
               
-            this.buildingTileStocks = [];          // buildings stock indexed by location (no player owned)
-            this.playersBuildingStock = [];        // indexed by player id
-            this.playersRailroadAdvancements = []; // indexed by player id
-            this.auctionStock = [];                // indexed by location
+            this.players_railroad_advancements = [];   // indexed by player id
 
-            this.playerCount = 0;
-            this.buildingTileCount = 0;
-            this.auctionTileCount = 0;
-            this.numberOfWorkersSelected = 0;
-            this.lastWorkerSelected = "";
-            this.canalTileDivId = "";     // Division Id of Canal tile
+            this.tile_width = 144;
+            this.tile_height = 196;
+            
+            this.player_count = 0;
+            this.building_tile_count = 0;
+            this.auction_tile_count = 0;
+            this.number_of_workers_selected = 0;
+            this.last_worker_selected = "";
+            this.canal_tile_div_id = "";     // Division Id of Canal tile
             this.lastHighlightedBuildingTile = "";
             this.numberOfBidsSelected = 0;
             this.lastHighlightedBidLocation = "";
             this.possibleBids = [];
             this.winningBids = [];
-            this.workersCount = 0;
+            this.workers_count = 0;
             this.workers = [];
         },
         
@@ -181,52 +186,49 @@ function (dojo, declare) {
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
-                
-                if (player.color_name == "yellow") {
-                    this.tokens_zone_yellow.create ( this, 'token_zone_yellow', 14, 12 );
-                    this.tokens_zone_yellow.setPattern( 'grid' );
-                    this.buildings_zone_yellow.create (this, 'building_zone_yellow', 500, 550); 
-                    this.buildings_zone_yellow.setPattern( 'grid' );
-                } else if (player.color_name == "blue") {
-                    this.tokens_zone_blue.create ( this, 'token_zone_yellow', 14, 12 );
-                    this.tokens_zone_blue.setPattern( 'grid' );
-                    this.buildings_zone_blue.create (this, 'building_zone_yellow', 500, 550); 
-                    this.buildings_zone_blue.setPattern( 'grid' );
-                } else if (player.color_name == "red") {
-                    this.tokens_zone_red.create ( this, 'token_zone_yellow', 14, 12 );
-                    this.tokens_zone_red.setPattern( 'grid' );
-                    this.buildings_zone_red.create (this, 'building_zone_yellow', 500, 550); 
-                    this.buildings_zone_red.setPattern( 'grid' );
-                } else if (player.color_name == "green") {
-                    this.tokens_zone_green.create ( this, 'token_zone_yellow', 14, 12 );
-                    this.tokens_zone_green.setPattern( 'grid' );
-                    this.buildings_zone_green.create (this, 'building_zone_yellow', 500, 550); 
-                    this.buildings_zone_green.setPattern( 'grid' );
-                }
-
-                this.auction_zone1.create( this, 'auction1_tile_zone', 112, 174);
-                this.auction_zone1.setPattern('diagonal');
-                this.auction_zone2.create( this, 'auction2_tile_zone', 112, 174);
-                this.auction_zone2.setPattern('diagonal');
-                this.auction_zone3.create( this, 'auction3_tile_zone', 112, 174);
-                this.auction_zone3.setPattern('diagonal');
-                this.limbo_zone.create ( this, 'limbo_zone', 8, 12); 138 + 36
-                this.limbo_zone.setPattern ('grid');
-
-
-                this.playersBuildingStock[player_id] = this.buildTechStock(gamedatas.buildings, 'buildings_'+player_id);
+                this.token_stock[player_id] = ebg.stock();
+                this.token_stock[player_id].create ( this, 'player_zone_' + player.color_name , 48, 48 );
+                this.token_stock[player_id].image_items_per_row = 5;
+                this.building_stock[player_id] = ebg.stock();
+                this.building_stock[player_id].create (this, 'player_zone_'+ player.color_name, this.tileWidth, this.tileHeight); 
+                this.building_stock[player_id].image_items_per_row = 9;
                 
                 if (gamedatas.firstPlayer == player_id){
                     dojo.removeClass("misc_first_"+player_id, "noshow")
                 }
-
-                this.tokenZone[player_id] = "player_token_zone_"+player.color_name;
-                
                 ++this.playerCount;
             }
 
+            // Auctions: 
+            
+            for (var auc =0; i < auctionCount; i++){
+                // tiles
+                this.auction_tile_stock[auc].create( this, "auction"+auc+"_tile_zone", this.tile_width, this.tile_height);
+                this.auction_tile_stock[auc].image_items_per_row = 10;
+                // bids:
+                this.bid_zone[auc] = [];
+                for (var bid in this.bid_vals){
+                    this.bid_zone[auc][bid].create( this, "bid_slot_A"+auc+"_B"+bid, bid_zone_width, bid_zone_height)
+                    this.bid_zone[auc][bid].setPattern( 'grid' );
+                }
+            }
+            
+            this.limbo_zone.create ( this, 'limbo', 8, 12);
+            this.limbo_zone.setPattern ('grid');
+            
             // TODO: Set up your game interface here, according to "gamedatas"
-            this.create_building_zones();
+            this.main_building_zone.create( this, 'building_zone' + player.color_name , this.tileWidth, this.tileHeight );
+            this.main_building_zone.image_items_per_row = 9;
+            for (var building in gamedatas.buildings){
+                if (building['location'] == BUILDING_LOC_PLAYER){
+                    this.building_stockbuilding['player_id'].addItemType( building['building_key'], building['building_id'], g_gamethemeurl+'img/buildingTiles_144x196.png', building['building_id'] );
+                } else if (building['location'] == BUILDING_LOC_OFFER) {
+                    this.main_building_zone.addItemType( building['building_key'], building['building_id'], g_gamethemeurl+'img/buildingTiles_144x196.png', building['building_id'] );
+                }
+            }
+            for(var auction in gamedatas.auction){
+                this.auction_tile_stock[auction['location']].addItemType(auction['auction_id'], auction['position'], g_gamethemeurl+'img/auctionTiles_144x196.png', auction['auction_id'] );
+            }
  
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -245,9 +247,65 @@ function (dojo, declare) {
         {
             console.log( 'Entering state: '+stateName );
             
+            var player_id = this.gamedatas.player_resources['player_id'];
+            this.currentState = stateName;
+            
             switch( stateName )
             {
-            
+                case 'startRound':
+                    // clean up tiles?     
+                    setupTiles (this.gamedatas.round_number); 
+                    break;
+                case 'allocateWorkers':
+                    if( this.isCurrentPlayerActive() )
+                    {
+                        // show workers that are selectable
+                        // also show building_slots
+                        var selectable_workers = args.args.custom_slots;
+                        for (var worker in this.gamedatas.workers){
+                            if (worker[player_id] == player_id){
+                                const worker_div = "worker_"+worker['worker_id'];
+                                dojo.addClass(worker_div, "selectable");
+                            }
+                        }
+                    }
+                    break;
+                case 'collectIncome':
+
+                    break;
+                case 'payWorkers':
+
+                    break;
+                case 'beginAuction':
+
+                    break;
+                case 'playerTurn':
+
+                    break;
+                case 'getPassBenefits':
+
+                    break;
+                case 'nextBid':
+
+                    break;
+                case 'buildingPhase':
+
+                    break;
+                case 'payAuction':
+
+                    break;
+                case 'chooseBuildingToBuild':
+
+                    break;
+                case 'getBonus':
+
+                    break;
+                case 'bonusChoice':
+
+                    break;
+                case 'endRound':
+
+                    break;
             /* Example:
             
             case 'myGameState':
@@ -334,7 +392,7 @@ function (dojo, declare) {
             }
 
             
-        }
+        },
 
 
         ///////////////////////////////////////////////////
@@ -364,7 +422,7 @@ function (dojo, declare) {
             if( ! this.checkAction( 'myAction' ) )
             {   return; }
 
-            this.ajaxcall( "/homesteaderstb/homesteaderstb/myAction.html", { 
+            this.ajaxcall( "/homesteaders/homesteaders/myAction.html", { 
                                                                     lock: true, 
                                                                     myArgument1: arg1, 
                                                                     myArgument2: arg2,
@@ -395,7 +453,7 @@ function (dojo, declare) {
             In this method, you associate each of your game notifications with your local method to handle it.
             
             Note: game notification names correspond to "notifyAllPlayers" and "notifyPlayer" calls in
-                  your homesteaderstb.game.php file.
+                  your homesteaders.game.php file.
         
         */
         setupNotifications: function()
@@ -431,5 +489,6 @@ function (dojo, declare) {
         },    
         
         */
+
    });             
 });
