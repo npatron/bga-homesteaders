@@ -19,16 +19,13 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   
-  //define("AUCTION_BOARD", 1);
-
-  define("AUCTION_STATE_FACEDOWN", 0);
-  define("AUCTION_STATE_FACEUP",   1);
-
+if (!defined('AUCTION_LOC_DISCARD')){
   define("AUCTION_LOC_DISCARD", 0);
   define("AUCTION_LOC_DECK1",   1);
   define("AUCTION_LOC_DECK2",   2);
   define("AUCTION_LOC_DECK3",   3);
-
+}
+if (!defined('AUCTION1_1')){
   // Auction tiles
   define("AUCTION1_1",  1);
   define("AUCTION1_2",  2);
@@ -62,7 +59,8 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("AUCTION3_8",  28);
   define("AUCTION3_9",  29);
   define("AUCTION3_10", 30);
-  
+}
+if (!defined("BUILDING_HOMESTEAD_YELLOW")){
   // Buildings
   define("BUILDING_HOMESTEAD_YELLOW", 1);
   define("BUILDING_HOMESTEAD_RED", 2);
@@ -102,8 +100,7 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("BUILDING_RESTARAUNT",    32);
   define("BUILDING_TRAIN_STATION", 33);
   define("BUILDING_CIRCUS",        34);
-  define("BUILDING_RAIL_YARD",     35);
-  
+  define("BUILDING_RAIL_YARD",     35);  
   define("FIRST_PLAYER_TILE",      36);
 
   define("BUILDING_LOC_FUTURE",  0);
@@ -120,7 +117,8 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("TYPE_COMMERCIAL",  1);
   define("TYPE_INDUSTRIAL",  2);
   define("TYPE_SPECIAL",     3);
-
+} 
+if (!defined("WOOD")){
   //resources
   define("NONE",   0);
   define("WOOD",   1);
@@ -129,7 +127,8 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("COPPER", 4);
   define("FOOD",   5);
   define("COW",    6);
-  
+}
+if (!defined("NO_BID")){ 
   define("NO_BID",     0);
   define("BID_A1_B3",  1);
   define("BID_A1_B4",  2);
@@ -160,8 +159,7 @@ require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
   define("BID_A3_B12", 27);
   define("BID_A3_B16", 28);
   define("BID_A3_B21", 29);
-
-
+}
 
 class homesteaders extends Table
 {
@@ -493,8 +491,8 @@ class homesteaders extends Table
         return ($buildingName);
     }
 
-    static function getBuildingNameFromId($building_Id){
-        switch($building_Id)
+    static function getBuildingNameFromId($building_id){
+        switch($building_id)
         {
             case BUILDING_HOMESTEAD_YELLOW:
             case BUILDING_HOMESTEAD_RED:
@@ -595,130 +593,9 @@ class homesteaders extends Table
         $enough = $enough && ($player_resources['copper'] >= $building_cost[COPPER]);
         $enough = $enough && ($player_resources['food']   >= $building_cost[FOOD]);
         $enough = $enough && ($player_resources['cow']    >= $building_cost[COW]);
-return $enough;
+        return $enough;
     }
-
-    static function payForBuilding($player_id, $building_key){
-        $building_cost = self::getBuildingCostFromKey ($building_key);
-        $sql = "SELECT * `resources` WHERE `player_id` =".$player_id;
-        $player_resources = self::getObjectFromDB($sql);
-        $wood  = ($player_resources['wood']   - $building_cost[WOOD]);
-        $steel = ($player_resources['steel']  - $building_cost[STEEL]);
-        $gold  = ($player_resources['gold']   - $building_cost[GOLD]);
-        $copper =($player_resources['copper'] - $building_cost[COPPER]);
-        $food  = ($player_resources['food']   - $building_cost[FOOD]);
-        $cow   = ($player_resources['cow']    - $building_cost[COW]);
-        $sql = "UPDATE `resources` SET 'wood'= '".$wood."','steel'= '".$steel."','gold' = '".$gold."','copper'='".$copper."','food' = '".$food."','cow'='".$cow."') WHERE `player_id` =".$player_id;
-        self::DbQuery( $sql );
-    }
-
-
-//////////////////////////////////////////////////////////////////////////////
-//////////// Player actions
-//////////// 
-
-    /*
-        Each time a player is doing some game action, one of the methods below is called.
-        (note: each method below must match an input method in homesteaderstb.action.php)
-    */
-
-    function takeLoan()
-    {
-        self::checkAction( 'takeLoan' );
-
-        $current_player_id = self::getCurrentPlayerId();
-        $sql =  "SELECT * FROM `resources` WHERE `player_id`='".$current_player_id."' ";
-        $resource = self::getObjectFromDb($sql);
-        $silver = $resource['silver'] + 2;
-        $dept = $resource['dept'] + 1;
-        $sql = "UPDATE resources Set `silver`= ".$silver.", `dept`=".$dept." player WHERE player_id =$current_player_id";
-        self::DbQuery( $sql );
-
-        self::notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-        ) );
-    }
-
-    function trade( $resource1, $resource2 )
-    {
-        self::checkAction( 'trade' );
-        
-        $player_id = self::getCurrentPlayerId();
-
-        self::notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
-            'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'card_name' => $card_name,
-            'card_id' => $card_id
-        ) );
-    }
-
-    function selectWorkerDestination($selectedWorker, $building_key, $building_slot) {
-        self::checkAction( "placeWorkers" );
-        $player_id = self::getCurrentPlayerId();
-        $slotRequiredWorkers = 1;
-        $building = self::getBuildingFromKey($building_key);
-        if ($building['building_id'] == BUILDING_RIVER_PORT){
-            $slotRequiredWorkers = 2;
-        }
-
-        if (count($selectedWorker)> $slotRequiredWorkers)
-            throw new BgaUserException( self::_("Too many workers selected.") );
-
-        // if not enough workers are selected, select un-assigned workers (controlled by player)
-        if(count($selectedWorker)<$slotRequiredWorkers){
-            $workers = getUnusedWorkers($player_id);
-            if (count($workers) + count($selectedWorker)<$slotRequiredWorkers)
-               throw new BgaUserException( self::_("You Must select worker(s) to move") );
-            $selectedWorker += $workers;
-        } 
-    }
-
-    function getUnusedWorkers($player_id){
-        $workers = array();
-        $sql = "SELECT * `workers` WHERE `player_id`='".$player_id."'";
-        $player_workers = self::getCollectionFromDB( $sql);
-        foreach($player_workers as $worker_key => $worker ){
-            if ($worker[`building_key`] == '0'){
-                $workers += $worker;
-            }
-        }
-        return $workers;
-    }
- 
-    function placeWorker($worker_key, $building_key, $building_slot)
-    {
-        self::checkAction( "placeWorkers" );
-        $player_id = self::getCurrentPlayerId();
-        $sql = "UPDATE `workers` SET `building_id`='".$building_key."' `player_id`='".$player_id."' WHERE `worker_key`='".$worker_key."'";
-        self::DbQuery( $sql );
-    }
-
-    function buyBuilding( $player_id, $building_key )
-    {
-        $afford = canPlayerAffordBuilding ($player_id, $building_key);
-        if ($afford){
-            self::payForBuilding($player_id, $building_key);
-            $sql = "UPDATE `buildings` Set `location`= ".BUILDING_LOC_PLAYER.", `player_id`=".$player_id." WHERE building_key =".$building_key;    
-            self::DbQuery( $sql );
-            self::notifyAllPlayers( "buyBuilding", clienttranslate( '${player_name} buys a building ${building_key} ' ),
-            array('player_id' => $player_id,'player_name' => self::getActivePlayerName(),'building_key' => getBuildingNameFromKey($building_key),) );
-            return true;
-        } else {
-            $this->notifyPlayer( $player_id, "notEnoughResources", clienttranslate( '${you} do not have enough resources to buy building ${building_key} ' ),
-            array('player_id' => $player_id,'player_name' => self::getActivePlayerName(),'building_key' => getBuildingNameFromKey($building_key),) );
-            return false;
-        } 
-    }
-
-    function donePlacingWorkers (){
-        $current_player_id = self::getCurrentPlayerId();
-        $currentPhase = self::getGameStateValue('current_phase');
-            
-        $this->gamestate->setPlayerNonMultiactive( $current_player_id, "done" );
-    }
-
+    
     static function collectIncome() 
     {
         $sql = "SELECT * FROM `resources` ";
@@ -839,11 +716,32 @@ return $enough;
         }
     }
 
-    static function makeBid($player_id, $bid_location){
-        $sql = "UPDATE `resource` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
+    static function payForBuilding($player_id, $building_key){
+        $building_cost = self::getBuildingCostFromKey ($building_key);
+        $sql = "SELECT * `resources` WHERE `player_id` =".$player_id;
+        $player_resources = self::getObjectFromDB($sql);
+        $wood  = ($player_resources['wood']   - $building_cost[WOOD]);
+        $steel = ($player_resources['steel']  - $building_cost[STEEL]);
+        $gold  = ($player_resources['gold']   - $building_cost[GOLD]);
+        $copper =($player_resources['copper'] - $building_cost[COPPER]);
+        $food  = ($player_resources['food']   - $building_cost[FOOD]);
+        $cow   = ($player_resources['cow']    - $building_cost[COW]);
+        $sql = "UPDATE `resources` SET 'wood'= '".$wood."','steel'= '".$steel."','gold' = '".$gold."','copper'='".$copper."','food' = '".$food."','cow'='".$cow."') WHERE `player_id` =".$player_id;
         self::DbQuery( $sql );
     }
 
+    function getUnusedWorkers($player_id){
+        $workers = array();
+        $sql = "SELECT * `workers` WHERE `player_id`='".$player_id."'";
+        $player_workers = self::getCollectionFromDB( $sql);
+        foreach($player_workers as $worker_key => $worker ){
+            if ($worker[`building_key`] == '0'){
+                $workers += $worker;
+            }
+        }
+        return $workers;
+    }
+    
     static function clearBids(){
         $sql = "UPDATE `resources` SET `bid_loc`= '".NO_BID."' ";
         self::DbQuery( $sql );
@@ -870,15 +768,136 @@ return $enough;
         $sql = "UPDATE `auctions` SET `location`='".AUCTION_LOC_DISCARD."' WHERE `location` == '".$auction_no."' AND position == '".$round_number."'";
         self::DBQuery( $sql);
     }
+    
+    function doTheyOwnBuilding($player_id, $building_id) {
+        $sql = "SELECT * FROM `buildings` WHERE `player_id`='".$player_id."'";
+        $buildings = self::getCollectionFromDB( $sql );
+        $own = false;
+    }
+
+    function buyBuilding( $player_id, $building_key )
+    {
+        $afford = canPlayerAffordBuilding ($player_id, $building_key);
+        if ($afford){
+            self::payForBuilding($player_id, $building_key);
+            $sql = "UPDATE `buildings` Set `location`= ".BUILDING_LOC_PLAYER.", `player_id`=".$player_id." WHERE building_key =".$building_key;    
+            self::DbQuery( $sql );
+            self::notifyAllPlayers( "buyBuilding", clienttranslate( '${player_name} buys a building ${building_key} ' ),
+            array('player_id' => $player_id,'player_name' => self::getActivePlayerName(),'building_key' => getBuildingNameFromKey($building_key),) );
+            return true;
+        } else {
+            $this->notifyPlayer( $player_id, "notEnoughResources", clienttranslate( '${you} do not have enough resources to buy building ${building_key} ' ),
+            array('player_id' => $player_id,'player_name' => self::getActivePlayerName(),'building_key' => getBuildingNameFromKey($building_key),) );
+            return false;
+        } 
+    }
 
     static function getValidBids($player_id) {
         $valid_bids = range(1,29);
         $valid_bids = \array_diff($valid_bids, [OUTBID, BID_PASS]); // remove outbid & pass
         $sql = "SELECT `player_id`, `bid_loc` FROM `resources`";
-        $current_bids = self::getCollectionFromDB( $sql );
-        foreach ($current_bids as $player_id => $bid){
-            // do something;
+        $resources = self::getCollectionFromDB( $sql );
+        
+        foreach ($resources as $player_id => $resource){
+            $bid = $resource['bid_loc']; 
+            if ($bid > 0 && $bid < 10){
+                for ($i = $bid; i >0; $i--){
+                    $valid_bids = \array_diff($valid_bids, [$i]);
+                }
+            } else if ($bid > 10 && $bid < 20) {
+                for ($i = $bid; i >10; $i--){
+                    $valid_bids = \array_diff($valid_bids, [$i]);
+                }
+            } else if ($bid > 20 && $bid < 30) {
+                for ($i = $bid; i >20; $i--){
+                    $valid_bids = \array_diff($valid_bids, [$i]);
+                }
+            }
         }
+        return ($valid_bids);
+    }
+
+
+//////////////////////////////////////////////////////////////////////////////
+//////////// Player actions
+//////////// 
+
+    /*
+        Each time a player is doing some game action, one of the methods below is called.
+        (note: each method below must match an input method in homesteaderstb.action.php)
+    */
+
+    function takeLoan()
+    {
+        self::checkAction( 'takeLoan' );
+
+        $current_player_id = self::getCurrentPlayerId();
+        $sql =  "SELECT * FROM `resources` WHERE `player_id`='".$current_player_id."' ";
+        $resource = self::getObjectFromDb($sql);
+        $silver = $resource['silver'] + 2;
+        $dept = $resource['dept'] + 1;
+        $sql = "UPDATE resources Set `silver`= ".$silver.", `dept`=".$dept." player WHERE player_id =$current_player_id";
+        self::DbQuery( $sql );
+
+        self::notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+        ) );
+    }
+
+    function trade( $resource1, $resource2 )
+    {
+        self::checkAction( 'trade' );
+        
+        $player_id = self::getCurrentPlayerId();
+
+        self::notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
+            'player_id' => $player_id,
+            'player_name' => self::getActivePlayerName(),
+            'card_name' => $card_name,
+            'card_id' => $card_id
+        ) );
+    }
+
+    function selectWorkerDestination($selectedWorker, $building_key, $building_slot) {
+        self::checkAction( "placeWorkers" );
+        $player_id = self::getCurrentPlayerId();
+        $slotRequiredWorkers = 1;
+        $building = self::getBuildingFromKey($building_key);
+        if ($building['building_id'] == BUILDING_RIVER_PORT){
+            $slotRequiredWorkers = 2;
+        }
+
+        if (count($selectedWorker)> $slotRequiredWorkers)
+            throw new BgaUserException( self::_("Too many workers selected.") );
+
+        // if not enough workers are selected, select un-assigned workers (controlled by player)
+        if(count($selectedWorker)<$slotRequiredWorkers){
+            $workers = getUnusedWorkers($player_id);
+            if (count($workers) + count($selectedWorker)<$slotRequiredWorkers)
+               throw new BgaUserException( self::_("You Must select worker(s) to move") );
+            $selectedWorker += $workers;
+        } 
+    }
+ 
+    function placeWorker($worker_key, $building_key, $building_slot)
+    {
+        self::checkAction( "placeWorkers" );
+        $player_id = self::getCurrentPlayerId();
+        $sql = "UPDATE `workers` SET `building_id`='".$building_key."' `player_id`='".$player_id."' WHERE `worker_key`='".$worker_key."'";
+        self::DbQuery( $sql );
+    }
+
+    function donePlacingWorkers (){
+        $current_player_id = self::getCurrentPlayerId();
+        $currentPhase = self::getGameStateValue('current_phase');
+            
+        $this->gamestate->setPlayerNonMultiactive( $current_player_id, "done" );
+    }
+
+    static function makeBid($player_id, $bid_location){
+        $sql = "UPDATE `resource` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
     }
 
     
@@ -961,12 +980,12 @@ return $enough;
         $sql = "UPDATE auctions SET state = '".AUCTION_STATE_FACEUP."' WHERE position = '".$round_number."';";
         self::DbQuery( $sql );
         
-        $this->gamestate->nextState( STATE_PLACE_WORKERS );
+        $this->gamestate->nextState();
     }    
 
     function stPlaceWorkers()
     {
-        $this->gamestate->setAllPlayersMultiactive( "Done");
+        $this->gamestate->setAllPlayersMultiactive( "done");
         // for each player have them place workers (then press done)
         
         $this->gamestate->setAllPlayersNonMultiactive( STATE_INCOME );
@@ -976,17 +995,37 @@ return $enough;
     {
         self::collectIncome();
 
-        $this->gamestate->nextState( STATE_PAY_WORKERS );
+        $this->gamestate->nextState( );
     }
 
     function stPayWorkers()
     {
-         // if player has gold or trade token, 
+        $sql = "SELECT `player_id`, `workers`, `gold`, `silver` `trade` `dept` FROM `resources` "
+        $players = self::getCollectionFromDB( $sql );
+        $this->gamestate->setAllPlayersMultiactive( );
+        foreach($players as $player_id => $player){
+            if ($player['gold'] == 0 && $player['trade'] == 0){
+                //no decisions just pay.
+                $silver = $player['silver'];
+                $dept = $player['dept'];
+                if ($player['silver'] >= $player['workers']){
+                    $silver = $player['silver'] - $player['workers'];
+                } else {
+                    while ($silver < $player['workers']){
+                        $silver +=2;
+                        $dept ++;
+                    } 
+                }
+                $sql = "UPDATE `resources` SET `silver`='".$silver."', `dept`='".$dept."' WHERE `player_id`='".$player_id."'";
+                $this->gamestate->setPlayerNonMultiactive($player_id);
+            } else {
+                $this->gamestate->setPlayerNonMultiactive($player_id);    
+            }
+        }
+        // if player has gold or trade token, 
         // make them active to trade and,
         // choose to pay workers with gold or silver (no change for gold)
-        $this->gamestate->setAllPlayersMultiactive( "Done");
         
-        $this->gamestate->setAllPlayersNonMultiactive( STATE_AUCTION );
     }
     
     function stBeginAuction(){
@@ -1064,7 +1103,7 @@ return $enough;
             if ($next_auction == $number_auctions) {
                 $next_auction ++;
                 self::setGameStateValue( 'auction_next', $next_auction);
-                //$this->gamestate->nextState( STATE_NEXT_BUILDING );
+                $this->gamestate->nextState( STATE_NEXT_BUILDING );
             } else {
                 self::setGameStateValue( 'auction_next', 1);
                 $this->gamestate->nextState( STATE_END_ROUND );
@@ -1192,13 +1231,14 @@ return $enough;
     function stEndRound()
     {
         $round_number = self::getGameStateValue( 'round_number' );
-        self::setGameStateValue( 'round_number' , $round_number +1);
-        self::setGameStateValue( 'auction_next' , 1);
-        self::setGameStateValue( 'players_passed' , 0);
-        
-        
-        // (very often) go to another gamestate
-        $this->gamestate->nextState( STATE_END_GAME );
+        if ($round_number == 10){
+            $this->gamestate->nextState( STATE_END_GAME );
+        } else {
+            self::setGameStateValue( 'auction_next' , 1);
+            self::setGameStateValue( 'players_passed' , 0);
+            self::setGameStateValue( 'last_bid' , 0);
+            $this->gamestate->nextState( STATE_START_ROUND );
+        }
     }
 
 //////////////////////////////////////////////////////////////////////////////

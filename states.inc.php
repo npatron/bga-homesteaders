@@ -42,7 +42,7 @@ $machinestates = array(
         "description" => clienttranslate("Game setup"),
         "type" => "manager",
         "action" => "stGameSetup",
-        "transitions" => array( "" => STATE_START_ROUND )
+        "transitions" => array( "" => 2 )
     ),
 
     STATE_START_ROUND => array(
@@ -185,7 +185,7 @@ $machinestates = array(
 
     // Final state.
     // Please do not modify (and do not overload action/args methods).
-    STATE_END_GAME => array(
+    99 => array(
         "name" => "gameEnd",
         "description" => clienttranslate("End of game"),
         "type" => "manager",
