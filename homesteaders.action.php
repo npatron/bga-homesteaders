@@ -53,7 +53,7 @@
       self::ajaxResponse( );
    }
 
-   public function donePlacingWorker()
+   /*public function donePlacingWorker()
    {
        self::setAjaxMode();     
 
@@ -64,7 +64,7 @@
        $this->game->discardOrderCard( $orderCardKey );
 
        self::ajaxResponse( );
-   }
+   }*/
   	
   	// TODO: defines your action entry points there
 

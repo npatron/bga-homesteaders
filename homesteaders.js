@@ -247,7 +247,7 @@ function (dojo, declare) {
         {
             console.log( 'Entering state: '+stateName );
             
-            var player_id = this.gamedatas.player_resources['player_id'];
+            var current_player_id = this.gamedatas.player_resources['player_id'];
             this.currentState = stateName;
             
             switch( stateName )
@@ -260,11 +260,19 @@ function (dojo, declare) {
                     if( this.isCurrentPlayerActive() )
                     {
                         // show workers that are selectable
-                        // also show building_slots
-                        var selectable_workers = args.args.custom_slots;
-                        for (var worker in this.gamedatas.workers){
-                            if (worker[player_id] == player_id){
+                        //var selectable_workers = args.args.custom_slots;
+                        for (var worker_key in this.gamedatas.workers){
+                            var worker = this.gamedatas.workers[worker_key];
+                            if (worker.player_id == current_player_id){
                                 const worker_div = "worker_"+worker['worker_id'];
+                                dojo.addClass(worker_div, "selectable");
+                            }
+                        }
+                        // also show building_slots
+                        for (var building_key in this.gamedatas.buildings){
+                            var building = this.gamedatas.buildings[building_key];
+                            if (building.player_id == current_player_id){
+                                const building_div = "build_tile_"+building.building_id;
                                 dojo.addClass(worker_div, "selectable");
                             }
                         }

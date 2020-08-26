@@ -54,19 +54,22 @@
     <div id="train_advancement_5" class="train_advance"> </div>
 
 </div>
+<!-- token limbo -->
+<div id="limbo" style="display: block">
+
+</div>
 <div id="building_zone"> 
+    <div class="building_zone_name"> {BUILDING_TITLE} </div>
     <div id="build_tile_{BUILD_ID}" class="building_tile"> </div>
 </div>
-<div id="player_zone_{color}"></div>
-<div id="player_zone_{color}"></div>
-<div id="player_zone_{color}"></div>
-<div id="player_zone_{color}"></div>
-
+<div id="player_zone_{color}">
+    <div class="boardheader" style="color: #{COLOR}">{NAME}</div>
+</div>
 
 <!-- BEGIN player -->
     <div class="playertable whiteblock playertable_{DIR}">
-        <div class="playertablename" style="color:#{PLAYER_COLOR}">
-            {PLAYER_NAME}
+        <div class="playertablename" style="color:#{COLOR}">
+            {NAME}
         </div>
         <div class="playertable_card" id="playertablecard_{PLAYER_ID}">
         </div>
@@ -105,10 +108,7 @@
 -->
     
 
-<!-- token limbo -->
-<div id="limbo" style="display: block">
 
-</div>
 
 var jstpl_buildings = '<div class="buildings" id="buildings_${player_id}" style="background-position:-${x}px -${y}px">\
                         </div>';

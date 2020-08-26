@@ -477,109 +477,109 @@
    border-radius: 6px;
 }
 
-#build_tile_hs_yellow { /* Yellow Homestead */
+#build_tile_1 { /* Yellow Homestead */
    background-position: 0px 0px;
 }
-#build_tile_hs_red { /* Red Homestead */
+#build_tile_2 { /* Red Homestead */
    background-position: -144px 0px;
 }
-#build_tile_hs_green { /* Green Homestead */
+#build_tile_3 { /* Green Homestead */
    background-position: -288px 0px;
 }
-#build_tile_hs_blue { /* Blue Homestead */
+#build_tile_4 { /* Blue Homestead */
    background-position: -432px 0px;
 }
-#build_tile_2 { /* Grain Mill */
+#build_tile_5 { /* Grain Mill */
    background-position: -576px 0px;
 }
-#build_tile_3 { /* Farm */
+#build_tile_6 { /* Farm */
    background-position: -720px 0px;
 }
-#build_tile_4 { /* Market */
+#build_tile_7 { /* Market */
    background-position: -864px 0px;
 }
-#build_tile_5 { /* Foundry */
+#build_tile_8 { /* Foundry */
    background-position: -1008px 0px;
 }
-#build_tile_6 { /* Steel Mill */
+#build_tile_9 { /* Steel Mill */
    background-position: -1152px 0px;
 }
-#build_tile_7 { /* Boarding House */
+#build_tile_10 { /* Boarding House */
    background-position: 0px -196px;
 }
-#build_tile_8 { /* Railworkers House */
+#build_tile_11 { /* Railworkers House */
    background-position: -144px -196px;
 }
-#build_tile_9 { /* Ranch */
+#build_tile_12 { /* Ranch */
    background-position: -288px -196px;
 }
-#build_tile_10 { /* Trading Post */
+#build_tile_13 { /* Trading Post */
    background-position: -432px -196px;
 }
-#build_tile_11 { /* General Store */
+#build_tile_14 { /* General Store */
    background-position: -576px -196px;
 }
-#build_tile_12 { /* Gold Mine */
+#build_tile_15 { /* Gold Mine */
    background-position: -720px -196px;
 }
-#build_tile_13 { /* Copper Mine */
+#build_tile_16 { /* Copper Mine */
    background-position: -864px -196px;
 }
-#build_tile_14 { /* River Port */
+#build_tile_17 { /* River Port */
    background-position: -1008px -196px;
 }
-#build_tile_15 { /* Church */
+#build_tile_18 { /* Church */
    background-position: -1152px -196px;
 }
-#build_tile_16 { /* Workshop */
+#build_tile_19 { /* Workshop */
    background-position: -0px -392px;
 }
-#build_tile_17 { /* Depot */
+#build_tile_20 { /* Depot */
    background-position: -144px -392px;
 }
-#build_tile_18 { /* Stables */
+#build_tile_21 { /* Stables */
    background-position: -288px -392px;
 }
-#build_tile_19 { /* Bank */
+#build_tile_22 { /* Bank */
    background-position: -432px -392px;
 }
-#build_tile_20 { /* Meatpacking Plant */
+#build_tile_23 { /* Meatpacking Plant */
    background-position: -576px -392px;
 }
-#build_tile_21 { /* Forge */
+#build_tile_24 { /* Forge */
    background-position: -720px -392px;
 }
-#build_tile_22 { /* Factory */
+#build_tile_25 { /* Factory */
    background-position: -864px -392px;
 }
-#build_tile_23 { /* Rodeo */
+#build_tile_26 { /* Rodeo */
    background-position: -1008px -392px;
 }
-#build_tile_24 { /* Lawyer */
+#build_tile_27 { /* Lawyer */
    background-position: -1152px -392px;
 }
-#build_tile_25 { /* Fairgrounds */
+#build_tile_28 { /* Fairgrounds */
    background-position: -0px -588px;
 }
-#build_tile_26 { /* Dude Ranch */
+#build_tile_29 { /* Dude Ranch */
    background-position: -144px -588px;
 }
-#build_tile_27 { /* Town Hall */
+#build_tile_30 { /* Town Hall */
    background-position: -288px -588px;
 }
-#build_tile_28 { /* Terminal */
+#build_tile_31 { /* Terminal */
    background-position: -432px -588px;
 }
-#build_tile_29 { /* Restaraunt */
+#build_tile_32 { /* Restaraunt */
    background-position: -576px -588px;
 }
-#build_tile_30 { /* Train Station */
+#build_tile_33 { /* Train Station */
    background-position: -720px -588px;
 }
-#build_tile_31 { /* Circus */
+#build_tile_34 { /* Circus */
    background-position: -864px -588px;
 }
-#build_tile_32 { /* Rail Yard */
+#build_tile_35 { /* Rail Yard */
    background-position: -1008px -588px;
 }
 #first_player_tile { /* First Player */
