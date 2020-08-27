@@ -260,18 +260,16 @@ function (dojo, declare) {
                     if( this.isCurrentPlayerActive() )
                     {
                         // show workers that are selectable
-                        //var selectable_workers = args.args.custom_slots;
-                        for (var worker_key in this.gamedatas.workers){
-                            var worker = this.gamedatas.workers[worker_key];
-                            if (worker.player_id == current_player_id){
-                                const worker_div = "worker_"+worker['worker_id'];
+                        for (var worker in args.args.workers){
+                            if(worker['player_id'] == current_player_id){
+                                var worker_key = worker['worker_key'];
+                                const worker_div = "worker_" + worker_key;
                                 dojo.addClass(worker_div, "selectable");
                             }
                         }
                         // also show building_slots
-                        for (var building_key in this.gamedatas.buildings){
-                            var building = this.gamedatas.buildings[building_key];
-                            if (building.player_id == current_player_id){
+                        for (var building in args.args.buildings){
+                            if (building.player_id == current_player_id && building.worker_slot != 0){
                                 const building_div = "build_tile_"+building.building_id;
                                 dojo.addClass(worker_div, "selectable");
                             }
@@ -367,6 +365,9 @@ function (dojo, declare) {
             {            
                 switch( stateName )
                 {
+                    case 'allocateWorkers':
+                    this.addActionButton( 'button_1_id', _('done'), 'doneAllocatingWorkers' );  
+                    break;
 /*               
                  Example:
  
@@ -386,22 +387,6 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Utility methods
         
-        buildBuildingTileStock: function(buildings)
-        {
-            var stock = new ebg.stock();
-            stock.create( this, 20, 98, 144 );
-            stock.image_items_per_row = 10;
-            stock.setSelectionMode(0);
-            stock.setSelectionAppearance('class');
-
-            for(var buildingKey in buildings){
-                var building = buildings[buildingKey];
-                var imgId = () 
-            }
-
-            
-        },
-
 
         ///////////////////////////////////////////////////
         //// Player's action
@@ -483,6 +468,15 @@ function (dojo, declare) {
         
         // TODO: from this point and below, you can write your game notifications handling methods
         
+
+        notif_buildingBought: function( notif )
+        {
+            console.log( 'notif_buildingBought' );
+            console.log( notif );
+
+            // move building to player zone
+            // update player resources  
+        }
         /*
         Example:
         
