@@ -247,7 +247,8 @@ function (dojo, declare) {
         {
             console.log( 'Entering state: '+stateName );
             
-            var current_player_id = this.gamedatas.player_resources['player_id'];
+            var current_player_id = this.gamedatas.player_resources[player_id];
+            var current_player_color = this.gamedatas.players['current_player_id'].color_name;
             this.currentState = stateName;
             
             switch( stateName )
@@ -257,36 +258,25 @@ function (dojo, declare) {
                     setupTiles (this.gamedatas.round_number); 
                     break;
                 case 'allocateWorkers':
-                    if( this.isCurrentPlayerActive() )
-                    {
-                        // show workers that are selectable
-                        for (var worker in args.args.workers){
-                            if(worker['player_id'] == current_player_id){
-                                var worker_key = worker['worker_key'];
-                                const worker_div = "worker_" + worker_key;
-                                dojo.addClass(worker_div, "selectable");
-                            }
-                        }
-                        // also show building_slots
-                        for (var building in args.args.buildings){
-                            if (building.player_id == current_player_id && building.worker_slot != 0){
-                                const building_div = "build_tile_"+building.building_id;
-                                dojo.addClass(worker_div, "selectable");
-                            }
-                        }
-                    }
-                    break;
-                case 'collectIncome':
-
+                    
                     break;
                 case 'payWorkers':
 
                     break;
-                case 'beginAuction':
-
-                    break;
-                case 'playerTurn':
-
+                case 'playerBid':
+                    if( this.isCurrentPlayerActive() )
+                        {
+                            var player_bid_token = "bid_token_"+current_player_color;
+                            // mark bids as selectable
+                            for (var bid_loc in args.args.bid_location){
+                                var bid_auc = NUMBER(bid_loc['auction']);
+                                var bid_slot = NUMBER(bid_loc['slot']);
+                                const bid_slot_div = "bid_slot_A" + bid_auc + "_B" + bid_slot;
+                                dojo.addClass(bid_slot_div, "selectable");
+                            }
+                            this.addActionButton( 'btn_pass',    _('pass'),    'passBid');
+                            this.addActionButton( 'btn_confirm', _('Confirm'), 'makeBid');
+                        }
                     break;
                 case 'getPassBenefits':
 
@@ -337,6 +327,9 @@ function (dojo, declare) {
             
             switch( stateName )
             {
+                case 'collectIncome':
+                    update_Resources();
+                    break;
             
             /* Example:
             
@@ -359,6 +352,8 @@ function (dojo, declare) {
         //        
         onUpdateActionButtons: function( stateName, args )
         {
+            
+            var current_player_id = this.gamedatas.player_resources['player_id'];
             console.log( 'onUpdateActionButtons: '+stateName );
                       
             if( this.isCurrentPlayerActive() )
@@ -366,7 +361,28 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                     case 'allocateWorkers':
-                    this.addActionButton( 'button_1_id', _('done'), 'doneAllocatingWorkers' );  
+                        if( this.isCurrentPlayerActive() )
+                        {
+                            // show workers that are selectable
+                            for (var worker in args.args.workers){
+                                if(NUMBER(worker['player_id']) == current_player_id){
+                                    var worker_key = NUMBER(worker['worker_key']);
+                                    const worker_div = "worker_" + worker_key;
+                                    dojo.addClass(worker_div, "selectable");
+                                }
+                            }
+                            // also show building_slots
+                            for (var building in args.args.buildings){
+                                if (NUMBER(building.player_id) == current_player_id && building.worker_slot != 0){
+                                    const building_div = "build_tile_"+building.building_id;
+                                    dojo.addClass(worker_div, "selectable");
+                                }
+                            }
+                            this.addActionButton( 'btn_trade',       _('Trade'),           'tradeAction');
+                            this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan');
+                            this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorker');
+                            this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
+                        }
                     break;
 /*               
                  Example:

@@ -14,8 +14,9 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, since it is included multiple times
-    define("STATE_START_ROUND",        10);
+    define("STATE_START_ROUND",        2);
     define("STATE_PLACE_WORKERS",      20);
+    define("STATE_TRADE_RESOURCES",    21);
     define("STATE_INCOME",             22);
     define("STATE_PAY_WORKERS",        23);
     define("STATE_BEGIN_AUCTION",      30);
@@ -72,7 +73,6 @@ $machinestates = array(
         "description" =>  clienttranslate('collect income'),
         "type" => "game",
         "action" => "stCollectIncome",
-        "updateGameProgression" => true,   
         "transitions" => array( "" => STATE_PAY_WORKERS )
     ),
     
@@ -84,7 +84,7 @@ $machinestates = array(
         "action" => "stPayWorkers",
         "args" => "argWorkersPlacement",
         "possibleactions" => array( "takeLoan", "makeTrade", "done" ),
-        "transitions" => array( "Done" => STATE_BEGIN_AUCTION, 
+        "transitions" => array( "done" => STATE_BEGIN_AUCTION, 
                                 "loopback" => STATE_PAY_WORKERS )
     ),
 
@@ -128,7 +128,7 @@ $machinestates = array(
         "action" => "stNextBid",
         "updateGameProgression" => true,
         "transitions" => array( "skip" => STATE_NEXT_BID, 
-                                "nextBid" => STATE_PLAYER_BID, 
+                                "bid" => STATE_PLAYER_BID, 
                                 "endAuction" => STATE_NEXT_BUILDING )
     ),
 
@@ -160,7 +160,7 @@ $machinestates = array(
         "type" => "activeplayer",
         "args" => "buildingToBuild",
         "action" => "stBuild",
-        "possibleactions" => array( "trade", "choose", "takeLoan", "doNotBuild" ),
+        "possibleactions" => array( "trade", "build", "takeLoan", "doNotBuild" ),
         "transitions" => array( "build" => STATE_RESOLVE_BUILDING, 
                                 "bonus" => STATE_CHOOSE_BONUS,
                                 "endBuild" => STATE_END_BUILD )
@@ -180,7 +180,7 @@ $machinestates = array(
         "name" => "auctionBonus",
         "description" => '',
         "type" => "game",
-        "action" => "stAuctionBonus",
+        "action" => "stGetAuctionBonus",
         "updateGameProgression" => true,
         "transitions" => array( "bonusChoice" => STATE_CHOOSE_BONUS, 
                                 "endBuild" => STATE_END_BUILD )
@@ -196,9 +196,7 @@ $machinestates = array(
         "args" => "trades",
         "action" => "stChooseBonus",
         "possibleactions" => array( "done" ),
-        "transitions" => array( "done" => STATE_END_BUILD, 
-                                "auctionBonus"=> STATE_AUCTION_BONUS , 
-                                "railBonus" => STATE_RAIL_BONUS )
+        "transitions" => array( "done" => STATE_END_BUILD)
     ),
 
     STATE_END_BUILD => array(
@@ -206,7 +204,6 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stEndBuildRound",
-        "updateGameProgression" => true,
         "transitions" => array( "endRound" => STATE_END_ROUND, 
                                 "nextBuilding" => STATE_NEXT_BUILDING )
     ),

@@ -290,11 +290,10 @@ class homesteaders extends Table
             self::DBQuery( $sql );
         }
         
-        $this->activeNextPlayer();
+        self::activeNextPlayer();
         $active_player = self::getActivePlayerId();
         self::setGameStateValue('first_player', $active_player);
-        self::setGameStateValue('current_phase', STATE_START_ROUND);
-
+        
         /************ End of the game initialization *****/
     }
 
@@ -428,9 +427,19 @@ class homesteaders extends Table
         self::DbQuery( $sql );
     }
 
+    static function updateResource($player_id, $resource_key, $amount){
+        $sql = "SELECT `".$resource_key."` FROM `resources` WHERE `player_id`= '".$player_id."'";
+        $resource_count = self::getUniqueValueFromDB( $sql );
+        $resource_count += $amount;
+        $sql = "UPDATE `resources` SET `".$resource_key."`='".$resource_count."' WHERE `player_id`= '".$player_id."'";
+        self::DBQuery( $sql );
+        // TODO: add notification handler here;
+    }
+
     static function addWorker($player_id){
         $sql = "INSERT INTO `workers` (`player_id`) VALUES (".$player_id.");";
         self::DbQuery( $sql );
+        self::updateResource($player_id, 'workers', 1);
     }
 
     static function createAuctionTiles($playerCount){
@@ -483,7 +492,7 @@ class homesteaders extends Table
         self::DbQuery( $sql );
     }
 
-    function getBuildingFromKey($building_key){
+    static function getBuildingFromKey($building_key){
         $sql = "SELECT * from `buildings` where `building_key`='$building_key'";
         $building = self::getObjectFromDB($sql);
         return ($building);
@@ -835,6 +844,27 @@ class homesteaders extends Table
         } 
     }
 
+    static function makeBid($bid_location, $player_id){
+        $sql = "UPDATE `resource` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
+		self::notifyAllPlayers("moveBidToken", '', array (
+				'player_id' => $player_id,
+				'bid'=>$bid_location
+                ));
+        // mark somebids as outbid.
+        // TODO:: add logging of outbids (for stats).
+        if ($bid_location > 0 && $bid_location < 10){
+            $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `bid_loc` BETWEEN '1' AND '".$bid_location."'";
+            self::DBQuery( $sql );
+        } else if ($bid_location > 10 && $bid < 20) {
+            $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `bid_loc` BETWEEN '11' AND '".$bid_location."'";
+            self::DBQuery( $sql );
+        } else if ($bid_location > 20 && $bid_location < 30) {
+            $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `bid_loc` BETWEEN '21' AND '".$bid_location."'";
+            self::DBQuery( $sql );
+        }
+    }
+
     static function getValidBids($player_id) {
         $valid_bids = range(1,29);
         $valid_bids = \array_diff($valid_bids, [OUTBID, BID_PASS]); // remove outbid & pass
@@ -900,8 +930,8 @@ class homesteaders extends Table
         self::notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
             'player_id' => $player_id,
             'player_name' => self::getActivePlayerName(),
-            'card_name' => $card_name,
-            'card_id' => $card_id
+            'trade1' => $resource1,
+            'trade2' => $resource2
         ) );
     }
 
@@ -943,14 +973,20 @@ class homesteaders extends Table
         $this->gamestate->setPlayerNonMultiactive( $current_player_id, "done" );
     }
 
-    function playerMakeBid($player_id, $bid_location){
+    function playerMakeBid($bid_location){
         self::checkAction( "selectBid" );
-        $sql = "UPDATE `resource` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
-        self::DbQuery( $sql );
-		self::notifyAllPlayers("moveBidToken", '', array (
-				'player_id' => $player_id,
-				'bid'=>$bid_location
-				));
+        $active_player = $this->getActivePlayerId();
+        $valid_bids = self::getValidBids($active_player);
+        if (in_array($bid_location, $valid_bids)){// valid bid
+            $active_player = $this->getActivePlayerId();
+            self::makeBid($bid_location, $active_player);
+            self::setGameStateValue('last_bid', $bid_location);
+            $this->gamestate->nextState( "nextBid" );
+        } else if ($bid_location == BID_PASS){ //follow pass bid procedue
+            $players_passed = self::getGameStateValue('players_passed');
+            self::setGameStateValue('players_passed', ++$players_passed);
+            $this->gamestate->nextState( "pass" );
+        } 
     }
 
     function playerSelectBuilding($selected_building){
@@ -960,13 +996,13 @@ class homesteaders extends Table
 
     function playerBuildSelected(){
         $selected_building = self::getGameStateValue( 'selected_building');
-        $active_player = $this->getActivePlayer();
+        $active_player = $this->getActivePlayerId();
         if ($selected_building == 0){
             // throw error, building not selected
         } else {
             $success = $this->buyBuilding($active_player, $selected_building);
             if ($success) {
-                $this->gamestate->nextstate( 'build' );
+                $this->gamestate->nextState( 'build' );
             }
         }
     }
@@ -988,8 +1024,60 @@ class homesteaders extends Table
 
     function playerPayAuction() {
         self::checkAction( "payAuction" );
-        $active_player = $this->getActivePlayer();
+        $active_player = $this->getActivePlayerId();
         $sql = "SELECT `player_id`, `silver`, `gold`, `bid_loc` FROM `resources` WHERE `player_id`='".$active_player."'";
+    }
+
+    function playerSelectBonusOption($selected_bonus) {
+        $active_player = $this->getActivePlayerId();
+        //        $bonus = self::getRailAdvBonusOptions($active_player);
+        switch ($selected_bonus){
+            case 'worker':
+                self::addWorker($active_player);
+            break;
+            case TRADE:
+                self::updateResource($active_player,'cow', 1);
+            break;
+            case RAIL_LINE:
+                self::updateResource($active_player,'rail_tiles', 1);
+            break;
+            case WOOD:
+                self::updateResource($active_player,'wood', 1);
+            break;
+            case FOOD:
+                self::updateResource($active_player,'food', 1);
+            break;
+            case STEEL:
+                self::updateResource($active_player,'steel', 1);
+            break;
+            case GOLD:
+                self::updateResource($active_player,'gold', 1);
+            break;
+            case COPPER:
+                self::updateResource($active_player,'copper', 1);
+            break;
+            case COW:
+                self::updateResource($active_player,'cow', 1);
+            break;
+            case VP:
+                self::updateResource($active_player,'vp', 3);
+            break;
+        }
+        $phase = self::getGlobalStateValue( 'phase' );
+        $next_state = "";
+        switch($phase){
+            case PHASE_BID_PASS:
+                $next_state = "nextBid";
+            break;
+            case PHASE_BUILD_BONUS:
+                $next_state = "endAuction";
+            break;
+            case PHASE_AUCTION_BONUS:
+                $next_state = "auctionBonus";
+            break;
+        }
+        
+        $this->gamestate->nextState( $next_state );
     }
 
     
@@ -1093,6 +1181,21 @@ class homesteaders extends Table
         $this->gamestate->setAllPlayersMultiactive( );
         // for each player have them place workers (then press done)
         // TODO: figure out this multi-active thing.
+        $sql = "SELECT `worker_key`, `player_id`, `building_key`, `building_slot` `selected` FROM `workers` ";
+        $workers = self::getCollectionFromDB( $sql );
+        // for testing purposes just assign the worker to homestead slot 1.
+        foreach($workers as $worker_key => $worker){
+            $player_id = $worker['player_id'];
+            $sql = "SELECT `building_key`, `building_id`, `worker_slot`, `player_id` FROM `buildings` WHERE `player_id` = '".$player_id."'";
+            $player_buildings = self::getCollectionFromDB( $sql );
+            foreach ($player_buildings as $building_key => $building){
+                if ($building['building_id'] <5){
+                    $sql = "UPDATE `workers` SET `building_key` = ".$building_key.", `building_slot` = 1";
+                    self::DBQuery( $sql );
+                break;
+                }
+            }
+        }
         $this->gamestate->setAllPlayersNonMultiactive( "done" );
     }
 
@@ -1121,7 +1224,8 @@ class homesteaders extends Table
                     } 
                 }
                 $sql = "UPDATE `resources` SET `silver`='".$silver."', `dept`='".$dept."' WHERE `player_id`='".$player_id."'";
-                $this->gamestate->setPlayerNonMultiactive($player_id);
+                self::DBQuery( $sql );
+                $this->gamestate->setPlayerNonMultiactive($player_id, "done");
             } 
         }
     }
@@ -1134,115 +1238,74 @@ class homesteaders extends Table
         $this->gamestate->nextState( );
     }
 
-    function stMakeBidOrPass($bid_location) {
-        /* 
-         * this may be incorrect, 
-         * the bid handling here may need to be in an action 
-         * and this function should be just seting up the state.
-        */
-        $active_player = $this->getActivePlayer();
-        $valid_bids = self::getValidBids($active_player);
-        if (in_array($bid_location, $valid_bids)){// valid bid
-            $active_player = $this->getActivePlayerId();
-            self::makeBid($bid_location, $active_player);
-            self::setGameStateValue('last_bid', $bid_location);
-            $this->gamestate->nextState( "nextBid" );
-        } else if ($bid_location == BID_PASS){ //follow pass bid procedue
-            $players_passed = self::getGameStateValue('players_passed');
-            $players_passed ++;
-            self::setGameStateValue('players_passed', $players_passed);
-            $this->gamestate->nextState( "pass" );
-        } else { //if ($bid_location == NO_BID || $bid_location == OUTBID) {
-            // user error non-valid bid.
-            // TODO: Add ERROR HERE.
-        } 
+    function stMakeBidOrPass() {
+        // don't think I need to do anything here        
     }
     
     function stRailBonus() {
-        $active_player = $this->getActivePlayerId();
+        $active_player = self::getActivePlayerId();
         $sql = "SELECT `rail_adv` FROM `resources` WHERE `player_id`='".$active_player."'";
-        $resource = self::getUniqueValueFromDB( $sql );
-        $rail_adv = $resource['rail_adv'];
+        $rail_adv = self::getUniqueValueFromDB( $sql );
         if ($rail_adv < 5){
-            $rail_adv++;
+            $sql = "UPDATE `resources` SET `rail_adv`= '".(++$rail_adv)."' WHERE `player_id`='".$active_player."'";
+            self::DBQuery( $sql );
         }
-        getRailAdvBonusOptions();
-        $phase = self::getGlobalStateValue( 'phase' );
-        $next_state = "";
-        switch($phase){
-            case PHASE_BID_PASS:
-                $next_state = "nextBid";
-            break;
-            case PHASE_BUILD_BONUS:
-                $next_state = "endAuction";
-            break;
-            case PHASE_AUCTION_BONUS:
-                $next_state = "endAuction";
-            break;
-        }
-        
-        $this->gamestate->nextState( $next_state );
+        // wait for player action (select bonus)
     }
 
     function stNextBid()
     { 
-        $this->activeNextPlayer();
+        self::activeNextPlayer();
         // figure out if bid round is complete, 
-        $active_player = $this->getActivePlayerId();
+        $active_player = self::getActivePlayerId();
         $last_bid = self::getGameStateValue( 'last_bid' );
         $sql = "SELECT `bid_loc` FROM `resources` WHERE `player_id`='".$active_player."'";
         $player_bid = self::getUniqueValueFromDB( $sql );
         // if bidding is complete
         $players_passed = self::getGameStateValue('players_passed');
-        if ($player_bid == $last_bid || $players_passed >= count($bids)) {
+        $player_count = self::getUniqueValueFromDB('SELECT COUNT(*) FROM `players`');
+        if ($player_bid == $last_bid || $players_passed >= $player_count) {
             $next_state = "endAuction";
         } else if (self::canPlayerBid($active_player)) {// if this player can bid.
-            $next_state = "pass";
+            $next_state = "bid";
         } else { // if not, let next player bid
-            $next_state = "nextBid";
+            $next_state = "skip";
         }
         $this->gamestate->nextState( $next_state );
     }
 
     function stBuildingPhase()
     {
-        $next_auction = self::getGameStateValue( 'current_auction' );
+        $current_auction = self::getGameStateValue( 'current_auction' );
         $sql = "SELECT `player_id`, `bid_loc` FROM `resources`";
         $bids = self::getCollectionFromDB( $sql );
-        $next_player_id = 0;
+        $auction_winner_id = 0;
+        $next_state = "";
         // determine winner of this auction
         foreach($bids as $player_id => $bid){ 
-            if ($next_auction == 1 && $bid['bid_loc'] >= BID_A1_B3 && $bid['bid_loc'] <= BID_A1_B21 ){
-                $next_player_id=$player_id;
+            if ($current_auction == 1 && $bid['bid_loc'] >= BID_A1_B3 && $bid['bid_loc'] <= BID_A1_B21 ){
+                $auction_winner_id=$player_id;
                 break;
             }
-            if ($next_auction == 2 && $bid['bid_loc'] >= BID_A2_B3 && $bid['bid_loc'] <= BID_A2_B21 ){
-                $next_player_id=$player_id;
+            if ($current_auction == 2 && $bid['bid_loc'] >= BID_A2_B3 && $bid['bid_loc'] <= BID_A2_B21 ){
+                $auction_winner_id=$player_id;
                 break;
             }
-            if ($next_auction == 3  && $bid['bid_loc'] >= BID_A3_B3 && $bid['bid_loc'] <= BID_A3_B21 ){
-                $next_player_id=$player_id;
+            if ($current_auction == 3  && $bid['bid_loc'] >= BID_A3_B3 && $bid['bid_loc'] <= BID_A3_B21 ){
+                $next_pauction_winner_idlayer_id=$player_id;
                 break;
             }
         }
-        if ($next_player_id == 0) {
-            self::discardAuctionTile($next_auction);
-            $number_auctions = self::getGameStateValue( 'number_auctions' );
-            if ($next_auction == $number_auctions) {
-                $next_auction ++;
-                self::setGameStateValue( 'current_auction', $next_auction);
-                $this->gamestate->nextState( "auctionPassed" );
-            } else {
-                self::setGameStateValue( 'current_auction', 1);
-                $this->gamestate->nextState( "endRound" );
-            }
+        if ($auction_winner_id == 0) {
+            $next_state = "auctionPassed";
         } else {
-            if ($next_auction == 1){
-                self::setGameStateValue('first_player', $next_player_id);
+            if ($current_auction == 1){
+                self::setGameStateValue('first_player', $auction_winner_id);
             }
-            $this->gamestate->changeActivePlayer( $next_player_id );
-            $this->gamestate->nextState( "auctionWon" );
+            $this->gamestate->changeActivePlayer( $auction_winner_id );
+            $next_state = "auctionWon";
         }    
+        $this->gamestate->nextState( $next_state );
     }
 
     function stBuild()
@@ -1259,8 +1322,8 @@ class homesteaders extends Table
     function stResolveBuilding()
     {
         $next_state = "auctionBonus";
-        $round_number = self::getGamStateValue( 'round_number' );
-        $auction_no = self::getGamStateValue( 'current_auction' );
+        $round_number = self::getGameStateValue( 'round_number' );
+        $auction_no = self::getGameStateValue( 'current_auction' );
         $bonus = self::getUniqueValueFromDB("SELECT `bonus` FROM `auction`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'");
         if ($bonus == 0){
             $next_state = "endBuild";
@@ -1271,6 +1334,9 @@ class homesteaders extends Table
     function stGetAuctionBonus()
     {
         $next_state = "bonusChoice";
+        $active_player = $this->getActivePlayerId();
+        $auction_no = self::getGameStateValue( 'current_auction' );
+        $round_number = self::getGameStateValue( 'round_number' );
         $auction_id = self::getUniqueValueFromDB("SELECT `auction_id` FROM `auction`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'");
         switch($auction_id){
             case AUCTION1_5:
@@ -1278,7 +1344,7 @@ class homesteaders extends Table
             case AUCTION1_7: 
                 // worker
                 self::addWorker($active_player);
-                $next_state = "nextBuild";
+                $next_state = "endBuild";
                 self::setGameStateValue( 'bonus_option', NONE );
             break;
             case AUCTION2_4:
@@ -1343,32 +1409,32 @@ class homesteaders extends Table
                 $next_state = "railBonus";
             break;
         }
-        $this->gamestate->nextstate( $next_state );
+        $this->gamestate->nextState( $next_state );
     }
 
     function stEndBuildRound() {
         $auction_no = self::getGameStateValue( 'current_auction' );
         self::discardAuctionTile($auction_no);
-        $next_state = "";
+        $next_state = "nextBuilding";
         if ($auction_no = self::getGameStateValue( 'number_auctions' )){
             $next_state = "endRound";
         } else {
-            self::setGameStateValue( 'current_auction', $auction_no +  1 );
-            $next_state ="nextBuilding";
+            self::setGameStateValue( 'current_auction', ++$auction_no);
         }
-        $this->gamestate->nextstate( $next_state );
+        $this->gamestate->nextState( $next_state );
     }
 
     function stEndRound()
     {
         $round_number = self::getGameStateValue( 'round_number' );
-        $next_state = "";
-        if ($round_number == 10){
-            $next_state = "endGame";
-        } else {
-            self::setGameStateValue( 'current_auction' , 1);
-            self::setGameStateValue( 'players_passed' , 0);
-            self::setGameStateValue( 'last_bid' , 0);
+        $next_state = "endGame";
+        if ($round_number < 10) {
+            self::setGameStateValue( 'current_auction',   1);
+            self::setGameStateValue( 'players_passed',    0);
+            self::setGameStateValue( 'last_bid' ,         0);
+            self::setGameStateValue( 'selected_worker',   0);
+            self::setGameStateValue( 'selected_building', 0);
+            self::setGameStateValue( 'bid_selected',      0);
             $next_state = "nextAuction";
         }
         $this->gamestate->nextState( $next_state );
