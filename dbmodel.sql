@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
   `building_type` INT(1) UNSIGNED NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL             COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
-  `cost`          VARCHAR(16)     NOT NULL DEFAULT '0' COMMENT 'cost: list of_ separated costs (0-non, 1-wood, 2-steel,3-gold,4-copper,5-food,6-cow,7-debt)',
+  `cost`          VARCHAR(16)     NOT NULL DEFAULT '0' COMMENT 'cost: list of costs (0-non, 1-wood, 2-steel,3-gold,4-copper,5-food,6-cow,7-debt)',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
   `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `resources` (
   `gold`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `copper`     INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `cow`        INT(2) UNSIGNED NOT NULL DEFAULT '0',
-  `debt`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `loan`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `trade`      INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `vp`         INT(3) UNSIGNED NOT NULL DEFAULT '0',
   `bid_loc`    INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3',
@@ -72,3 +72,14 @@ CREATE TABLE IF NOT EXISTS `resources` (
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB;
 
+--- for logging purposes, can remove once I have it working.
+CREATE TABLE IF NOT EXISTS `log` (
+  `log_id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `round`     INT(11) NOT NULL,
+  `player_id` INT(11) NOT NULL,
+  `move_id`   INT(11) NOT NULL,
+  `action`    VARCHAR(16) NOT NULL,
+  `piece_id`  INT(11),
+  `action_arg` JSON,
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

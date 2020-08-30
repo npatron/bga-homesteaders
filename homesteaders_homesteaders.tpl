@@ -108,8 +108,10 @@
 
 <script type="text/javascript">
 
-var jstpl_buildings = '<div class="buildings" id="buildings_${player_id}" style="background-position:-${x}px -${y}px">\
+var jstpl_buildings = '<div class="buildings" id="buildings_" style="background-position:-${x}px -${y}px">\
                         </div>';
+// Javascript HTML templates
+var jstpl_ipiece = '<div class="${type} ${type}_${color} inlineblock" aria-label="${name}" title="${name}"></div>';
 
 
 </script>  
