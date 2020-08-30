@@ -10,7 +10,7 @@
  *
  * material.inc.php
  *
- * homesteaderstb game material description
+ * homesteaders game material description
  *
  * Here, you can describe the material of your game with PHP variables.
  *   
@@ -34,158 +34,97 @@ $this->card_types = array(
 */
 
 $this->workerSlots = array(
-
- 'homestead_red_slot1' => array(
-  'name' => clienttranslate("produce Wood"),
+ '1_1' => array(
+  'name' => clienttranslate("Yellow homestead Slot 1"),
   'tooltip' => clienttranslate("Homestead: produces a Wood."),
   'rules'=>"1,0,W",
  ),
- 'homestead_red_slot2' => array(
-  'name' => clienttranslate("Produce VP"),
+ '1_2' => array(
+  'name' => clienttranslate("Yellow homestead Slot 2"),
   'tooltip' => clienttranslate("Homestead: produces a VP."),
   'rules'=>"1,0,V",
  ),
- 'homestead_blue_slot1' => array(
-  'name' => clienttranslate("produce Wood"),
+ '2_1' => array(
+  'name' => clienttranslate("Red homestead Slot 1"),
   'tooltip' => clienttranslate("Homestead: produces a Wood."),
   'rules'=>"1,0,W",
  ),
- 'homestead_blue_slot2' => array(
-  'name' => clienttranslate("Produce VP"),
+ '2_2' => array(
+  'name' => clienttranslate("Red homestead Slot 2"),
   'tooltip' => clienttranslate("Homestead: produces a VP."),
   'rules'=>"1,0,V",
  ),
- 'homestead_green_slot1' => array(
-  'name' => clienttranslate("produce Wood"),
+ '3_1' => array(
+  'name' => clienttranslate("Green homestead Slot 1"),
   'tooltip' => clienttranslate("Homestead: produces a Wood."),
   'rules'=>"1,0,W",
  ),
- 'homestead_green_slot2' => array(
-  'name' => clienttranslate("Produce VP"),
+ '3_2' => array(
+  'name' => clienttranslate("Green homestead Slot 2"),
   'tooltip' => clienttranslate("Homestead: produces a VP."),
   'rules'=>"1,0,V",
  ),
- 'homestead_yellow_slot1' => array(
-  'name' => clienttranslate("produce Wood"),
+ '4_1' => array(
+  'name' => clienttranslate("Blue homestead Slot 1"),
   'tooltip' => clienttranslate("Homestead: produces a Wood."),
   'rules'=>"1,0,W",
  ),
- 'homestead_yellow_slot2' => array(
-  'name' => clienttranslate("Produce VP"),
+ '4_2' => array(
+  'name' => clienttranslate("Blue homestead Slot 2"),
   'tooltip' => clienttranslate("Homestead: produces a VP."),
   'rules'=>"1,0,V",
  ),
- 'farm1_slot1' => array(
-  'name' => clienttranslate("Produce Trade token and 2 silver"),
-  'tooltip' => clienttranslate("Farm: produce a Trade chit and 2 silver."),
+ '6_1' => array(
+  'name' => clienttranslate("Farm slot 1"),
+  'tooltip' => clienttranslate("produce a Trade chit and 2 silver."),
   'rules'=>"1,0,TQQ",
  ),
- 'farm1_slot2' => array(
-  'name' => clienttranslate("Produce a Food"),
+ '6_2' => array(
+  'name' => clienttranslate("Farm Slot 2"),
   'tooltip' => clienttranslate("Farm: produce a Food."),
   'rules'=>"1,0,F",
  ),
- 'farm2_slot1' => array(
-  'name' => clienttranslate("Produce Trade token and 2 silver"),
-  'tooltip' => clienttranslate("Farm: produce a Trade chit and 2 silver."),
-  'rules'=>"1,0,TQQ",
- ),
- 'farm2_slot2' => array(
-  'name' => clienttranslate("Produce a Food"),
-  'tooltip' => clienttranslate("Farm: produce a Food."),
-  'rules'=>"1,0,F",
- ),
- 'farm3_slot1' => array(
-  'name' => clienttranslate("Produce Trade token and 2 silver"),
-  'tooltip' => clienttranslate("Farm: produce a Trade chit and 2 silver."),
-  'rules'=>"1,0,TQQ",
- ),
- 'farm3_slot2' => array(
-  'name' => clienttranslate("Produce a Food"),
-  'tooltip' => clienttranslate("Farm: produce a Food."),
-  'rules'=>"1,0,F",
- ),
- 'market1_slot' => array(
-  'name' => clienttranslate("Produce 2 silver"),
+ '7_1' => array(
+  'name' => clienttranslate("Market"),
   'tooltip' => clienttranslate("Market: produce 2 silver."),
   'rules'=>"1,0,QQ",
  ),
- 'market2_slot' => array(
-  'name' => clienttranslate("Produce 2 silver"),
-  'tooltip' => clienttranslate("Market: produce 2 silver."),
-  'rules'=>"1,0,QQ",
- ),
- 'market3_slot' => array(
-  'name' => clienttranslate("Produce 2 silver"),
-  'tooltip' => clienttranslate("Market: produce 2 silver."),
-  'rules'=>"1,0,QQ",
- ),
- 'Foundry1_slot' => array(
-  'name' => clienttranslate("Produce a Steel"),
-  'tooltip' => clienttranslate("Foundry: produce a steel."),
-  'rules'=>"1,0,Ss",
- ),
- 'Foundry2_slot' => array(
-  'name' => clienttranslate("Produce a Steel"),
+ '8_1' => array(
+  'name' => clienttranslate("Foundry"),
   'tooltip' => clienttranslate("Foundry: produce a steel."),
   'rules'=>"1,0,S",
  ),
- 'Foundry3_slot' => array(
-  'name' => clienttranslate("Produce a Steel"),
-  'tooltip' => clienttranslate("Foundry: produce a steel."),
-  'rules'=>"1,0,S",
- ),
- 'Ranch1_slot' => array(
-  'name' => clienttranslate("Produce a Cow"),
-  'tooltip' => clienttranslate("Ranch: produce a Cow."),
+ '12_1' => array(
+  'name' => clienttranslate("Ranch"),
+  'tooltip' => clienttranslate("Ranch: produce a Livestock."),
   'rules'=>"1,0,L",
  ),
- 'Ranch2_slot' => array(
-  'name' => clienttranslate("Produce a Cow"),
-  'tooltip' => clienttranslate("Ranch: produce a Cow."),
-  'rules'=>"1,0,L",
- ),
- 'GoldMine1_slot' => array(
-  'name' => clienttranslate("Produce a Gold"),
+ '15_1' => array(
+  'name' => clienttranslate("Gold Mine"),
   'tooltip' => clienttranslate("Gold Mine: produce a Gold."),
   'rules'=>"1,0,G",
  ),
- 'GoldMine2_slot' => array(
-  'name' => clienttranslate("Produce a Gold"),
-  'tooltip' => clienttranslate("Gold Mine: produce a Gold."),
-  'rules'=>"1,0,G",
- ),
- 'CopperMine1_slot' => array(
-  'name' => clienttranslate("Produce a Copper"),
+ '16_1' => array(
+  'name' => clienttranslate("Copper Mine"),
   'tooltip' => clienttranslate("Copper Mine: produce a Copper."),
   'rules'=>"1,0,C",
  ),
- 'CopperMine2_slot' => array(
-  'name' => clienttranslate("Produce a Copper"),
-  'tooltip' => clienttranslate("Copper Mine: produce a Copper."),
-  'rules'=>"1,0,C",
- ),
- 'RiverPort1_slot' => array(
-  'name' => clienttranslate("Use 2 workers to produce a Gold"),
+ '17_3' => array(
+  'name' => clienttranslate("River Port"),
   'tooltip' => clienttranslate("River Port: Use 2 workers to produce a Gold."),
-  'rules'=>"1,0,C",
- ),
- 'RiverPort2_slot' => array(
-  'name' => clienttranslate("Use 2 workers to produce a Gold"),
-  'tooltip' => clienttranslate("River Port: use 2 workers to produce a Gold."),
   'rules'=>"2,0,G",
  ),
- 'Meatpacking_plant_slot1' => array(
-  'name' => clienttranslate("Meatpacking Plant"),
+ '23_1' => array(
+  'name' => clienttranslate("Meatpacking Plant slot 1"),
   'tooltip' => clienttranslate("Meatpacking Plant: produce 2 VPs."),
   'rules'=>"1,0,VV",
  ),
- 'Meatpacking_plant_slot2' => array(
-  'name' => clienttranslate("Meatpacking Plant"),
+ '23_2' => array(
+  'name' => clienttranslate("Meatpacking Plant slot 2"),
   'tooltip' => clienttranslate("Meatpacking Plant: produce 2 VPs."),
   'rules'=>"1,0,VV",
  ),
- 'Forge_slot' => array(
+ '24_1' => array(
   'name' => clienttranslate("Forge"),
   'tooltip' => clienttranslate("Forge: produce 2 VPs."),
   'rules'=>"1,0,VV",
