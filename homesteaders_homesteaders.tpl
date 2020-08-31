@@ -12,39 +12,11 @@
 -->
 
 <div id="board" class="shadow">
-    <div id="bid_slot_A1_B3"> </div>
-    <div id="bid_slot_A1_B4"> </div>
-    <div id="bid_slot_A1_B5"> </div>
-    <div id="bid_slot_A1_B6"> </div>
-    <div id="bid_slot_A1_B7"> </div>
-    <div id="bid_slot_A1_B9"> </div>
-    <div id="bid_slot_A1_B12"> </div>
-    <div id="bid_slot_A1_B16"> </div>
-    <div id="bid_slot_A1_B21"> </div>
+
     <div id="auction1_tile_zone" class="auction_tiles"> </div>
-
-    <div id="bid_slot_A2_B3"> </div>
-    <div id="bid_slot_A2_B4"> </div>
-    <div id="bid_slot_A2_B5"> </div>
-    <div id="bid_slot_A2_B6"> </div>
-    <div id="bid_slot_A2_B7"> </div>
-    <div id="bid_slot_A2_B9"> </div>
-    <div id="bid_slot_A2_B12"> </div>
-    <div id="bid_slot_A2_B16"> </div>
-    <div id="bid_slot_A2_B21"> </div>
     <div id="auction2_tile_zone" class="auction_tiles"> </div>
-
-    <div id="bid_slot_A3_B3"> </div>
-    <div id="bid_slot_A3_B4"> </div>
-    <div id="bid_slot_A3_B5"> </div>
-    <div id="bid_slot_A3_B6"> </div>
-    <div id="bid_slot_A3_B7"> </div>
-    <div id="bid_slot_A3_B9"> </div>
-    <div id="bid_slot_A3_B12"> </div>
-    <div id="bid_slot_A3_B16"> </div>
-    <div id="bid_slot_A3_B21"> </div>
     <div id="auction3_tile_zone" class="auction_tiles"> </div>
-
+    
     <div id="train_advancement_1" class="train_advance"> </div>
     <div id="train_advancement_2" class="train_advance"> </div>
     <div id="train_advancement_3" class="train_advance"> </div>
@@ -53,21 +25,21 @@
 
 </div>
 <!-- token limbo -->
-<div id="limbo" style="display: block">
+<div id="limbo" style="display: block"> </div>
 
-</div>
 <div id="building_zone"> 
-    <div class="building_zone_name"> {BUILDING_TITLE} </div>
-    <div id="build_tile_{BUILD_ID}" class="building_tile"> </div>
+    <div class="building_zone_name"> Buildings Stock </div>
 </div>
-<div id="player_zone_{color}">
-    <div class="boardheader" style="color: #{COLOR}">{NAME}</div>
+
+
+<div id="building_zone_{color}">
+    <div class="boardheader" style="display: block" style="color: #{COLOR}">{COLOR}</div>
 </div>
 
 <!-- BEGIN player -->
     <div class="playertable whiteblock playertable_{DIR}">
         <div class="playertablename" style="color:#{COLOR}">
-            {NAME}
+            {PLAYER_NAME}
         </div>
         <div class="playertable_card" id="playertablecard_{PLAYER_ID}">
         </div>
@@ -108,8 +80,10 @@
 
 <script type="text/javascript">
 
-var jstpl_buildings = '<div class="buildings" id="buildings_" style="background-position:-${x}px -${y}px">\
-                        </div>';
+var jstpl_bidslot = '<div id="bid_slot_A{AUC}_B{BID}"> </div>'
+
+var jstpl_buildings =  '<div id="building_tile_{BUILD_KEY}" class="building_tile build_tile_{BUILD_ID}"> </div>'
+
 // Javascript HTML templates
 var jstpl_ipiece = '<div class="${type} ${type}_${color} inlineblock" aria-label="${name}" title="${name}"></div>';
 

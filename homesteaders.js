@@ -33,11 +33,8 @@ function (dojo, declare) {
             // auction tile zones
             this.auction_zone_height = 175;
             this.auction_zone_width = 105;
-            // indexed by location [discard-0, Auctions-(1,2,3)]
-            this.auction_tile_stock = [];              
-            for (var i = 0; i <= 3; i++){ 
-                this.auction_tile_stock[i] = new ebg.stock();
-            }
+            
+            
             // auction bid zones
             this.bid_zone_height = 36;
             this.bid_zone_width = 36;
@@ -47,12 +44,21 @@ function (dojo, declare) {
                 this.bid_zone[i] = new ebg.zone();
             }
             // storage for buildings
-            
+            // indexed by location [discard-0, Auctions-(1,2,3)]
+            this.auction_tile_stock = [];              
+            for (var auc = 1; auc <= 3; auc++){ 
+                this.auction_tile_stock[i] = new ebg.stock();
+                for(var bid in bid_vals){
+                    this.bid_zone[auc][bid] = new ebg.zone();
+                }
+            }
+
             //player zones
             this.building_zone = [];
-            this.main_building_zone  = new ebg.stock();
-            this.token_zone = [];
-              
+            this.player_token_order = [];
+            this.token_stock = [];
+            this.player_colors = [];
+            
             this.players_railroad_advancements = [];   // indexed by player id
 
             this.tile_width = 144;
@@ -67,9 +73,6 @@ function (dojo, declare) {
             this.lastHighlightedBuildingTile = "";
             this.numberOfBidsSelected = 0;
             this.lastHighlightedBidLocation = "";
-            this.possibleBids = [];
-            this.winningBids = [];
-            this.workers_count = 0;
             this.workers = [];
         },
         
@@ -90,16 +93,34 @@ function (dojo, declare) {
         {
             console.log( "Starting game setup" );
             
+            this.token_stock[-1] = new ebg.stock();
+            var limbo = dojo
+            this.token_stock[-1].create ( this, $('limbo') , 30, 30 );
+            this.token_stock[-1].image_items_per_row = 10;
+
             this.playerCount = 0;
             // Setting up player boards
             for( var player_id in gamedatas.players )
             {
                 var player = gamedatas.players[player_id];
-                this.token_stock[player_id] = ebg.stock();
-                this.token_stock[player_id].create ( this, 'player_zone_' + player.color_name , 48, 48 );
+                
+                if (player.color_name === 'blue'){
+                    this.player_token_order[player_id] = 0;
+                } else if (player.color_name === 'green'){
+                    this.player_token_order[player_id] = 1;
+                } else if (player.color_name === 'yellow'){
+                    this.player_token_order[player_id] = 7;
+                } else if (player.color_name === 'red'){
+                    this.player_token_order[player_id] = 6;
+                }
+                this.token_stock[player_id] = new ebg.stock();
+                this.token_stock[player_id].create ( this, $('player_zone_' + player.color_name) , 48, 48 );
                 this.token_stock[player_id].image_items_per_row = 5;
-                this.building_stock[player_id] = ebg.stock();
-                this.building_stock[player_id].create (this, 'player_zone_'+ player.color_name, this.tileWidth, this.tileHeight); 
+                
+                this.token_stock[-1] = this.auction_tile_stock[auction['location']].addItemType(this.player_token_order[player_id], 1, g_gamethemeurl+'img/30_30_tokens.png', this.player_token_order[player_id]);
+                
+                this.building_stock[player_id] = new ebg.stock();
+                this.building_stock[player_id].create (this, $('player_zone_'+ player.color_name), this.tileWidth, this.tileHeight); 
                 this.building_stock[player_id].image_items_per_row = 9;
                 
                 if (gamedatas.firstPlayer == player_id){
@@ -110,29 +131,32 @@ function (dojo, declare) {
 
             // Auctions: 
             
-            for (var auc =0; i < auctionCount; i++){
+            for (var auc =1; i <= auctionCount; i++){
                 // tiles
-                this.auction_tile_stock[auc].create( this, "auction"+auc+"_tile_zone", this.tile_width, this.tile_height);
+                this.auction_tile_stock[auc].create( this,$("auction"+auc+"_tile_zone"), this.tile_width, this.tile_height);
                 this.auction_tile_stock[auc].image_items_per_row = 10;
                 // bids:
                 this.bid_zone[auc] = [];
                 for (var bid in this.bid_vals){
-                    this.bid_zone[auc][bid].create( this, "bid_slot_A"+auc+"_B"+bid, bid_zone_width, bid_zone_height)
+                    var bidId = this.format_block( 'jstpl_bidslot', {AUC: auc, BID: bid} );
+                    dojo.place( bidId , 'board' );
+                    this.bid_zone[auc][bid].create( this, $(bidId), bid_zone_width, bid_zone_height)
                     this.bid_zone[auc][bid].setPattern( 'grid' );
                 }
             }
             
-            this.limbo_zone.create ( this, 'limbo', 8, 12);
+            this.limbo_zone.create ( this, $('limbo'), 8, 12);
             this.limbo_zone.setPattern ('grid');
             
             // TODO: Set up your game interface here, according to "gamedatas"
-            this.main_building_zone.create( this, 'building_zone' + player.color_name , this.tileWidth, this.tileHeight );
-            this.main_building_zone.image_items_per_row = 9;
-            for (var building in gamedatas.buildings){
-                if (building['location'] == BUILDING_LOC_PLAYER){
-                    this.building_stockbuilding['player_id'].addItemType( building['building_key'], building['building_id'], g_gamethemeurl+'img/buildingTiles_144x196.png', building['building_id'] );
-                } else if (building['location'] == BUILDING_LOC_OFFER) {
-                    this.main_building_zone.addItemType( building['building_key'], building['building_id'], g_gamethemeurl+'img/buildingTiles_144x196.png', building['building_id'] );
+            this.building_zone[-1].create( this, $('building_zone' + player.color_name) , this.tileWidth, this.tileHeight );
+            this.building_zone[-1].image_items_per_row = 9;
+            for (var building_key in gamedatas.buildings){
+                var building = gamedatas.building[building_key];
+                if (building.location == BUILDING_LOC_PLAYER){
+                    this.building_zone[building.player_id].addItemType( building.building_key, building.building_id, g_gamethemeurl+'img/buildingTiles_144x196.png', building.building_id );
+                } else if (building.location == BUILDING_LOC_OFFER) {
+                    this.building_zone[-1].addItemType( building.building_key, building.building_id, g_gamethemeurl+'img/buildingTiles_144x196.png', building.building_id );
                 }
             }
             for(var auction in gamedatas.auction){

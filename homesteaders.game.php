@@ -19,7 +19,7 @@
 
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 require_once('modules/constants.inc.php');
-require_once('modules/homesteadersLog.class.php')
+require_once('modules/homesteadersLog.class.php');
 
 class homesteaders extends Table
 {
@@ -171,7 +171,7 @@ class homesteaders extends Table
         $sql = "SELECT `worker_key`, `player_id`, `building_key`, `building_slot`, `selected` FROM `workers`";
         $result['workers'] = self::getCollectionFromDb( $sql );
 
-        $sql = "SELECT `player_id`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade_tokens`, `vp_tokens` FROM `resources` WHERE player_id = '".$current_player_id."'";
+        $sql = "SELECT `player_id`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '".$current_player_id."'";
         $result['player_resources'] = self::getObjectFromDb( $sql );
 
         $sql = "SELECT `player_id`, `workers`, `rail_tiles`, `bid_loc`, `rail_adv` FROM `resources` ";
@@ -828,7 +828,7 @@ class homesteaders extends Table
         $active_player = $this->getActivePlayerId();
         if ($selected_building == 0){
             throw new BgaUserException( self::_("You Must select building(s) to build") );
-    
+        }
         $success = $this->buyBuilding($active_player, $selected_building);
         if ($success) {
             $this->gamestate->nextState( 'build' );
@@ -838,8 +838,8 @@ class homesteaders extends Table
     public function playerSelectWorker($worker_key) {
         $sql = "SELECT `selected` FROM `workers` WHERE `worker_key`='".$worker_key."'";
         $selected = self::getUniqueValueFromDB( $sql );
-        $toggleSelect = (!$selected &1); // toggle 
-        $sql = "UPDATE `workers` SET `selected`='"$toggleSelect."' WHERE `worker_key`='".$worker_key."'";
+        $selected = (!$selected &1); 
+        $sql = "UPDATE `workers` SET `selected`='".$selected."' WHERE `worker_key`='".$worker_key."'";
         self::DBQuery( $sql);
     }
 

@@ -35,7 +35,7 @@ class homesteadersLog extends APP_GameClass
         $this->game->initStat( 'player', 'outbids', 0, $player_id );
         $this->game->initStat( 'player', 'loans', 0, $player_id );
     }
-
+  }
     /*
    * gameEndStats: compute end-of-game statistics
    */
@@ -150,7 +150,7 @@ class homesteadersLog extends APP_GameClass
 
   public function takeLoan($player_id) 
   {
-    $this->insert($player_id, 0, 'loan')
+    $this->insert($player_id, 0, 'loan');
   }
 
 
