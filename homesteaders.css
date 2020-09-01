@@ -22,9 +22,10 @@
 div#board {
    background-image: url('img/auctionBoard.jpg');
    position: relative;
-	width: 520px;
-	height: 384px;
-	background-size: 520px auto;
+	width: 1000px;
+	height: auto;
+   background-size: 1000px auto;
+   background-repeat: no-repeat;
    margin: auto;
 }
 
@@ -248,21 +249,20 @@ div#bid_slot_A3_B21{
    box-sizing: content-box;
  }
 
- .auction_tiles {
-   height: 175px;
-   width:  105px;
- }
  #auction1_tile_zone {
-    top: 18.23%;
-    left: 13.46%;
+   position: relative;
+   top: 18.23%;
+   left: 13.46%;
  }
  #auction2_tile_zone {
-    top: 18.23%;
-    left: 43.27%;
+   position: relative;
+   top: -100%;
+   left: 13.46%;
 }
  #auction3_tile_zone {
-    top: 18.23%;
-    left: 73.08%;
+   position: relative;
+   top: -100%;
+   left: 13.46%;
 }
 
 .color_yellow {
@@ -302,6 +302,7 @@ div#bid_slot_A3_B21{
    height: 196px;
    position: relative;
    background-image: url('img/auctionTiles_144x196.png');
+   background-repeat: no-repeat;
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
@@ -394,111 +395,119 @@ div#train_advancement_5{
    left: 335px;
 }
 
-#auction_tile_1 { /* Auction 1*/
+.auction_tile_1 { /* Auction 1*/
    background-position: 0px 0px;
 }
-#auction_tile_2 {
-   background-position: -144px -0px;
+.auction_tile_2 {
+   background-position: -100% -0px;
 }
-#auction_tile_3 {
-   background-position: -288px -0px;
+.auction_tile_3 {
+   background-position: -200% -0px;
 }
-#auction_tile_4 {
-   background-position: -432px -0px;
+.auction_tile_4 {
+   background-position: -300% -0px;
 }
-#auction_tile_5 {
-   background-position: -576px -0px;
+.auction_tile_5 {
+   background-position: -400% -0px;
 }
-#auction_tile_6 {
-   background-position: -720px -0px;
+.auction_tile_6 {
+   background-position: -500% -0px;
 }
-#auction_tile_7 {
-   background-position: -864px -0px;
+.auction_tile_7 {
+   background-position: -600% -0px;
 }
-#auction_tile_8 {
+.auction_tile_8 {
    background-position: -1008px -0px;
 }
-#auction_tile_9 {
+.auction_tile_9 {
    background-position: -1152px -0px;
 }
-#auction_tile_10 {
+.auction_tile_10 {
    background-position: -1296px -0px;
 }
-#auction_tile_11 {/* Auction 2*/
+.auction_tile_11 {/* Auction 2*/
    background-position: -0px -196px;
 }
-#auction_tile_12 {
+.auction_tile_12 {
    background-position: -144px -196px;
 }
-#auction_tile_13 {
+.auction_tile_13 {
    background-position: -288px -196px;
 }
-#auction_tile_14 {
+.auction_tile_14 {
    background-position: -432px -196px;
 }
-#auction_tile_15 {
+.auction_tile_15 {
    background-position: -576px -196px;
 }
-#auction_tile_16 {
+.auction_tile_16 {
    background-position: -720px -196px;
 }
-#auction_tile_17 {
+.auction_tile_17 {
    background-position: -864px -196px;
 }
-#auction_tile_18 {
+.auction_tile_18 {
    background-position: -1008px -196px;
 }
-#auction_tile_19 {
+.auction_tile_19 {
    background-position: -1152px -196px;
 }
-#auction_tile_20 {
+.auction_tile_20 {
    background-position: -1296px -196px;
 }
-#auction_tile_21 { /* Auction 3*/
+.auction_tile_21 { /* Auction 3*/
    background-position: -0px -392px;
 }
-#auction_tile_22 {
+.auction_tile_22 {
    background-position: -144px -392px;
 }
-#auction_tile_23 {
+.auction_tile_23 {
    background-position: -288px -392px;
 }
-#auction_tile_24 {
+.auction_tile_24 {
    background-position: -432px -392px;
 }
-#auction_tile_25 {
+.auction_tile_25 {
    background-position: -576px -392px;
 }
-#auction_tile_26 {
+.auction_tile_26 {
    background-position: -720px -392px;
 }
-#auction_tile_27 {
+.auction_tile_27 {
    background-position: -864px -392px;
 }
-#auction_tile_28 {
+.auction_tile_28 {
    background-position: -1008px -392px;
 }
-#auction_tile_29 {
+.auction_tile_29 {
    background-position: -1152px -392px;
 }
-#auction_tile_30 {
+.auction_tile_30 {
    background-position: -1296px -392px;
 }
 
 
 #building_zone_red {
+   display: block;
+   width: auto;
    border-color: red;
    border-radius: 6px;
 }
 #building_zone_yellow {
+   display: block;
+   width: auto;
    border-color: yellow;
    border-radius: 6px;
 }
 #building_zone_green {
+   display: block;
+   width: auto;
    border-color: green;
    border-radius: 6px;
 }
 #building_zone_blue {
+   display: block;
+   width: auto;
    border-color: blue;
    border-radius: 6px;
 }
@@ -511,6 +520,7 @@ div#train_advancement_5{
    height: 196px;
    position: relative;
    background-image: url('img/buildingTiles_144x196.png');
+   background-repeat: no-repeat;
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
@@ -620,6 +630,6 @@ div#train_advancement_5{
 .build_tile_35 { /* Rail Yard */
    background-position: -1008px -588px;
 }
-div#first_player_tile { /* First Player */
+.first_player_tile { /* First Player */
    background-position: -1152px -588px;
 }
