@@ -142,6 +142,7 @@
 var jstpl_bidslot='<div id="bid_slot_A{AUC}_B{BID}"></div>';
 
 var jstpl_buildings='<div id="building_tile_{BUILD_KEY}" class="building_tile build_tile_{BUILD_ID}"></div>';
+var jstpl_workerSlot='<div id="building_{key}_worker_zone_{slot}" class="slot_{slot}"> </div>';
 
 var jstpl_auction='<div id="auction_tile_{auc}" class="auction_tile"> </div>';
 

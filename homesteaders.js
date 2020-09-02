@@ -60,12 +60,12 @@ function (dojo, declare) {
             this.player_token_order = [];
             //player zones
             this.player_color = []; // indexed by player id
-            //this.player_token_stock = [];
+            this.player_token_stock = [];
             this.player_token_div = [];
-            this.player_token_zone = [];
 
-            //this.player_building_stock = [];
+            this.player_building_stock = [];
             this.player_building_div = [];
+            this.building_worker_stock = [];
 
             this.players_railroad_advancements = [];   // indexed by player id
 
@@ -128,13 +128,14 @@ function (dojo, declare) {
                 this.player_number[player_id] = this.playerCount;
                 this.player_color[player_id] = current_player_color;
                 this.player_token_div[player_id] = 'token_zone_' + this.player_color[player_id].toString();
-                this.player_token_zone[player_id] = new ebg.zone();
-                this.player_token_zone[player_id].create ( this, this.player_token_div[player_id] , 30, 30 );
-                
+                this.token_stock[player_id] = new ebg.stock();
+                this.token_stock[player_id].create ( this, this.player_token_div[player_id] , 30, 30 );
+                this.token_stock[player_id].addItemType( 1, 1, g_gamethemeurl+'img/30_30_meeple.png', this.player_token_order[player_id]);
+
                 this.player_building_div[player_id] = $('building_zone_'+ this.player_color[player_id].toString());
-                //this.player_building_stock[player_id] = new ebg.stock();
-                //this.player_building_stock[player_id].create (this, $('building_zone_'+ this.player_color[player_id].toString()), this.tile_width, this.tile_height); 
-                //this.player_building_stock[player_id].image_items_per_row = 9;
+                this.player_building_stock[player_id] = new ebg.stock();
+                this.player_building_stock[player_id].create (this, this.player_building_div[player_id], this.tile_width, this.tile_height); 
+                this.player_building_stock[player_id].image_items_per_row = 9;
                 
                 if (gamedatas.firstPlayer == player_id){
                     dojo.removeClass("first_player_tile_"+player_id, "noshow");
@@ -144,15 +145,15 @@ function (dojo, declare) {
 
             // Auctions: 
             this.createAuctionStocks(gamedatas.auctions);
-            this.showCurrentAuctions(gamedatas.auctions, gamedatas.round_number);
+            //this.showCurrentAuctions(gamedatas.auctions, gamedatas.round_number);
+
+            this.createBuildingStocks(gamedatas.buildings);
 
             this.createWorkers(gamedatas.workers);
             var auctionCount = 2;
             if (gamedatas.auctions.len > 20) {auctionCount = 3;}
             this.setupBidZones (auctionCount);
             
-            this.createBuildingStocks(gamedatas.buildings)
- 
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
@@ -164,108 +165,31 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
 
         createAuctionStocks: function ( auctions ) {
-            for (var i=1; i <=3; i++){
+            for (var i=1; i <=Math.floor(auctions.length/10); i++){
                 this.auction_div[i] = $("auction"+i.toString()+"_tile_zone");
-                this.auction_zones[i] = new ebg.zone();
-                this.auction_zones[i].create( this, this.auction_div[i], this.tile_width, this.tile_height);
-                this.auction_zones[i].setPattern( 'diagonal' );
+                this.auction_stock[i].create( this, $("auction1_tile_zone"), this.tile_width, this.tile_height);
+                this.auction_stock[i].image_items_per_row = 10;
             }
             
-            //this.auction_stock.create( this,$(this.auction_div[1]), this.tile_width, this.tile_height);
-            //this.auction_stock.image_items_per_row = 10;
-            //this.auction_stock.setSelectionMode(0);
-            
-            //for (var i = 0; i < auctions.length; i++){
-            //    this.auction_stock.addItemType( i, i, g_gamethemeurl+'img/auctionTiles_144x196.png', i);
-            //}
-            /*
-            this.auction_stock_1.create( this,$("auction1_tile_zone"), this.tile_width, this.tile_height);
-            this.auction_stock_1.image_items_per_row = 10;
-            this.auction_stock_2.create( this,$("auction2_tile_zone"), this.tile_width, this.tile_height);
-            this.auction_stock_2.image_items_per_row = 10;
-            if (auctions.length>20){   
-                this.auction_stock_3.create( this,$("auction3_tile_zone"), this.tile_width, this.tile_height);
-                this.auction_stock_3.image_items_per_row = 10;
-            }*/
-            /*for(var auction_id in auctions) {
-                var auction = auctions[auction_id];
-                if(auction.location ==1){
-                    if (auction.position == current_round) 
-                    //    this.auction_stock_1.addToStock ( auction.auction_id );
-                } else if (auction.location ==2){
-                    if (auction.position == current_round)
-                    //    this.auction_stock_2.addToStock ( auction.auction_id);
-                } else if (auction.location ==3){
-                    if (auction.position == current_round)
-                    //    this.auction_stock_3.addToStockWithId ( auction.auction_id);
-                }
-            }*/
+            for (var i = 0; i < auctions.length; i++){
+                var auc = Math.floor(i / 10)+1;
+                this.auction_stock[auc].addItemType( auction.auction_id, i, g_gamethemeurl+'img/auctionTiles_144x196.png', auction.auction_id-1);
+                var auction = auctions[i];
+                if (auction.position == current_round) 
+                    this.auction_stock[auc].addToStockById ( auction.auction_id );
+            }
         },
 
         showCurrentAuctions: function (current_round, auctions){
             for(var auction_id in auctions){
-                var auction = auctions[auction_id];
-                if ((auction.location != 0) && (auction.location==1 || auction.position == current_round))
-                {
-                    dojo.place( this.format_block( 'jstpl_auction', {auc : auction_id} ),
-                                this.auction_div[auction_id] );
-                    this.auction_zones[auction.location].placeInZone('auction_tile_'+auction_id, auction.pos);
-                }
-            //    if (auction.position == current_round){
-            //        this.auction_stock.addToStockWithId(auction_id, auction_id, this.auction_div[auction.location]);
-                    /*if (auction.location ==1){
-                        this.auction_stock_1.addToStock ( auction.auction_id, this.auction_1_div );
-                    } else if (auction.location ==2){
-                        this.auction_stock_2.addToStock ( auction.auction_id, this.auction_2_div );
-                    } else if (auction.location ==3){
-                        this.auction_stock_3.addToStock ( auction.auction_id, this.auction_3_div );
-                    }*/
-            //    }
-            }
-        },
-
-        clearAuction: function(){
-            //this.auction_stock.removeAll();
-            /*if(auction_no==1){
-                this.auction_stock_1.removeAll();
-            } else if (auction_no == 2){
-                this.auction_stock_2.removeAll();
-            } else if (auction_no == 3){
-                this.auction_stock_3.removeAll();
-            } else{
-                this.auction_stock_1.removeAll();
-                this.auction_stock_2.removeAll();
-                this.auction_stock_3.removeAll();
-            }*/
-        },
-
-        createWorkers: function(players, workers) {
-            for (player_id in players){
-                this.token_stock.addItemType( player_id, 1, g_gamethemeurl+'img/30_30_meeple.png', this.player_token_order[player_id])
-            }
-            for (var worker_key in workers){
-                var worker = workers[worker_key];
-                if (worker.building_key == 0) {
-                    this.addToStockWithId( worker.player_id, worker_key, this.player_token_div[worker.player_id]);
-                } else {
-                    this.addToStockWithId( worker.player_id, worker_key, $(this.main_building_stock.getItemDivId(worker.building_key)));
+                if (auctions[auction_id].position == current_round && auctions[auction_id].location !=0){
+                    this.auction_stock[Math.floor(auction_id / 10)].addToStock ( auction_id ); 
                 }
             }
         },
 
-        /*updateWorkers: function(workers) {
-              
-        },*/
-        
-        setupBidZones: function (auctionCount) {
-            /*
-            for (var bid =0; bid < this.bid_vals.length; bid ++){
-                bid_zonesA1_B[bid].create(this,$('bid_slot_A1_B'+bid.toString()), 30, 30);
-                bid_zonesA1_B[bid].create(this,$('bid_slot_A2_B'+bid.toString()), 30, 30);
-                if (auctionCount == 3){
-                    bid_zonesA3_B[bid].create(this,$('bid_slot_A3_B'+bid.toString()), 30, 30);
-                }
-            }*/
+        clearAuction: function(auction_no){
+            this.auction_stock[auction_no].removeAll();
         },
 
         createBuildingStocks: function(buildings){
@@ -278,12 +202,52 @@ function (dojo, declare) {
             for (var building_key in buildings){
                 var building = buildings[building_key];
                 if (building.location == 2){
-                    this.main_building_stock.addToStockWithId( building.building_id-1, building.building_key, this.player_building_div[building.player_id]);
-                //    this.player_building_stock[building.player_id].addItemType( building.building_key , building.building_id, g_gamethemeurl+'img/buildingTiles_144x196.png', building.building_id -1 );
-                //    this.player_building_stock[building.player_id].addToStock ( building.building_key );
+                    this.player_building_stock[building.player_id].addItemType( building.building_id-1, building.building_id, g_gamethemeurl+'img/buildingTiles_144x196.png', building.building_id -1 );
+                    this.player_building_stock[building.player_id].addToStockWithId (building.building_id-1, building.building_key );
+                    this.addBuildingWorkerSlots(building);
                 } else if (building.location == 1) {
                     this.main_building_stock.addToStockWithId ( building.building_id, building.building_key);
                 } 
+            }
+        },
+
+        addBuildingWorkerSlots: function(building){
+            var divId = this.player_building_stock[building.player_id].getItemDivId(building.building_id-1);
+            this.building_worker_stock[building.building_key] = [];
+            if (building.worker_slot>0){
+                dojo.place( this.format_block( 'jstpl_workerSlot', {key: building_key, slot: "1"}), divId, 30, 30 );
+                this.building_worker_stock[building_key][1] = new ebg.stock();
+                this.building_worker_stock[building_key][1].create( this, $('building_'+building_key+'_worker_zone_1'));
+            } else if (building.worker_slot == 2){
+                dojo.place( this.format_block( 'jstpl_workerSlot', {key: building_key, slot: "2"}), divId, 30, 30 );
+                this.building_worker_stock[building_key][2] = new ebg.stock();
+                this.building_worker_stock[building_key][2].create(this, $('building_'+building_key+'_worker_zone_2'));
+            }
+        },
+
+        createWorkers: function(workers) {
+            for (var worker_key in workers){
+                var worker = workers[worker_key];
+                if (worker.building_key == 0) {
+                    this.token_stock[worker.player_id].addToStockWithId( 1, worker_key);
+                } else {
+                    this.building_worker_stock[worker.building_key][worker.building_slot].addItemType(1, 1, g_gamethemeurl+'img/30_30_meeple.png', this.player_token_order[worker.player_id]);
+                    this.building_worker_stock[worker.building_key][worker.building_slot].addToStockWithId( 1, worker_key);
+                }
+            }
+        },
+
+        /*updateWorkers: function(workers) {
+              
+        },*/
+        
+        setupBidZones: function (auctionCount) {
+            for (var bid =0; bid < this.bid_vals.length; bid ++){
+                this.bid_zonesA1_B[bid].create(this,$('bid_slot_A1_B'+this.bid_vals[bid]), 30, 30);
+                this.bid_zonesA2_B[bid].create(this,$('bid_slot_A2_B'+this.bid_vals[bid]), 30, 30);
+                if (auctionCount == 3){
+                    this.bid_zonesA3_B[bid].create(this,$('bid_slot_A3_B'+this.bid_vals[bid]), 30, 30);
+                }
             }
         },
 

@@ -1014,13 +1014,13 @@ class homesteaders extends Table
 
     function stPlaceWorkers()
     {
-        //$this->gamestate->setAllPlayersMultiactive( );
+        $this->gamestate->setAllPlayersMultiactive( );
         // for each player have them place workers (then press done)
         // TODO: figure out this multi-active thing.
-        $sql = "SELECT `worker_key`, `player_id`, `building_key`, `building_slot` `selected` FROM `workers` ";
-        $workers = self::getCollectionFromDB( $sql );
+        //$sql = "SELECT `worker_key`, `player_id`, `building_key`, `building_slot` `selected` FROM `workers` ";
+        //$workers = self::getCollectionFromDB( $sql );
         // for testing purposes just assign the worker to homestead slot 1.
-        foreach($workers as $worker_key => $worker){
+        /*foreach($workers as $worker_key => $worker){
             $player_id = $worker['player_id'];
             $sql = "SELECT `building_key`, `building_id`, `worker_slot`, `player_id` FROM `buildings` WHERE `player_id` = '".$player_id."'";
             $player_buildings = self::getCollectionFromDB( $sql );
@@ -1031,7 +1031,7 @@ class homesteaders extends Table
                 break;
                 }
             }
-        }
+        }*/
     }
 
     function stCollectIncome()
