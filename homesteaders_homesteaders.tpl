@@ -13,10 +13,41 @@
 
 <div id="board" class="shadow">
 
-    <div id="auction1_tile_zone" class="auction_tiles"> </div>
-    <div id="auction2_tile_zone" class="auction_tiles"> </div>
-    <div id="auction3_tile_zone" class="auction_tiles"> </div>
+    <div id="bid_slot_A1_B9" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B12" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B16" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B21" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B7" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B6" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B5" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B4" class="bid_slot"> </div>
+    <div id="bid_slot_A1_B3" class="bid_slot"> </div>
+    <div id="auction1_tile_zone" class="auction_tiles_zone"> </div>
     
+    <div id="bid_slot_A2_B9" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B12" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B16" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B21" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B7" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B6" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B5" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B4" class="bid_slot"> </div>
+    <div id="bid_slot_A2_B3" class="bid_slot"> </div>
+    <div id="auction2_tile_zone" class="auction_tiles_zone"> </div>
+
+    <div id="bid_slot_A3_B9" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B12" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B16" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B21" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B7" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B6" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B5" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B4" class="bid_slot"> </div>
+    <div id="bid_slot_A3_B3" class="bid_slot"> </div>
+    <div id="auction3_tile_zone" class="auction_tiles_zone"> </div>
+
+    
+    <div id="train_advancement_0" class="train_advance"> </div>
     <div id="train_advancement_1" class="train_advance"> </div>
     <div id="train_advancement_2" class="train_advance"> </div>
     <div id="train_advancement_3" class="train_advance"> </div>
@@ -112,7 +143,7 @@ var jstpl_bidslot='<div id="bid_slot_A{AUC}_B{BID}"></div>';
 
 var jstpl_buildings='<div id="building_tile_{BUILD_KEY}" class="building_tile build_tile_{BUILD_ID}"></div>';
 
-var jstpl_auction='<div id="auction_{AUC_KEY}" class="auction_tile auction_tile_{AUC_ID}"> </div>';
+var jstpl_auction='<div id="auction_tile_{auc}" class="auction_tile"> </div>';
 
 var jstpl_ipiece='<div class="${type} ${type}_${color} inlineblock" aria-label="${name}" title="${name}"></div>';
 
