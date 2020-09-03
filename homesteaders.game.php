@@ -741,7 +741,7 @@ class homesteaders extends Table
 
     /*
         Each time a player is doing some game action, one of the methods below is called.
-        (note: each method below must match an input method in homesteaderstb.action.php)
+        (note: each method below must match an input method in homesteaders.action.php)
     */
 
     public function playerTakeLoan()
@@ -762,18 +762,40 @@ class homesteaders extends Table
         ) );
     }
 
-    public function playerTrade( $resource1, $resource2 )
+    public function playerTrade( $async= true, $trade )
     {
         self::checkAction( 'trade' );
         
-        $player_id = $this->getCurrentPlayerId();
+        $player_id = 0;
+        $player_name = "";
+        if ($async) {
+            $player_id = self::getCurrentPlayerId();
+            $player_name = self::getCurrentPlayerName();
+        } else {
+            $player_id = self::getActivePlayerId();
+            $player_name = self::getActivePlayerName();
+        }
+
+        switch ($trade){
+            case 1:
+                
+        }
 
         self::notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
             'player_id' => $player_id,
-            'player_name' => self::getActivePlayerName(),
-            'trade1' => $resource1,
-            'trade2' => $resource2
+            'player_name' => $player_name,
+            'trade1' => $resource_to_sell_name,
+            'trade2' => $resource_to_buy_name
         ) );
+    }
+
+
+    public function playerHireWorker($async = true){
+        self::checkAction( 'hireWorker' );
+
+        $player_id = self::getCurrentPlayerId();
+        if ($async)
+
     }
 
     public function playerSelectWorkerDestination($building_key, $building_slot) 
@@ -944,18 +966,16 @@ class homesteaders extends Table
     }    
     */
 
-    function argActivePlayerWorkers() {
-        $current_player_id = $this->getCurrentActiveUser();
-        $sql = "SELECT `worker_key`, `player_id`, `building_key`, `building_slot` FROM `workers`";
-        $workers = self::getCollectionFromDB( $sql );
-        $sql = "SELECT `building_key`, `building_id`, `player_id`, `worker_slot` FROM `buildings`";
-        $buildings = self::getCollectionFromDB( $sql );
-        return array('workers'=>$workers,
-              'buildings'=>$buildings);
+    function argPlaceWorkers() 
+    {
+        $current_player_id = $this->getCurrentPlayerId();
+        $sql = "SELECT `trade` FROM `resources` WHERE `player_id` = '".$current_player_id."'";
+        $trade = self::getUniqueValueFromDB( $sql);
+        return array('trade'=>$trade);
     }
 
     function argValidBids() {
-        $current_player_id = $this->getCurrentActiveUser();
+        $current_player_id = $this->getCurrentPlayerId();
         $valid_bids = self::getValidBids($current_player_id);
         return ($valid_bids);
     }

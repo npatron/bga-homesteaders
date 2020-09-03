@@ -55,6 +55,25 @@
     <div id="train_advancement_5" class="train_advance"> </div>
 
 </div>
+<div id="trade_board" >
+    <div id="trade_buy_wood" class="trade_option"> </div>
+    <div id="trade_buy_food" class="trade_option"> </div>
+    <div id="trade_buy_steel" class="trade_option"> </div>
+    <div id="trade_buy_gold" class="trade_option"> </div>
+    <div id="trade_buy_copper" class="trade_option"> </div>
+    <div id="trade_buy_livestock" class="trade_option"> </div>
+
+    <div id="trade_sell_wood" class="trade_option"> </div>
+    <div id="trade_sell_food" class="trade_option"> </div>
+    <div id="trade_sell_steel" class="trade_option"> </div>
+    <div id="trade_sell_gold" class="trade_option"> </div>
+    <div id="trade_sell_copper" class="trade_option"> </div>
+    <div id="trade_sell_livestock" class="trade_option"> </div>
+
+    <div id="trade_market_wood_food" class="trade_option"> </div>
+    <div id="trade_market_food_steel" class="trade_option"> </div>
+</div>
+
 <!-- token limbo -->
 <div id="limbo" style="display: block"> 
 </div>
@@ -68,37 +87,39 @@
 <!--
     Player Buildings section
 -->
-<div id="player_zone_yellow" class="noshow" style="margin-top:4px;">
+<div id="player_zone_yellow" class="noshow whiteblock res_yellow" style="margin-top:4px;">
+    <div id="token_zone_yellow" class="token_zone"> </div>
     <div id="building_zone_yellow">
         <div class="boardheader" style="color: yellow;">yellow</div>
     </div>
-    <div id="token_zone_yellow" class="token_zone"> </div>
 </div>
 
-<div id="player_zone_red" class="noshow" style="margin-top:4px;">
+<div id="player_zone_red" class="noshow whiteblock res_red" style="margin-top:4px;">
+    <div id="token_zone_red" class="token_zone"> </div>
     <div id="building_zone_red">
         <div class="boardheader" style="color: red;">red</div>
     </div>
-    <div id="token_zone_red" class="token_zone"> </div>
 </div>
 
-<div id="player_zone_green" class="noshow" style="margin-top:4px;">
+<div id="player_zone_green" class="noshow whiteblock res_green" style="margin-top:4px;">
+    <div id="token_zone_green" class="token_zone"> </div>
     <div id="building_zone_green" class="building_zone">
         <div class="boardheader" style="color: green;">green</div>
     </div>
-    <div id="token_zone_green" class="token_zone"> </div>
 </div>
 
-<div id="player_zone_blue" class="noshow" style="margin-top:4px;">
+<div id="player_zone_blue" class="noshow whiteblock res_blue" style="margin-top:4px;">
+    <div id="token_zone_blue" class="token_zone"> </div>
     <div id="building_zone_blue">
         <div class="boardheader" style="color: blue;">blue</div>
     </div>
-    <div id="token_zone_blue" class="token_zone"> </div>
 </div>
 
 
+
+
 <!-- BEGIN player -->
-<div class="playertable whiteblock playertable_{PLAYER_ID}">
+<!--<div class="playertable whiteblock playertable_{PLAYER_ID}">
     <div class="playertablename" style="color:#{COLOR}">
         {PLAYER_NAME}
     </div>
@@ -133,7 +154,7 @@
     </div>
     <div id="first_player_tile_{player_ID}"class="first_player_tile"> 
     </div>
-</div>
+</div> -->
 <!-- END player -->
 
 <script type="text/javascript">

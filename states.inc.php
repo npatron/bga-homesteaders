@@ -62,6 +62,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must allocate workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
+        "args" => "argPlaceWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "trade", "takeLoan". "done" ),
         "transitions" => array( "done" => STATE_INCOME )
     ),

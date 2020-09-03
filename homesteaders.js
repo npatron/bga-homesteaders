@@ -29,8 +29,9 @@ function (dojo, declare) {
             console.log('homesteaders constructor');
 
             // zone control
-            this.token_stock = new ebg.stock();
-            // this.worker_stock = new ebg.stock();
+            this.token_stock = [];
+            this.token_stock[-1] = new ebg.stock();
+            this.token_div = [];
             // auction tile zones
             this.tile_height = 175;
             this.tile_width = 105;
@@ -49,7 +50,7 @@ function (dojo, declare) {
                 this.bid_zonesA3_B[i] = new ebg.zone();
             }
             
-            this.auction_stock = new ebg.stock();
+            this.auction_stock = [];
             this.auction_div = [];
             this.auction_zones = [];
 
@@ -60,8 +61,6 @@ function (dojo, declare) {
             this.player_token_order = [];
             //player zones
             this.player_color = []; // indexed by player id
-            this.player_token_stock = [];
-            this.player_token_div = [];
 
             this.player_building_stock = [];
             this.player_building_div = [];
@@ -101,8 +100,10 @@ function (dojo, declare) {
         {
             console.log( "Starting game setup" );
 
-            this.token_stock.create (this, $('limbo') , 30, 30 );
-            // this.worker_stock.create (this, $('limbo') , 30, 30 );
+            this.token_div[-1] = $('limbo');
+            this.token_stock[-1].create (this, this.token_div[-1] , 50, 50 );
+            this.token_stock[-1].image_items_per_row = 5;
+            this.token_stock[-1].setSelectionMode(0);
 
             this.playerCount = 0;
             // Setting up player boards
@@ -114,29 +115,34 @@ function (dojo, declare) {
                 var current_player_color = player.color_name;
                 dojo.removeClass("player_zone_"+current_player_color.toString(), "noshow");
                 if (current_player_color === 'blue'){
-                    this.player_token_order[player_id] = 0;
+                    this.player_token_order[player_id] = 13;
                 } else if (current_player_color === 'green'){
-                    this.player_token_order[player_id] = 1;
+                    this.player_token_order[player_id] = 12;
                 } else if (current_player_color === 'yellow'){
-                    this.player_token_order[player_id] = 7;
+                    this.player_token_order[player_id] = 10;
                 } else if (current_player_color === 'red'){
-                    this.player_token_order[player_id] = 6;
+                    this.player_token_order[player_id] = 11;
                 }
-                this.token_stock.addItemType(player_id, current_player_color , g_gamethemeurl+'img/30_30_tokens.png', this.player_token_order[player_id]);
-                this.token_stock.addToStock(player_id);
+                this.token_stock[-1].addItemType(player_id, current_player_color , g_gamethemeurl+'img/tokens_50x50.png', this.player_token_order[player_id]);
+                this.token_stock[-1].addToStock(player_id);
                 
                 this.player_number[player_id] = this.playerCount;
                 this.player_color[player_id] = current_player_color;
-                this.player_token_div[player_id] = 'token_zone_' + this.player_color[player_id].toString();
+                this.token_div[player_id] = $('token_zone_' + this.player_color[player_id].toString());
                 this.token_stock[player_id] = new ebg.stock();
-                this.token_stock[player_id].create ( this, this.player_token_div[player_id] , 30, 30 );
-                this.token_stock[player_id].addItemType( 1, 1, g_gamethemeurl+'img/30_30_meeple.png', this.player_token_order[player_id]);
+                this.token_stock[player_id].create ( this, this.token_div[player_id] , 50, 50 );
+                this.token_stock[player_id].image_items_per_row = 5;
+                this.token_stock[player_id].addItemType( 1, 1, g_gamethemeurl+'img/tokens_50x50.png', 8);
+                this.token_stock[player_id].setSelectionMode(0);
+                
 
                 this.player_building_div[player_id] = $('building_zone_'+ this.player_color[player_id].toString());
                 this.player_building_stock[player_id] = new ebg.stock();
                 this.player_building_stock[player_id].create (this, this.player_building_div[player_id], this.tile_width, this.tile_height); 
                 this.player_building_stock[player_id].image_items_per_row = 9;
                 
+                // TODO: add railroad advancement.
+                // TODO: add bid_locations.
                 if (gamedatas.firstPlayer == player_id){
                     dojo.removeClass("first_player_tile_"+player_id, "noshow");
                 }
@@ -144,12 +150,10 @@ function (dojo, declare) {
             }
 
             // Auctions: 
-            this.createAuctionStocks(gamedatas.auctions);
+            this.setupAuctionStocks(gamedatas.auctions);
             //this.showCurrentAuctions(gamedatas.auctions, gamedatas.round_number);
-
-            this.createBuildingStocks(gamedatas.buildings);
-
-            this.createWorkers(gamedatas.workers);
+            this.setupBuildingStocks(gamedatas.buildings);
+            this.setupWorkers(gamedatas.workers);
             var auctionCount = 2;
             if (gamedatas.auctions.len > 20) {auctionCount = 3;}
             this.setupBidZones (auctionCount);
@@ -161,38 +165,25 @@ function (dojo, declare) {
         },
 
         ///////////////////////////////////////////////////
-        //// Utility Methods
+        //// Setup Methods
         ///////////////////////////////////////////////////
 
-        createAuctionStocks: function ( auctions ) {
+        setupAuctionStocks: function ( auctions, current_round ) {
             for (var i=1; i <=Math.floor(auctions.length/10); i++){
                 this.auction_div[i] = $("auction"+i.toString()+"_tile_zone");
-                this.auction_stock[i].create( this, $("auction1_tile_zone"), this.tile_width, this.tile_height);
+                this.auction_stock[i] = new ebg.stock();
+                this.auction_stock[i].create( this, this.auction_div[i], this.tile_width, this.tile_height);
                 this.auction_stock[i].image_items_per_row = 10;
             }
-            
             for (var i = 0; i < auctions.length; i++){
                 var auc = Math.floor(i / 10)+1;
-                this.auction_stock[auc].addItemType( auction.auction_id, i, g_gamethemeurl+'img/auctionTiles_144x196.png', auction.auction_id-1);
-                var auction = auctions[i];
-                if (auction.position == current_round) 
-                    this.auction_stock[auc].addToStockById ( auction.auction_id );
+                this.auction_stock[auc].addItemType( i + 1, i, g_gamethemeurl+'img/auctionTiles_144x196.png', i);
+                if (auctions[i].position == current_round) 
+                    this.auction_stock[auc].addToStockById ( i + 1 );
             }
         },
 
-        showCurrentAuctions: function (current_round, auctions){
-            for(var auction_id in auctions){
-                if (auctions[auction_id].position == current_round && auctions[auction_id].location !=0){
-                    this.auction_stock[Math.floor(auction_id / 10)].addToStock ( auction_id ); 
-                }
-            }
-        },
-
-        clearAuction: function(auction_no){
-            this.auction_stock[auction_no].removeAll();
-        },
-
-        createBuildingStocks: function(buildings){
+        setupBuildingStocks: function(buildings){
             this.main_building_stock.create( this, $('main_building_zone') , this.tile_width, this.tile_height );
             this.main_building_stock.image_items_per_row = 9;
             this.main_building_stock.setOverlap( 80, 20 );
@@ -202,8 +193,8 @@ function (dojo, declare) {
             for (var building_key in buildings){
                 var building = buildings[building_key];
                 if (building.location == 2){
-                    this.player_building_stock[building.player_id].addItemType( building.building_id-1, building.building_id, g_gamethemeurl+'img/buildingTiles_144x196.png', building.building_id -1 );
-                    this.player_building_stock[building.player_id].addToStockWithId (building.building_id-1, building.building_key );
+                    this.player_building_stock[building.player_id].addItemType( building.building_id, building.building_id , g_gamethemeurl+'img/buildingTiles_144x196.png', building.building_id -1 );
+                    this.player_building_stock[building.player_id].addToStockWithId (building.building_id, building.building_key );
                     this.addBuildingWorkerSlots(building);
                 } else if (building.location == 1) {
                     this.main_building_stock.addToStockWithId ( building.building_id, building.building_key);
@@ -211,29 +202,16 @@ function (dojo, declare) {
             }
         },
 
-        addBuildingWorkerSlots: function(building){
-            var divId = this.player_building_stock[building.player_id].getItemDivId(building.building_id-1);
-            this.building_worker_stock[building.building_key] = [];
-            if (building.worker_slot>0){
-                dojo.place( this.format_block( 'jstpl_workerSlot', {key: building_key, slot: "1"}), divId, 30, 30 );
-                this.building_worker_stock[building_key][1] = new ebg.stock();
-                this.building_worker_stock[building_key][1].create( this, $('building_'+building_key+'_worker_zone_1'));
-            } else if (building.worker_slot == 2){
-                dojo.place( this.format_block( 'jstpl_workerSlot', {key: building_key, slot: "2"}), divId, 30, 30 );
-                this.building_worker_stock[building_key][2] = new ebg.stock();
-                this.building_worker_stock[building_key][2].create(this, $('building_'+building_key+'_worker_zone_2'));
-            }
-        },
-
-        createWorkers: function(workers) {
+        setupWorkers: function(workers) {
             for (var worker_key in workers){
                 var worker = workers[worker_key];
-                if (worker.building_key == 0) {
-                    this.token_stock[worker.player_id].addToStockWithId( 1, worker_key);
-                } else {
-                    this.building_worker_stock[worker.building_key][worker.building_slot].addItemType(1, 1, g_gamethemeurl+'img/30_30_meeple.png', this.player_token_order[worker.player_id]);
-                    this.building_worker_stock[worker.building_key][worker.building_slot].addToStockWithId( 1, worker_key);
-                }
+                this.token_stock[worker.player_id].addToStockWithId( 1, worker_key);
+                var worker_div = $(this.token_stock[worker.player_id].getItemDivId(worker_key));
+                dojo.addClass(worker_div, "res_"+this.gamedatas.players[worker.player_id].color_name);
+                /* if (worker.building_key != 0) {
+                    dojo.place ()
+                } */
+                // add selected?
             }
         },
 
@@ -243,30 +221,13 @@ function (dojo, declare) {
         
         setupBidZones: function (auctionCount) {
             for (var bid =0; bid < this.bid_vals.length; bid ++){
-                this.bid_zonesA1_B[bid].create(this,$('bid_slot_A1_B'+this.bid_vals[bid]), 30, 30);
-                this.bid_zonesA2_B[bid].create(this,$('bid_slot_A2_B'+this.bid_vals[bid]), 30, 30);
+                this.bid_zonesA1_B[bid].create(this,$('bid_slot_A1_B'+this.bid_vals[bid]), 50, 50);
+                this.bid_zonesA2_B[bid].create(this,$('bid_slot_A2_B'+this.bid_vals[bid]), 50, 50);
                 if (auctionCount == 3){
-                    this.bid_zonesA3_B[bid].create(this,$('bid_slot_A3_B'+this.bid_vals[bid]), 30, 30);
+                    this.bid_zonesA3_B[bid].create(this,$('bid_slot_A3_B'+this.bid_vals[bid]), 50, 50);
                 }
             }
         },
-
-        moveBuildingToPlayer: function(building, player){
-            this.player_building_stock[player.player_id].addToStockWithId(building.building_id, building.building_key, $('main_building_zone'));
-        },
-
-        undoBuild: function(building, player) {
-            this.main_building_stock.addToStockWithId(building.building_id, building.building_key, $('player_building_'+player.player_color));
-        },
-
-        updateMainBuildingStock: function(buildings){
-            // todo make this for transitions where building stock changes [new round most likely]
-        
-            // use this probably: removeFromStockById( id, to, noupdate );
-            // addToStockWithId( type, id, from );
-            // get getPresentTypeList();
-        },
-
 
         ///////////////////////////////////////////////////
         //// Game & client states
@@ -292,7 +253,7 @@ function (dojo, declare) {
 
                     break;
                 case 'playerBid':
-                    if( this.isCurrentPlayerActive() )/*
+                    if( this.isCurrentPlayerActive() )
                         {
                             var player_bid_token = "bid_token_"+current_player_color;
                             // mark bids as selectable
@@ -304,7 +265,7 @@ function (dojo, declare) {
                             }
                             this.addActionButton( 'btn_pass',    _('pass'),    'passBid');
                             this.addActionButton( 'btn_confirm', _('Confirm'), 'makeBid');
-                        }*/
+                        }
                     break;
                 case 'getPassBenefits':
 
@@ -380,7 +341,6 @@ function (dojo, declare) {
         //        
         onUpdateActionButtons: function( stateName, args )
         {
-            
             var current_player_id = this.gamedatas.player_resources['player_id'];
             console.log( 'onUpdateActionButtons: '+stateName );
                       
@@ -389,28 +349,16 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                     case 'allocateWorkers':
-                        if( this.isCurrentPlayerActive() )
-                        {
-                            // show workers that are selectable
-                            for (var worker in args.args.workers){
-                                if(NUMBER(worker['player_id']) == current_player_id){
-                                    var worker_key = NUMBER(worker['worker_key']);
-                                    const worker_div = "worker_" + worker_key;
-                                    dojo.addClass(worker_div, "selectable");
-                                }
-                            }
-                            // also show building_slots
-                            for (var building in args.args.buildings){
-                                if (NUMBER(building.player_id) == current_player_id && building.worker_slot != 0){
-                                    const building_div = "build_tile_"+building.building_id;
-                                    dojo.addClass(worker_div, "selectable");
-                                }
-                            }
+                        // show workers that are selectable
+                        this.token_stock[current_player_id].setSelectionMode(1);
+                        // also make building_slots selectable.
+                        this.player_building_stock[current_player_id].setSelectionMode(1);                            
+                        if (Number(args.trade) >0){
                             this.addActionButton( 'btn_trade',       _('Trade'),           'tradeAction');
-                            this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan');
                             this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorker');
-                            this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
                         }
+                        this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan');
+                        this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
                     break;
 /*               
                  Example:
@@ -430,7 +378,70 @@ function (dojo, declare) {
 
         ///////////////////////////////////////////////////
         //// Utility methods
+
+        tradeAction: function(){
+            if( this.checkAction( 'trade' ) ){
+                //disable other buttons
+            //open trade menu, (not sure how yet)
+            }
+        },
+
+        hireWorker: function() {
+            if( this.checkAction( 'hireWorker')){
+                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {async: false, lock: true}, this, function( result ) {
+                }, function( is_error) { } );                
+            }
+        },
+
+        hireWorkerAsync: function(){
+            if( this.checkAction( 'hireWorker')){
+                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {async: true, lock: true}, this, function( result ) {
+                }, function( is_error) { } );                
+            }
+        },
+
+        showCurrentAuctions: function (current_round, auctions){
+            for(var auction_id in auctions){
+                if (auctions[auction_id].position == current_round && auctions[auction_id].location !=0){
+                    this.auction_stock[Math.floor(auction_id / 10)].addToStock ( auction_id ); 
+                }
+            }
+        },
+
+        clearAuction: function(auction_no){
+            this.auction_stock[auction_no].removeAll();
+        },
+
+        addBuildingWorkerSlots: function(building){
+            var divId = this.player_building_stock[building.player_id].getItemDivId(building.building_id-1);
+            this.building_worker_stock[building.building_key] = [];
+            if (building.worker_slot>0){
+                dojo.place( this.format_block( 'jstpl_workerSlot', {key: building_key, slot: "1"}), divId, 50, 50 );
+                this.building_worker_stock[building_key][1] = new ebg.stock();
+                this.building_worker_stock[building_key][1].create( this, $('building_'+building_key+'_worker_zone_1'));
+            } else if (building.worker_slot == 2){
+                dojo.place( this.format_block( 'jstpl_workerSlot', {key: building_key, slot: "2"}), divId, 50, 50 );
+                this.building_worker_stock[building_key][2] = new ebg.stock();
+                this.building_worker_stock[building_key][2].create(this, $('building_'+building_key+'_worker_zone_2'));
+            }
+        },
+
+        moveBuildingToPlayer: function(building, player){
+            this.player_building_stock[player.player_id].addToStockWithId(building.building_id, building.building_key, $('main_building_zone'));
+        },
+
+        undoBuild: function(building, player) {
+            this.main_building_stock.addToStockWithId(building.building_id, building.building_key, $('player_building_'+player.player_color));
+        },
+
+        updateMainBuildingStock: function(buildings){
+            // todo make this for transitions where building stock changes [new round most likely]
         
+            // use this probably: removeFromStockById( id, to, noupdate );
+            // addToStockWithId( type, id, from );
+            // get getPresentTypeList();
+        },
+
 
         ///////////////////////////////////////////////////
         //// Player's action

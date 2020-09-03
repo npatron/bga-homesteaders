@@ -147,30 +147,6 @@ div#bid_slot_A3_B21{
    border-color:red;
    border-width: 2px;
  }
- 
- .selectable {
-   border-style: dotted;
-   border-color: blue;
-   border-width: 3px;
-   box-sizing: content-box;
-   cursor:pointer;
- }
-
- .selected {
-   border-style: solid;
-   border-color:red;
-   border-width: 2px;
-   box-sizing: content-box;
-   cursor:pointer;
- }
-
- .highlighted {
-   border-style: dotted;
-   border-color:black;
-   border-width: 3px;
-   box-sizing: content-box;
-   cursor:pointer;
- }
 
  .token_zone {
    box-sizing: content-box;
@@ -195,6 +171,135 @@ div#bid_slot_A3_B21{
  #auction3_tile_zone {
    left: 73.25%;
 }
+div#train_advancement_0{
+   left: 6.4%;
+}
+div#train_advancement_1{
+   left: 21%;
+}
+div#train_advancement_2{
+   left: 35.5%;
+}
+div#train_advancement_3{
+   left: 50.2%;
+}
+div#train_advancement_4{
+   left: 64.6%;
+}
+div#train_advancement_5{
+   left: 79.1%;
+}
+
+.train_advance{
+   position: absolute;
+   top: 72.5%;
+   height: 15%;
+   width: 14%;
+   border-color:yellow;
+   border-style: solid;
+   border-width: 2px;
+}
+
+ div#trade_board {
+   background-image: url('img/trade.jpg');
+   position: relative;
+   width: 1000px;
+   height: auto;
+   background-size: 1000px auto;
+   background-repeat: no-repeat;
+   margin: auto;
+}
+.trade_option {
+   height: 10%;
+   width: 15%;
+   position: absolute;
+   border-color: green;
+   border-style: solid;
+   border-width: 2px;
+}
+
+div#trade_buy_wood{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_buy_food{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_buy_steel{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_buy_gold{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_buy_copper{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_buy_livestock{
+   left: 6.4%;
+   top: 5%
+}
+
+div#trade_sell_wood{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_sell_food{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_sell_steel{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_sell_gold{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_sell_copper{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_sell_livestock{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_market_wood_food{
+   left: 6.4%;
+   top: 5%
+}
+div#trade_market_food_steel{
+   left: 6.4%;
+   top: 5%
+}
+
+
+ .selectable {
+   border-style: dotted;
+   border-color: blue;
+   border-width: 3px;
+   box-sizing: content-box;
+   cursor:pointer;
+ }
+
+ .selected {
+   border-style: solid;
+   border-color:red;
+   border-width: 2px;
+   box-sizing: content-box;
+   cursor:pointer;
+ }
+
+ .highlighted {
+   border-style: dotted;
+   border-color:black;
+   border-width: 3px;
+   box-sizing: content-box;
+   cursor:pointer;
+ }
 
 .color_yellow {
    background-color: yellow;  
@@ -214,18 +319,26 @@ div#bid_slot_A3_B21{
 
 .res_red {
    border-color:red;
+   border-radius: 2px;
+   border-style: solid;
 }
 
 .res_green {
    border-color:green;
+   border-radius: 2px;
+   border-style: solid;
 }
 
 .res_blue {
    border-color:blue;
+   border-radius: 2px;
+   border-style: solid;
 }
 
 .res_yellow {
    border-color:yellow;
+   border-radius: 2px;
+   border-style: solid;
 }
 
 
@@ -290,34 +403,6 @@ div#bid_slot_A3_B21{
    visibility:visible;
 }
 
-.train_advance{
-   position: absolute;
-   top: 72.5%;
-   height: 15%;
-   width: 14%;
-   border-color:yellow;
-   border-style: solid;
-   border-width: 2px;
-}
-
-div#train_advancement_0{
-   left: 6.4%;
-}
-div#train_advancement_1{
-   left: 21%;
-}
-div#train_advancement_2{
-   left: 35.5%;
-}
-div#train_advancement_3{
-   left: 50.2%;
-}
-div#train_advancement_4{
-   left: 64.6%;
-}
-div#train_advancement_5{
-   left: 79.1%;
-}
 
 .auction_tile {
    width: 144px;
