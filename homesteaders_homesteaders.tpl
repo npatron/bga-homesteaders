@@ -46,12 +46,27 @@
     <div id="bid_slot_A3_B3" class="bid_slot"> </div>
     <div id="auction_tile_zone3" class="auction_tiles_zone"> </div>
 
-    <div id="train_advancement_0" class="train_advance"> </div>
-    <div id="train_advancement_1" class="train_advance"> </div>
-    <div id="train_advancement_2" class="train_advance"> </div>
-    <div id="train_advancement_3" class="train_advance"> </div>
-    <div id="train_advancement_4" class="train_advance"> </div>
-    <div id="train_advancement_5" class="train_advance"> </div>
+    <div id="train_advancement_0" class="train_advance"> 
+        <div id="token_rail_yellow" class="noshow token token_yellow"> </div>
+        <div id="token_rail_blue" class="noshow token token_blue"> </div>
+        <div id="token_rail_green" class="noshow token token_green"> </div>
+        <div id="token_rail_red" class="noshow token token_red"> </div>
+    </div>
+    <div id="train_advancement_1" class="train_advance"> 
+
+    </div>
+    <div id="train_advancement_2" class="train_advance"> 
+
+    </div>
+    <div id="train_advancement_3" class="train_advance"> 
+
+    </div>
+    <div id="train_advancement_4" class="train_advance"> 
+
+    </div>
+    <div id="train_advancement_5" class="train_advance"> 
+    
+    </div>
 
 </div>
 <div id="trade_board" >
@@ -75,6 +90,10 @@
 
 <!-- token limbo -->
 <div id="limbo" style="display: block"> 
+    <div id="token_bid_yellow" class="noshow token token_yellow"> </div>
+    <div id="token_bid_blue" class="noshow token token_blue"> </div>
+    <div id="token_bid_green" class="noshow token token_green"> </div>
+    <div id="token_bid_red" class="noshow token token_red"> </div>
 </div>
 
 <div id="building_zone"> 
@@ -155,12 +174,11 @@
 <script type="text/javascript">
 
 // templates
-var jstpl_bidslot='<div id="bid_slot_A{AUC}_B{BID}"></div>';
-
 var jstpl_buildings='<div id="building_tile_{BUILD_KEY}" class="building_tile build_tile_{BUILD_ID}"></div>';
-var jstpl_workerSlot='<div id="building_{key}_worker_zone_{slot}" class="slot_{slot}"> </div>';
 
-var jstpl_auction='<div id="auction_tile_{auc}" class="auction_tile"> </div>';
+var jstpl_auction_tile='<div id="auction_tile_{auc}" class="auction_tile"> </div>';
+
+var jptpl_token_piece='<div id="token_{type}_{id}" class="token token_{type}"> </div>';
 
 var jstpl_ipiece='<div class="${type} ${type}_${color} inlineblock" aria-label="${name}" title="${name}"></div>';
 

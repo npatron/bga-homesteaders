@@ -29,6 +29,17 @@ div#board {
    margin: auto;
 }
 
+/*=========================
+    Bid Slot Locations (on board)
+  =========================*/
+.bid_slot {
+position: absolute;
+height: 8.25%;
+width: 6%;
+border-style: solid;
+border-color:red;
+border-width: 2px;
+}
 div#bid_slot_A1_B3{
    top: 54.8%;
    left: 6.5%;
@@ -65,7 +76,6 @@ div#bid_slot_A1_B21{
    top: 8.85%;
    left: 26.75%;
  }
-
 div#bid_slot_A2_B3{
    top: 54.8%;
    left: 36.45%;
@@ -102,7 +112,6 @@ div#bid_slot_A2_B21{
    top: 8.85%;
    left: 57%;
  }
-
 div#bid_slot_A3_B3{
    top: 54.8%;
    left: 66.65%;
@@ -139,20 +148,15 @@ div#bid_slot_A3_B21{
    top: 8.85%;
    left: 87.1%;
  }
- .bid_slot {
-   position: absolute;
-   height: 8.25%;
-   width: 6%;
-   border-style: solid;
-   border-color:red;
-   border-width: 2px;
- }
 
- .token_zone {
+.token_zone {
    box-sizing: content-box;
- }
+}
 
- .auction_tiles_zone{
+/*************************
+ * Auction Zones
+*************************/
+.auction_tiles_zone{
    border-style: solid;
    border-color:blue;
    border-width: 2px;
@@ -160,18 +164,28 @@ div#bid_slot_A3_B21{
    top: 27%;
    height: 36%;
    width: 20%;
- }
-
- #auction_tile_zone1 {
+}
+#auction_tile_zone1 {
    left: 13.46%;
- }
- #auction_tile_zone2 {
+}
+#auction_tile_zone2 {
    left: 43.45%;
 }
- #auction_tile_zone3 {
+#auction_tile_zone3 {
    left: 73.25%;
 }
-
+/*************************
+ * Train Advancement Token Zones
+*************************/
+.train_advance{
+   position: absolute;
+   top: 72.5%;
+   height: 15%;
+   width: 14%;
+   border-color:yellow;
+   border-style: solid;
+   border-width: 2px;
+}
 div#train_advancement_0{
    left: 6.4%;
 }
@@ -191,17 +205,10 @@ div#train_advancement_5{
    left: 79.1%;
 }
 
-.train_advance{
-   position: absolute;
-   top: 72.5%;
-   height: 15%;
-   width: 14%;
-   border-color:yellow;
-   border-style: solid;
-   border-width: 2px;
-}
-
- div#trade_board {
+/*************************
+ * trade Board (and trade Selection Zones)
+*************************/
+div#trade_board {
    background-image: url('img/trade.jpg');
    position: relative;
    width: 500px;
@@ -276,71 +283,62 @@ div#trade_market_food_steel{
    top: 45.5%;
 }
 
-
- .selectable {
+/*************************
+ * State classes 
+*************************/
+.selectable {
    border-style: dotted;
    border-color: blue;
    border-width: 3px;
    box-sizing: content-box;
    cursor:pointer;
- }
-
- .selected {
+}
+.selected {
    border-style: solid;
    border-color:red;
    border-width: 2px;
    box-sizing: content-box;
    cursor:pointer;
- }
-
- .highlighted {
+}
+.highlighted {
    border-style: dotted;
    border-color:black;
    border-width: 3px;
    box-sizing: content-box;
    cursor:pointer;
- }
-
+}
 .color_yellow {
    background-color: yellow;  
 }
-
 .color_blue {
     background-color: blue; 
 }
-
 .color_green {
     background-color: green; 
 }
-
 .color_red {
     background-color: red; 
 }
-
-.res_red {
-   border-color:red;
-   border-radius: 2px;
-   border-style: solid;
-}
-
-.res_green {
-   border-color:green;
-   border-radius: 2px;
-   border-style: solid;
-}
-
-.res_blue {
-   border-color:blue;
-   border-radius: 2px;
-   border-style: solid;
-}
-
 .res_yellow {
    border-color:yellow;
    border-radius: 2px;
    border-style: solid;
 }
-
+.res_blue {
+   border-color:blue;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_green {
+   border-color:green;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_red {
+   border-color:red;
+   border-radius: 2px;
+   border-style: solid;
+}
 
 .tile_tip {
    border-radius:4px;
@@ -351,6 +349,7 @@ div#trade_market_food_steel{
    padding:4px 4px 4px 4px;
 }
 
+/*** may not need this use selected above ***/
 .tile_selected {
    border-style: solid;
    border-color:red;
@@ -358,17 +357,66 @@ div#trade_market_food_steel{
    box-sizing: border-box;
 }
 
+.noshow {
+   visibility:hidden;
+   height:0px;
+}
+.show {
+   visibility:visible;
+}
+
+/*=========================
+    Token images
+  =========================*/
+.token {
+   background-image: url('img/tokens_50x50.png');
+   width: 50px;
+   height: 50px;
+}
+
+.token_wood {
+   background-position: 0% 0%;
+}
+.token_steel {
+   background-position: -100% 0%;
+}
+.token_gold {
+   background-position: -200% 0%;
+}
+.token_copper {
+   background-position: -300% 0%;
+}
+.token_food {
+   background-position: -400% 0%;
+}
+.token_cow {
+   background-position: 0% -100%;
+}
+.token_silver {
+   background-position: -100% -100%;
+}
+.token_trade {
+   background-position: -200% -100%;
+}
+.token_worker {
+   background-position: -300% -100%;
+}
+.token_yellow {
+   background-position: 0% -200%;
+}
+.token_blue {
+   background-position: -300% -200%;
+}
+.token_green {
+   background-position: -200% -200%;
+}
+.token_red {
+   background-position: -300% -200%;
+}
+
 .resourcebox {
    position: relative;
    height:150px;
-}
-
-.token {
-   width: 48px;
-   height: 48px;
-   position: absolute;
-   background-size: auto;
-   background-image: url('img/tokens_48x48.png');
 }
 
 .score_text {
@@ -395,14 +443,6 @@ div#trade_market_food_steel{
     position:relative;
 }
 
-.noshow {
-   visibility:hidden;
-   height:0px;
-}
-.show {
-   visibility:visible;
-}
-
 
 .auction_tile {
    width: 144px;
@@ -413,6 +453,10 @@ div#trade_market_food_steel{
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
+
+/*=========================
+    Auction Tile images
+  =========================*/
 
 div#auction_tile_1 { /* Auction 1*/
    background-position: 0px 0px;

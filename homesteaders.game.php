@@ -133,9 +133,9 @@ class homesteaders extends Table
         self::DbQuery( $sql );
 
         // set colors
-        foreach ($gamePlayers as $pid => $p) {
+        foreach ($gamePlayers as $player_id => $p) {
             $color = $p['player_color'];
-            $sql = "UPDATE `player` SET `color_name`='".self::$playerColorNames[$color]."' WHERE `player_id`='".$pid."'";
+            $sql = "UPDATE `player` SET `color_name`='".self::$playerColorNames[$color]."' WHERE `player_id`='".$player_id."'";
             self::DBQuery( $sql );
         }
         
@@ -209,7 +209,7 @@ class homesteaders extends Table
 ////////////    
 
     
-    function createBuildings($gamePlayers){
+    static function createBuildings($gamePlayers){
         self::DBQuery("DELETE FROM `buildings`");
         $sql = "INSERT INTO `buildings` (`building_id`, `building_type`, `stage`, `location`, `player_id`) VALUES ";
         $values=array();

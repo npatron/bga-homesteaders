@@ -47,7 +47,7 @@
 
     public function donePayingWorkers() {
       self::setAjaxMode( );
-      $this->game->playerDonePlacingWorkers();
+      $this->game->playerDonePayingWorkers();
       self::ajaxResponse( );
     }
 
@@ -59,9 +59,9 @@
 
     public function selectWorkerDestination( ) {
       self::setAjaxMode();
-      $building_key = self::getArg('building_key', AT_alphanum, true);
-      $building_slot = self::getArg('building_slot', AT_alphanum, true, null);
-      $this->game->selectWorkerDestination( $worker_key, $place_id, $choices );
+     // $building_key = self::getArg('building_key', AT_alphanum, true);
+      //$building_slot = self::getArg('building_slot', AT_alphanum, true, null);
+      //$this->game->selectWorkerDestination( $worker_key, $place_id, $choices );
       self::ajaxResponse( );
    }
 
