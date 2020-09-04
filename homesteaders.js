@@ -209,10 +209,7 @@ function (dojo, declare) {
                 this.token_stock[worker.player_id].addToStockWithId( 1, worker_key);
                 var worker_div = $(this.token_stock[worker.player_id].getItemDivId(worker_key));
                 dojo.addClass(worker_div, "res_"+this.gamedatas.players[worker.player_id].color_name);
-                /* if (worker.building_key != 0) {
-                    dojo.place ()
-                } */
-                // add selected?
+                
             }
         },
 
@@ -244,8 +241,7 @@ function (dojo, declare) {
             switch( stateName )
             {
                 case 'startRound':
-                    // clean up tiles?     
-                    setupTiles (this.gamedatas.round_number); 
+                    setupTiles (this.gamedatas.round_number);  
                     break;
                 case 'payWorkers':
                     this.goldAmount = 0;
@@ -410,10 +406,9 @@ function (dojo, declare) {
                 }, function( is_error) { } );                
             }
         },
-
-        showCurrentAuctions: function (current_round, auctions){
-            for(var auction_id in auctions){
-                if (auctions[auction_id].position == current_round && auctions[auction_id].location !=0){
+        showCurrentAuctions: function (){
+            for(var auction_id in this.gamedatas.auctions){
+                if (this.gamedatas.auctions[auction_id].position == this.gamedatas.round_number && this.gamedatas.auctions[auction_id].location !=0){
                     this.auction_stock[Math.floor(auction_id / 10)].addToStock ( auction_id ); 
                 }
             }
