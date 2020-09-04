@@ -51,6 +51,10 @@ function (dojo, declare) {
             }
             
             this.auction_stock = [];
+            this.auction_stock[1] = new ebg.stock();
+            this.auction_stock[2] = new ebg.stock();
+            this.auction_stock[3] = new ebg.stock();
+
             this.auction_div = [];
             this.auction_zones = [];
 
@@ -147,11 +151,10 @@ function (dojo, declare) {
                 if (gamedatas.firstPlayer == player_id){
                     dojo.removeClass("first_player_tile_"+player_id, "noshow");
                 }
-                
             }
 
             // Auctions: 
-            this.setupAuctionStocks(gamedatas.auctions);
+            this.setupAuctionStocks(gamedatas.auctions, gamedatas.current_round);
             //this.showCurrentAuctions(gamedatas.auctions, gamedatas.round_number);
             this.setupBuildingStocks(gamedatas.buildings);
             this.setupWorkers(gamedatas.workers);
@@ -170,17 +173,19 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
 
         setupAuctionStocks: function ( auctions, current_round ) {
-            for (var i=1; i <=Math.floor(auctions.length/10); i++){
-                this.auction_div[i] = $("auction"+i.toString()+"_tile_zone");
-                this.auction_stock[i] = new ebg.stock();
+            for (var i=1; i <=3; i++){
+                this.auction_div[i] = $("auction_tile_zone"+i.toString());
                 this.auction_stock[i].create( this, this.auction_div[i], this.tile_width, this.tile_height);
                 this.auction_stock[i].image_items_per_row = 10;
             }
-            for (var i = 0; i < auctions.length; i++){
-                var auc = Math.floor(i / 10)+1;
-                this.auction_stock[auc].addItemType( i + 1, i, g_gamethemeurl+'img/auctionTiles_144x196.png', i);
-                if (auctions[i].position == current_round) 
-                    this.auction_stock[auc].addToStockById ( i + 1 );
+            for (var auction_id in auctions){
+                var auction = auctions[auction_id];
+                if (auction.location >0){
+                    this.auction_stock[auction.location].addItemType( auction.auction_id, (10- auction.priority), g_gamethemeurl+'img/auctionTiles_144x196.png', auction.auction_id - 1);
+                    if (auction.position == current_round){
+                        this.auction_stock[auction.location].addToStockWithId ( auction.auction_id, auction.auction_id );
+                    }
+                } 
             }
         },
 
@@ -386,6 +391,21 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Utility methods
 
+        takeLoan: function(){
+            if( this.checkAction( 'takeLoan')){
+                this.ajaxcall( "/homesteaders/homesteaders/takeLoan.html", {lock: true}, this, function( result ) {
+                }, function( is_error) { } );     
+            }
+        },
+
+        donePayingWorkers: function(){
+            if( this.checkAction( 'done')){
+                this.ajaxcall( "/homesteaders/homesteaders/donePayingWorkers.html", {lock: true}, this, function( result ) {
+                }, function( is_error) { } ); 
+            }
+        },
+        
+
         tradeAction: function(){
             if( this.checkAction( 'trade' ) ){
                 //disable other buttons
@@ -395,21 +415,16 @@ function (dojo, declare) {
 
         hireWorker: function() {
             if( this.checkAction( 'hireWorker')){
-                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {async: false, lock: true}, this, function( result ) {
+                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {lock: true}, this, function( result ) {
                 }, function( is_error) { } );                
             }
         },
 
-        hireWorkerAsync: function(){
-            if( this.checkAction( 'hireWorker')){
-                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {async: true, lock: true}, this, function( result ) {
-                }, function( is_error) { } );                
-            }
-        },
         showCurrentAuctions: function (){
             for(var auction_id in this.gamedatas.auctions){
-                if (this.gamedatas.auctions[auction_id].position == this.gamedatas.round_number && this.gamedatas.auctions[auction_id].location !=0){
-                    this.auction_stock[Math.floor(auction_id / 10)].addToStock ( auction_id ); 
+                var auction = this.gamedatas.auctions[auction_id]; 
+                if (auction.position == this.gamedatas.round_number && auction.location !=0){
+                    this.auction_stock[auction.location].addToStock ( auction_id ); 
                 }
             }
         },

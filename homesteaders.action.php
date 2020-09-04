@@ -39,6 +39,24 @@
       }
     } 
 
+    public function takeLoan () {
+      self::setAjaxMode( );
+      $this->game->playerTakeLoan ();
+      self::ajaxResponse( );
+    }
+
+    public function donePayingWorkers() {
+      self::setAjaxMode( );
+      $this->game->playerDonePlacingWorkers();
+      self::ajaxResponse( );
+    }
+
+    public function hireWorker() {
+      self::setAjaxMode( );
+      $this->game->playerHireWorker();
+      self::ajaxResponse( );
+    }
+
     public function selectWorkerDestination( ) {
       self::setAjaxMode();
       $building_key = self::getArg('building_key', AT_alphanum, true);
@@ -47,14 +65,14 @@
       self::ajaxResponse( );
    }
 
-   public function pass() {
-      self::setAjaxMode();
+   public function doNotBuild() {
+      self::setAjaxMode( );
       $this->game->playerDoNotBuild( );
       self::ajaxResponse( );
    }
 
   public function donePlacingWorkers() {
-    self::setAjaxMode();
+    self::setAjaxMode( );
     $this->game->playerDonePlacingWorkers( );
     self::ajaxResponse( );
  }

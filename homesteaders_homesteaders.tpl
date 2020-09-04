@@ -22,7 +22,7 @@
     <div id="bid_slot_A1_B5" class="bid_slot"> </div>
     <div id="bid_slot_A1_B4" class="bid_slot"> </div>
     <div id="bid_slot_A1_B3" class="bid_slot"> </div>
-    <div id="auction1_tile_zone" class="auction_tiles_zone"> </div>
+    <div id="auction_tile_zone1" class="auction_tiles_zone"> </div>
     
     <div id="bid_slot_A2_B9" class="bid_slot"> </div>
     <div id="bid_slot_A2_B12" class="bid_slot"> </div>
@@ -33,7 +33,7 @@
     <div id="bid_slot_A2_B5" class="bid_slot"> </div>
     <div id="bid_slot_A2_B4" class="bid_slot"> </div>
     <div id="bid_slot_A2_B3" class="bid_slot"> </div>
-    <div id="auction2_tile_zone" class="auction_tiles_zone"> </div>
+    <div id="auction_tile_zone2" class="auction_tiles_zone"> </div>
 
     <div id="bid_slot_A3_B9" class="bid_slot"> </div>
     <div id="bid_slot_A3_B12" class="bid_slot"> </div>
@@ -44,9 +44,8 @@
     <div id="bid_slot_A3_B5" class="bid_slot"> </div>
     <div id="bid_slot_A3_B4" class="bid_slot"> </div>
     <div id="bid_slot_A3_B3" class="bid_slot"> </div>
-    <div id="auction3_tile_zone" class="auction_tiles_zone"> </div>
+    <div id="auction_tile_zone3" class="auction_tiles_zone"> </div>
 
-    
     <div id="train_advancement_0" class="train_advance"> </div>
     <div id="train_advancement_1" class="train_advance"> </div>
     <div id="train_advancement_2" class="train_advance"> </div>
@@ -88,31 +87,27 @@
     Player Buildings section
 -->
 <div id="player_zone_yellow" class="noshow whiteblock res_yellow" style="margin-top:4px;">
+    <div class="boardheader" style="color: yellow;">yellow</div>
     <div id="token_zone_yellow" class="token_zone"> </div>
-    <div id="building_zone_yellow">
-        <div class="boardheader" style="color: yellow;">yellow</div>
-    </div>
+    <div id="building_zone_yellow"> </div>
 </div>
 
 <div id="player_zone_red" class="noshow whiteblock res_red" style="margin-top:4px;">
+    <div class="boardheader" style="color: red;">red</div>
     <div id="token_zone_red" class="token_zone"> </div>
-    <div id="building_zone_red">
-        <div class="boardheader" style="color: red;">red</div>
-    </div>
+    <div id="building_zone_red"> </div>
 </div>
 
 <div id="player_zone_green" class="noshow whiteblock res_green" style="margin-top:4px;">
+    <div class="boardheader" style="color: green;">green</div>
     <div id="token_zone_green" class="token_zone"> </div>
-    <div id="building_zone_green" class="building_zone">
-        <div class="boardheader" style="color: green;">green</div>
-    </div>
+    <div id="building_zone_green" class="building_zone"> </div>
 </div>
 
 <div id="player_zone_blue" class="noshow whiteblock res_blue" style="margin-top:4px;">
+    <div class="boardheader" style="color: blue;">blue</div>
     <div id="token_zone_blue" class="token_zone"> </div>
-    <div id="building_zone_blue">
-        <div class="boardheader" style="color: blue;">blue</div>
-    </div>
+    <div id="building_zone_blue"> </div>
 </div>
 
 

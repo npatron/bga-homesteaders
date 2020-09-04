@@ -459,6 +459,16 @@ class homesteaders extends Table
         $enough = $enough && ($player_resources['cow']    >= $building_cost[COW]);
         return $enough;
     }
+
+    function canPlayerAfford($player_id, $resource_arr){
+        $sql = "SELECT * `resources` WHERE `player_id` =".$player_id;
+        $player_resources = self::getObjectFromDB($sql);
+        $enough = true;
+        foreach( $resource_arr as $key => $resource){
+            $enough = $enough && ($player_resource[$key] >= $resource);  
+        }
+        return $enough;
+    }
     
     function collectIncome() 
     {
@@ -746,15 +756,10 @@ class homesteaders extends Table
 
     public function playerTakeLoan()
     {
-        self::checkAction( 'takeLoan' );
-
+        self::checkAction( "takeLoan" );
         $current_player_id = $this->getCurrentPlayerId();
-        $sql =  "SELECT `silver`, `loan` FROM `resources` WHERE `player_id`='".$current_player_id."' ";
-        $player_resources = self::getObjectFromDb($sql);
-        $silver = $player_resources['silver'] + 2;
-        $loan = $player_resources['loan'] + 1;
-        $sql = "UPDATE `resources` SET `silver`= '".$silver."', `loan`='".$loan."' WHERE player_id ='".$current_player_id."'";
-        self::DbQuery( $sql );
+        self::updateResource($current_player_id,'silver', 2);
+        self::updateResource($current_player_id,'dept', 1);
         $this->log->takeLoan($current_player_id);
         self::notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
             'player_id' => $player_id,
@@ -788,14 +793,17 @@ class homesteaders extends Table
             'trade2' => $resource_to_buy_name
         ) );
     }
-
-
-    public function playerHireWorker($async = true){
+    public function playerHireWorker($free = false){
         self::checkAction( 'hireWorker' );
-
         $player_id = self::getCurrentPlayerId();
-        if ($async)
-
+        if (!$free){
+            $worker_cost = array('trade'=>1,'food'=>1);
+            if (!self::canPlayerAfford($player_id, $worker_cost))
+                throw new BgaUserException( self::_("You cannot afford to hire a worker"));
+            self::updateResource($player_id, 'trade', -1);
+            self::updateResource($player_id, 'food', -1);
+        }
+        self::addWorker($player_id);
     }
 
     public function playerSelectWorkerDestination($building_key, $building_slot) 

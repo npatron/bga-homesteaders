@@ -162,15 +162,16 @@ div#bid_slot_A3_B21{
    width: 20%;
  }
 
- #auction1_tile_zone {
+ #auction_tile_zone1 {
    left: 13.46%;
  }
- #auction2_tile_zone {
+ #auction_tile_zone2 {
    left: 43.45%;
 }
- #auction3_tile_zone {
+ #auction_tile_zone3 {
    left: 73.25%;
 }
+
 div#train_advancement_0{
    left: 6.4%;
 }
@@ -203,14 +204,14 @@ div#train_advancement_5{
  div#trade_board {
    background-image: url('img/trade.jpg');
    position: relative;
-   width: 1000px;
-   height: auto;
-   background-size: 1000px auto;
+   width: 500px;
+   height: 130px;
+   background-size: 500px auto;
    background-repeat: no-repeat;
    margin: auto;
 }
 .trade_option {
-   height: 10%;
+   height: 19%;
    width: 15%;
    position: absolute;
    border-color: green;
@@ -219,61 +220,60 @@ div#train_advancement_5{
 }
 
 div#trade_buy_wood{
-   left: 6.4%;
-   top: 5%
+   left: 1.5%;
+   top: 15.5%;
 }
 div#trade_buy_food{
-   left: 6.4%;
-   top: 5%
+   left: 18%;
+   top: 15.5%;
 }
 div#trade_buy_steel{
-   left: 6.4%;
-   top: 5%
+   left: 1.5%;
+   top: 38%;
 }
 div#trade_buy_gold{
-   left: 6.4%;
-   top: 5%
+   left: 18%;
+   top: 20%;
 }
 div#trade_buy_copper{
-   left: 6.4%;
-   top: 5%
+   left: 1.5%;
+   top: 59.5%;
 }
 div#trade_buy_livestock{
-   left: 6.4%;
-   top: 5%
+   left: 18%;
+   top: 59.5%;
 }
-
 div#trade_sell_wood{
-   left: 6.4%;
-   top: 5%
+   left: 39.5%;
+   top: 15.5%;
 }
 div#trade_sell_food{
-   left: 6.4%;
-   top: 5%
+   left: 55.8%;
+   top: 15.5%;
 }
 div#trade_sell_steel{
-   left: 6.4%;
-   top: 5%
+   left: 39.5%;
+   top: 38%;
 }
 div#trade_sell_gold{
-   left: 6.4%;
-   top: 5%
+   left: 55.8%;
+   top: 38%;
 }
 div#trade_sell_copper{
-   left: 6.4%;
-   top: 5%
+   left: 39.5%;
+   top: 59.5%;
 }
 div#trade_sell_livestock{
-   left: 6.4%;
-   top: 5%
+   left: 55.8%;
+   top: 59.5%;
 }
 div#trade_market_wood_food{
-   left: 6.4%;
-   top: 5%
+   left: 79.5%;
+   top: 23.5%;
 }
 div#trade_market_food_steel{
-   left: 6.4%;
-   top: 5%
+   left: 79.5%;
+   top: 45.5%;
 }
 
 
