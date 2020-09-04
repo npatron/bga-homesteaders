@@ -75,6 +75,7 @@ function (dojo, declare) {
             this.building_tile_count = 0;
             this.auction_tile_count = 0;
             this.number_of_workers_selected = 0;
+            this.goldAmount = 0;
             this.last_worker_selected = "";
             this.canal_tile_div_id = "";     // Division Id of Canal tile
             this.lastHighlightedBuildingTile = "";
@@ -246,11 +247,8 @@ function (dojo, declare) {
                     // clean up tiles?     
                     setupTiles (this.gamedatas.round_number); 
                     break;
-                case 'allocateWorkers':
-                    
-                    break;
                 case 'payWorkers':
-
+                    this.goldAmount = 0;
                     break;
                 case 'playerBid':
                     if( this.isCurrentPlayerActive() )
@@ -258,8 +256,8 @@ function (dojo, declare) {
                             var player_bid_token = "bid_token_"+current_player_color;
                             // mark bids as selectable
                             for (var bid_loc in args.args.bid_location){
-                                var bid_auc = NUMBER(bid_loc['auction']);
-                                var bid_slot = NUMBER(bid_loc['slot']);
+                                var bid_auc = Number(bid_loc['auction']);
+                                var bid_slot = Number(bid_loc['slot']);
                                 const bid_slot_div = "bid_slot_A" + bid_auc + "_B" + bid_slot;
                                 dojo.addClass(bid_slot_div, "selectable");
                             }
@@ -277,7 +275,7 @@ function (dojo, declare) {
 
                     break;
                 case 'payAuction':
-
+                    this.goldAmount = 0;
                     break;
                 case 'chooseBuildingToBuild':
 
@@ -331,7 +329,7 @@ function (dojo, declare) {
            */
            
            
-            case 'dummmy':
+            case 'dummy':
                 break;
             }               
         }, 
@@ -348,6 +346,19 @@ function (dojo, declare) {
             {            
                 switch( stateName )
                 {
+                    case 'payWorkers':
+                        if (Number(args.trade) >0){
+                            this.addActionButton( 'btn_trade', _('Trade'),'tradeAction');
+                        }
+                        if (Number(args.gold) > this.goldAmount){
+                            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'lowerGold');
+                        }
+                        if (this.goldAmount >0 ) {
+                            this.addActionButton( 'btn_less_gold', _('Use Less Gold'), 'lowerGold');
+                        }
+                        this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan');
+                        this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
+                    break;
                     case 'allocateWorkers':
                         // show workers that are selectable
                         this.token_stock[current_player_id].setSelectionMode(1);
