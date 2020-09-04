@@ -221,11 +221,7 @@ div#trade_board {
    height: 19%;
    width: 15%;
    position: absolute;
-   border-color: green;
-   border-style: solid;
-   border-width: 2px;
 }
-
 div#trade_buy_wood{
    left: 1.5%;
    top: 15.5%;
@@ -411,7 +407,7 @@ div#trade_market_food_steel{
    background-position: -200% -200%;
 }
 .token_red {
-   background-position: -300% -200%;
+   background-position: -100% -200%;
 }
 
 .resourcebox {

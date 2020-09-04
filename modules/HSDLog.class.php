@@ -4,7 +4,7 @@
  * homesteadersLog: a class that allows to log some actions
  *   and then fetch these actions later
  */
-class homesteadersLog extends APP_GameClass
+class HSDLog extends APP_GameClass
 {
   public $game;
   public function __construct($game)

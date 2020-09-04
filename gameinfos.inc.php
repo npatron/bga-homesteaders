@@ -12,28 +12,25 @@
 
 $gameinfos = array( 
 
-// Name of the game in English (will serve as the basis for translation) 
-'game_name' => "Homesteaders",
-
 // Game designer (or game designers, separated by commas)
 'designer' => 'Alex Rockwell',       
 
 // Game artist (or game artists, separated by commas)
-'artist' => 'Ariel Seoane',         
+'artist' => 'Hans Janssen, Ariel Seoane',         
 
 // Year of FIRST publication of this game. Can be negative.
 'year' => 2009,                 
 
-// Game publisher (use empty string if there is no publisher)
-'publisher' => 'Tasty Minsterl Games, LLC',                     
+// Game publisher
+'publisher' => 'Tasty Minstrel Games, Quined Games',                     
 
 // Url of game publisher website
-'publisher_website' => 'http://www.playTMG.com/',   
+'publisher_website' => 'http://playtmg.com/, https://www.quined.nl/',   
 
 // Board Game Geek ID of the publisher
 'publisher_bgg_id' => 9499,
 
-// Board game geek ID of the game
+// Board game geek if of the game
 'bgg_id' => 26566,
 
 
@@ -41,7 +38,7 @@ $gameinfos = array(
 'players' => array( 2,3,4 ),    
 
 // Suggest players to play with this number of players. Must be null if there is no such advice, or if there is only one possible player configuration.
-'suggest_player_number' => 3,
+'suggest_player_number' => 4,
 
 // Discourage players to play with these numbers of players. Must be null if there is no such advice.
 'not_recommend_player_number' => null,
@@ -49,7 +46,7 @@ $gameinfos = array(
 
 
 // Estimated game duration, in minutes (used only for the launch, afterward the real duration is computed)
-'estimated_duration' => 60,           
+'estimated_duration' => 30,           
 
 // Time in second add to a player when "giveExtraTime" is called (speed profile = fast)
 'fast_additional_time' => 30,           
@@ -66,7 +63,7 @@ $gameinfos = array(
 // Note: if you are NOT using any tie breaker, leave the empty string.
 //
 // Example: 'tie_breaker_description' => totranslate( "Number of remaining cards in hand" ),
-'tie_breaker_description' => "",
+'tie_breaker_description' => "Silver Remaining",
 
 // If in the game, all losers are equal (no score to rank them or explicit in the rules that losers are not ranked between them), set this to true 
 // The game end result will display "Winner" for the 1st player and "Loser" for all other players
@@ -83,22 +80,22 @@ $gameinfos = array(
 'complexity' => 3,    
 
 // Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
-'luck' => 2,    
+'luck' => 3,    
 
 // Strategy of the game, from 0 (no strategy can be setup) to 5 (totally based on strategy)
-'strategy' => 4,    
+'strategy' => 3,    
 
 // Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
 'diplomacy' => 3,    
 
 // Colors attributed to players
-'player_colors' => array( "ff0000", "008000", "0000ff", "ffff00"),
-//                          red       green      blue     yellow  (purple expansion color)
+'player_colors' => array( "ff0000", "008000", "0000ff", "ffff00" ),
+
 // Favorite colors support : if set to "true", support attribution of favorite colors based on player's preferences (see reattributeColorsBasedOnPreferences PHP method)
 'favorite_colors_support' => true,
 
 // When doing a rematch, the player order is swapped using a "rotation" so the starting player is not the same
-// If you want to disable this, set this to true
+// If you want to disable this, set this to false
 'disable_player_order_swap_on_rematch' => false,
 
 // Game interface width range (pixels)
@@ -135,7 +132,7 @@ $gameinfos = array(
 //  http://en.doc.boardgamearena.com/Game_meta-information:_gameinfos.inc.php
 //  IMPORTANT: this list should be ORDERED, with the most important tag first.
 //  IMPORTANT: it is mandatory that the FIRST tag is 1, 2, 3 and 4 (= game category)
-'tags' => array( 2 ),
+'tags' => array( 4, 22, 102, 106 ),
 
 
 //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)
