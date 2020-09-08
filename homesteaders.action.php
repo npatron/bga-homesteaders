@@ -57,11 +57,19 @@
       self::ajaxResponse( );
     }
 
-    public function selectWorkerDestination( ) {
+    public function selectWorker() {
+      self::setAjaxMode( );
+      $worker_key = self::getArg( "worker_key", AT_posint, true );
+      $this->game->playerSelectWorker($worker_key);
+      self::ajaxResponse( );
+    }
+
+    public function selectWorkerDestination() {
       self::setAjaxMode();
-     // $building_key = self::getArg('building_key', AT_alphanum, true);
-      //$building_slot = self::getArg('building_slot', AT_alphanum, true, null);
-      //$this->game->selectWorkerDestination( $worker_key, $place_id, $choices );
+      $worker_key = self::getArg( "worker_key", AT_posint, true);
+      $building_key = self::getArg( "building_key", AT_posint, true); 
+      $building_slot = self::getArg( "building_slot", AT_posint, true);
+      $this->game->playerSelectWorkerDestination( $worker_key, $building_key, $building_slot );
       self::ajaxResponse( );
    }
 
@@ -75,7 +83,21 @@
     self::setAjaxMode( );
     $this->game->playerDonePlacingWorkers( );
     self::ajaxResponse( );
- }
+  }
+
+  public function makeBid (){
+      self::setAjaxMode();
+      $bid_loc = self::getArg( "bid_loc", AT_posint, true);
+      $this->game->playerMakeBid( $bid_loc );
+      self::ajaxResponse( );
+  }
+
+  public function passBid (){
+    self::setAjaxMode( );
+    $this->game->playerDonePlacingWorkers( );
+    self::ajaxResponse( );
+  }
+
 
    /*public function donePlacingWorker()
    {

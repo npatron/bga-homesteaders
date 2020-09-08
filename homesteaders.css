@@ -151,6 +151,7 @@ div#bid_slot_A3_B21{
 
 .token_zone {
    box-sizing: content-box;
+   height: 60px;
 }
 
 /*************************
@@ -278,6 +279,47 @@ div#trade_market_food_steel{
    left: 79.5%;
    top: 45.5%;
 }
+div#done_trading {
+   background-image: url('img/refuse.png');
+   top: 1%;
+   left: 24%;
+   height: 19%;
+   width: 15%;
+   position: absolute;
+}
+
+/***************************
+ * Building Zones
+ **************************/
+#main_building_zone {
+   width: auto;
+   max-width: 1000px;
+   border-radius: 6px;
+}
+#future_building_zone {
+   visibility: hidden;
+   height: 0px;
+   width: 0px;
+}
+
+.building_zone {
+   width: auto;
+   max-width: 800px;
+   border-radius: 6px;
+}
+
+#building_zone_red {
+   border-color: red;
+}
+#building_zone_yellow {
+   border-color: yellow;
+}
+#building_zone_green {
+   border-color: green;
+}
+#building_zone_blue {
+   border-color: blue;
+}
 
 /*************************
  * State classes 
@@ -345,14 +387,6 @@ div#trade_market_food_steel{
    padding:4px 4px 4px 4px;
 }
 
-/*** may not need this use selected above ***/
-.tile_selected {
-   border-style: solid;
-   border-color:red;
-   border-width: 2px;
-   box-sizing: border-box;
-}
-
 .noshow {
    visibility:hidden;
    height:0px;
@@ -361,6 +395,9 @@ div#trade_market_food_steel{
    visibility:visible;
 }
 
+#limbo {
+   height: 50px;
+}
 /*=========================
     Token images
   =========================*/
@@ -443,11 +480,24 @@ div#trade_market_food_steel{
 .auction_tile {
    width: 144px;
    height: 196px;
-   position: relative;
    background-image: url('img/auctionTiles_144x196.png');
    background-repeat: no-repeat;
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
+}
+
+.worker_slot{
+   position: absolute;
+   height: 75px;
+   width: 75px;
+   top: 120px;
+}
+
+.slot_1 {
+   left: 10px;
+}
+.slot_2 {
+   left: 75px;
 }
 
 /*=========================
@@ -545,30 +595,6 @@ div#auction_tile_30 {
    background-position: -1296px -392px;
 }
 
-#building_zone_red {
-   display: block;
-   width: auto;
-   border-color: red;
-   border-radius: 6px;
-}
-#building_zone_yellow {
-   display: block;
-   width: auto;
-   border-color: yellow;
-   border-radius: 6px;
-}
-#building_zone_green {
-   display: block;
-   width: auto;
-   border-color: green;
-   border-radius: 6px;
-}
-#building_zone_blue {
-   display: block;
-   width: auto;
-   border-color: blue;
-   border-radius: 6px;
-}
 
 /*=========================
     Building card images
@@ -576,7 +602,6 @@ div#auction_tile_30 {
 .building_tile {
    width: 144px;
    height: 196px;
-   position: relative;
    background-image: url('img/buildingTiles_144x196.png');
    background-repeat: no-repeat;
    box-shadow: -3px -3px 3px grey inset;

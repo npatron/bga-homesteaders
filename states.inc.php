@@ -63,7 +63,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
         "args" => "argPlaceWorkers",
-        "possibleactions" => array( "placeWorker", "hireWorker", "trade", "takeLoan". "done" ),
+        "possibleactions" => array( "placeWorker", "hireWorker", "trade", "takeLoan", "done" ),
         "transitions" => array( "done" => STATE_INCOME )
     ),
 
@@ -101,6 +101,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must bid on auction or pass'),
         "type" => "activeplayer",
         "action" => "stMakeBidOrPass",
+        "args" => "argValidBids",
         "possibleactions" => array( "selectBid", "approveBid", "pass" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
                                 "pass" => STATE_RAIL_BONUS )
@@ -112,6 +113,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must choose a rail bonus'),
         "type" => "activeplayer",
         "action" => "stRailBonus",
+        "args" => "argRailBonus",
         "possibleactions" => array( "selectBonus", "chooseBonus" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
                                 "auctionBonus" => STATE_AUCTION_BONUS, 

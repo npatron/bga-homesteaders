@@ -10,6 +10,7 @@
 -------
 
 -->
+<div id ="top"> </div>
 <!-- Auction Board -->
 <div id="board" class="shadow">
 
@@ -47,24 +48,14 @@
     <div id="auction_tile_zone3" class="auction_tiles_zone"> </div>
 
     <div id="train_advancement_0" class="train_advance"> 
-<!--
-       <div id="token_rail_yellow" class="noshow token token_yellow"> </div>
-        <div id="token_rail_blue" class="noshow token token_blue"> </div>
-        <div id="token_rail_green" class="noshow token token_green"> </div>
-        <div id="token_rail_red" class="noshow token token_red"> </div>
--->
     </div>
     <div id="train_advancement_1" class="train_advance"> 
-
     </div>
     <div id="train_advancement_2" class="train_advance"> 
-
     </div>
     <div id="train_advancement_3" class="train_advance"> 
-
     </div>
     <div id="train_advancement_4" class="train_advance"> 
-
     </div>
     <div id="train_advancement_5" class="train_advance"> 
     
@@ -73,11 +64,10 @@
 
 <!-- token limbo -->
 <div id="limbo" style="display: block"> 
-    <div id="token_bid_yellow" class="noshow token token_yellow"> </div>
-    <div id="token_bid_blue" class="noshow token token_blue"> </div>
-    <div id="token_bid_green" class="noshow token token_green"> </div>
-    <div id="token_bid_red" class="noshow token token_red"> </div>
+<div id='future_building_zone'> </div>
 </div>
+
+
 
 <div id="building_zone"> 
     <div class="building_stock"> Buildings Stock 
@@ -88,6 +78,9 @@
 <!--
     Player Buildings section
 -->
+<div id='top_player_zone'>
+</div>
+
 <div id="player_zone_yellow" class="noshow whiteblock res_yellow" style="margin-top:4px;">
     <div id="player_name_yellow" class="boardheader" style="color: yellow;">yellow</div>
     <div id="token_zone_yellow" class="token_zone"> </div>
@@ -113,24 +106,28 @@
 </div>
 
 <!-- Trade Helper Board -->
-<div id="trade_board" class="noshow">
-    <div id="trade_buy_wood" class="trade_option"> </div>
-    <div id="trade_buy_food" class="trade_option"> </div>
-    <div id="trade_buy_steel" class="trade_option"> </div>
-    <div id="trade_buy_gold" class="trade_option"> </div>
-    <div id="trade_buy_copper" class="trade_option"> </div>
-    <div id="trade_buy_livestock" class="trade_option"> </div>
+<div id ="bottom"> 
+    <div id="trade_board" class="">
+        <div id="done_trading" class="noshow"> </div>
+        <div id="trade_buy_wood" class="trade_option"> </div>
+        <div id="trade_buy_food" class="trade_option"> </div>
+        <div id="trade_buy_steel" class="trade_option"> </div>
+        <div id="trade_buy_gold" class="trade_option"> </div>
+        <div id="trade_buy_copper" class="trade_option"> </div>
+        <div id="trade_buy_livestock" class="trade_option"> </div>
 
-    <div id="trade_sell_wood" class="trade_option"> </div>
-    <div id="trade_sell_food" class="trade_option"> </div>
-    <div id="trade_sell_steel" class="trade_option"> </div>
-    <div id="trade_sell_gold" class="trade_option"> </div>
-    <div id="trade_sell_copper" class="trade_option"> </div>
-    <div id="trade_sell_livestock" class="trade_option"> </div>
+        <div id="trade_sell_wood" class="trade_option"> </div>
+        <div id="trade_sell_food" class="trade_option"> </div>
+        <div id="trade_sell_steel" class="trade_option"> </div>
+        <div id="trade_sell_gold" class="trade_option"> </div>
+        <div id="trade_sell_copper" class="trade_option"> </div>
+        <div id="trade_sell_livestock" class="trade_option"> </div>
 
-    <div id="trade_market_wood_food" class="trade_option"> </div>
-    <div id="trade_market_food_steel" class="trade_option"> </div>
+        <div id="trade_market_wood_food" class="trade_option"> </div>
+        <div id="trade_market_food_steel" class="trade_option"> </div>
+    </div>
 </div>
+
 
 
 
@@ -176,11 +173,15 @@
 <script type="text/javascript">
 
 // templates
-var jstpl_buildings='<div id="building_tile_{BUILD_KEY}" class="building_tile build_tile_{BUILD_ID}"></div>';
+var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
+
+var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot} key_${key}"></div>'; 
 
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';
 
 var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
+
+var jstpl_resource_log = '<div title = "${type}" class="inlineblock token token_${type}"> </div>';
 
 var jstpl_ipiece='<div class="${type} ${type}_${color} inlineblock" aria-label="${name}" title="${name}"></div>';
 

@@ -153,5 +153,4 @@ class HSDLog extends APP_GameClass
     $this->insert($player_id, 0, 'loan');
   }
 
-
 }
