@@ -75,16 +75,14 @@ function (dojo, declare) {
             this.tile_height = 196;
             
             this.player_count = 0;
-            this.building_tile_count = 0;
-            this.auction_tile_count = 0;
-            this.number_of_workers_selected = 0;
             this.goldAmount = 0;
-            this.last_worker_selected = "";
+            this.last_worker_selected = 0;
+            this.last_bid_selected = "NOBID";
             this.canal_tile_div_id = "";     // Division Id of Canal tile
             this.lastHighlightedBuildingTile = "";
             this.numberOfBidsSelected = 0;
+            this.numberOfWorkersSelected = 0;
             this.lastHighlightedBidLocation = "";
-            this.workers = [];
         },
         
         /*
@@ -128,7 +126,7 @@ function (dojo, declare) {
                 } else if (current_player_color === 'red'){
                     this.player_token_order[player_id] = 11;
                 }
-                this.players_railroad_advancements[player_id] = gamedatas.resources[player_id].rail_adv;
+                //this.players_railroad_advancements[player_id] = gamedatas.resources[player_id].rail_adv;
                 
                 this.player_color[player_id] = current_player_color;
                 this.token_div[player_id] = 'token_zone_' + this.player_color[player_id].toString();
@@ -250,19 +248,7 @@ function (dojo, declare) {
                     this.goldAmount = 0;
                     break;
                 case 'playerBid':
-                    if( this.isCurrentPlayerActive() )
-                        {
-                            for (var bid_no in args.bid_location){
-                                var bid_loc = getBidLocation(args.bid_location[bid_no]);
-                                var bid_slot = bid_loc[bid_loc.bid_val-1];
-                                const bid_slot_id = "bid_slot_A" + bid_loc.auction_no.toString() + "_B" + bid_slot;
-                                dojo.addClass(bid_slot_id, "selectable");
-                                dojo.connect(bid_slot_id, 'onclick', this, 'doClickOnBidSlot');
-                            }
-                            this.addActionButton( 'btn_pass',    _('pass'),    'onSelectPassBidButton');
-                            this.addActionButton( 'btn_confirm', _('Confirm'), 'onSelectMakeBidButton');
-                        }
-                    break;
+                    
                 case 'getPassBenefits':
 
                     break;
@@ -364,6 +350,20 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'onSelectTakeLoanButton');
                         this.addActionButton( 'btn_done',        _('Done'),            'onSelectDonePlacingWorkersButton');
                     break;
+                    case 'playerBid':
+                        for (const bid_key in args.valid_bids) {
+                            var bid = args.valid_bids[bid_key];
+                            this.numberOfBidsSelected = 0;
+                            var bid_loc = this.getBidLocation(bid);
+                            var bid_slot = Number(bid_loc.bid_val);
+                            console.log("bid_no: "+ bid+", loc: "+bid_loc.auction_no.toString()+", bid_slot:"+ bid_slot)
+                            const bid_slot_id = "bid_slot_A" + bid_loc.auction_no.toString() + "_B" + bid_slot;
+                            dojo.query("#"+bid_slot_id).addClass("selectable");
+                            dojo.query("#"+bid_slot_id).connect('onclick', this, 'doClickOnBidSlot');
+                        }
+                        this.addActionButton( 'btn_pass',    _('Pass'),    'onSelectPassBidButton', null, false, 'red');
+                        this.addActionButton( 'btn_confirm', _('Confirm Bid'), 'onSelectConfirmBidButton');
+                    break;
                 }
             }
         },        
@@ -441,11 +441,16 @@ function (dojo, declare) {
                 }, function( is_error) { } );                
             }
         },
-
-        onSelectMakeBidButton: function () {
-            if( this.checkAction( 'approveBid')){
-                var bid_loc = this.getBidLocFromId();
-                this.ajaxcall( "/homesteaders/homesteaders/makeBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
+        
+        onSelectConfirmBidButton: function () {
+            if( this.checkAction( 'confirmBid')){
+                const selected_slot = dojo.query(".bid_slot.selected");
+                if (selected_slot.length != 1){
+                    this.showMessage( _("You must select 1 bid_slot"), 'error' );
+                    return;
+                }
+                const bid_loc = this.getBidLocFromId(selected_slot[0].id);
+                this.ajaxcall( "/homesteaders/homesteaders/confirmBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
                 }, function( is_error) { } );                
             }
         },
@@ -492,6 +497,44 @@ function (dojo, declare) {
             this.player_building_zone[player.player_id].placeInZone(`building_tile_${building.building_key}`);
         },
 
+        getBidNo: function(bid_loc_id){
+            var split_bid = bid_loc_id.split("_");
+            var auc_no = Number(split_bid[2].slice(-1));
+            var bid_val = split_bid[3];
+            switch(bid_val){
+                case 'B3':
+                    var bid_no = 1;
+                    break;
+                case 'B4':
+                    var bid_no = 2;
+                    break; 
+                case 'B5':
+                    var bid_no = 3;
+                    break;
+                case 'B6':
+                    var bid_no = 4;
+                    break;
+                case 'B7':
+                    var bid_no = 5;
+                    break;
+                case 'B9':
+                    var bid_no = 6;
+                    break;
+                case 'B12':
+                    var bid_no = 7;
+                    break;
+                case 'B16':
+                    var bid_no = 8;
+                    break;
+                case 'B21':
+                    var bid_no = 9;
+                    break;
+            }
+            console.log( "auc_no -> " + auc_no);
+            console.log( "bid_no -> " + bid_no);
+            return ((auc_no-1)*10 + bid_no); 
+        },
+
         getBidLocation: function(bid_no){
             var auction_no = 1;
             var bid_val = Number(bid_no);
@@ -501,6 +544,36 @@ function (dojo, declare) {
             } else if (bid_no > 10){
                 auction_no = 2;
                 bid_val = bid_val - 10;
+                
+            }
+            switch(bid_val){
+                case 1:
+                    bid_val = 3;
+                    break;
+                case 2:
+                    bid_val = 4;
+                    break;
+                case 3:
+                    bid_val = 5;
+                    break;
+                case 4:
+                    bid_val = 6;
+                    break;
+                case 5:
+                    bid_val = 7;
+                    break;
+                case 6:
+                    bid_val = 9;
+                    break;
+                case 7:
+                    bid_val = 12;
+                    break;
+                case 8:
+                    bid_val = 16;
+                    break;
+                case 9:
+                    bid_val = 21;
+                    break;                                                            
             }
             return {
                 auction_no,
@@ -567,22 +640,26 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if( ! this.checkAction( 'selectBid' ) )
             { return; }
-
+            
             var bid_loc_id = evt.target.id;
             console.log( 'bid_loc: '+ bid_loc_id );
             // clear all other selected workers, then select this. 
-            var deselect = false;
-            if (dojo.hasClass(worker_divId, 'selected')){
-                deselect = true;
-            } 
-            var selected = dojo.query(`.selected`);
-            selected.addClass('selectable');
-            selected.removeClass('selected');
-            if (deselect == false){
-                console.log( 'selectable -> selected' );
-                dojo.query(`#${bid_loc_id}`).removeClass("selectable");
-                dojo.query(`#${bid_loc_id}`).addClass("selected");
+            if (this.numberOfBidsSelected == 1){
+                var selected = dojo.query(`.selected`);
+                selected.removeClass('selected');
+                selected.addClass('selectable');
+                if (this.last_bid_selected === bid_loc_id){
+                    this.numberOfBidsSelected = 0;
+                    this.last_bid_selected = "";
+                    return;
+                }
             }
+            this.numberOfBidsSelected = 1;
+            this.last_bid_selected = bid_loc_id;
+            console.log( 'selectable -> selected' );
+            dojo.query(`#${bid_loc_id}`).removeClass("selectable");
+            dojo.query(`#${bid_loc_id}`).addClass("selected");
+            
         },
 
         onClickOnWorkerDestination: function( evt )
@@ -591,8 +668,7 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if( ! this.checkAction( 'placeWorker' ) )
             { return; }
-            var selectedWorker = dojo.query('.selected');
-            if (selectedWorker.length != 1){
+            if (numberOfWorkersSelected!= 1){
                 this.showMessage( _("You must select 1 worker"), 'error' );
                     return;
             }
@@ -605,11 +681,7 @@ function (dojo, declare) {
             } else if(target_divId.startsWith('slot_2')){
                 var building_slot = 2;
             }
-            console.log( `building_key: ${building_key}` );
-            console.log( `building_slot: ${building_slot}` );
-
-            var worker_key = selectedWorker[0].id.split('_')[2];
-            console.log( `worker_key: ${worker_key}` );
+            const worker_key = last_worker_selected.split('_')[2];
             this.ajaxcall( "/homesteaders/homesteaders/selectWorkerDestination.html", { 
                 lock: true, 
                 worker_key: worker_key,
@@ -705,19 +777,12 @@ function (dojo, declare) {
         setupNotifications: function()
         {
             console.log( 'notifications subscriptions setup' );
+            
+            dojo.subscribe( 'gainWorker', this, "notif_gainWorker" );
             dojo.subscribe( 'workerMoved', this, "notif_workerMoved" );
+            dojo.subscribe( 'railAdv', this, "notif_railAdv" );
+            dojo.subscribe( 'moveBid', this, "notif_moveBid");
 
-            // TODO: here, associate your game notifications with local methods
-            
-            // Example 1: standard notification handling
-            // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-            
-            // Example 2: standard notification handling + tell the user interface to wait
-            //            during 3 seconds after calling the method in order to let the players
-            //            see what is happening in the game.
-            // dojo.subscribe( 'cardPlayed', this, "notif_cardPlayed" );
-            // this.notifqueue.setSynchronous( 'cardPlayed', 3000 );
-            // 
         },  
         
         // TODO: from this point and below, you can write your game notifications handling methods
@@ -772,33 +837,45 @@ function (dojo, declare) {
             this.building_worker_zones[notif.args.building_key][notif.args.building_slot].placeInZone('token_worker_'+notif.args.worker_key.toString());
             if (this.isCurrentPlayerActive() && notif.args.player_id == this.player_id)
             {
+                this.numberOfWorkersSelected = 0;
+                this.last_worker_selected = "";
                 selectedWorker = dojo.query('.selected');
                 selectedWorker.removeClass('selected');
                 selectedWorker.addClass('selectable');
-                selectedWorker.connect('onclick', this, 'onClickOnWorker');
             }
         },
 
-        setupNewAuction: function( auction_div, auction_id, auction_loc)
-        {
-            //this.addTooltip()
-        }
-        /*
-        Example:
-        
-        notif_cardPlayed: function( notif )
-        {
-            console.log( 'notif_cardPlayed' );
+        notif_railAdv: function( notif ){
+            console.log ('notif_railAdv');
             console.log( notif );
-            
-            // Note: notif.args contains the arguments specified during you "notifyAllPlayers" / "notifyPlayer" PHP call
-            
-            // TODO: play the card in the user interface.
-        },    
-        
-        */
+            const current_player_color = this.player_color[notif.args.player_id];
+            const rail_adv_token_id =  `token_${current_player_color}_rail`;
+            this.rail_line_zone[notif.args.rail_destination].placeInZone(rail_adv_token_id);
+        }, 
 
-        
+        notif_gainWorker: function( notif ){
+            console.log ('notif_gainWorker');
+            console.log( notif );
+            const worker_id = `token_worker_${notif.args.worker_key}`;
+            dojo.place(this.format_block( 'jptpl_token', {
+                type: "worker", id: notif.args.worker_key.toString()}), this.token_div[notif.args.player_id] );
+            this.token_zone[notif.args.player_id].placeInZone(worker_id);
+        },
 
+        notif_moveBid: function( notif ){
+            console.log ('notif_moveBid');
+            console.log( notif );
+            const current_player_color = this.player_color[notif.args.player_id];
+            const bid_token_id = `token_${current_player_color}_bid`;
+            
+            if (notif.args.bid_location == 10) { // OUTBID
+                this.token_zone[-1].placeInZone(bid_token_id);
+            } else if(notif.args.bid_location == 20){ // pass
+                this.token_zone[notif.args.player_id].placeInZone(bid_token_id);
+            } else { //actual bid
+                const bid = this.getBidLocation(notif.args.bid_location);
+                this.bid_zones[bid.auction_no][bid.bid_val].placeInZone(bid_token_id);
+            }
+        },
    });             
 });

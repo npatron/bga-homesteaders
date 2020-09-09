@@ -36,9 +36,6 @@ div#board {
 position: absolute;
 height: 8.25%;
 width: 6%;
-border-style: solid;
-border-color:red;
-border-width: 2px;
 }
 div#bid_slot_A1_B3{
    top: 54.8%;

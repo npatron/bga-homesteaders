@@ -49,7 +49,7 @@ class HSDBid extends APP_GameClass
     public function makeBid($bid_location, $player_id){
         $sql = "UPDATE `resources` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
         self::DbQuery( $sql );
-		$this->game->notifyAllPlayers("moveBidToken", '', array (
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} places a bid'), array (
 				'player_id' => $player_id,
 				'bid'=>$bid_location));
         // mark somebids as outbid.
@@ -67,14 +67,19 @@ class HSDBid extends APP_GameClass
     }
 
     public function getValidBids($player_id) {
-        $valid_bids = range(1,29);
+        $player_count = $this->game->getPlayersNumber();
+        if ($player_count == 4){
+            $valid_bids = range(1,29);
+        } else {
+            $valid_bids = range(1,19);
+        }
         $valid_bids = \array_diff($valid_bids, [OUTBID, BID_PASS]); // remove outbid & pass
         $sql = "SELECT `bid_loc` FROM `resources`";
         $bids = self::getObjectListFromDB( $sql );
         $offset = 0;
         if ($this->game->doTheyOwnBuilding($player_id, BUILDING_LAWYER)){
             $offset = 1;
-        }             
+        }
         foreach ($bids as $bid){
             if ($bid > 0 && $bid < 10){
                 for ($i = ($bid - $offset); $i >0; $i--){

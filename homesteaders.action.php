@@ -85,7 +85,7 @@
     self::ajaxResponse( );
   }
 
-  public function makeBid (){
+  public function confirmBid (){
       self::setAjaxMode();
       $bid_loc = self::getArg( "bid_loc", AT_posint, true);
       $this->game->playerMakeBid( $bid_loc );
@@ -98,24 +98,4 @@
     self::ajaxResponse( );
   }
 
-
-   /*public function donePlacingWorker()
-   {
-       self::setAjaxMode();     
-
-       // Retrieve argument (key of order card to discard)
-       $orderCardKey = self::getArg( "orderCard", AT_posint, true );
-
-       // Perform the discard
-       $this->game->discardOrderCard( $orderCardKey );
-
-       self::ajaxResponse( );
-   }*/
-  	
-  	// TODO: defines your action entry points there
-
-
-
-  }
-  
-
+}

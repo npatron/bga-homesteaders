@@ -20,6 +20,7 @@
 require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
 require_once('modules/constants.inc.php');
 require_once('modules/HSDLog.class.php');
+require_once('modules/HSDBid.class.php');
 
 class homesteaders extends Table
 {
@@ -40,13 +41,12 @@ class homesteaders extends Table
             "first_player"      => 11, 
             "selected_worker"   => 12,
             "selected_building" => 13,
-            "bid_selected"      => 14,
-            "phase"             => 15,
-            "number_auctions"   => 16,
-            "current_auction"   => 17,
-            "last_bid"          => 18,
-            "players_passed"    => 19,
-            "bonus_option"      => 20,
+            "phase"             => 14,
+            "number_auctions"   => 15,
+            "current_auction"   => 16,
+            "last_bid"          => 17,
+            "players_passed"    => 18,
+            "bonus_option"      => 19,
         ) );
         
         $this->Log   = new HSDLog($this);
@@ -105,7 +105,6 @@ class homesteaders extends Table
         self::setGameStateInitialValue( 'first_player', 0 );
         self::setGameStateInitialValue( 'selected_worker', 0 );
         self::setGameStateInitialValue( 'selected_building', 0 );
-        self::setGameStateInitialValue( 'bid_selected', 0 );
         self::setGameStateInitialValue( 'phase', 0 );
         self::setGameStateInitialValue( 'number_auctions', $number_auctions );
         self::setGameStateInitialValue( 'current_auction', 1 );
@@ -659,6 +658,11 @@ class homesteaders extends Table
             $rail_adv++;
             $sql = "UPDATE `resources` SET `rail_adv`= '".$rail_adv."' WHERE `player_id`='$active_player'";
             self::DbQuery( $sql );
+            self::notifyAllPlayers( "railAdv", 
+                        clienttranslate( '${player_name} gains rail advancement ' ),            
+                        array('player_id' => $player_id,
+                              'player_name' => self::getActivePlayerName(),
+                              'rail_destination' => $rail_adv,));
         }
     }
     
@@ -788,6 +792,11 @@ class homesteaders extends Table
             $this->updateResource($player_id, 'food', -1);
         }
         self::addWorker($player_id);
+        self::notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token}' ), array(
+            'player_id' => $player_id,
+            'worker_key' => $worker_key,
+            'token_name' => 'worker',
+            'player_name' => self::getCurrentPlayerName(),));
     }
 
     public function playerSelectWorkerDestination($worker_key, $building_key, $building_slot) 
@@ -816,30 +825,30 @@ class homesteaders extends Table
         $this->gamestate->setPlayerNonMultiactive( self::getCurrentPlayerId(), "done" );
     }
 
-    public function playerMakeBid($bid_location){
-        self::checkAction( "selectBid" );
+    public function playerConfirmBid($bid_location){
+        self::checkAction( "confirmBid" );
         $active_player = $this->getActivePlayerId();
-        $valid_bids = $this->bid->getValidBids($active_player);
+        $valid_bids = $this->Bid->getValidBids($active_player);
         if (in_array($bid_location, $valid_bids)){// valid bid
             $active_player = $this->getActivePlayerId();
-            $this->bid->makeBid($bid_location, $active_player);
+            $this->Bid->makeBid($bid_location, $active_player);
             self::setGameStateValue('last_bid', $bid_location);
             $this->gamestate->nextState( "nextBid" );
-        } else if ($bid_location == BID_PASS){ //follow pass bid procedue
-            $players_passed = self::getGameStateValue('players_passed');
-            self::setGameStateValue('players_passed', ++$players_passed);
-            $this->gamestate->nextState( "pass" );
-        } 
+        } else {
+            
+        }
     }
 
     public function playerPassBid(){
-        self::checkAction( "selectBid" );
+        self::checkAction( "pass" );
         $active_player = $this->getActivePlayerId();
         $this->Log->passBid($active_player);
         $this->Bid->passBid($active_player);
+        $players_passed = self::getGameStateValue('players_passed');
+        self::setGameStateValue('players_passed', ++$players_passed);
         self::setGameStateValue('phase', 2);
         $this->getRailAdv($active_player);
-        $this->gamestate->nextState('pass');
+        $this->gamestate->nextState( "rail" );
     }
 
     public function playerSelectBuilding(){
@@ -974,8 +983,8 @@ class homesteaders extends Table
 
     function argValidBids() {
         $active_player_id = self::getActivePlayerId();
-        $valid_Bids = $this->Bid->getValidBids($active_player_id);
-        return ($valid_bids);
+        $valid_bids = $this->Bid->getValidBids($active_player_id);
+        return array('valid_bids'=>$valid_bids );
     }
 
     function argRailBonus() {
@@ -1112,7 +1121,7 @@ class homesteaders extends Table
     function stBuildingPhase()
     {
         $next_state = "";
-        $auction_winner_id = $this->Bid->getWinnerOfAuction()
+        $auction_winner_id = $this->Bid->getWinnerOfAuction();
         // determine winner of this auction
         
         if ($auction_winner_id == 0) {

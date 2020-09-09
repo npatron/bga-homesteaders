@@ -102,9 +102,9 @@ $machinestates = array(
         "type" => "activeplayer",
         "action" => "stMakeBidOrPass",
         "args" => "argValidBids",
-        "possibleactions" => array( "selectBid", "approveBid", "pass" ),
+        "possibleactions" => array( "selectBid", "confirmBid", "pass" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
-                                "pass" => STATE_RAIL_BONUS )
+                                "rail" => STATE_RAIL_BONUS )
     ),
 
     STATE_RAIL_BONUS => array(
