@@ -140,7 +140,7 @@ class HSDLog extends APP_GameClass
     $this->insert($player_id, 0, 'startTurn');
   }
 
-   /*
+  /*
    * addBuild: add a new build entry to log
    */
   public function buyBuilding($player_id, $building_id)
@@ -151,6 +151,16 @@ class HSDLog extends APP_GameClass
   public function takeLoan($player_id) 
   {
     $this->insert($player_id, 0, 'loan');
+  }
+
+  public function passBid($player_id)
+  {
+    $this->insert($player_id, 0, 'passBid');
+  }
+
+  public function outbidPlayer($outbid_player_id, $outbidding_player_id)
+  {
+    $this->insert($outbid_player_id, 0, 'outbid', array('outbid_by'=>$outbidding_player_id));
   }
 
 }

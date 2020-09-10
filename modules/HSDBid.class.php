@@ -3,7 +3,6 @@
 /*
  * HSDBid: a class that allows handles bid related actions.
  */
-require_once('constants.inc.php');
 class HSDBid extends APP_GameClass
 {
     public $game;
@@ -46,24 +45,64 @@ class HSDBid extends APP_GameClass
         return 0;
     }
 
+    public function passBid(){
+        $player_id = $this->game->getActivePlayerId();
+        $players_passed = $this->game->getGameStateValue('players_passed');
+        $sql = "UPDATE `resources` SET `bid_loc` = '".BID_PASS."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes'), array (
+				'player_id' => $player_id,
+                'bid'=> BID_PASS ));
+        $this->game->setGameStateValue('players_passed', ++$players_passed);
+        $this->game->setGameStateValue('phase', 2);
+        $this->game->getRailAdv($player_id);
+        
+    }
+
+    public function confirmBid($bid_location){
+        $active_player = $this->game->getActivePlayerId();
+        $valid_bids = $this->getValidBids($active_player);
+        if (in_array($bid_location, $valid_bids)){// valid bid
+            $this->Bid->makeBid($bid_location, $active_player);
+            $this->game->setGameStateValue('last_bid', $bid_location);
+            $this->gamestate->nextState( "nextBid" );
+        } else {
+            throw new BgaUserException( _("Invalid Bid Selection") );
+        }
+    }
+
+    public function outbidPlayer($player_id){
+        $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} is outbid'), array (
+                'player_id' => $player_id,
+                'player_name' => $this->game->loadPlayersBasicInfos()[$player_id]['player_name'],
+                'bid_location'=>OUTBID));
+        $this->game->Log->outbidPlayer($player_id);
+    }
+
     public function makeBid($bid_location, $player_id){
+        // determine outbids (if any).
+        $auction_bid_start = 0;
+        if ($bid_location > 0 && $bid_location < 10){
+            $auction_bid_start = 1;
+        } else if ($bid_location > 10 && $bid_location < 20) {
+            $auction_bid_start = 11;
+        } else if ($bid_location > 20 && $bid_location < 30) {
+            $auction_bid_start = 21;
+        }
+        $sql = "SELECT `player_id` FROM `resources` WHERE `bid_loc` BETWEEN '".$auction_bid_start."' AND '".$bid_location."'";
+        $outbid = self::getCollectionFromDb( $sql );
+        foreach($outbid as $outbid_id){
+            $this->outbidPlayer($outbid_id);
+        }
+        // then update bid for this 
         $sql = "UPDATE `resources` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
         self::DbQuery( $sql );
 		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} places a bid'), array (
-				'player_id' => $player_id,
-				'bid'=>$bid_location));
-        // mark somebids as outbid.
-        // TODO:: add logging of outbids (for stats).
-        if ($bid_location > 0 && $bid_location < 10){
-            $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `bid_loc` BETWEEN '1' AND '".$bid_location."'";
-            self::DbQuery( $sql );
-        } else if ($bid_location > 10 && $bid < 20) {
-            $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `bid_loc` BETWEEN '11' AND '".$bid_location."'";
-            self::DbQuery( $sql );
-        } else if ($bid_location > 20 && $bid_location < 30) {
-            $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `bid_loc` BETWEEN '21' AND '".$bid_location."'";
-            self::DbQuery( $sql );
-        }
+                'player_id' => $player_id,
+                'player_name' => $this->game->getActivePlayerName(),
+                'bid'=>$bid_location));
     }
 
     public function getValidBids($player_id) {

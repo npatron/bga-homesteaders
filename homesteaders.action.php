@@ -88,7 +88,7 @@
   public function confirmBid (){
       self::setAjaxMode();
       $bid_loc = self::getArg( "bid_loc", AT_posint, true);
-      $this->game->playerMakeBid( $bid_loc );
+      $this->game->playerConfirmBid( $bid_loc );
       self::ajaxResponse( );
   }
 

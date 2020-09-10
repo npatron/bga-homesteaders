@@ -449,7 +449,7 @@ function (dojo, declare) {
                     this.showMessage( _("You must select 1 bid_slot"), 'error' );
                     return;
                 }
-                const bid_loc = this.getBidLocFromId(selected_slot[0].id);
+                const bid_loc = this.getBidNo(selected_slot[0].id);
                 this.ajaxcall( "/homesteaders/homesteaders/confirmBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
                 }, function( is_error) { } );                
             }

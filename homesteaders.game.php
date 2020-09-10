@@ -827,44 +827,35 @@ class homesteaders extends Table
 
     public function playerConfirmBid($bid_location){
         self::checkAction( "confirmBid" );
-        $active_player = $this->getActivePlayerId();
-        $valid_bids = $this->Bid->getValidBids($active_player);
-        if (in_array($bid_location, $valid_bids)){// valid bid
-            $active_player = $this->getActivePlayerId();
-            $this->Bid->makeBid($bid_location, $active_player);
-            self::setGameStateValue('last_bid', $bid_location);
-            $this->gamestate->nextState( "nextBid" );
-        } else {
-            
-        }
+        $this->Bid->confirmBid($bid_location);
+        
     }
 
     public function playerPassBid(){
         self::checkAction( "pass" );
-        $active_player = $this->getActivePlayerId();
-        $this->Log->passBid($active_player);
-        $this->Bid->passBid($active_player);
-        $players_passed = self::getGameStateValue('players_passed');
-        self::setGameStateValue('players_passed', ++$players_passed);
-        self::setGameStateValue('phase', 2);
-        $this->getRailAdv($active_player);
+        $this->Log->passBid($this->getActivePlayerId());
+        $this->Bid->passBid();
         $this->gamestate->nextState( "rail" );
     }
 
+    // pretty sure I don't want to track selected Building in sql, probably want to remove this.
     public function playerSelectBuilding(){
         self::checkAction( "build" );
         self::setGameStateValue( $selected_building );
     }
 
+    // pretty sure I don't want to track selected Building in sql, probably want take it as input instead.
     public function playerBuildSelected(){
         $selected_building = self::getGameStateValue( 'selected_building');
         $active_player = $this->getActivePlayerId();
         if ($selected_building == 0){
-            throw new BgaUserException( self::_("You Must select building(s) to build") );
+            throw new BgaUserException( _("You Must select a building to build") );
         }
         $success = $this->buyBuilding($active_player, $selected_building);
         if ($success) {
             $this->gamestate->nextState( 'build' );
+        } else {
+            throw new BgaUserException( _("Not enough resources to build that building") );
         }
     }
 
