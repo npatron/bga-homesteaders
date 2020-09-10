@@ -56,16 +56,14 @@ class HSDBid extends APP_GameClass
         $this->game->setGameStateValue('players_passed', ++$players_passed);
         $this->game->setGameStateValue('phase', 2);
         $this->game->getRailAdv($player_id);
-        
     }
 
     public function confirmBid($bid_location){
         $active_player = $this->game->getActivePlayerId();
         $valid_bids = $this->getValidBids($active_player);
         if (in_array($bid_location, $valid_bids)){// valid bid
-            $this->Bid->makeBid($bid_location, $active_player);
+            $this->makeBid($bid_location, $active_player);
             $this->game->setGameStateValue('last_bid', $bid_location);
-            $this->gamestate->nextState( "nextBid" );
         } else {
             throw new BgaUserException( _("Invalid Bid Selection") );
         }
