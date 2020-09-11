@@ -13,8 +13,7 @@ class HSDBid extends APP_GameClass
 
     function clearBids(){
         self::DbQuery( "UPDATE `resources` SET `bid_loc`= '0' " );
-        $this->game->setGameStateValue('last_bid', 0);
-        $this->game->setGameStateValue('bid_selected', 0 );
+        $this->game->setGameStateValue('last_bidder', 0);
         $this->game->setGameStateValue('players_passed', 0);
     }
 
@@ -30,29 +29,18 @@ class HSDBid extends APP_GameClass
 
     public function getBidCost($bid_location){
         $bid_index = ($bid_location % 10);
-        switch($bid_index){
-            case 1:
-                return 3;
-            case 2:
-                return 4;
-            case 3:
-                return 5;
-            case 4:
-                return 6;
-            case 5:
-                return 7;
-            case 6:
-                return 9;
-            case 7:
-                return 12;
-            case 8:
-                return 16;
-            case 9:
-                return 21;
-            default:
-                return 0;
-        }
-        
+        $bid_cost_array = array(
+            1 => 3, 
+            2 => 4,
+            3 => 5,
+            4 => 6,
+            5 => 7,
+            6 => 9,
+            7 => 12,
+            8 => 16,
+            9 => 21,
+        );
+        return ($bid_cost_array[$bid_index]);
     }
 
     public function getWinnerOfAuction() 
@@ -91,7 +79,7 @@ class HSDBid extends APP_GameClass
         $valid_bids = $this->getValidBids($active_player);
         if (in_array($bid_location, $valid_bids)){// valid bid
             $this->makeBid($bid_location, $active_player);
-            $this->game->setGameStateValue('last_bid', $bid_location);
+            $this->game->setGameStateValue('last_bidder', $active_player);
         } else {
             throw new BgaUserException( _("Invalid Bid Selection") );
         }
@@ -145,21 +133,22 @@ class HSDBid extends APP_GameClass
         $sql = "SELECT `bid_loc` FROM `resources`";
         $bids = self::getObjectListFromDB( $sql );
         $offset = 0;
-        /*if ($this->game->doTheyOwnBuilding($player_id, BUILDING_LAWYER)){
+        if ($this->game->doTheyOwnBuilding($player_id, BUILDING_LAWYER)){
             $offset = 1;
-        }*/
-        foreach ($bids as $bid){
-            if ($bid > 0 && $bid < 10){
-                for ($i = ($bid - $offset); $i >0; $i--){
-                    $valid_bids = \array_diff($valid_bids, [$i]);
+        }
+        for($i=0; $i < count($bids); $i++){
+            $bid = $bids[$i]['bid_loc'];
+            if (($bid > 0) && ($bid < 10)){
+                for ($j = ($bid - $offset); $j >0; $j--){
+                    $valid_bids = \array_diff($valid_bids, [$j]);
                 }
-            } else if ($bid > 10 && $bid < 20) {
-                for ($i = ($bid - $offset); $i >10; $i--){
-                    $valid_bids = \array_diff($valid_bids, [$i]);
+            } else if (($bid > 10) && ($bid < 20)) {
+                for ($j = ($bid - $offset); $j >10; $j--){
+                    $valid_bids = \array_diff($valid_bids, [$j]);
                 }
-            } else if ($bid > 20 && $bid < 30) {
-                for ($i = ($bid - $offset); $i >20; $i--){
-                    $valid_bids = \array_diff($valid_bids, [$i]);
+            } else if (($bid > 20) && ($bid < 30)) {
+                for ($j = ($bid - $offset); $j >20; $j--){
+                    $valid_bids = \array_diff($valid_bids, [$j]);
                 }
             }
         }

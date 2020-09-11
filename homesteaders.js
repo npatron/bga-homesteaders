@@ -83,6 +83,8 @@ function (dojo, declare) {
             this.numberOfBidsSelected = 0;
             this.numberOfWorkersSelected = 0;
             this.lastHighlightedBidLocation = "";
+            this.connectHandlers = [];
+            this.tradeConnectHandlers = [];
         },
         
         /*
@@ -224,10 +226,13 @@ function (dojo, declare) {
                     dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}),'token_zone_'+player_color);
                     this.token_zone[player_id].placeInZone(`token_${player_color}_bid`);
                 } else {
-                    const auc = Math.ceil(player_bid_loc / 10);
-                    const bid = ((player_bid_loc % 10)-1);
-                    dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}),`bid_slot_A${auc}_B${this.bid_vals[bid]}`);
-                    this.bid_zones[auc][bid].placeInZone(`token_${player_color}_bid`);
+                    const bid_pair = this.getBidPairFromBidNo(player_bid_loc);
+                    const bid_auc_no = bid_pair.auction_no;
+                    const bid_slot = this.bid_vals[bid_pair.bid_index];
+                    console.log(`bid_no: ${player_bid_loc}, loc: ${bid_auc_no}, bid_slot: ${bid_slot}`);
+                    const bid_slot_id = `bid_slot_A${bid_auc_no}_B${bid_slot}`;
+                    dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}), bid_slot_id);
+                    this.bid_zones[bid_auc_no][bid_pair.bid_index].placeInZone(`token_${player_color}_bid`);
                 }
             }
         },
@@ -268,7 +273,7 @@ function (dojo, declare) {
                     this.goldAmount = 0;
                     break;
                 case 'playerBid':
-                    
+                    console.log('entering playerBid');
                 case 'getPassBenefits':
 
                     break;
@@ -311,18 +316,25 @@ function (dojo, declare) {
                     //update_Resources();
                     break;
                 case 'allocateWorkers':
-                    // show workers that are selectable
+                    // remove selectable (and selected) from workers
                     const worker_elements = dojo.query( `#token_zone_${this.player_color[current_player_id]} .token_worker` );
                     worker_elements.removeClass('selectable');
-                    worker_elements.connect('onclick', this, 'doNothingEvent');
-                    // also make building_slots selectable.
-                    
+                    worker_elements.removeClass('selected');
+                    // remove selectable from buildings_slots
                     const buildings = dojo.query(`#building_zone_${this.player_color[current_player_id]} .selectable`)
                     buildings.removeClass('selectable');
-                    buildings.connect('onclick', this, 'doNothingEvent');
+                    // remove click events
+                    this.connectHandlers.foreach(connect.disconnect());
+                    this.connectHandlers = [];
                     break;    
                 case 'payWorkers':
                     onSelectDoneTrading(null);
+                    break;
+                case 'playerBid':
+                    const selectable = dojo.query(".bid_loc .selectable")
+                    selectable.removeClass('selectable');
+                    this.connectHandlers.foreach(connect.disconnect());
+                    this.connectHandlers = [];
                     break;
                 case 'dummy':
                     break;
@@ -358,11 +370,11 @@ function (dojo, declare) {
                         // show workers that are selectable
                         const worker_elements = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
                         worker_elements.addClass('selectable');
-                        worker_elements.connect('onclick', this, 'onClickOnWorker');
+                        this.connectHandlers.push(worker_elements.connect('onclick', this, 'onClickOnWorker'));
                         // also make building_slots selectable.
                         const buildings = dojo.query(`#building_zone_${this.player_color[current_player_id]} .worker_slot`)
                         buildings.addClass('selectable');
-                        buildings.connect('onclick', this, 'onClickOnWorkerDestination');
+                        this.connectHandlers.push(buildings.connect('onclick', this, 'onClickOnWorkerDestination'));
                         if (Number(args.trade) >0){
                             this.addActionButton( 'btn_trade',       _('Trade'),           'onSelectTradeActionButton');
                             this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'onSelectHireWorkerButton');
@@ -374,12 +386,12 @@ function (dojo, declare) {
                         this.numberOfBidsSelected = 0;
                         for (let bid_key in args.valid_bids) {
                             let bid = args.valid_bids[bid_key];
-                            const bid_loc = this.getBidLocation(bid);
-                            const bid_slot = this.bid_vals[bid_loc.bid_index -1];
-                            console.log(`bid_no: ${bid}, loc: ${bid_loc.auction_no}, bid_slot: ${bid_slot}`);
-                            const bid_slot_id = `bid_slot_A${bid_loc.auction_no}_B${bid_slot}`;
+                            const bid_pair = this.getBidPairFromBidNo(bid);
+                            const bid_slot = this.bid_vals[bid_pair.bid_index];
+                            console.log(`bid_no: ${bid}, auc: ${bid_pair.auction_no}, bid_slot: ${bid_slot}`);
+                            const bid_slot_id = `bid_slot_A${bid_pair.auction_no}_B${bid_slot}`;
                             dojo.query("#"+bid_slot_id).addClass("selectable");
-                            dojo.query("#"+bid_slot_id).connect('onclick', this, 'doClickOnBidSlot');
+                            this.connectHandlers.push(dojo.query("#"+bid_slot_id).connect('onclick', this, 'doClickOnBidSlot'));
                         }
                         this.addActionButton( 'btn_pass',    _('Pass'),    'onSelectPassBidButton', null, false, 'red');
                         this.addActionButton( 'btn_confirm', _('Confirm Bid'), 'onSelectConfirmBidButton');
@@ -439,12 +451,12 @@ function (dojo, declare) {
             const options = dojo.query(".trade_option");
             for (let option in options){
                 option.addClass('selectable');
-                option.connect( 'onclick', this, 'onSelectTradeAction' );
+                this.tradeConnectHandlers.push(option.connect( 'onclick', this, 'onSelectTradeAction' ));
             }
             const done_trading = dojo.query('#done_trading')
             done_trading.addClass('done_trading' , 'selectable');
             done_trading.removeClass('done_trading' , 'noshow');
-            done_trading.connect( 'onclick', this, 'onSelectDoneTrading' );
+            this.tradeConnectHandlers.push(done_trading.connect( 'onclick', this, 'onSelectDoneTrading' ));
             }
         },
 
@@ -469,7 +481,7 @@ function (dojo, declare) {
                     this.showMessage( _("You must select 1 bid_slot"), 'error' );
                     return;
                 }
-                const bid_loc = this.getBidNo(selected_slot[0].id);
+                const bid_loc = this.getBidNoFromSlotId(selected_slot[0].id);
                 this.ajaxcall( "/homesteaders/homesteaders/confirmBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
                 }, function( is_error) { } );                
             }
@@ -517,7 +529,7 @@ function (dojo, declare) {
             this.player_building_zone[player.player_id].placeInZone(`building_tile_${building.building_key}`);
         },
 
-        getBidNo: function(bid_loc_id){
+        getBidNoFromSlotId: function(bid_loc_id){
             const split_bid = bid_loc_id.split("_");
             const auc_no = Number(split_bid[2].slice(-1));
             const bid_val = split_bid[3];
@@ -555,9 +567,9 @@ function (dojo, declare) {
             return ((auc_no-1)*10 + bid_no); 
         },
 
-        getBidLocation: function(bid_no){
+        getBidPairFromBidNo: function(bid_no){
             const auction_no = Math.ceil(bid_no/10);
-            const bid_index = Number(bid_no%10);
+            const bid_index = Number(bid_no%10) -1;
             return {
                 auction_no,
                 bid_index,
@@ -705,9 +717,9 @@ function (dojo, declare) {
             this.slideToObject('trade_board', 'bottom');
             // now make the trade options not selectable
             dojo.query('.trade_option').removeClass('selectable');
-            dojo.query('.trade_option').connect('onclick', this, 'doNothingEvent' );
             dojo.query('#done_trading').removeClass( 'selectable');
             dojo.query('#done_trading').addClass('noshow');
+            this.tradeConnectHandlers.foreach(connect.disconnect);
         },
 
 
@@ -859,9 +871,9 @@ function (dojo, declare) {
             } else if(notif.args.bid_location == 20){ // pass
                 this.token_zone[notif.args.player_id].placeInZone(bid_token_id);
             } else { //actual bid
-                const bid = this.getBidLocation(notif.args.bid_location);
-                console.log(`: ${notif.args.bid_location} auc: ${bid.auction_no} bid_index: ${bid.bid_index} bid_val: ${bid.bid_val} token: ${bid_token_id}`);
-                this.bid_zones[bid.auction_no][bid.bid_index].placeInZone(bid_token_id);
+                const bid_pair = this.getBidPairFromBidNo(notif.args.bid_location);
+                const bid_auc_no = bid_pair.auction_no;
+                this.bid_zones[bid_auc_no][bid_pair.bid_index].placeInZone(bid_token_id);
             }
         },
 

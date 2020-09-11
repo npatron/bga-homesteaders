@@ -125,8 +125,8 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stNextBid",
-        "transitions" => array( "skip" => STATE_NEXT_BID, 
-                                "bid" => STATE_PLAYER_BID, 
+        "transitions" => array( "skipPlayer" => STATE_NEXT_BID, 
+                                "playerBid" => STATE_PLAYER_BID, 
                                 "endAuction" => STATE_NEXT_BUILDING )
     ),
 

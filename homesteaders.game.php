@@ -38,15 +38,13 @@ class homesteaders extends Table
         
         self::initGameStateLabels( array( 
             "round_number"      => 10,
-            "first_player"      => 11, 
-            "selected_worker"   => 12,
-            "selected_building" => 13,
-            "phase"             => 14,
-            "number_auctions"   => 15,
-            "current_auction"   => 16,
-            "last_bid"          => 17,
-            "players_passed"    => 18,
-            "bonus_option"      => 19,
+            "first_player"      => 11,
+            "phase"             => 12,
+            "number_auctions"   => 13,
+            "current_auction"   => 14,
+            "last_bidder"       => 15,
+            "players_passed"    => 16,
+            "bonus_option"      => 17,
         ) );
         
         $this->Log   = new HSDLog($this);
@@ -101,16 +99,16 @@ class homesteaders extends Table
             $number_auctions = 3;
         }
         // Init global values with their initial values
-        self::setGameStateInitialValue( 'round_number', 0 );
-        self::setGameStateInitialValue( 'first_player', 0 );
-        self::setGameStateInitialValue( 'selected_worker', 0 );
-        self::setGameStateInitialValue( 'selected_building', 0 );
-        self::setGameStateInitialValue( 'phase', 0 );
-        self::setGameStateInitialValue( 'number_auctions', $number_auctions );
-        self::setGameStateInitialValue( 'current_auction', 1 );
-        self::setGameStateInitialValue( 'last_bid', 0 );
-        self::setGameStateInitialValue( 'players_passed', 0 );
-        self::setGameStateInitialValue( 'bonus_option', 0 );
+        $this->setGameStateInitialValue( 'round_number', 0 );
+        $this->setGameStateInitialValue( 'first_player', 0 );
+        $this->setGameStateInitialValue( 'selected_worker', 0 );
+        $this->setGameStateInitialValue( 'selected_building', 0 );
+        $this->setGameStateInitialValue( 'phase', 0 );
+        $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
+        $this->setGameStateInitialValue( 'current_auction', 1 );
+        $this->setGameStateInitialValue( 'last_bidder', 0 );
+        $this->setGameStateInitialValue( 'players_passed', 0 );
+        $this->setGameStateInitialValue( 'bonus_option', 0 );
         
         // create building Tiles (in sql)
         $this->createBuildings($gamePlayers);
@@ -138,9 +136,9 @@ class homesteaders extends Table
             self::DbQuery( $sql );
         }
         
-        self::activeNextPlayer();
+        $this->activeNextPlayer();
         $active_player = self::getActivePlayerId();
-        self::setGameStateValue('first_player', $active_player);
+        $this->setGameStateValue('first_player', $active_player);
         
         /************ End of the game initialization *****/
     }
@@ -562,53 +560,53 @@ class homesteaders extends Table
                     case BUILDING_HOMESTEAD_GREEN:
                     case BUILDING_HOMESTEAD_BLUE:
                         if ($worker['building_slot'] == 1){
-                            $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'wood');
+                            $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'wood');
                             $player_resource['wood'] += 1;
                         } else {
-                            $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'vp');
+                            $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'vp');
                             $player_resource['vp'] += 1;
                         }
                         break;
                     case BUILDING_FARM:
                         if ($worker['building_slot'] == 1){
-                            $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'trade');
-                            $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 2, 'silver');
+                            $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'trade');
+                            $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 2, 'silver');
                             $player_resource['trade'] += 1;
                             $player_resource['silver'] += 2;
                         } else {
-                            $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'food');
+                            $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'food');
                             $player_resource['food'] += 1;
                         }
                         break;
                     case BUILDING_MARKET:
-                        $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 2, 'silver');
+                        $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 2, 'silver');
                         $player_resource['silver'] += 2;
                         break;
                     case BUILDING_FOUNDRY:
-                        $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'steel');
+                        $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'steel');
                         $player_resource['steel'] += 1;
                         break;
                     case BUILDING_RANCH:
-                        $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'cow');
+                        $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'cow');
                         $player_resource['cow'] += 1;
                         break;
                     case BUILDING_GOLD_MINE:
-                        $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'gold');
+                        $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'gold');
                         $player_resource['gold'] += 1;
                         break;
                     case BUILDING_COPPER_MINE:
-                        $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 1, 'copper');
+                        $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 1, 'copper');
                         $player_resource['copper'] += 1;
                         break;
                     case BUILDING_RIVER_PORT:
                         if ($worker['building_slot'] == 2){
-                            $this->notifyIncome ($player_id, '2 workers at'.$this->getBuildingNameFromKey($building_key), 1, 'gold');
+                            $this->notifyIncome ($player_id, '2 workers at '.$this->getBuildingNameFromKey($building_key), 1, 'gold');
                             $player_resource['gold'] += 1;
                         } 
                         break;
                     case BUILDING_MEATPACKING_PLANT:
                     case BUILDING_FORGE:
-                        $this->notifyIncome ($player_id, 'worker at'.$this->getBuildingNameFromKey($building_key), 2, 'vp');
+                        $this->notifyIncome ($player_id, 'worker at '.$this->getBuildingNameFromKey($building_key), 2, 'vp');
                         $player_resource['vp'] += 2;
                         break;
                 }
@@ -1106,20 +1104,18 @@ class homesteaders extends Table
 
     function stNextBid()
     { 
-        self::activeNextPlayer();
+        $this->activeNextPlayer();
         // figure out if bid round is complete, 
         $active_player = $this->getActivePlayerId();
-        $last_bid = self::getGameStateValue( 'last_bid' );
-        $sql = "SELECT `bid_loc` FROM `resources` WHERE `player_id`='$active_player'";
-        $player_bid = self::getUniqueValueFromDB( $sql );
+        $last_bidder = $this->getGameStateValue( 'last_bidder' );
         // if bidding is complete
         $players_passed = $this->getGameStateValue('players_passed');
-        if ($player_bid == $last_bid || $players_passed >= $this->getPlayersNumber()) {
+        if ($active_player == $last_bidder || $players_passed >= $this->getPlayersNumber()) {
             $next_state = "endAuction";
         } else if ($this->Bid->canPlayerBid($active_player)) {// if this player can bid.
-            $next_state = "bid";
+            $next_state = "playerBid";
         } else { // if not, let next player bid
-            $next_state = "skip";
+            $next_state = "skipPlayer";
         }
         $this->gamestate->nextState( $next_state );
     }
@@ -1135,7 +1131,7 @@ class homesteaders extends Table
             $next_state = "auctionPassed";
         } else {
             if ($current_auction == 1){
-                self::setGameStateValue('first_player', $auction_winner_id);
+                $this->setGameStateValue('first_player', $auction_winner_id);
             }
             $this->gamestate->changeActivePlayer( $auction_winner_id );
             $next_state = "auctionWon";
@@ -1145,8 +1141,8 @@ class homesteaders extends Table
 
     function stBuild()
     {
-        $auction_no = self::getGameStateValue( 'current_auction' );
-        $round_number = self::getGameStateValue( 'round_number' );
+        $auction_no = $this->getGameStateValue( 'current_auction' );
+        $round_number = $this->getGameStateValue( 'round_number' );
         $sql = "SELECT `build_type` FROM `auctions` WHERE `location` = '$auction_no AND `position` = '$round_number'";
         $build_type = self::getUniqueValueFromDB( $sql );
         if ( $build_type== 0 ){
@@ -1157,8 +1153,8 @@ class homesteaders extends Table
     function stResolveBuilding()
     {
         $next_state = "auctionBonus";
-        $round_number = self::getGameStateValue( 'round_number' );
-        $auction_no = self::getGameStateValue( 'current_auction' );
+        $round_number = $this->getGameStateValue( 'round_number' );
+        $auction_no = $this->getGameStateValue( 'current_auction' );
         $bonus = self::getUniqueValueFromDB("SELECT `bonus` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'");
         if ($bonus == 0){
             $next_state = "endBuild";
@@ -1170,8 +1166,8 @@ class homesteaders extends Table
     {
         $next_state = "bonusChoice";
         $active_player = $this->getActivePlayerId();
-        $auction_no = self::getGameStateValue( 'current_auction' );
-        $round_number = self::getGameStateValue( 'round_number' );
+        $auction_no = $this->getGameStateValue( 'current_auction' );
+        $round_number = $this->getGameStateValue( 'round_number' );
         $auction_id = self::getUniqueValueFromDB("SELECT `auction_id` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'");
         switch($auction_id){
             case AUCTION1_5:
@@ -1180,27 +1176,27 @@ class homesteaders extends Table
                 // worker
                 $this->addWorker($active_player);
                 $next_state = "endBuild";
-                self::setGameStateValue( 'bonus_option', NONE );
+                $this->setGameStateValue( 'bonus_option', NONE );
             break;
             case AUCTION2_4:
             case AUCTION3_4:
                 $this->addWorker($active_player);
-                self::setGameStateValue( 'bonus_option' , 7);
+                $this->setGameStateValue( 'bonus_option' , 7);
                 // worker and rail adv
             break;
             case AUCTION2_8:
             case AUCTION3_7:
                 // wood for rail tile (not rail advancement)
-                self::setGameStateValue( 'bonus_option' , WOOD);
+                $this->setGameStateValue( 'bonus_option' , WOOD);
             break;
             // resource for points
             case AUCTION1_9:
                 // copper for 4 vp.
-                self::setGameStateValue( 'bonus_option' , COPPER);
+                $this->setGameStateValue( 'bonus_option' , COPPER);
             break;
             case AUCTION1_10:
                 // cow for 4 vp.
-                self::setGameStateValue( 'bonus_option' , COW);
+                $this->setGameStateValue( 'bonus_option' , COW);
             break;
             case AUCTION3_10:
                 $sql = "SELECT `vp` FROM `resources` WHERE `player_id` = '".$active_player."'";
@@ -1221,7 +1217,7 @@ class homesteaders extends Table
 
     function stChooseBonus()
     {
-        $bonus = self::getGameStateValue( 'bonus_option' );
+        $bonus = $this->getGameStateValue( 'bonus_option' );
         $next_state = "done";
         switch($bonus){
             case NONE:
@@ -1240,7 +1236,7 @@ class homesteaders extends Table
                 // trade copper for vp.
             break;
             case 7:
-                self::setGameStateValue('phase', 3);
+                $this->setGameStateValue('phase', 3);
                 $next_state = "railBonus";
             break;
         }
@@ -1248,28 +1244,27 @@ class homesteaders extends Table
     }
 
     function stEndBuildRound() {
-        $auction_no = self::getGameStateValue( 'current_auction' );
+        $auction_no = $this->getGameStateValue( 'current_auction' );
         $this->discardAuctionTile($auction_no);
         $next_state = "nextBuilding";
-        if ($auction_no = self::getGameStateValue( 'number_auctions' )){
+        if ($auction_no = $this->getGameStateValue( 'number_auctions' )){
             $next_state = "endRound";
         } else {
-            self::setGameStateValue( 'current_auction', ++$auction_no);
+            $this->setGameStateValue( 'current_auction', ++$auction_no);
         }
         $this->gamestate->nextState( $next_state );
     }
 
     function stEndRound()
     {
-        $round_number = self::getGameStateValue( 'round_number' );
+        $round_number = $this->getGameStateValue( 'round_number' );
         $next_state = "endGame";
         if ($round_number < 10) {
-            self::setGameStateValue( 'current_auction',   1);
-            self::setGameStateValue( 'players_passed',    0);
-            self::setGameStateValue( 'last_bid' ,         0);
-            self::setGameStateValue( 'selected_worker',   0);
-            self::setGameStateValue( 'selected_building', 0);
-            self::setGameStateValue( 'bid_selected',      0);
+            $this->setGameStateValue( 'current_auction',   1);
+            $this->setGameStateValue( 'players_passed',    0);
+            $this->setGameStateValue( 'last_bid' ,         0);
+            $this->setGameStateValue( 'selected_worker',   0);
+            $this->setGameStateValue( 'selected_building', 0);
             $next_state = "nextAuction";
         }
         $this->gamestate->nextState( $next_state );
