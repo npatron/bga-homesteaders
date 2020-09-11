@@ -13,53 +13,59 @@
 <div id ="top"> </div>
 <!-- Auction Board -->
 <div id="board" class="shadow">
+    <div id="bid_limbo" class= "token_zone"> </div>
 
-    <div id="bid_slot_A1_B9" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B12" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B16" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B21" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B7" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B6" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B5" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B4" class="bid_slot"> </div>
-    <div id="bid_slot_A1_B3" class="bid_slot"> </div>
-    <div id="auction_tile_zone1" class="auction_tiles_zone"> </div>
+    <div id="bid_slot_1_9" class="bid_slot"> </div>
+    <div id="bid_slot_1_12" class="bid_slot"> </div>
+    <div id="bid_slot_1_16" class="bid_slot"> </div>
+    <div id="bid_slot_1_21" class="bid_slot"> </div>
+    <div id="bid_slot_1_7" class="bid_slot"> </div>
+    <div id="bid_slot_1_6" class="bid_slot"> </div>
+    <div id="bid_slot_1_5" class="bid_slot"> </div>
+    <div id="bid_slot_1_4" class="bid_slot"> </div>
+    <div id="bid_slot_1_3" class="bid_slot"> </div>
+    <div id="auction_tile_zone_1" class="auction_tiles_zone"> </div>
     
-    <div id="bid_slot_A2_B9" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B12" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B16" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B21" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B7" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B6" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B5" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B4" class="bid_slot"> </div>
-    <div id="bid_slot_A2_B3" class="bid_slot"> </div>
-    <div id="auction_tile_zone2" class="auction_tiles_zone"> </div>
+    <div id="bid_slot_2_9" class="bid_slot"> </div>
+    <div id="bid_slot_2_12" class="bid_slot"> </div>
+    <div id="bid_slot_2_16" class="bid_slot"> </div>
+    <div id="bid_slot_2_21" class="bid_slot"> </div>
+    <div id="bid_slot_2_7" class="bid_slot"> </div>
+    <div id="bid_slot_2_6" class="bid_slot"> </div>
+    <div id="bid_slot_2_5" class="bid_slot"> </div>
+    <div id="bid_slot_2_4" class="bid_slot"> </div>
+    <div id="bid_slot_2_3" class="bid_slot"> </div>
+    <div id="auction_tile_zone_2" class="auction_tiles_zone"> </div>
 
-    <div id="bid_slot_A3_B9" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B12" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B16" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B21" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B7" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B6" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B5" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B4" class="bid_slot"> </div>
-    <div id="bid_slot_A3_B3" class="bid_slot"> </div>
-    <div id="auction_tile_zone3" class="auction_tiles_zone"> </div>
+    <div id="bid_slot_3_9" class="bid_slot"> </div>
+    <div id="bid_slot_3_12" class="bid_slot"> </div>
+    <div id="bid_slot_3_16" class="bid_slot"> </div>
+    <div id="bid_slot_3_21" class="bid_slot"> </div>
+    <div id="bid_slot_3_7" class="bid_slot"> </div>
+    <div id="bid_slot_3_6" class="bid_slot"> </div>
+    <div id="bid_slot_3_5" class="bid_slot"> </div>
+    <div id="bid_slot_3_4" class="bid_slot"> </div>
+    <div id="bid_slot_3_3" class="bid_slot"> </div>
+    <div id="auction_tile_zone_3" class="auction_tiles_zone"> </div>
 
-    <div id="train_advancement_0" class="train_advance"> 
-    </div>
-    <div id="train_advancement_1" class="train_advance"> 
-    </div>
-    <div id="train_advancement_2" class="train_advance"> 
-    </div>
-    <div id="train_advancement_3" class="train_advance"> 
-    </div>
-    <div id="train_advancement_4" class="train_advance"> 
-    </div>
-    <div id="train_advancement_5" class="train_advance"> 
-    
-    </div>
+    <div id="train_advancement_0" class="train_advance"> </div>
+    <div id="train_advancement_1" class="train_advance"> </div>
+    <div id="train_advancement_2" class="train_advance"> </div>
+    <div id="train_advancement_3" class="train_advance"> </div>
+    <div id="train_advancement_4" class="train_advance"> </div>
+    <div id="train_advancement_5" class="train_advance"> </div>
+
+    <div id="train_bonus_1_trade" class="train_bonus"> </div>
+    <div id="train_bonus_2_track" class="train_bonus"> </div>
+    <div id="train_bonus_3_worker" class="train_bonus"> </div>
+    <div id="train_bonus_4_wood" class="train_bonus"> </div>
+    <div id="train_bonus_4_food" class="train_bonus"> </div>
+    <div id="train_bonus_4_steel" class="train_bonus"> </div>
+    <div id="train_bonus_4_gold" class="train_bonus"> </div>
+    <div id="train_bonus_4_copper" class="train_bonus"> </div>
+    <div id="train_bonus_4_cow" class="train_bonus"> </div>
+    <div id="train_bonus_5_vp" class="train_bonus"> </div>
+
 </div>
 
 <!-- token limbo -->

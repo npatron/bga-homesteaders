@@ -38,7 +38,7 @@ function (dojo, declare) {
             // indexed by location [discard-0, Auctions-(1,2,3)]
             this.bid_zone_height = 36;
             this.bid_zone_width = 36;
-            this.bid_vals = [3,4,5,6,7,9,12,16,21];
+            this.bid_val_arr = [3,4,5,6,7,9,12,16,21];
             // auction bid zones
             this.bid_zones = [];
             this.auction_zones = [];
@@ -46,7 +46,7 @@ function (dojo, declare) {
                 this.bid_zones[i] = []; 
                 this.auction_zones[i]= new ebg.zone();
             }
-            for (var i =0; i < this.bid_vals.length; i++){
+            for (var i =0; i < this.bid_val_arr.length; i++){
                 this.bid_zones[1][i] = new ebg.zone();
                 this.bid_zones[2][i] = new ebg.zone();
                 this.bid_zones[3][i] = new ebg.zone();
@@ -77,12 +77,9 @@ function (dojo, declare) {
             this.player_count = 0;
             this.goldAmount = 0;
             this.last_worker_selected = 0;
-            this.last_bid_selected = 0;
+            this.last_bid_selected = "";
             this.canal_tile_div_id = "";     // Division Id of Canal tile
-            this.lastHighlightedBuildingTile = "";
             this.numberOfBidsSelected = 0;
-            this.numberOfWorkersSelected = 0;
-            this.lastHighlightedBidLocation = "";
             this.connectHandlers = [];
             this.tradeConnectHandlers = [];
         },
@@ -103,10 +100,6 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
-
-            this.token_div[-1] = 'limbo';
-            this.token_zone[-1].create (this, this.token_div[-1], 50, 50 );
-            this.token_zone[-1].setPattern('horizontalfit');
 
             this.playerCount = 0;
             // Setting up player boards
@@ -169,7 +162,7 @@ function (dojo, declare) {
 
         setupAuctionZones: function (auctions, current_round ) {
             for (let i=1; i <=3; i++){
-                this.auction_ids[i] = "auction_tile_zone"+i.toString();
+                this.auction_ids[i] = "auction_tile_zone_"+i.toString();
                 this.auction_zones[i].create(this, this.auction_ids[i], this.tile_width, this.tile_height);
                 this.auction_zones[i].setPattern('diagonal');
             }
@@ -206,11 +199,13 @@ function (dojo, declare) {
         },
         
         setupBidZones: function (auctionCount) {
-            for (let bid =0; bid < this.bid_vals.length; bid ++){
-                this.bid_zones[1][bid].create(this,'bid_slot_A1_B'+this.bid_vals[bid].toString(), 50, 50);
-                this.bid_zones[2][bid].create(this,'bid_slot_A2_B'+this.bid_vals[bid].toString(), 50, 50);
-                if (auctionCount == 3){
-                    this.bid_zones[3][bid].create(this,'bid_slot_A3_B'+this.bid_vals[bid].toString(), 50, 50);
+            this.token_div[-1] = 'bid_limbo';
+            this.token_zone[-1].create (this, this.token_div[-1], 50, 50 );
+            this.token_zone[-1].setPattern('horizontalfit');
+            
+            for (let bid =0; bid < this.bid_val_arr.length; bid ++){
+                for (let auc = 1; auc <= auctionCount; auc++){
+                    this.bid_zones[1][bid].create(this,`bid_slot_${auc}_${this.bid_val_arr[bid].toString()}`, 50, 50);
                 }
             }
         },
@@ -220,7 +215,7 @@ function (dojo, declare) {
                 const player_bid_loc = resources[player_id].bid_loc;
                 const player_color = this.player_color[player_id];
                 if (player_bid_loc == 0 || player_bid_loc == 10){ //NOBID or OUTBID
-                    dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}),'limbo');
+                    dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}),'bid_limbo');
                     this.token_zone[-1].placeInZone(`token_${player_color}_bid`);
                 } else if (player_bid_loc == 20) {// BID_PASS
                     dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}),'token_zone_'+player_color);
@@ -228,9 +223,9 @@ function (dojo, declare) {
                 } else {
                     const bid_pair = this.getBidPairFromBidNo(player_bid_loc);
                     const bid_auc_no = bid_pair.auction_no;
-                    const bid_slot = this.bid_vals[bid_pair.bid_index];
+                    const bid_slot = this.bid_val_arr[bid_pair.bid_index];
                     console.log(`bid_no: ${player_bid_loc}, loc: ${bid_auc_no}, bid_slot: ${bid_slot}`);
-                    const bid_slot_id = `bid_slot_A${bid_auc_no}_B${bid_slot}`;
+                    const bid_slot_id = `bid_slot_${bid_auc_no}_${bid_slot}`;
                     dojo.place(this.format_block( 'jptpl_token', {type: player_color.toString(), id: "bid"}), bid_slot_id);
                     this.bid_zones[bid_auc_no][bid_pair.bid_index].placeInZone(`token_${player_color}_bid`);
                 }
@@ -275,30 +270,28 @@ function (dojo, declare) {
                 case 'playerBid':
                     console.log('entering playerBid');
                 case 'getPassBenefits':
-
+                    // do something
                     break;
                 case 'nextBid':
-
+                    // do something
                     break;
                 case 'buildingPhase':
-
+                    // do something
                     break;
                 case 'payAuction':
                     this.goldAmount = 0;
                     break;
                 case 'chooseBuildingToBuild':
-
+                    // do something
                     break;
                 case 'getBonus':
-
+                    // do something
                     break;
                 case 'bonusChoice':
-
+                    // do something
                     break;
                 case 'endRound':
-
-                    break;
-                case 'dummmy':
+                    // do something
                     break;
             }
         },
@@ -328,7 +321,7 @@ function (dojo, declare) {
                     this.connectHandlers = [];
                     break;    
                 case 'payWorkers':
-                    onSelectDoneTrading(null);
+                    this.disableTradeIfNecessary();
                     break;
                 case 'playerBid':
                     const selectable = dojo.query(".bid_loc .selectable")
@@ -355,10 +348,10 @@ function (dojo, declare) {
                 {
                     case 'payWorkers':
                         if (Number(args.trade) >0){
-                            this.addActionButton( 'btn_trade', _('Trade'),'tradeActionButton');
+                            this.addActionButton( 'btn_trade', _('Trade'), 'tradeActionButton');
                         }
                         if (Number(args.gold) > this.goldAmount){
-                            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'lowerGold');
+                            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold');
                         }
                         if (this.goldAmount >0 ) {
                             this.addActionButton( 'btn_less_gold', _('Use Less Gold'), 'lowerGold');
@@ -374,27 +367,40 @@ function (dojo, declare) {
                         // also make building_slots selectable.
                         const buildings = dojo.query(`#building_zone_${this.player_color[current_player_id]} .worker_slot`)
                         buildings.addClass('selectable');
-                        this.connectHandlers.push(buildings.connect('onclick', this, 'onClickOnWorkerDestination'));
+                        this.connectHandlers.push(buildings.connect('onclick', this, 'onClickOnWorkerSlot'));
                         if (Number(args.trade) >0){
-                            this.addActionButton( 'btn_trade',       _('Trade'),           'onSelectTradeActionButton');
-                            this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'onSelectHireWorkerButton');
+                            this.addActionButton( 'btn_trade',       _('Trade'),           'tradeActionButton');
+                            this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton');
                         }
-                        this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'onSelectTakeLoanButton');
-                        this.addActionButton( 'btn_done',        _('Done'),            'onSelectDonePlacingWorkersButton');
+                        this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan');
+                        this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
                     break;
                     case 'playerBid':
                         this.numberOfBidsSelected = 0;
                         for (let bid_key in args.valid_bids) {
                             let bid = args.valid_bids[bid_key];
                             const bid_pair = this.getBidPairFromBidNo(bid);
-                            const bid_slot = this.bid_vals[bid_pair.bid_index];
+                            const bid_slot = this.bid_val_arr[bid_pair.bid_index];
                             console.log(`bid_no: ${bid}, auc: ${bid_pair.auction_no}, bid_slot: ${bid_slot}`);
-                            const bid_slot_id = `bid_slot_A${bid_pair.auction_no}_B${bid_slot}`;
+                            const bid_slot_id = `bid_slot_${bid_pair.auction_no}_${bid_slot}`;
                             dojo.query("#"+bid_slot_id).addClass("selectable");
                             this.connectHandlers.push(dojo.query("#"+bid_slot_id).connect('onclick', this, 'doClickOnBidSlot'));
                         }
-                        this.addActionButton( 'btn_pass',    _('Pass'),    'onSelectPassBidButton', null, false, 'red');
                         this.addActionButton( 'btn_confirm', _('Confirm Bid'), 'onSelectConfirmBidButton');
+                        this.addActionButton( 'btn_pass',    _('Pass'),    'onSelectPassBidButton', null, false, 'red');
+                    break;
+                    case 'payAuction':
+                        if (Number(args.trade) >0){
+                            this.addActionButton( 'btn_trade', _('Trade'), 'tradeActionButton');
+                        }
+                        if (Number(args.gold) > this.goldAmount){
+                            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold');
+                        }
+                        if (this.goldAmount >0 ) {
+                            this.addActionButton( 'btn_less_gold', _('Use Less Gold'), 'lowerGold');
+                        }
+                        this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan');
+                        this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
                     break;
                 }
             }
@@ -403,107 +409,7 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Utility methods
 
-        takeLoan: function(){
-            if( this.checkAction( 'takeLoan')){
-                this.ajaxcall( "/homesteaders/homesteaders/takeLoan.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );     
-            }
-        },
-
-        donePayingWorkers: function(){
-            if( this.checkAction( 'done')){
-                this.ajaxcall( "/homesteaders/homesteaders/donePayingWorkers.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} ); 
-            }
-        },
-
-        donePlacingWorkers: function(){
-            if( this.checkAction( 'done')){
-                this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} ); 
-            }
-        },
-        
-
-        disableTradeIfNecessary: function() {
-            if (dojo.query('#top #trade_board').length ==1){
-                this.slideToObject('trade_board', 'bottom');
-                // now make the trade options not selectable
-                dojo.query('.trade_option').removeClass('selectable');
-                dojo.query('.trade_option').connect('onclick', this, 'doNothingEvent' );
-                dojo.query('#done_trading').removeClass( 'selectable');
-                dojo.query('#done_trading').addClass('noshow');
-            }
-        },
-
-        onSelectTradeActionButton: function(){
-            if( this.checkAction( 'trade' ) ){
-            // if trade options already displayed, set done.
-            if (dojo.hasClass('trade_done', 'selectable')){ 
-                this.onSelectDoneTrading(null);
-                return;
-            }
-            this.slideToObject('trade_board', 'top');
-            // now make the trade options selectable
-            const options = dojo.query(".trade_option");
-            for (let option in options){
-                option.addClass('selectable');
-                this.tradeConnectHandlers.push(option.connect( 'onclick', this, 'onSelectTradeAction' ));
-            }
-            const done_trading = dojo.query('#done_trading')
-            done_trading.addClass('done_trading' , 'selectable');
-            done_trading.removeClass('done_trading' , 'noshow');
-            this.tradeConnectHandlers.push(done_trading.connect( 'onclick', this, 'onSelectDoneTrading' ));
-            }
-        },
-
-        onSelectHireWorkerButton: function() {
-            if( this.checkAction( 'hireWorker')){
-                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {lock: true}, this, function( result ) {
-                }, function( is_error) { } );                
-            }
-        },
-        
-        onSelectPassBidButton: function() {
-            if( this.checkAction( 'pass')){
-                this.ajaxcall( "/homesteaders/homesteaders/passBid.html", {lock: true}, this, function( result ) {
-                }, function( is_error) { } );                
-            }
-        },
-        
-        onSelectConfirmBidButton: function () {
-            if( this.checkAction( 'confirmBid')){
-                const selected_slot = dojo.query(".bid_slot.selected");
-                if (selected_slot.length != 1){
-                    this.showMessage( _("You must select 1 bid_slot"), 'error' );
-                    return;
-                }
-                const bid_loc = this.getBidNoFromSlotId(selected_slot[0].id);
-                this.ajaxcall( "/homesteaders/homesteaders/confirmBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
-                }, function( is_error) { } );                
-            }
-        },
-
-        showCurrentAuctions: function (auctions, current_round){
-            for (var auction_id in auctions){
-                const auction = auctions[auction_id];
-                if (auction.location !=0 && auction.position == current_round) {
-                    dojo.place(this.format_block( 'jstpl_auction_tile', {auc: auction_id}), this.auction_ids[auction.location]);
-                    this.auction_zones[auction.location].placeInZone(`auction_tile_${auction_id}`);
-                }
-            }
-        },
-
-        clearAuction: function(auction_no){
-            const auc_id = dojo.query(`#${this.auction_ids[auction_no]} .auction_tile`)[0].id
-            if (auc_id != null){
-                this.auction_zones[auction_no].removeFromZone(auc_id, true);
-            }
-        },
-
+        /***** building utils *****/
         addBuildingWorkerSlots: function(building){
             const key = building.building_key; 
             const divId = `building_tile_${key}`;
@@ -529,39 +435,15 @@ function (dojo, declare) {
             this.player_building_zone[player.player_id].placeInZone(`building_tile_${building.building_key}`);
         },
 
+        moveBuildingToMainZone: function(building) {
+            this.main_building_zone.placeInZone(`building_tile_${building.building_key}`);
+        },
+
+        /***** Bid utils *****/
         getBidNoFromSlotId: function(bid_loc_id){
             const split_bid = bid_loc_id.split("_");
-            const auc_no = Number(split_bid[2].slice(-1));
-            const bid_val = split_bid[3];
-            switch(bid_val){
-                case 'B3':
-                    var bid_no = 1;
-                    break;
-                case 'B4':
-                    var bid_no = 2;
-                    break; 
-                case 'B5':
-                    var bid_no = 3;
-                    break;
-                case 'B6':
-                    var bid_no = 4;
-                    break;
-                case 'B7':
-                    var bid_no = 5;
-                    break;
-                case 'B9':
-                    var bid_no = 6;
-                    break;
-                case 'B12':
-                    var bid_no = 7;
-                    break;
-                case 'B16':
-                    var bid_no = 8;
-                    break;
-                case 'B21':
-                    var bid_no = 9;
-                    break;
-            }
+            const auc_no = Number(split_bid[2]);
+            const bid_no = this.bid_val_arr.indexOf(split_bid[3]) + 1;
             console.log( "auc_no -> " + auc_no);
             console.log( "bid_no -> " + bid_no);
             return ((auc_no-1)*10 + bid_no); 
@@ -576,8 +458,33 @@ function (dojo, declare) {
             };
         },
 
-        undoBuild: function(building) {
-            this.main_building_zone.placeInZone(`building_tile_${building.building_key}`);
+        showCurrentAuctions: function (auctions, current_round){
+            for (var auction_id in auctions){
+                const auction = auctions[auction_id];
+                if (auction.location !=0 && auction.position == current_round) {
+                    dojo.place(this.format_block( 'jstpl_auction_tile', {auc: auction_id}), this.auction_ids[auction.location]);
+                    this.auction_zones[auction.location].placeInZone(`auction_tile_${auction_id}`);
+                }
+            }
+        },
+
+        clearAuction: function(auction_no){
+            const auc_id = dojo.query(`#${this.auction_ids[auction_no]} .auction_tile`)[0].id
+            if (auc_id != null){
+                this.auction_zones[auction_no].removeFromZone(auc_id, true);
+            }
+        },
+        
+        disableTradeIfPossible: function() {
+            if (dojo.query('#top #trade_board').length ==1){
+                this.slideToObject('trade_board', 'bottom');
+                // now make the trade options not selectable
+                dojo.query('.trade_option').removeClass( 'selectable' );
+                dojo.query('#done_trading').removeClass( 'selectable' );
+                dojo.query('#done_trading').addClass( 'noshow' );
+                this.tradeConnectHandlers.foreach(connect.disconnect);
+                this.tradeConnectHandlers = [];
+            }
         },
 
         updateMainBuildingStock: function(buildings){
@@ -588,21 +495,87 @@ function (dojo, declare) {
             // get getPresentTypeList();
         },
 
-
         ///////////////////////////////////////////////////
         //// Player's action
-        
-        /*
-        
-            Here, you are defining methods to handle player's action (ex: results of mouse click on 
-            game objects).
+
+        /***** COMMON ACTIONS (multiple states) *****/
+        takeLoan: function(){
+            if( this.checkAction( 'takeLoan')){
+                this.ajaxcall( "/homesteaders/homesteaders/takeLoan.html", {lock: true}, this, 
+                function( result ) {}, 
+                function( is_error) {} );     
+            }
+        },
+
+        lowerGold: function(){
+            this.goldAmount --;
+            //this.updateGoldCounter()
+        },
+        raiseGold: function(){
+            this.goldAmount++;
+            //this.updateGoldCounter()
+        },
+
+        /***** TRADE *****/
+        onSelectTradeAction: function( evt){
+            console.log( 'onClickOnTradeSlot' );
+            dojo.stopEvent( evt );
+            if( ! this.checkAction( 'trade' ) )
+            { return; }
+            if (!dojo.hasClass (evt.target.id, 'selectable'))
+            { return; }
+            const tradeAction = evt.target.id.substring(6);  
+            // THIS ISN'T DONE YET! //
+            // TODO FINISH TRADE ACTION //
+            this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
+                lock: true, 
+                tradeAction: tradeAction
+             }, this, function( result ) {}, function( is_error) {});
+        },
+        tradeActionButton: function(){
+            if( this.checkAction( 'trade' ) ){
+            // if trade options already displayed, set done.
+            if (dojo.query('#top #trade_board').length ==1){ 
+                this.disableTradeIfPossible();
+                return;
+            }
+            this.slideToObject('trade_board', 'top');
+            // now make the trade options selectable
+            const options = dojo.query(".trade_option");
+            options.addClass('selectable');
+            this.tradeConnectHandlers.push(
+                options.connect( 'onclick', this, 'onSelectTradeAction' ));
             
-            Most of the time, these methods:
-            _ check the action is possible at this game state.
-            _ make a call to the game server
-        
-        */
-        
+            const done_trading = dojo.query('#done_trading')
+            done_trading.addClass('done_trading' , 'selectable');
+            done_trading.removeClass('done_trading' , 'noshow');
+            this.tradeConnectHandlers.push(done_trading.connect( 'onclick', this, 'onSelectDoneTrading' ));
+            }
+        },
+        onSelectDoneTrading: function( evt){
+            console.log( 'doneTrading' );
+            if (evt != null) { dojo.stopEvent( evt ); }
+            if( !this.checkAction( 'trade' ) )
+            { return; }
+            if (!dojo.hasClass ('done_trading', 'selectable'))
+            { return; }
+            this.disableTradeIfPossible();
+        },
+
+        /***** PLACE WORKERS PHASE *****/
+        donePlacingWorkers: function(){
+            if( this.checkAction( 'done')){
+                this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
+                function( result ) {}, 
+                function( is_error) {} ); 
+            }
+        },
+        hireWorkerButton: function() {
+            if( this.checkAction( 'hireWorker')){
+                this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {lock: true}, this, function( result ) {
+                }, function( is_error) { } );                
+            }
+        },
         onClickOnWorker: function( evt )
         {
             console.log( 'onClickOnWorker' );
@@ -625,9 +598,48 @@ function (dojo, declare) {
                 console.log( 'selectable -> selected' );
                 dojo.query(`#${worker_divId}`).removeClass("selectable");
                 dojo.query(`#${worker_divId}`).addClass("selected");
+                this.last_worker_selected = worker_divId;
             }
         },
 
+        onClickOnWorkerSlot: function( evt )
+        {
+            console.log( 'onClickOnWorkerSlot' );
+            dojo.stopEvent( evt );
+            if( ! this.checkAction( 'placeWorker' ) )
+            { return; }
+            if (this.last_worker_selected == 0){
+                this.showMessage( _("You must select 1 worker"), 'error' );
+                    return;
+            }
+            
+            const target_divId = evt.target.id;
+            console.log( `target: ${target_divId}` );
+            const building_key = Number(target_divId.split('_')[2]);
+            if(target_divId.startsWith('slot_1')){
+                var building_slot = 1; 
+            } else if(target_divId.startsWith('slot_2')){
+                var building_slot = 2;
+            }
+            const worker_key = this.last_worker_selected.split('_')[2];
+            this.ajaxcall( "/homesteaders/homesteaders/selectWorkerDestination.html", { 
+                lock: true, 
+                worker_key: worker_key,
+                building_key: building_key,
+                building_slot: building_slot
+             }, this, function( result ) {}, function( is_error) {});
+
+        },
+        /***** PAY WORKERS PHASE *****/
+        donePayingWorkers: function(){
+            if( this.checkAction( 'done')){
+                this.ajaxcall( "/homesteaders/homesteaders/donePayingWorkers.html", {lock: true}, this, 
+                function( result ) {}, 
+                function( is_error) {} ); 
+            }
+        },
+
+        /***** PLAYER BID PHASE *****/
         doClickOnBidSlot: function (evt) 
         {
             console.log( 'onSelectBidSlot' );
@@ -636,11 +648,11 @@ function (dojo, declare) {
             if( ! this.checkAction( 'selectBid' ) )
             { return; }
             var bid_loc_id = evt.target.id;
-            if (bid_loc_id.startsWith('token'))
+            if (bid_loc_id.startsWith('token'))//clicked on token in bid_slot
             { bid_loc_id = evt.target.parentNode.id; }
             console.log( 'bid_loc: '+ bid_loc_id );
             
-            // clear all other selected workers, then select this. 
+            // clear all other selected slots, then select this. 
             if (this.numberOfBidsSelected == 1){
                 const selected = dojo.query(`.selected`);
                 selected.removeClass('selected');
@@ -658,105 +670,33 @@ function (dojo, declare) {
             dojo.query(`#${bid_loc_id}`).addClass("selected");
             
         },
-
-        onClickOnWorkerDestination: function( evt )
-        {
-            console.log( 'onClickOnWorkerSlot' );
-            dojo.stopEvent( evt );
-            if( ! this.checkAction( 'placeWorker' ) )
-            { return; }
-            if (this.numberOfWorkersSelected!= 1){
-                this.showMessage( _("You must select 1 worker"), 'error' );
+        onSelectPassBidButton: function() {
+            if( this.checkAction( 'pass')){
+                this.ajaxcall( "/homesteaders/homesteaders/passBid.html", {lock: true}, this, function( result ) {
+                }, function( is_error) { } );                
+            }
+        },
+        onSelectConfirmBidButton: function () {
+            if( this.checkAction( 'confirmBid')){
+                const selected_slot = dojo.query(".bid_slot.selected");
+                if (selected_slot.length != 1){
+                    this.showMessage( _("You must select 1 bid_slot"), 'error' );
                     return;
+                }
+                const bid_loc = this.getBidNoFromSlotId(selected_slot[0].id);
+                this.ajaxcall( "/homesteaders/homesteaders/confirmBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
+                }, function( is_error) { } );                
             }
-            
-            const target_divId = evt.target.id;
-            console.log( `target: ${target_divId}` );
-            const building_key = Number(target_divId.split('_')[2]);
-            if(target_divId.startsWith('slot_1')){
-                var building_slot = 1; 
-            } else if(target_divId.startsWith('slot_2')){
-                var building_slot = 2;
+        },
+
+        /***** PAY AUCTION PHASE *****/
+        donePayingAuction: function(){
+            if( this.checkAction( 'done')){
+                this.ajaxcall( "/homesteaders/homesteaders/donePayingAuction.html", {lock: true}, this, 
+                function( result ) {}, 
+                function( is_error) {} ); 
             }
-            const worker_key = last_worker_selected.split('_')[2];
-            this.ajaxcall( "/homesteaders/homesteaders/selectWorkerDestination.html", { 
-                lock: true, 
-                worker_key: worker_key,
-                building_key: building_key,
-                building_slot: building_slot
-             }, this, function( result ) {}, function( is_error) {});
-
         },
-
-        doNothingEvent: function(evt){
-            console.log( 'doNothing' );
-            dojo.stopEvent(evt);
-        },
-
-        onSelectTradeAction: function( evt){
-            console.log( 'onClickOnTradeSlot' );
-            dojo.stopEvent( evt );
-            if( ! this.checkAction( 'trade' ) )
-            { return; }
-            if (!dojo.hasClass (evt.target.id, 'selectable'))
-            { return; }
-            const tradeAction = evt.target.id.substring(6); 
-            this.ajaxcall( "/homesteaders/homesteaders/selectWorkerDestination.html", { 
-                lock: true, 
-                tradeAction: tradeAction
-             }, this, function( result ) {}, function( is_error) {});
-        },
-
-        onSelectDoneTrading: function( evt){
-            console.log( 'doneTrading' );
-            if (evt != null) { dojo.stopEvent( evt ); }
-            if( ! this.checkAction( 'trade' ) )
-            { return; }
-            if (!dojo.hasClass ('done_trading', 'selectable'))
-            { return; }
-            this.slideToObject('trade_board', 'bottom');
-            // now make the trade options not selectable
-            dojo.query('.trade_option').removeClass('selectable');
-            dojo.query('#done_trading').removeClass( 'selectable');
-            dojo.query('#done_trading').addClass('noshow');
-            this.tradeConnectHandlers.foreach(connect.disconnect);
-        },
-
-
-
-        /* Example:
-        
-        onMyMethodToCall1: function( evt )
-        {
-            console.log( 'onMyMethodToCall1' );
-            
-            // Preventing default browser reaction
-            dojo.stopEvent( evt );
-
-            // Check that this action is possible (see "possibleactions" in states.inc.php)
-            if( ! this.checkAction( 'myAction' ) )
-            {   return; }
-
-            this.ajaxcall( "/homesteaders/homesteaders/myAction.html", { 
-                                                                    lock: true, 
-                                                                    myArgument1: arg1, 
-                                                                    myArgument2: arg2,
-                                                                    ...
-                                                                 }, 
-                         this, function( result ) {
-                            
-                            // What to do after the server call if it succeeded
-                            // (most of the time: nothing)
-                            
-                         }, function( is_error) {
-
-                            // What to do after the server call in anyway (success or failure)
-                            // (most of the time: nothing)
-
-                         } );        
-        },        
-        
-        */
 
         
         ///////////////////////////////////////////////////
@@ -835,8 +775,7 @@ function (dojo, declare) {
             this.building_worker_zones[notif.args.building_key][notif.args.building_slot].placeInZone('token_worker_'+notif.args.worker_key.toString());
             if (this.isCurrentPlayerActive() && notif.args.player_id == this.player_id)
             {
-                this.numberOfWorkersSelected = 0;
-                this.last_worker_selected = "";
+                this.last_worker_selected = 0;
                 const selectedWorker = dojo.query('.selected');
                 selectedWorker.removeClass('selected');
                 selectedWorker.addClass('selectable');

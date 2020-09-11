@@ -32,124 +32,126 @@ div#board {
 /*=========================
     Bid Slot Locations (on board)
   =========================*/
-.bid_slot {
-position: absolute;
-height: 8.25%;
-width: 6%;
+div#bid_limbo{
+   position: absolute;
+   height: 50px;
+   width: 200px;
+   top: 1%;
+   left: 45%;
 }
-div#bid_slot_A1_B3{
+.bid_slot {
+   position: absolute;
+   height: 8.25%;
+   width: 6%;
+}
+div#bid_slot_1_3{
    top: 54.8%;
    left: 6.35%;
  }
-div#bid_slot_A1_B4{
+div#bid_slot_1_4{
    top: 45.5%;
    left: 6.35%;
  }
-div#bid_slot_A1_B5{
+div#bid_slot_1_5{
    top: 36.4%;
    left: 6.35%;
  }
-div#bid_slot_A1_B6{
+div#bid_slot_1_6{
    top: 27.25%;
    left: 6.35%;
  }
-div#bid_slot_A1_B7{
+div#bid_slot_1_7{
    top: 18%;
    left: 6.35%;
  }
-div#bid_slot_A1_B9{
+div#bid_slot_1_9{
    top: 8.85%;
    left: 6.35%;
  }
-div#bid_slot_A1_B12{
+div#bid_slot_1_12{
    top: 8.85%;
    left: 13.25%;
  }
-div#bid_slot_A1_B16{
+div#bid_slot_1_16{
    top: 8.85%;
    left: 19.9%;
  }
-div#bid_slot_A1_B21{
+div#bid_slot_1_21{
    top: 8.85%;
    left: 26.75%;
  }
-div#bid_slot_A2_B3{
+div#bid_slot_2_3{
    top: 54.8%;
    left: 36.45%;
  }
-div#bid_slot_A2_B4{
+div#bid_slot_2_4{
    top: 45.5%;
    left: 36.45%;
  }
-div#bid_slot_A2_B5{
+div#bid_slot_2_5{
    top: 35.95%;
    left: 36.45%;
  }
-div#bid_slot_A2_B6{
+div#bid_slot_2_6{
    top: 27.256%;
    left: 36.45%;
  }
-div#bid_slot_A2_B7{
+div#bid_slot_2_7{
    top: 18%;
    left: 36.45%;
  }
-div#bid_slot_A2_B9{
+div#bid_slot_2_9{
    top: 8.85%;
    left: 36.45%;
  }
-div#bid_slot_A2_B12{
+div#bid_slot_2_12{
    top: 8.85%;
    left: 43.4%;
  }
-div#bid_slot_A2_B16{
+div#bid_slot_2_16{
    top: 8.85%;
    left: 50.1%;
  }
-div#bid_slot_A2_B21{
+div#bid_slot_2_21{
    top: 8.85%;
    left: 57%;
  }
-div#bid_slot_A3_B3{
+div#bid_slot_3_3{
    top: 54.8%;
    left: 66.65%;
  }
-div#bid_slot_A3_B4{
+div#bid_slot_3_4{
    top: 45.5%;
    left: 66.65%;
  }
-div#bid_slot_A3_B5{
+div#bid_slot_3_5{
    top: 36.4%;
    left: 66.65%;
  }
-div#bid_slot_A3_B6{
+div#bid_slot_3_6{
    top: 27.256%;
    left: 66.65%;
  }
-div#bid_slot_A3_B7{
+div#bid_slot_3_7{
    top: 18%;
    left: 66.65%;
  }
-div#bid_slot_A3_B9{
+div#bid_slot_3_9{
    top: 8.85%;
    left: 66.65%;
  }
-div#bid_slot_A3_B12{
+div#bid_slot_3_12{
    top: 8.85%;
    left: 73.6%;
  }
-div#bid_slot_A3_B16{
+div#bid_slot_3_16{
    top: 8.85%;
    left: 80.3%;
  }
-div#bid_slot_A3_B21{
+div#bid_slot_3_21{
    top: 8.85%;
    left: 87.1%;
  }
-
-.token_zone {
-   box-sizing: content-box;
-   height: 60px;
-}
 
 /*************************
  * Auction Zones
@@ -163,13 +165,13 @@ div#bid_slot_A3_B21{
    height: 36%;
    width: 20%;
 }
-#auction_tile_zone1 {
+#auction_tile_zone_1 {
    left: 13.46%;
 }
-#auction_tile_zone2 {
+#auction_tile_zone_2 {
    left: 43.45%;
 }
-#auction_tile_zone3 {
+#auction_tile_zone_3 {
    left: 73.25%;
 }
 /*************************
@@ -177,8 +179,8 @@ div#bid_slot_A3_B21{
 *************************/
 .train_advance{
    position: absolute;
-   top: 72.5%;
-   height: 15%;
+   top: 80%;
+   height: 7.5%;
    width: 14%;
    border-color:yellow;
    border-style: solid;
@@ -202,6 +204,67 @@ div#train_advancement_4{
 div#train_advancement_5{
    left: 79.1%;
 }
+.train_bonus {
+   position: absolute;
+   top: 73%;
+   border-color:purple;
+   border-style: solid;
+   border-width: 2px;
+   height: 6%;
+}
+div#train_bonus_1_trade{
+   left: 26%;
+   width: 4%;
+}
+div#train_bonus_2_track{
+   left: 40.65%;
+   width: 4%;
+}
+div#train_bonus_3_worker{
+   left: 55.5%;
+   width: 4%;
+}
+div#train_bonus_4_wood{
+   top: 75%;
+   height: 4%;
+   left: 65%;
+   width: 1.5%;
+}
+div#train_bonus_4_food{
+   top: 76%;
+   height: 3%;
+   left: 66.7%;
+   width: 1.5%;
+}
+div#train_bonus_4_steel{
+   top: 76%;
+   height: 3%;
+   left: 68.6%;
+   width: 1.5%;
+}
+div#train_bonus_4_gold{
+   top: 76%;
+   height: 3%;
+   left: 70.6%;
+   width: 1.5%;
+}
+div#train_bonus_4_copper{
+   top: 76%;
+   height: 3%;
+   left: 72.4%;
+   width: 2.5%;
+}
+div#train_bonus_4_cow{
+   top: 75.5%;
+   height: 3.5%;
+   left: 75.2%;
+   width: 2.8%;
+}
+div#train_bonus_5_vp{
+   left: 84%;
+   width: 5%;
+}
+
 
 /*************************
  * trade Board (and trade Selection Zones)
@@ -392,12 +455,13 @@ div#done_trading {
    visibility:visible;
 }
 
-#limbo {
-   height: 50px;
-}
 /*=========================
     Token images
   =========================*/
+.token_zone {
+   box-sizing: content-box;
+   height: 60px;
+}
 .token {
    background-image: url('img/tokens_50x50.png');
    width: 50px;

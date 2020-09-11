@@ -101,8 +101,6 @@ class homesteaders extends Table
         // Init global values with their initial values
         $this->setGameStateInitialValue( 'round_number', 0 );
         $this->setGameStateInitialValue( 'first_player', 0 );
-        $this->setGameStateInitialValue( 'selected_worker', 0 );
-        $this->setGameStateInitialValue( 'selected_building', 0 );
         $this->setGameStateInitialValue( 'phase', 0 );
         $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
         $this->setGameStateInitialValue( 'current_auction', 1 );
