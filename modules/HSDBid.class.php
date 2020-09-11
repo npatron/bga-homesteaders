@@ -28,6 +28,33 @@ class HSDBid extends APP_GameClass
         return false;
     }
 
+    public function getBidCost($bid_location){
+        $bid_index = ($bid_location % 10);
+        switch($bid_index){
+            case 1:
+                return 3;
+            case 2:
+                return 4;
+            case 3:
+                return 5;
+            case 4:
+                return 6;
+            case 5:
+                return 7;
+            case 6:
+                return 9;
+            case 7:
+                return 12;
+            case 8:
+                return 16;
+            case 9:
+                return 21;
+            default:
+                return 0;
+        }
+        
+    }
+
     public function getWinnerOfAuction() 
     {
         $current_auction = $this->game->getGameStateValue( 'current_auction' );
@@ -48,11 +75,12 @@ class HSDBid extends APP_GameClass
     public function passBid(){
         $player_id = $this->game->getActivePlayerId();
         $players_passed = $this->game->getGameStateValue('players_passed');
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes'), array (
+                'player_id' => $player_id,
+                'player_name' => $this->game->loadPlayersBasicInfos()[$player_id]['player_name'],
+                'bid_location'=> BID_PASS ));
         $sql = "UPDATE `resources` SET `bid_loc` = '".BID_PASS."' WHERE `player_id` = '".$player_id."'";
         self::DbQuery( $sql );
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes'), array (
-				'player_id' => $player_id,
-                'bid'=> BID_PASS ));
         $this->game->setGameStateValue('players_passed', ++$players_passed);
         $this->game->setGameStateValue('phase', 2);
         $this->game->getRailAdv($player_id);
@@ -69,14 +97,15 @@ class HSDBid extends APP_GameClass
         }
     }
 
-    public function outbidPlayer($player_id){
-        $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `player_id` = '".$player_id."'";
-        self::DbQuery( $sql );
+    public function outbidPlayer($player_id) {
 		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} is outbid'), array (
                 'player_id' => $player_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$player_id]['player_name'],
-                'bid_location'=>OUTBID));
-        $this->game->Log->outbidPlayer($player_id);
+                'bid_location'=> OUTBID));
+        $sql = "UPDATE `resources` SET `bid_loc` = '".OUTBID."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
+        $outbid_byid = $this->game->getActivePlayerId();
+        $this->game->Log->outbidPlayer($player_id, $outbid_byid);
     }
 
     public function makeBid($bid_location, $player_id){
@@ -91,16 +120,18 @@ class HSDBid extends APP_GameClass
         }
         $sql = "SELECT `player_id` FROM `resources` WHERE `bid_loc` BETWEEN '".$auction_bid_start."' AND '".$bid_location."'";
         $outbid = self::getCollectionFromDb( $sql );
-        foreach($outbid as $outbid_id){
+        foreach($outbid as $outbid_id =>$outbids){
             $this->outbidPlayer($outbid_id);
         }
         // then update bid for this 
-        $sql = "UPDATE `resources` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
-        self::DbQuery( $sql );
+        
 		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} places a bid'), array (
                 'player_id' => $player_id,
-                'player_name' => $this->game->getActivePlayerName(),
-                'bid'=>$bid_location));
+                'player_name' => $this->game->loadPlayersBasicInfos()[$player_id]['player_name'],
+                'bid_location'=> $bid_location) );
+        $sql = "UPDATE `resources` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
+        self::DbQuery( $sql );
+        
     }
 
     public function getValidBids($player_id) {
@@ -114,9 +145,9 @@ class HSDBid extends APP_GameClass
         $sql = "SELECT `bid_loc` FROM `resources`";
         $bids = self::getObjectListFromDB( $sql );
         $offset = 0;
-        if ($this->game->doTheyOwnBuilding($player_id, BUILDING_LAWYER)){
+        /*if ($this->game->doTheyOwnBuilding($player_id, BUILDING_LAWYER)){
             $offset = 1;
-        }
+        }*/
         foreach ($bids as $bid){
             if ($bid > 0 && $bid < 10){
                 for ($i = ($bid - $offset); $i >0; $i--){

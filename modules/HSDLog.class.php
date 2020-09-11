@@ -95,8 +95,7 @@ class HSDLog extends APP_GameClass
   {
     $player_id = $player_id == -1 ? $this->game->getActivePlayerId() : $player_id;
     $moveId = self::getUniqueValueFromDB("SELECT `global_value` FROM `global` WHERE `global_id` = 3");
-    $round = $this->game->getGameStateValue("currentRound");
-
+    $round = $this->game->getGameStateValue("round_number");
 
     if ($action === 'build'){
       $stats[] = ['table','buildings'];
@@ -129,7 +128,7 @@ class HSDLog extends APP_GameClass
 
     $actionArgs = json_encode($args);
 
-    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$pieceId', '$action', '$actionArgs')");
+    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action', '$actionArgs')");
   }
 
   /*
