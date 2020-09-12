@@ -62,14 +62,12 @@ function (dojo, declare) {
             // storage for buildings
             this.main_building_zone = new ebg.zone
             
-            this.player_token_order = [];
             //player zones
             this.player_color = []; // indexed by player id
             this.player_building_zone_id = [];
             this.player_building_zone = [];
             this.building_worker_zones = [];
-
-            this.players_railroad_advancements = [];   // indexed by player id
+            //this.players_railroad_advancements = [];   // indexed by player id
 
             this.tile_width = 144;
             this.tile_height = 196;
@@ -106,20 +104,17 @@ function (dojo, declare) {
             for( let player_id in gamedatas.players ) {
                 ++this.playerCount;
                 const player = gamedatas.players[player_id];
-                
+                if( this.player_id == player_id){
+                    const player_board_div = $('player_board_'+player_id);
+                    dojo.place( this.format_block('jstpl_player_board', {id: player_id} ), player_board_div );
+                } /*else {
+                    const player_board_div = $('player_board_'+player_id);
+                    dojo.place( this.format_block('jstpl_otherplayer_board', {id: player_id} ), player_board_div );
+                }*/
                 const current_player_color = player.color_name;
                 dojo.removeClass("player_zone_"+current_player_color.toString(), "noshow");
                 //TODO remove this innerText declaration once use different template pattern.
                 dojo.byId("player_name_"+current_player_color.toString()).innerText = player.player_name;
-                if (current_player_color === 'blue'){
-                    this.player_token_order[player_id] = 13;
-                } else if (current_player_color === 'green'){
-                    this.player_token_order[player_id] = 12;
-                } else if (current_player_color === 'yellow'){
-                    this.player_token_order[player_id] = 10;
-                } else if (current_player_color === 'red'){
-                    this.player_token_order[player_id] = 11;
-                }
                 //this.players_railroad_advancements[player_id] = gamedatas.resources[player_id].rail_adv;
                 
                 this.player_color[player_id] = current_player_color;
@@ -130,18 +125,13 @@ function (dojo, declare) {
                 this.player_building_zone_id[player_id] = 'building_zone_'+ this.player_color[player_id].toString();
                 this.player_building_zone[player_id] = new ebg.zone();
                 this.player_building_zone[player_id].create(this, this.player_building_zone_id[player_id], this.tile_width, this.tile_height);
-                
-                if (gamedatas.firstPlayer == player_id){
-                    dojo.removeClass("first_player_tile_"+player_id, "noshow");
-                }
-                if (player_id == this.player_id){
-                    dojo.place(`player_zone_${current_player_color}`, 'top_player_zone')
-                }
+
             }
 
             // Auctions: 
             this.setupAuctionZones(gamedatas.auctions, gamedatas.round_number);
             this.setupBuildingZones(gamedatas.buildings);
+            this.player_building_zone[gamedatas.first_player].placeInZone('first_player_tile', 1);
             this.setupWorkers(gamedatas.workers);
             var auctionCount = 2;
             if (gamedatas.auctions.len > 20) {auctionCount = 3;}

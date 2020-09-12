@@ -101,7 +101,7 @@ class homesteaders extends Table
         // Init global values with their initial values
         $this->setGameStateInitialValue( 'round_number', 0 );
         $this->setGameStateInitialValue( 'first_player', 0 );
-        $this->setGameStateInitialValue( 'phase', 0 );
+        $this->setGameStateInitialValue( 'phase',        0 );
         $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
         $this->setGameStateInitialValue( 'current_auction', 1 );
         $this->setGameStateInitialValue( 'last_bidder', 0 );
@@ -175,6 +175,7 @@ class homesteaders extends Table
         $sql = "SELECT `auction_id`, `position`, `location`,  `build_type`, `bonus` FROM `auctions` WHERE `location` IN (1,2,3) "; //`state`
         $result['auctions'] = self::getCollectionFromDb( $sql );
         
+        $result['first_player'] = self::getGameStateValue( 'first_player');
         $result['current_player'] = $current_player_id;
         $result['round_number'] = self::getGameStateValue( 'round_number' );
 
@@ -427,6 +428,11 @@ class homesteaders extends Table
             case BUILDING_RAIL_YARD:
                 return clienttranslate( 'Rail yard' );
         }
+    }
+
+    function getColorNames(){
+        $sql = "SELECT `player_id`, `color_name` FROM `player`";
+        return self::getCollectionFromDb( $sql );
     }
 
     function getBuildingCostFromKey($building_key){
@@ -797,7 +803,7 @@ class homesteaders extends Table
         $this->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token}' ), array(
             'player_id' => $player_id,
             'worker_key' => $worker_key,
-            'token_name' => 'worker',
+            'token' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),));
         $this->addWorker($player_id);
     }
@@ -812,8 +818,8 @@ class homesteaders extends Table
             'building_key' => $building_key,
             'building_name' => $this->getBuildingNameFromKey($building_key),
             'building_slot' => $building_slot, 
-            'token_name' => 'worker',
-            'player_name' => $this->loadPlayersBasicInfos()[$player_id]['player_name'],
+            'token' => 'worker',
+            'player_name' => $this->getcurrentPlayerName(),
         ) );
         $sql = "UPDATE `workers` SET `building_key`= '".$building_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$worker_key."'";
         self::DbQuery( $sql );
