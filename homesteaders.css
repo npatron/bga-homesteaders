@@ -37,7 +37,7 @@ div#bid_limbo{
    height: 50px;
    width: 200px;
    top: 1%;
-   left: 45%;
+   left: 40%;
 }
 .bid_slot {
    position: absolute;
@@ -265,7 +265,6 @@ div#train_bonus_5_vp{
    width: 5%;
 }
 
-
 /*************************
  * trade Board (and trade Selection Zones)
 *************************/
@@ -361,7 +360,6 @@ div#done_trading {
    height: 0px;
    width: 0px;
 }
-
 .building_zone {
    width: auto;
    max-width: 800px;
@@ -456,6 +454,26 @@ div#done_trading {
 }
 
 /*=========================
+    Player board
+  =========================*/
+.score {
+   transform: scale(.8);
+   position: relative;
+   display: inline-block;
+   margin-left: 3px;
+   margin-top: -0px;
+}
+.score_text {
+   position: relative;
+   display: inline-block;
+   left: 2px;
+   top: -7px;
+}
+.score_group {
+   height: 35px;
+}
+
+/*=========================
     Token images
   =========================*/
 .token_zone {
@@ -472,6 +490,23 @@ div#done_trading {
    height: 25px;
    width: 25px;
    background-size: 125px 75px;
+}
+
+.token_rail {
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: 0% 0%;
+   top: 4px;
+   height: 30px;
+   width: 25px;
+   background-size: 75px 30px;
+}
+.token_loan {
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -100% 0%;
+   top: 4px;
+   height: 30px;
+   width: 25px;
+   background-size: 75px 30px;
 }
 
 .token_wood {
@@ -536,25 +571,6 @@ div#done_trading {
    left: 15px;
 }
 
-/*=========================
-    Player board
-  =========================*/
-.score {
-   transform: scale(.8);
-   position: relative;
-   display: inline-block;
-   margin-left: 3px;
-   margin-top: -0px;
-}
-.score_text {
-   position: relative;
-   display: inline-block;
-   left: 2px;
-   top: -7px;
-}
-.score_group {
-   height: 35px;
-}
 /*=========================
     Auction Tile images
   =========================*/

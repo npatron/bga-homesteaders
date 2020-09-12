@@ -71,11 +71,9 @@
 
 <!-- token limbo -->
 <div id="limbo" style="display: block"> 
-<div id='future_building_zone'> </div>
-<div id='first_player_tile' class=' building_tile'> </div>
+    <div id='future_building_zone'> </div>
+    <div id='first_player_tile' class=' building_tile'> </div>
 </div>
-
-
 
 <div id="building_zone"> 
     <div class="building_stock"> Buildings Stock 
@@ -149,8 +147,8 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div id="silvericon_p${id}" class="token_silver icon score player_silver"></div><span id="silvercount_${id}" class="score_text">0</span>\
     <div id="tradeicon_p${id}"  class="token_trade icon score player_trade"></div><span id="tradecount_${id}" class="score_text">0</span>\
     <div id="loanicon_p${id}"   class="token_loan icon score player_loan"></div><span id="loancount_${id}" class="score_text">0</span>\
-    </div><div class="score_group">\
     <div id="woodicon_p${id}"   class="token_wood icon score player_wood"></div><span id="woodcount_${id}" class="score_text">0</span>\
+    </div><div class="score_group">\
     <div id="steelicon_p${id}"  class="token_steel icon score player_steel"></div><span id="steelcount_${id}" class="score_text">0</span>\
     <div id="goldicon_p${id}"   class="token_gold icon score player_gold"></div><span id="goldcount_${id}" class="score_text">0</span>\
     <div id="coppericon_p${id}" class="token_copper icon score player_copper"></div><span id="coppercount_${id}" class="score_text">0</span>\

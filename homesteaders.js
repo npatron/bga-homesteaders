@@ -68,6 +68,7 @@ function (dojo, declare) {
             this.player_building_zone = [];
             this.building_worker_zones = [];
             //this.players_railroad_advancements = [];   // indexed by player id
+            this.resourceCounters = [];
 
             this.tile_width = 144;
             this.tile_height = 196;
@@ -78,6 +79,7 @@ function (dojo, declare) {
             this.last_bid_selected = "";
             this.canal_tile_div_id = "";     // Division Id of Canal tile
             this.numberOfBidsSelected = 0;
+            // on click handlers
             this.connectHandlers = [];
             this.tradeConnectHandlers = [];
         },
@@ -104,18 +106,14 @@ function (dojo, declare) {
             for( let player_id in gamedatas.players ) {
                 ++this.playerCount;
                 const player = gamedatas.players[player_id];
+                const current_player_color = player.color_name;
                 if( this.player_id == player_id){
                     const player_board_div = $('player_board_'+player_id);
                     dojo.place( this.format_block('jstpl_player_board', {id: player_id} ), player_board_div );
-                } /*else {
-                    const player_board_div = $('player_board_'+player_id);
-                    dojo.place( this.format_block('jstpl_otherplayer_board', {id: player_id} ), player_board_div );
-                }*/
-                const current_player_color = player.color_name;
+                    dojo.place(`player_zone_${current_player_color}`, 'player_zones', "first");
+                } 
                 dojo.removeClass("player_zone_"+current_player_color.toString(), "noshow");
-                //TODO remove this innerText declaration once use different template pattern.
                 dojo.byId("player_name_"+current_player_color.toString()).innerText = player.player_name;
-                //this.players_railroad_advancements[player_id] = gamedatas.resources[player_id].rail_adv;
                 
                 this.player_color[player_id] = current_player_color;
                 this.token_div[player_id] = 'token_zone_' + this.player_color[player_id].toString();
@@ -125,12 +123,13 @@ function (dojo, declare) {
                 this.player_building_zone_id[player_id] = 'building_zone_'+ this.player_color[player_id].toString();
                 this.player_building_zone[player_id] = new ebg.zone();
                 this.player_building_zone[player_id].create(this, this.player_building_zone_id[player_id], this.tile_width, this.tile_height);
-
             }
 
+            this.setupPlayerResources(gamedatas.player_resources);
             // Auctions: 
             this.setupAuctionZones(gamedatas.auctions, gamedatas.round_number);
             this.setupBuildingZones(gamedatas.buildings);
+
             this.player_building_zone[gamedatas.first_player].placeInZone('first_player_tile', 1);
             this.setupWorkers(gamedatas.workers);
             var auctionCount = 2;
@@ -150,6 +149,16 @@ function (dojo, declare) {
         //// Setup Methods
         ///////////////////////////////////////////////////
 
+        setupPlayerResources: function (resources){
+            for (const [key, value] of Object.entries(resources)) {
+                console.log(`${key}: ${value}`);
+                if (key === "player_id") continue;
+                this.resourceCounters[key] = new ebg.counter();
+                this.resourceCounters[key].create(`${key}count_${resources.player_id}`);
+                this.resourceCounters[key].setValue(value);
+            }
+        },
+
         setupAuctionZones: function (auctions, current_round ) {
             for (let i=1; i <=3; i++){
                 this.auction_ids[i] = "auction_tile_zone_"+i.toString();
@@ -160,7 +169,6 @@ function (dojo, declare) {
         },
 
         setupBuildingZones: function(buildings){
-            
             this.main_building_zone.create (this, 'main_building_zone', this.tile_width, this.tile_height );
             for (let building_key in buildings){
                 const building = buildings[building_key];
@@ -598,12 +606,15 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if( ! this.checkAction( 'placeWorker' ) )
             { return; }
+            const target_divId = evt.target.id;
+            if (target_divId.startsWith('token_worker')){
+                return this.onClickOnWorker(evt);
+            }
             if (this.last_worker_selected == 0){
                 this.showMessage( _("You must select 1 worker"), 'error' );
                     return;
             }
             
-            const target_divId = evt.target.id;
             console.log( `target: ${target_divId}` );
             const building_key = Number(target_divId.split('_')[2]);
             if(target_divId.startsWith('slot_1')){
