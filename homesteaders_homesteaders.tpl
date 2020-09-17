@@ -128,6 +128,12 @@
         <div id="trade_market_wood_food" class="trade_option"> </div>
         <div id="trade_market_food_steel" class="trade_option"> </div>
     </div>
+    <div id="payment_section" class =" whiteblock">
+        <div id ="gold_cost_token" class='token token_gold'> </div>
+        <span id="gold_cost" class="score_text">0</span>
+        <div id= "silver_cost_token" class='token token_silver'> </div>
+        <span id="silver_cost" class="score_text">0</span>
+    </div>
 </div>
 
 <script type="text/javascript">

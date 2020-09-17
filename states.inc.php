@@ -81,9 +81,9 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must choose how to pay workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPayWorkers",
+        "args" => "argPayWorkers",
         "possibleactions" => array( "takeLoan", "trade", "done" ),
-        "transitions" => array( "done" => STATE_BEGIN_AUCTION, 
-                                "loopback" => STATE_PAY_WORKERS )
+        "transitions" => array( "" => STATE_BEGIN_AUCTION)
     ),
 
     STATE_BEGIN_AUCTION  => array(
@@ -100,7 +100,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must bid on auction or pass'),
         "descriptionmyturn" => clienttranslate('${you} must bid on auction or pass'),
         "type" => "activeplayer",
-        "action" => "stMakeBidOrPass",
+//        "action" => "stMakeBidOrPass",
         "args" => "argValidBids",
         "possibleactions" => array( "selectBid", "confirmBid", "pass" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
@@ -114,7 +114,7 @@ $machinestates = array(
         "type" => "activeplayer",
         "action" => "stRailBonus",
         "args" => "argRailBonus",
-        "possibleactions" => array( "selectBonus", "chooseBonus" ),
+        "possibleactions" => array( "chooseBonus" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
                                 "auctionBonus" => STATE_AUCTION_BONUS, 
                                 "endAuction" => STATE_END_BUILD)
@@ -145,6 +145,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must pay for auction'),
         "descriptionmyturn" => clienttranslate('${you} must pay for auction'),
         "type" => "activeplayer",
+        "args" => "argAuctionCost",
         "possibleactions" => array( "trade", "takeLoan", "useMoreGold", "useLessGold", "done" ),
         "transitions" => array( "build" => STATE_CHOOSE_BUILDING, 
                                 "bonus" => STATE_AUCTION_BONUS)

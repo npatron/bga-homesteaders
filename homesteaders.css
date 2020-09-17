@@ -22,9 +22,9 @@
 div#board {
    background-image: url('img/auctionBoard.jpg');
    position: relative;
-	width: 1000px;
-	height: 740px;
-   background-size: 1000px 740px;
+	width: 740px;
+	height: 545px;
+   background-size: 740px 545px;
    background-repeat: no-repeat;
    margin: auto;
 }
@@ -341,9 +341,9 @@ div#trade_market_food_steel{
 div#done_trading {
    background-image: url('img/refuse.png');
    top: 1%;
-   left: 24%;
-   height: 19%;
-   width: 15%;
+   left: 35%;
+   height: 12%;
+   width: 3.3%;
    position: absolute;
 }
 

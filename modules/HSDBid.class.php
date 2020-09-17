@@ -119,7 +119,6 @@ class HSDBid extends APP_GameClass
                 'bid_location'=> $bid_location) );
         $sql = "UPDATE `resources` SET `bid_loc` = '".$bid_location."' WHERE `player_id` = '".$player_id."'";
         self::DbQuery( $sql );
-        
     }
 
     public function getValidBids($player_id) {

@@ -22,61 +22,61 @@
  */
   
   
-  class action_homesteaders extends APP_GameAction
-  { 
-    // Constructor: please do not modify
-   	public function __default()
-  	{
-  	    if( self::isArg( 'notifwindow') )
-  	    {
-            $this->view = "common_notifwindow";
-  	        $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
-  	    }
-  	    else
-  	    {
-            $this->view = "homesteaders_homesteaders";
-            self::trace( "Complete reinitialization of board game" );
+class action_homesteaders extends APP_GameAction
+{ 
+  // Constructor: please do not modify
+  public function __default()
+  {
+      if( self::isArg( 'notifwindow') )
+      {
+          $this->view = "common_notifwindow";
+          $this->viewArgs['table'] = self::getArg( "table", AT_posint, true );
       }
-    } 
-
-    public function takeLoan () {
-      self::setAjaxMode( );
-      $this->game->playerTakeLoan ();
-      self::ajaxResponse( );
+      else
+      {
+          $this->view = "homesteaders_homesteaders";
+          self::trace( "Complete reinitialization of board game" );
     }
+  } 
 
-    public function donePayingWorkers() {
-      self::setAjaxMode( );
-      $this->game->playerDonePayingWorkers();
-      self::ajaxResponse( );
-    }
+  public function takeLoan () {
+    self::setAjaxMode( );
+    $this->game->playerTakeLoan ();
+    self::ajaxResponse( );
+  }
 
-    public function hireWorker() {
-      self::setAjaxMode( );
-      $this->game->playerHireWorker();
-      self::ajaxResponse( );
-    }
+  public function donePayingWorkers() {
+    self::setAjaxMode( );
+    $this->game->playerDonePayingWorkers();
+    self::ajaxResponse( );
+  }
 
-    public function selectWorker() {
-      self::setAjaxMode( );
-      $worker_key = self::getArg( "worker_key", AT_posint, true );
-      $this->game->playerSelectWorker($worker_key);
-      self::ajaxResponse( );
-    }
+  public function hireWorker() {
+    self::setAjaxMode( );
+    $this->game->playerHireWorker();
+    self::ajaxResponse( );
+  }
 
-    public function selectWorkerDestination() {
-      self::setAjaxMode();
-      $worker_key = self::getArg( "worker_key", AT_posint, true);
-      $building_key = self::getArg( "building_key", AT_posint, true); 
-      $building_slot = self::getArg( "building_slot", AT_posint, true);
-      $this->game->playerSelectWorkerDestination( $worker_key, $building_key, $building_slot );
-      self::ajaxResponse( );
-   }
+  public function selectWorker() {
+    self::setAjaxMode( );
+    $worker_key = self::getArg( "worker_key", AT_posint, true );
+    $this->game->playerSelectWorker($worker_key);
+    self::ajaxResponse( );
+  }
 
-   public function doNotBuild() {
-      self::setAjaxMode( );
-      $this->game->playerDoNotBuild( );
-      self::ajaxResponse( );
+  public function selectWorkerDestination() {
+    self::setAjaxMode();
+    $worker_key = self::getArg( "worker_key", AT_posint, true);
+    $building_key = self::getArg( "building_key", AT_posint, true); 
+    $building_slot = self::getArg( "building_slot", AT_posint, true);
+    $this->game->playerSelectWorkerDestination( $worker_key, $building_key, $building_slot );
+    self::ajaxResponse( );
+  }
+
+  public function doNotBuild() {
+    self::setAjaxMode( );
+    $this->game->playerDoNotBuild( );
+    self::ajaxResponse( );
    }
 
   public function donePlacingWorkers() {
@@ -86,15 +86,22 @@
   }
 
   public function confirmBid (){
-      self::setAjaxMode();
-      $bid_loc = self::getArg( "bid_loc", AT_posint, true);
-      $this->game->playerConfirmBid( $bid_loc );
-      self::ajaxResponse( );
+    self::setAjaxMode();
+    $bid_loc = self::getArg( "bid_loc", AT_posint, true);
+    $this->game->playerConfirmBid( $bid_loc );
+    self::ajaxResponse( );
   }
 
   public function passBid (){
     self::setAjaxMode( );
-    $this->game->playerDonePlacingWorkers( );
+    $this->game->playerPassBid( );
+    self::ajaxResponse( );
+  }
+
+  public function doneSelectingBonus (){
+    self::setAjaxMode();
+    $bonus = self::getArg( "bonus", AT_posint, true);
+    $this->game->playerSelectBonusOption( $bonus );
     self::ajaxResponse( );
   }
 
