@@ -38,16 +38,39 @@ class action_homesteaders extends APP_GameAction
           self::trace( "Complete reinitialization of board game" );
     }
   } 
-
+  // common actions
   public function takeLoan () {
     self::setAjaxMode( );
     $this->game->playerTakeLoan ();
     self::ajaxResponse( );
   }
 
-  public function donePayingWorkers() {
+  public function trade(){
     self::setAjaxMode( );
-    $this->game->playerDonePayingWorkers();
+    $trade_action = self::getArg( "trade_action", AT_alphanum, true );
+    $this->game->playerTrade($trade_action);
+    self::ajaxResponse( );
+  }
+
+  // pay workers
+  public function payWorkers() {
+    self::setAjaxMode( );
+    $gold = self::getArg( "gold", AT_posint, true);
+    $this->game->playerPayWorkers($gold);
+    self::ajaxResponse( );
+  }
+
+  public function payAuction() {
+    self::setAjaxMode( );
+    $gold = self::getArg( "gold", AT_posint, true);
+    $this->game->playerPayAuction($gold);
+    self::ajaxResponse( );
+  }
+
+  // place worker actions
+  public function donePlacingWorkers() {
+    self::setAjaxMode( );
+    $this->game->playerDonePlacingWorkers( );
     self::ajaxResponse( );
   }
 
@@ -57,15 +80,8 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function selectWorker() {
-    self::setAjaxMode( );
-    $worker_key = self::getArg( "worker_key", AT_posint, true );
-    $this->game->playerSelectWorker($worker_key);
-    self::ajaxResponse( );
-  }
-
   public function selectWorkerDestination() {
-    self::setAjaxMode();
+    self::setAjaxMode( );
     $worker_key = self::getArg( "worker_key", AT_posint, true);
     $building_key = self::getArg( "building_key", AT_posint, true); 
     $building_slot = self::getArg( "building_slot", AT_posint, true);
@@ -73,20 +89,18 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function doNotBuild() {
+  /*
+  public function selectWorker() {
     self::setAjaxMode( );
-    $this->game->playerDoNotBuild( );
+    $worker_key = self::getArg( "worker_key", AT_posint, true );
+    $this->game->playerSelectWorker($worker_key);
     self::ajaxResponse( );
-   }
+  }*/
 
-  public function donePlacingWorkers() {
-    self::setAjaxMode( );
-    $this->game->playerDonePlacingWorkers( );
-    self::ajaxResponse( );
-  }
 
+  // bid actions
   public function confirmBid (){
-    self::setAjaxMode();
+    self::setAjaxMode( );
     $bid_loc = self::getArg( "bid_loc", AT_posint, true);
     $this->game->playerConfirmBid( $bid_loc );
     self::ajaxResponse( );
@@ -97,11 +111,55 @@ class action_homesteaders extends APP_GameAction
     $this->game->playerPassBid( );
     self::ajaxResponse( );
   }
+  
+  // DONE actions
+  public function doNotBuild() {
+    self::setAjaxMode( );
+    $this->game->playerDoNotBuild( );
+    self::ajaxResponse( );
+   }
 
+  public function buildBuilding(){
+    self::setAjaxMode( );
+    $building_key = self::getArg( "building_key", AT_posint, true);
+    $this->game->playerBuildBuilding( $building_key );
+    self::ajaxResponse( );
+  }
+  
   public function doneSelectingBonus (){
     self::setAjaxMode();
     $bonus = self::getArg( "bonus", AT_posint, true);
     $this->game->playerSelectBonusOption( $bonus );
+    self::ajaxResponse( );
+  }
+
+  public function woodForTrack (){
+    self::setAjaxMode( );
+    $this->game->playerWoodForTrack( );
+    self::ajaxResponse( );
+  }
+
+  public function copperForVp (){
+    self::setAjaxMode( );
+    $this->game->playerCopperForVp( );
+    self::ajaxResponse( );
+  }
+
+  public function cowForVp (){
+    self::setAjaxMode( );
+    $this->game->playerCowForVp( );
+    self::ajaxResponse( );
+  }
+
+  public function foodForVp (){
+    self::setAjaxMode( );
+    $this->game->playerFoodForVp( );
+    self::ajaxResponse( );
+  }
+
+  public function passAuctionBonus (){
+    self::setAjaxMode( );
+    $this->game->playerPassAuctionBonus( );
     self::ajaxResponse( );
   }
 

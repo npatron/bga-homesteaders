@@ -104,7 +104,7 @@
   define("FOOD",     5);
   define("COW",      6);
   define("TRADE",    7);
-  define("RAIL_LINE",8);
+  define("TRACK",    8);
   define("WORKER",   9);
   define("VP",       10);
   define("SILVER",   11);

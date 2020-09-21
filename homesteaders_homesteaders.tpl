@@ -10,11 +10,15 @@
 -------
 
 -->
-<div id ="top"><span id="round_number">{ROUND_STRING}{ROUND_NUMBER}</span>
- </div>
+<div id ="top">
+    <span id="round_number">{ROUND_STRING}{ROUND_NUMBER}</span>
+    <div id="payment_top"> </div> 
+    <div id="trade_top"> </div>
+    <div id="buy_zone"> </div>
+</div>
 <!-- Auction Board -->
 <div id="board" class="shadow">
-    <div id="bid_limbo" class= "token_zone"> </div>
+    <div id="pending_bids" class= "token_zone"> </div>
 
     <div id="bid_slot_1_9" class="bid_slot"> </div>
     <div id="bid_slot_1_12" class="bid_slot"> </div>
@@ -69,16 +73,20 @@
 
 </div>
 
-<!-- token limbo -->
+<!-- Token limbo -->
+<div id='passed_bid_zone'> </div>
 <div id="limbo" style="display: block"> 
     <div id='future_building_zone'> </div>
     <div id='first_player_tile' class=' building_tile'> </div>
 </div>
 
-<div id="building_zone"> 
-    <div class="building_stock"> Buildings Stock 
+<!-- Commmon Building Section-->
+<div id='building_location'>
+    <div id="building_zone"> 
+        <div class="building_stock"> Buildings Stock 
+        </div>
+        <div id="main_building_zone"> </div>
     </div>
-    <div id="main_building_zone"> </div>
 </div>
 
 <!--
@@ -107,32 +115,38 @@
     </div>
 </div>
 
-<!-- Trade Helper Board -->
+<!-- bottom area for non-active sections. -->
 <div id ="bottom"> 
-    <div id="trade_board" class="">
-        <div id="done_trading" class="noshow"> </div>
-        <div id="trade_buy_wood" class="trade_option"> </div>
-        <div id="trade_buy_food" class="trade_option"> </div>
-        <div id="trade_buy_steel" class="trade_option"> </div>
-        <div id="trade_buy_gold" class="trade_option"> </div>
-        <div id="trade_buy_copper" class="trade_option"> </div>
-        <div id="trade_buy_livestock" class="trade_option"> </div>
+    <div id="trade_bottom">
+        <div id="trade_board" class="">
+            <!-- Trade Helper Board -->
+            <div id="done_trading" class=""> </div>
+            <div id="trade_buy_wood" class="trade_option"> </div>
+            <div id="trade_buy_food" class="trade_option"> </div>
+            <div id="trade_buy_steel" class="trade_option"> </div>
+            <div id="trade_buy_gold" class="trade_option"> </div>
+            <div id="trade_buy_copper" class="trade_option"> </div>
+            <div id="trade_buy_livestock" class="trade_option"> </div>
 
-        <div id="trade_sell_wood" class="trade_option"> </div>
-        <div id="trade_sell_food" class="trade_option"> </div>
-        <div id="trade_sell_steel" class="trade_option"> </div>
-        <div id="trade_sell_gold" class="trade_option"> </div>
-        <div id="trade_sell_copper" class="trade_option"> </div>
-        <div id="trade_sell_livestock" class="trade_option"> </div>
+            <div id="trade_sell_wood" class="trade_option"> </div>
+            <div id="trade_sell_food" class="trade_option"> </div>
+            <div id="trade_sell_steel" class="trade_option"> </div>
+            <div id="trade_sell_gold" class="trade_option"> </div>
+            <div id="trade_sell_copper" class="trade_option"> </div>
+            <div id="trade_sell_livestock" class="trade_option"> </div>
 
-        <div id="trade_market_wood_food" class="trade_option"> </div>
-        <div id="trade_market_food_steel" class="trade_option"> </div>
+            <div id="trade_market_wood_food" class="trade_option"> </div>
+            <div id="trade_market_food_steel" class="trade_option"> </div>
+            <div id="trade_bank_trade_copper" class="trade_option"> </div>
+        </div>
     </div>
-    <div id="payment_section" class =" whiteblock">
-        <div id ="gold_cost_token" class='token token_gold'> </div>
-        <span id="gold_cost" class="score_text">0</span>
-        <div id= "silver_cost_token" class='token token_silver'> </div>
-        <span id="silver_cost" class="score_text">0</span>
+    <div id="payment_bottom"> 
+        <div id="payment_section" class ="boardheader whiteblock payment_size">
+            <div id ="gold_cost_token" class='token token_gold'> </div>
+            <span id="gold_cost" class="payment_text">0</span>
+            <div id= "silver_cost_token" class='token token_silver'> </div>
+            <span id="silver_cost" class="payment_text">0</span>
+        </div>
     </div>
 </div>
 
@@ -141,7 +155,7 @@
 // templates
 var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 
-var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot} key_${key}"></div>'; 
+var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
 
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';
 

@@ -18,7 +18,6 @@
 
 /********* You can start writing your CSS below this line: **********/
 
-
 div#board {
    background-image: url('img/auctionBoard.jpg');
    position: relative;
@@ -32,7 +31,7 @@ div#board {
 /*=========================
     Bid Slot Locations (on board)
   =========================*/
-div#bid_limbo{
+div#pending_bids{
    position: absolute;
    height: 50px;
    width: 200px;
@@ -166,10 +165,10 @@ div#bid_slot_3_21{
    width: 20%;
 }
 #auction_tile_zone_1 {
-   left: 13.46%;
+   left: 13.25%;
 }
 #auction_tile_zone_2 {
-   left: 43.45%;
+   left: 43.25%;
 }
 #auction_tile_zone_3 {
    left: 73.25%;
@@ -271,9 +270,9 @@ div#train_bonus_5_vp{
 div#trade_board {
    background-image: url('img/trade.jpg');
    position: relative;
-   width: 500px;
-   height: 130px;
-   background-size: 500px auto;
+   width: 690px;
+   height: 180px;
+   background-size: 690px auto;
    background-repeat: no-repeat;
    margin: auto;
 }
@@ -296,7 +295,7 @@ div#trade_buy_steel{
 }
 div#trade_buy_gold{
    left: 18%;
-   top: 20%;
+   top: 38%;
 }
 div#trade_buy_copper{
    left: 1.5%;
@@ -338,15 +337,51 @@ div#trade_market_food_steel{
    left: 79.5%;
    top: 45.5%;
 }
+div#trade_bank_trade_copper{
+   left: 79.5%;
+   bottom: 0%;
+}
 div#done_trading {
    background-image: url('img/refuse.png');
    top: 1%;
    left: 35%;
-   height: 12%;
-   width: 3.3%;
+   height: 16px;
+   width: 16px;
    position: absolute;
 }
+.trade_size {
+   height: 180px;
+   width: 690px;
+}
 
+#payment_section {
+   position: relative;
+ }
+.payment_size {
+   height: 37px;
+   width: 120px;
+   margin: auto;
+}
+#gold_cost_token {
+   position: absolute;
+   left: 0px;
+   top: 6px;
+}
+#gold_cost {
+   position: absolute;
+   left: 53px;
+   top: 20px;
+}
+#silver_cost_token {
+   position: absolute;
+   left: 70px;
+   top: 3px;
+}
+#silver_cost {
+   position: absolute;
+   left: 125px;
+   top: 20px;
+}
 /***************************
  * Building Zones
  **************************/
@@ -492,7 +527,7 @@ div#done_trading {
    background-size: 125px 75px;
 }
 
-.token_rail {
+.token_track {
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 0%;
    top: 4px;
@@ -513,63 +548,107 @@ div#done_trading {
    background-position: 0% 0%;
 }
 .token_steel {
-   background-position: -100% 0%;
+   background-position: 25% 0%;
 }
 .token_gold {
-   background-position: -200% 0%;
+   background-position: 50% 0%;
 }
 .token_copper {
-   background-position: -300% 0%;
+   background-position: 75% 0%;
 }
 .token_food {
-   background-position: -400% 0%;
+   background-position: 100% 0%;
 }
 .token_cow {
-   background-position: 0% -100%;
+   background-position: 0% 50%;
 }
 .token_silver {
-   background-position: -100% -100%;
+   background-position: 25% 50%;
 }
 .token_trade {
-   background-position: -200% -100%;
+   background-position: 50% 50%;
 }
 .token_worker {
-   background-position: -300% -100%;
+   height: 35px;
+   width: 35px;
+   background-size: 175px 105px;
+   background-position: 75% 50%;
+}
+.token_vp {
+   background-position: 100% 50%;
 }
 .token_yellow {
-   background-position: 0% -200%;
+   background-position: 0% 100%;
 }
 .token_blue {
-   background-position: -300% -200%;
+   background-position: 25% 100%;
 }
 .token_green {
-   background-position: -200% -200%;
+   background-position: 50% 100%;
 }
 .token_red {
-   background-position: -100% -200%;
+   background-position: 75% 100%;
 }
 
 .worker_slot{
    position: absolute;
-   height: 50px;
-   width: 50px;
+   height: 35px;
+   width: 35px;
 }
-.slot_1 {
-   top: 120px;
-   left: 10px;
+.slot_1_home {
+   bottom: 10px;
+   left: 5px;
 }
-.slot_2 {
-   top: 120px;
-   left: 75px;
+.slot_2_home {
+   bottom: 8px;
+   left: 64px;
 }
-.slot_1_alt {
-   top: 96px;
-   left: 15px;
+.slot_1_6 {
+   bottom: 45px;
+   left: 16px;
 }
-.slot_2_alt {
-   top: 146px;
-   left: 15px;
+.slot_2_6 {
+   top: 8px;
+   left: 30px;
 }
+.slot_1_7 {
+   bottom: 8px;
+   left: 44px;
+}
+.slot_1_8 {
+   bottom: 8px;
+   left: 33px;
+}
+.slot_1_12 {
+   bottom: 8px;
+   left: 26px;
+}
+.slot_1_15 {
+   bottom: 9px;
+   left: 17px;
+}
+.slot_1_16 {
+   bottom: 9px;
+   left: 28px;
+}
+.slot_3_17 {
+   bottom: 9px;
+   left: 28px;
+   width: 70px;
+}
+.slot_1_24 {
+   bottom: 8px;
+   left: 30px;
+}
+.slot_2_24 {
+   bottom: 45px;
+   left: 30px;
+}
+.slot_1_26 {
+   bottom: 8px;
+   left: 28px;
+}
+
 
 /*=========================
     Auction Tile images
@@ -584,94 +663,94 @@ div#done_trading {
 }
 
 div#auction_tile_1 { /* Auction 1*/
-   background-position: 0px 0px;
+   background-position: 0% 0%;
 }
 div#auction_tile_2 {
-   background-position: -100% -0px;
+   background-position: 11.11% 0%;
 }
 div#auction_tile_3 {
-   background-position: -200% -0px;
+   background-position: 22.22% 0%;
 }
 div#auction_tile_4 {
-   background-position: -300% -0px;
+   background-position: 33.33% 0%;
 }
 div#auction_tile_5 {
-   background-position: -400% -0px;
+   background-position: 44.44% 0%;
 }
 div#auction_tile_6 {
-   background-position: -500% -0px;
+   background-position: 55.55% 0%;
 }
 div#auction_tile_7 {
-   background-position: -600% -0px;
+   background-position: 66.66% 0%;
 }
 div#auction_tile_8 {
-   background-position: -1008px -0px;
+   background-position: 77.77% 0%;
 }
 div#auction_tile_9 {
-   background-position: -1152px -0px;
+   background-position: 88.88% 0%;
 }
 div#auction_tile_10 {
-   background-position: -1296px -0px;
+   background-position: 100% 0%;
 }
 div#auction_tile_11 {/* Auction 2*/
-   background-position: -0px -196px;
+   background-position: 0% 50%;
 }
 div#auction_tile_12 {
-   background-position: -144px -196px;
+   background-position: 11.11% 50%;
 }
 div#auction_tile_13 {
-   background-position: -288px -196px;
+   background-position: 22.22% 50%;
 }
 div#auction_tile_14 {
-   background-position: -432px -196px;
+   background-position: 33.33% 50%;
 }
 div#auction_tile_15 {
-   background-position: -576px -196px;
+   background-position: 44.44% 50%;
 }
 div#auction_tile_16 {
-   background-position: -720px -196px;
+   background-position: 55.55% 50%;
 }
 div#auction_tile_17 {
-   background-position: -864px -196px;
+   background-position: 66.66% 50%;
 }
 div#auction_tile_18 {
-   background-position: -1008px -196px;
+   background-position: 77.77% 50%;
 }
 div#auction_tile_19 {
-   background-position: -1152px -196px;
+   background-position: 88.88% 50%;
 }
 div#auction_tile_20 {
-   background-position: -1296px -196px;
+   background-position: 100% 50%;
 }
 div#auction_tile_21 { /* Auction 3*/
-   background-position: -0px -392px;
+   background-position: 0% 100%;
 }
 div#auction_tile_22 {
-   background-position: -144px -392px;
+   background-position: 11.11% 100%;
 }
 div#auction_tile_23 {
-   background-position: -288px -392px;
+   background-position: 22.22% 100%;
 }
 div#auction_tile_24 {
-   background-position: -432px -392px;
+   background-position: 33.33% 100%;
 }
 div#auction_tile_25 {
-   background-position: -576px -392px;
+   background-position: 44.44% 100%;
 }
 div#auction_tile_26 {
-   background-position: -720px -392px;
+   background-position: 55.55% 100%;
 }
 div#auction_tile_27 {
-   background-position: -864px -392px;
+   background-position: 66.66% 100%;
 }
 div#auction_tile_28 {
-   background-position: -1008px -392px;
+   background-position: 77.77% 100%;
 }
 div#auction_tile_29 {
-   background-position: -1152px -392px;
+   background-position: 88.88% 100%;
 }
 div#auction_tile_30 {
-   background-position: -1296px -392px;
+   background-position: 100% 100%;
 }
 
 
@@ -688,110 +767,110 @@ div#auction_tile_30 {
 }
 
 .build_tile_1 { /* Yellow Homestead */
-   background-position: 0px 0px;
+   background-position: 0% 0%;
 }
 .build_tile_2 { /* Red Homestead */
-   background-position: -144px 0px;
+   background-position: 12.5% 0%;
 }
 .build_tile_3 { /* Green Homestead */
-   background-position: -288px 0px;
+   background-position: 25% 0%;
 }
 .build_tile_4 { /* Blue Homestead */
-   background-position: -432px 0px;
+   background-position: 37.5% 0%;
 }
 .build_tile_5 { /* Grain Mill */
-   background-position: -576px 0px;
+   background-position: 50% 0%;
 }
 .build_tile_6 { /* Farm */
-   background-position: -720px 0px;
+   background-position: 62.5% 0%;
 }
 .build_tile_7 { /* Market */
-   background-position: -864px 0px;
+   background-position: 75% 0%;
 }
 .build_tile_8 { /* Foundry */
-   background-position: -1008px 0px;
+   background-position: 87.5% 0%;
 }
 .build_tile_9 { /* Steel Mill */
-   background-position: -1152px 0px;
+   background-position: 100% 0%;
 }
 .build_tile_10 { /* Boarding House */
-   background-position: 0px -196px;
+   background-position: 0% 33.33%;
 }
 .build_tile_11 { /* Railworkers House */
-   background-position: -144px -196px;
+   background-position: 12.5% 33.33%;
 }
 .build_tile_12 { /* Ranch */
-   background-position: -288px -196px;
+   background-position: 25% 33.33%;
 }
 .build_tile_13 { /* Trading Post */
-   background-position: -432px -196px;
+   background-position: 37.5% 33.33%;
 }
 .build_tile_14 { /* General Store */
-   background-position: -576px -196px;
+   background-position: 50% 33.33%;
 }
 .build_tile_15 { /* Gold Mine */
-   background-position: -720px -196px;
+   background-position: 62.5% 33.33%;
 }
 .build_tile_16 { /* Copper Mine */
-   background-position: -864px -196px;
+   background-position: 75% 33.33%;
 }
 .build_tile_17 { /* River Port */
-   background-position: -1008px -196px;
+   background-position: 87.5% 33.33%;
 }
 .build_tile_18 { /* Church */
-   background-position: -1152px -196px;
+   background-position: 100% 33.33%;
 }
 .build_tile_19 { /* Workshop */
-   background-position: -0px -392px;
+   background-position: 0% 66.66%;
 }
 .build_tile_20 { /* Depot */
-   background-position: -144px -392px;
+   background-position: 12.5% 66.66%;
 }
 .build_tile_21 { /* Stables */
-   background-position: -288px -392px;
+   background-position: 25% 66.66%;
 }
 .build_tile_22 { /* Bank */
-   background-position: -432px -392px;
+   background-position: 37.5% 66.66%;
 }
 .build_tile_23 { /* Meatpacking Plant */
-   background-position: -576px -392px;
+   background-position: 50% 66.66%;
 }
 .build_tile_24 { /* Forge */
-   background-position: -720px -392px;
+   background-position: 62.5% 66.66%;
 }
 .build_tile_25 { /* Factory */
-   background-position: -864px -392px;
+   background-position: 75% 66.66%;
 }
 .build_tile_26 { /* Rodeo */
-   background-position: -1008px -392px;
+   background-position: 87.5% 66.66%;
 }
 .build_tile_27 { /* Lawyer */
-   background-position: -1152px -392px;
+   background-position: 100% 66.66%;
 }
 .build_tile_28 { /* Fairgrounds */
-   background-position: -0px -588px;
+   background-position: 0% 100%;
 }
 .build_tile_29 { /* Dude Ranch */
-   background-position: -144px -588px;
+   background-position: 12.5% 100%;
 }
 .build_tile_30 { /* Town Hall */
-   background-position: -288px -588px;
+   background-position: 25% 100%;
 }
 .build_tile_31 { /* Terminal */
-   background-position: -432px -588px;
+   background-position: 37.5% 100%;
 }
 .build_tile_32 { /* Restaraunt */
-   background-position: -576px -588px;
+   background-position: 50% 100%;
 }
 .build_tile_33 { /* Train Station */
-   background-position: -720px -588px;
+   background-position: 62.5% 100%;
 }
 .build_tile_34 { /* Circus */
-   background-position: -864px -588px;
+   background-position: 75% 100%;
 }
 .build_tile_35 { /* Rail Yard */
-   background-position: -1008px -588px;
+   background-position: 87.5% 100%;
 }
 #first_player_tile { /* First Player */
-   background-position: -1152px -588px;
+   background-position: 100% 100%;
 }
