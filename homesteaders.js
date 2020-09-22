@@ -264,19 +264,8 @@ function (dojo, declare) {
                     dojo.connect($(`slot_1_${key}`),'onclick', this, 'onClickOnWorkerSlot'); 
                 }
             } else if (building.w_slot == 2){
-                switch(building.id) {
-                    case BUILDING_HOMESTEAD_YELLOW:
-                    case BUILDING_HOMESTEAD_RED:
-                    case BUILDING_HOMESTEAD_GREEN:
-                    case BUILDING_HOMESTEAD_BLUE:
-                        dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: home}), divId);
-                        dojo.place(this.format_block( 'jstpl_building_slot', {slot: 2, key: key, id: home}), divId);
-                    break;
-                    default:
-                        dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), divId);
-                        dojo.place(this.format_block( 'jstpl_building_slot', {slot: 2, key: key, id: id}), divId);
-                    break;
-                }
+                dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), divId);
+                dojo.place(this.format_block( 'jstpl_building_slot', {slot: 2, key: key, id: id}), divId);
                 this.building_worker_zones[key] = [];
                 this.building_worker_zones[key][1] = new ebg.zone();
                 this.building_worker_zones[key][1].create(this, `slot_1_${key}`, this.worker_dimension, this.worker_dimension );

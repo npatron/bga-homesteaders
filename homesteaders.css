@@ -590,16 +590,43 @@ div#done_trading {
    background-position: 75% 100%;
 }
 
+/*=========================
+    Building Worker Slots
+  =========================*/
 .worker_slot{
    position: absolute;
    height: 35px;
    width: 35px;
 }
-.slot_1_home {
+.slot_1_1 {
    bottom: 10px;
    left: 5px;
 }
-.slot_2_home {
+.slot_2_1 {
+   bottom: 8px;
+   left: 64px;
+}
+.slot_1_2 {
+   bottom: 10px;
+   left: 5px;
+}
+.slot_2_2 {
+   bottom: 8px;
+   left: 64px;
+}
+.slot_1_3 {
+   bottom: 10px;
+   left: 5px;
+}
+.slot_2_3 {
+   bottom: 8px;
+   left: 64px;
+}
+.slot_1_4 {
+   bottom: 10px;
+   left: 5px;
+}
+.slot_2_4 {
    bottom: 8px;
    left: 64px;
 }
