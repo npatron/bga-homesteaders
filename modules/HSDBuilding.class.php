@@ -267,8 +267,7 @@ class HSDBuilding extends APP_GameClass
                     }
                 break;
                 case BUILDING_RODEO:
-                    $playerWorkers = $this->game->getUniqueValueFromDb("SELECT `workers` FROM `resources` WHERE `player_id`='".$player_id."'");
-                    $rodeoIncome = min($playerWorkers, 5);
+                    $rodeoIncome = min($player_workers, 5);
                     $this->game->updateAndNotifyIncome ($player_id,  'silver', $rodeoIncome, $this->getBuildingNameFromKey($building_key));
                 break;
                 case BUILDING_FAIRGROUNDS:
