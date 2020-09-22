@@ -18,7 +18,8 @@
 </div>
 <!-- Auction Board -->
 <div id="board" class="shadow">
-    <div id="pending_bids" class= "token_zone"> </div>
+    <div id="pending_bids" class="token_zone"> </div>
+    <div id='passed_bid_zone' class="token_zone"> </div>
 
     <div id="bid_slot_1_9" class="bid_slot"> </div>
     <div id="bid_slot_1_12" class="bid_slot"> </div>
@@ -74,7 +75,7 @@
 </div>
 
 <!-- Token limbo -->
-<div id='passed_bid_zone'> </div>
+
 <div id="limbo" style="display: block"> 
     <div id='future_building_zone'> </div>
     <div id='first_player_tile' class=' building_tile'> </div>
@@ -160,6 +161,7 @@ var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_$
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';
 
 var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
+var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> </div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
     <div class="score_group">\

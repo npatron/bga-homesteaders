@@ -100,7 +100,7 @@ class HSDLog extends APP_GameClass
     if ($action === 'build'){
       $stats[] = ['table','buildings'];
       $stats[] = [$player_id, 'buildings'];
-      $building_type = $this->game->building->getType($piece_id);
+      $building_type = $this->game->Building->getBuildingTypeFromId($piece_id);
       switch($building_type){
         case TYPE_RESIDENTIAL:
           $stats[] = [$player_id, 'residential'];
@@ -149,6 +149,10 @@ class HSDLog extends APP_GameClass
 
   public function takeLoan($player_id) 
   {
+    $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
+      'player_id' => $player_id,
+      'player_name' => $this->game->getPlayerName($player_id),
+    ) );
     $this->insert($player_id, 0, 'loan');
   }
 

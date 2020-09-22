@@ -360,7 +360,8 @@ div#done_trading {
 .payment_size {
    height: 37px;
    width: 120px;
-   margin: auto;
+   margin-left: auto;
+   margin-right: auto;
 }
 #gold_cost_token {
    position: absolute;
@@ -530,10 +531,9 @@ div#done_trading {
 .token_track {
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 0%;
-   top: 4px;
-   height: 30px;
-   width: 25px;
-   background-size: 75px 30px;
+   height: 102px;
+   width: 85px;
+   background-size: 255px 102px;
 }
 .token_loan {
    background-image: url('img/rail_debt_85x102.png');
@@ -580,14 +580,17 @@ div#done_trading {
 .token_yellow {
    background-position: 0% 100%;
 }
-.token_blue {
-   background-position: 25% 100%;
+.token_red {
+   background-position: 25% 100%;  
 }
 .token_green {
    background-position: 50% 100%;
 }
-.token_red {
+.token_blue {
    background-position: 75% 100%;
+}
+.token_purple {
+   background-position: 100% 100%;
 }
 
 /*=========================

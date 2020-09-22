@@ -34,7 +34,6 @@ if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, sinc
     define("STATE_END_ROUND",          59);
     define("STATE_END_GAME",           99);
 }
-
  
 $machinestates = array(
 
