@@ -1094,6 +1094,7 @@ function (dojo, declare) {
             dojo.subscribe( 'moveBid',     this, "notif_moveBid");
             dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
+            dojo.subscribe( 'clearAllBids', this, "notif_clearAllBids");
 
         },  
         
@@ -1199,6 +1200,13 @@ function (dojo, declare) {
             } else { //actual bid
                 let bid_pair = this.getBidPairFromBidNo(notif.args.bid_location);
                 this.bid_zones[bid_pair.auction_no][bid_pair.bid_index].placeInZone(bid_divId);
+            }
+        },
+
+        notif_clearAllBids: function( notif ){
+            for (let i in this.player_color){
+                const player_token_divId = `token_${this.player_color[i]}_bid`;
+                this.bid_zones[-1].placeInZone(player_token_divId);
             }
         },
 

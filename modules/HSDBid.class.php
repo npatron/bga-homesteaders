@@ -11,10 +11,20 @@ class HSDBid extends APP_GameClass
         $this->game = $game;
     }
 
+    function setBidForPlayer($player_id, $bid_loc){
+        $sql = "UPDATE `resources` SET `bid_loc`= '".$bid_loc."' WHERE `player_id`='".$player_id."'";
+        self::DbQuery( $sql );
+        $this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes'), array (
+            'player_id' => $player_id,
+            'player_name' => $this->game->loadPlayersBasicInfos()[$player_id]['player_name'],
+            'bid_location'=> BID_PASS ));
+    }
+
     function clearBids(){
         self::DbQuery( "UPDATE `resources` SET `bid_loc`= '0' " );
         $this->game->setGameStateValue('last_bidder', 0);
         $this->game->setGameStateValue('players_passed', 0);
+        $this->game->notifyAllPlayers("clearAllBids",  _('Resetting all bid tokens'), array ());
     }
 
     function canPlayerBid($player_id) {

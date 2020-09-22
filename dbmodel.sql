@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `resources` (
   `player_id`  INT(8) UNSIGNED NOT NULL,
   `silver`     INT(3) UNSIGNED NOT NULL DEFAULT '6',
   `workers`    INT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `rail_tiles` INT(2) UNSIGNED NOT NULL DEFAULT '0',
+  `track`      INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `wood`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `food`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `steel`      INT(2) UNSIGNED NOT NULL DEFAULT '0',

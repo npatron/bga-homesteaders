@@ -18,7 +18,8 @@
 </div>
 <!-- Auction Board -->
 <div id="board" class="shadow">
-    <div id="pending_bids" class= "token_zone"> </div>
+    <div id="pending_bids" class="token_zone"> </div>
+    <div id='passed_bid_zone' class="token_zone"> </div>
 
     <div id="bid_slot_1_9" class="bid_slot"> </div>
     <div id="bid_slot_1_12" class="bid_slot"> </div>
@@ -74,7 +75,7 @@
 </div>
 
 <!-- Token limbo -->
-<div id='passed_bid_zone'> </div>
+
 <div id="limbo" style="display: block"> 
     <div id='future_building_zone'> </div>
     <div id='first_player_tile' class=' building_tile'> </div>
