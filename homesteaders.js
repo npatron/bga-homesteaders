@@ -130,6 +130,13 @@ function (dojo, declare) {
 
             this.hasBuilding = []; 
             this.last_selected = [];
+            this.type_selector = [];
+            this.type_selector['bid'] = '.bid_slot';
+            this.type_selector['bonus'] = '.train_bonus';
+            this.type_selector['worker_slot'] = '.worker_slot';
+            this.type_selector['building'] = '.building_tile';
+            this.type_selector['worker'] = '.token_worker';
+            this.type_selector['trade'] = '.trade_option';
             
             this.canal_tile_divId = "";     // Division Id of Canal tile
             // on click handlers
@@ -180,6 +187,7 @@ function (dojo, declare) {
             // Auctions: 
             this.setupAuctionZones(gamedatas.auctions, gamedatas.round_number);
             this.setupBuildings(gamedatas.buildings);
+            this.setupTracks(gamedatas.tracks);
 
             this.player_building_zone[gamedatas.first_player].placeInZone('first_player_tile', 1);
             this.setupWorkers(gamedatas.workers);
@@ -240,6 +248,14 @@ function (dojo, declare) {
                     this.addBuildingWorkerSlots(building);
                     dojo.connect($(building_divId), 'onclick', this, 'onClickOnBuilding' );
                 }
+            }
+        },
+
+        setupTracks: function(tracks){
+            for(let i in tracks){
+                const track = tracks[i];
+                dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: this.player_color[track.p_id]}), 'future_building_zone');
+                this.player_building_zone[track.p_id].placeInZone(`token_track_${track.r_key}`,50);
             }
         },
 
@@ -471,12 +487,6 @@ function (dojo, declare) {
                     this.disableTradeIfPossible();
                     break;
                 case 'playerBid':
-                    const bids = dojo.query('.bid_loc');
-                    bids.removeClass('selectable');
-                    if (this.last_selected['bid'].id != "null"){
-                        dojo.removeClass(this.last_selected['bid'].id, 'selected');
-                        this.last_selected['bid'] = "";
-                    }
                     break;
                 case 'payAuction':
                     this.hidePaymentSection();
@@ -501,6 +511,11 @@ function (dojo, declare) {
                 {
                     case 'payWorkers':
                         this.showPaymentSection();
+                        console.log(args.worker_counts);
+                        console.log(args.worker_counts[this.player_id]);
+                        console.log(args.worker_counts[this.player_id].workers);
+
+                        this.silverCost = Number(args.worker_counts[this.player_id].workers);
                         this.silverCounter.setValue(Math.max(0 , this.silverCost));
                         this.goldCounter.setValue(this.goldAmount);
                         
@@ -717,6 +732,19 @@ function (dojo, declare) {
                 this.auction_zones[auction_no].removeFromZone(auc_id, true);
             }
         },
+
+        clearSelectable: function(type, selected = false){
+            console.log(`clearing ${type} selectable/selected`);
+            
+            const selectables = dojo.query(this.type_selector[type]);
+            selectables.removeClass('selectable');
+            
+            if (selected == true && this.last_selected[type] != ""){
+                console.log("clearing selected:"+ this.last_selected[type]);
+                dojo.removeClass(this.last_selected[type], 'selected');
+                this.last_selected[type] = "";
+            }
+        },
         
         disableTradeIfPossible: function() {
             if (dojo.query('#trade_board .selectable').length >0){
@@ -768,6 +796,7 @@ function (dojo, declare) {
 
         updateSelected: function(type, selected_id) {
             // if not selectable or selected 
+            console.log ('updated selected type: '+type);
             if (!( dojo.hasClass (selected_id, 'selectable')))
             { return; }
             // clear previously selected
@@ -796,13 +825,13 @@ function (dojo, declare) {
         },
 
         hidePaymentSection: function(){
-            this.slideToObject( 'payment_section', 'payment_bottom' ).play();
             dojo.removeClass( 'payment_top' , 'payment_size');
+            this.slideToObject( 'payment_section', 'payment_bottom' ).play();
         },
 
         showPaymentSection: function(){
-            this.slideToObject( 'payment_section', 'payment_top' ).play();
             dojo.addClass( 'payment_top' , 'payment_size');
+            this.slideToObject( 'payment_section', 'top' ).play();
         },
 
         lowerGold: function(){
@@ -910,7 +939,7 @@ function (dojo, declare) {
              }, this, function( result ) {}, function( is_error) {});
         },
         /***** PAY WORKERS PHASE *****/
-        donePayWorkers: function(){
+        donePayingWorkers: function(){
             if( this.checkAction( 'done')){
                 this.ajaxcall( "/homesteaders/homesteaders/payWorkers.html", {
                     gold: this.goldAmount, lock: true}, this, 
@@ -939,6 +968,7 @@ function (dojo, declare) {
                 this.ajaxcall( "/homesteaders/homesteaders/passBid.html", {lock: true}, this, function( result ) {
                 }, function( is_error) { } );                
             }
+            this.clearSelectable('bid', true);
         },
         onSelectConfirmBidButton: function () 
         {
@@ -950,7 +980,8 @@ function (dojo, declare) {
                 }
                 const bid_loc = this.getBidNoFromSlotId(this.last_selected['bid']);
                 this.ajaxcall( "/homesteaders/homesteaders/confirmBid.html", {lock: true, bid_loc: bid_loc}, this, function( result ) {
-                }, function( is_error) { } );                
+                }, function( is_error) { } );
+                this.clearSelectable('bid', true);
             }
         },
 
@@ -1194,11 +1225,11 @@ function (dojo, declare) {
             const bid_divId = `token_${player_color}_bid`;
             console.log("id:" + bid_divId + ", loc:"+ notif.args.bid_location );
             if (notif.args.bid_location == 10) { // OUTBID
-                this.token_zone[-1].placeInZone(bid_divId);
+                this.bid_zones[-1].placeInZone(bid_divId);
             } else if(notif.args.bid_location == 20){ // pass
-                this.token_zone[notif.args.player_id].placeInZone(bid_divId);
+                this.bid_zones[0].placeInZone(bid_divId);
             } else { //actual bid
-                let bid_pair = this.getBidPairFromBidNo(notif.args.bid_location);
+                const bid_pair = this.getBidPairFromBidNo(notif.args.bid_location);
                 this.bid_zones[bid_pair.auction_no][bid_pair.bid_index].placeInZone(bid_divId);
             }
         },
@@ -1218,12 +1249,24 @@ function (dojo, declare) {
                 this.updateHasBuilding(notif.args.building_id);
         },
 
+
+        notif_playerRecieveTrack: function( notif){
+            console.log ('notif_playerRecieveTrack');
+            console.log ( notif );
+            
+            const building_zone_divId = `building_zone_${this.player_color[notif.args.player_id]}`;
+            const trackToken_divId = `token_track_${notif.args.key}`;
+            dojo.place(this.format_block( 'jptpl_track', {id: notif.args.key, color: this.player_color[notif.args.player_id]}), building_zone_divId);
+            this.player_building_zone[track.p_id].placeInZone(`token_track_${notif.args.key}`,50);
+        },
+
         notif_playerIncome: function( notif ){
             console.log ('notif_playerIncome');
             console.log ( notif);
+            const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' to player '"+ notif.args.player_name+ "'");
-                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"`,'limbo' , 'board', `player_zone_${this.player_color[notif.args.player_id]}` , 500 , 100*i );
+                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`,'limbo' , 'board', player_zone_divId , 500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.type].incValue(1);
                 }
@@ -1233,9 +1276,12 @@ function (dojo, declare) {
         notif_playerPayment: function( notif ){
             console.log ('notif_playerPayment');
             console.log ( notif);
+            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            console.log ( player_zone_divId );
+            console.log ( notif.args.amount );
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' from player '"+ notif.args.player_name+ "'");
-                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"`, 'limbo' ,`player_zone_${this.player_color[notif.args.player_id]}`, 'board',  500 , 100*i );
+                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo' , player_zone_divId, 'board',  500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.type].incValue(-1);
                 }

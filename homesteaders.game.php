@@ -116,7 +116,7 @@ class homesteaders extends Table
         
         
         // create building Tiles (in sql)
-        $this->Building->createBuildings($gamePlayers);
+        $this->Building->createBuildings($players);
         $this->Auction->createAuctionTiles(count($players));
 
         $values = array();
@@ -169,6 +169,9 @@ class homesteaders extends Table
 
         $sql = "SELECT `building_key` b_key, `building_id` b_id, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` ";
         $result['buildings'] = $this->getCollectionFromDb( $sql );
+
+        $sql = "SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` ";
+        $result['tracks'] = $this->getCollectionFromDb( $sql );
   
         $sql = "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot, `selected` FROM `workers`";
         $result['workers'] = $this->getCollectionFromDb( $sql );
@@ -724,9 +727,9 @@ class homesteaders extends Table
     function argPayWorkers()
     {
         $res = array ();
-        $sql = "SELECT `workers` FROM `resources`";
+        $sql = "SELECT `player_id`, `workers` FROM `resources`";
         $worker_counts = self::getCollectionFromDB($sql);
-        return $worker_counts;
+        return array('worker_counts'=>$worker_counts);
     }
 
     function argPlaceWorkers() 
@@ -738,7 +741,7 @@ class homesteaders extends Table
             $trade = self::getUniqueValueFromDB( $sql ); 
             $res [$player_id] = array("trade"=>$trade);
         }
-        return $res;
+        return array('placeWorkers'=>$res);
     }
 
     function argValidBids() {

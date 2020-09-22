@@ -12,12 +12,12 @@ class HSDBuilding extends APP_GameClass
     }
 
     /** SETUP BUILDINGS on game start, IN DB */
-    function createBuildings($gamePlayers){
+    function createBuildings($players){
         self::DbQuery("DELETE FROM `buildings`");
         $sql = "INSERT INTO `buildings` (`building_id`, `building_type`, `stage`, `location`, `player_id`, `worker_slot`) VALUES ";
         $values=array();
         // homestead (assigned to each player by player_id)
-        foreach( $gamePlayers as $player_id => $player ) {
+        foreach( $players as $player_id => $player ) {
             $player_color = $this->game->getPlayerColorName($player_id);
             if ($player_color === 'yellow'){
                 $values[] = "('".BUILDING_HOMESTEAD_YELLOW."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
@@ -38,7 +38,7 @@ class HSDBuilding extends APP_GameClass
         $count_3x = 3;
         // some buildings have 2 copies in 3-4 player
         $count_2x = 2; 
-        if (count($gamePlayers) == 2){
+        if (count($players) == 2){
             $count_3x = 2;
             $count_2x = 1; 
         }
@@ -101,7 +101,7 @@ class HSDBuilding extends APP_GameClass
     function getBuildingTypeFromId($building_id){
         $sql = "SELECT `building_type` FROM `buildings` WHERE `building_id`='".$building_id."'";
         $building_type = $this->game->getObjectListFromDB( $sql );
-        return (reset($buildings))
+        return (reset($buildings));
     }
 
     function getBuildingCostFromKey($building_key){
@@ -222,7 +222,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function doesPlayerOwnBuilding($player_id, $building_id) {
-        $sql = "SELECT * FROM `buildings` WHERE `player_id`='".$player_id."' AND `building_id`=`$building_id`";
+        $sql = "SELECT * FROM `buildings` WHERE `player_id`='".$player_id."' AND `building_id`='$building_id'";
         $buildings = $this->game->getCollectionFromDB( $sql );
         if (count($buildings) == 1) {
             return true;
@@ -277,7 +277,8 @@ class HSDBuilding extends APP_GameClass
     }
 
     function canPlayerAffordBuilding($player_id, $building_key){
-        return $this->game->canPlayerAfford($player_id, getBuildingCostFromKey($building_key));
+        $building_cost = $this->getBuildingCostFromKey($building_key);
+        return $this->game->canPlayerAfford($player_id, $building_cost);
     }
 
     // INCOME

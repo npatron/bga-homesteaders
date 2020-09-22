@@ -161,6 +161,7 @@ var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_$
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';
 
 var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
+var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> </div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
     <div class="score_group">\

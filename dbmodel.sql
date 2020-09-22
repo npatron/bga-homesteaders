@@ -30,6 +30,12 @@ CREATE TABLE IF NOT EXISTS `workers` (
   PRIMARY KEY (`worker_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `tracks` (
+  `rail_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `player_id` INT(8) UNSIGNED NOT NULL COMMENT 'Player owning the track',
+  PRIMARY KEY (`rail_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=1;
+
 CREATE TABLE IF NOT EXISTS `buildings` (
   `building_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
