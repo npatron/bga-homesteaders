@@ -122,7 +122,7 @@ class Table {
      *
      * @param $sql
      */
-    protected function DbQuery($sql)
+    protected static function DbQuery($sql)
     {
     }
 
@@ -133,7 +133,7 @@ class Table {
      *
      * @param $sql
      */
-    protected function getUniqueValueFromDB($sql)
+    protected static function getUniqueValueFromDB($sql)
     {
     }
 
@@ -165,7 +165,7 @@ class Table {
      * @param bool $bSingleValue
      * @return array
      */
-    protected function getCollectionFromDB($sql, $bSingleValue = FALSE)
+    protected static function getCollectionFromDB($sql, $bSingleValue = FALSE)
     {
         return array();
     }
@@ -175,7 +175,7 @@ class Table {
      *
      * @param $sql
      */
-    protected function getNonEmptyCollectionFromDB($sql)
+    protected static function getNonEmptyCollectionFromDB($sql)
     {
     }
 
@@ -193,7 +193,7 @@ class Table {
      * @param $sql
      * @return array
      */
-    protected function getObjectFromDB($sql)
+    protected static function getObjectFromDB($sql)
     {
     }
 
@@ -202,7 +202,7 @@ class Table {
      *
      * @param $sql
      */
-    protected function getNonEmptyObjectFromDB($sql)
+    protected static function getNonEmptyObjectFromDB($sql)
     {
     }
 
@@ -231,7 +231,7 @@ class Table {
      * @param      $sql
      * @param bool $bUniqueValue
      */
-    protected function getObjectListFromDB($sql, $bUniqueValue = FALSE)
+    protected static function getObjectListFromDB($sql, $bUniqueValue = FALSE)
     {
     }
 
@@ -244,7 +244,7 @@ class Table {
      * @param      $sql
      * @param bool $bSingleValue
      */
-    protected function getDoubleKeyCollectionFromDB($sql, $bSingleValue = FALSE)
+    protected static function getDoubleKeyCollectionFromDB($sql, $bSingleValue = FALSE)
     {
     }
 
@@ -285,7 +285,7 @@ class Table {
      *
      * @param $array
      */
-    protected function initGameStateLabels($array)
+    protected static function initGameStateLabels($array)
     {
     }
 
@@ -338,7 +338,7 @@ class Table {
      * @param      $actionName
      * @param bool $bThrowException
      */
-    protected function checkAction($actionName, $bThrowException = TRUE)
+    protected static function checkAction($actionName, $bThrowException = TRUE)
     {
     }
 
@@ -661,6 +661,14 @@ class Deck
  * Class feException
  */
 class feException extends Exception
+{
+
+}
+
+/**
+ * Class BgaUserException
+ */
+class BgaUserException extends Exception
 {
 
 }

@@ -65,10 +65,60 @@ class HSDAuction extends APP_GameClass
     function discardAuctionTile(){
         $auction_no = $this->game->getGameStateValue( 'current_auction' );
         $round_number = $this->game->getGameStateValue( 'round_number' );
-        self::notifyAllPlayers( "updateAuction", _( 'Discard Auction Tile' ), 
+        $this->game->notifyAllPlayers( "updateAuction", _( 'Discard Auction Tile' ), 
                 array('auction_no'=>$auction_no, 'state'=>'discard') );
         $sql = "UPDATE `auctions` SET `location`='".AUCTION_LOC_DISCARD."' WHERE `location` = '".$auction_no."' AND position = '".$round_number."'";
         self::DbQuery( $sql);
+    }
+
+    function resolveAuctionBonus(){
+        $next_state = "bonusChoice";
+        $active_player = $this->game->getActivePlayerId();
+        $auction_no = $this->game->getGameStateValue( 'current_auction' );
+        $round_number = $this->game->getGameStateValue( 'round_number' );
+        $auction_id = self::getUniqueValueFromDB("SELECT `auction_id` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'");
+        switch($auction_id){
+            case AUCTION1_5:
+            case AUCTION1_6:
+            case AUCTION1_7: 
+                // worker
+                $this->game->addWorker($active_player, _("Auction Tile Bonus"));
+                $this->game->setGameStateValue( 'bonus_option', NONE );
+                $next_state = "endBuild";
+            break;
+            case AUCTION2_4:
+            case AUCTION3_4:
+                $this->game->addWorker( $active_player, "Auction Tile Bonus");
+                // worker and rail adv
+                $this->game->setGameStateValue( 'phase', PHASE_AUCTION_BONUS);
+                $this->game->getRailAdv( $active_player );
+                $next_state = 'railBonus';
+            break;
+            case AUCTION2_8:
+            case AUCTION3_7:
+                // wood for rail track (not rail advancement)
+                $this->game->setGameStateValue( 'bonus_option' , WOOD);
+            break;
+            // resource for points
+            case AUCTION1_9:
+                // copper for 4 vp.
+                $this->game->setGameStateValue( 'bonus_option' , COPPER);
+            break;
+            case AUCTION1_10:
+                // cow for 4 vp.
+                $this->game->setGameStateValue( 'bonus_option' , COW);
+            break;
+            case AUCTION3_10:
+                $this->game->updateAndNotifyIncome($active_player, 'vp', 6, 'Auction Reward');
+                // get 6 vp (charity) & get next (food->2VP) -notice no break;
+            case AUCTION2_9:
+            case AUCTION2_10:
+            case AUCTION3_9:
+                // trade 1 food for 2 VP.
+                $this->game->setGameStateValue( 'bonus_option' , FOOD);
+            break;
+        }
+        $this->game->gamestate->nextState( $next_state );
     }
 
 

@@ -11,13 +11,14 @@ class HSDBuilding extends APP_GameClass
         $this->game = $game;
     }
 
+    /** SETUP BUILDINGS on game start, IN DB */
     function createBuildings($gamePlayers){
         self::DbQuery("DELETE FROM `buildings`");
         $sql = "INSERT INTO `buildings` (`building_id`, `building_type`, `stage`, `location`, `player_id`, `worker_slot`) VALUES ";
         $values=array();
         // homestead (assigned to each player by player_id)
         foreach( $gamePlayers as $player_id => $player ) {
-            $player_color = self::$playerColorNames[$player['player_color']];
+            $player_color = $this->game->getPlayerColorName($player_id);
             if ($player_color === 'yellow'){
                 $values[] = "('".BUILDING_HOMESTEAD_YELLOW."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
             } else if ($player_color === 'red'){
@@ -85,15 +86,65 @@ class HSDBuilding extends APP_GameClass
         self::DbQuery( $sql );
     }
 
+    /**** Utility ****/
     function getBuildingFromKey($building_key){
-        $sql = "SELECT * from `buildings` where `building_key`='$building_key'";
-        $building = self::getObjectFromDB($sql);
+        $sql = "SELECT * FROM `buildings` WHERE `building_key`='$building_key'";
+        $building = $this->game->getObjectFromDB($sql);
         return ($building);
     }
 
-    function getBuildingNameFromKey($building_key){
+    function getBuildingIdFromKey($building_key){
         $building = $this->getBuildingFromKey($building_key);
-        $buildingName = $this->getBuildingNameFromId($building['building_id']);
+        return ($building['building_id']);
+    }
+
+    function getBuildingTypeFromId($building_id){
+        $sql = "SELECT `building_type` FROM `buildings` WHERE `building_id`='".$building_id."'";
+        $building_type = $this->game->getObjectListFromDB( $sql );
+        return (reset($buildings))
+    }
+
+    function getBuildingCostFromKey($building_key){
+        $building = $this->getBuildingFromKey($building_key);
+        $cost = $building['cost'];
+        if ($cost == "0") 
+            return array();
+        $building_cost = array(
+            'wood'  =>  '0',
+            'steel' =>  '0',
+            'gold'  =>  '0',
+            'copper' => '0',
+            'food'  =>  '0',
+            'cow'   =>  '0',);
+        //for each digit in $cost, increment the assiciated array key.
+        for ($i =0; $i < strlen($cost); $i++){
+            switch($cost[$i]){
+                case WOOD:
+                    $building_cost['wood'] ++;
+                break;
+                case STEEL:
+                    $building_cost['steel'] ++;
+                break;
+                case GOLD:
+                    $building_cost['gold'] ++;
+                break;
+                case COPPER:
+                    $building_cost['copper'] ++;
+                break;
+                case FOOD:
+                    $building_cost['food'] ++;
+                break;
+                case COW:
+                    $building_cost['cow'] ++;
+                break;
+            }
+        }
+        return $building_cost;
+    }
+
+    function getBuildingNameFromKey($building_key){
+        $building_id = $this->getBuildingIdFromKey($building_key);
+        $buildingName = $this->getBuildingNameFromId($building_id);
         return ($buildingName);
     }
 
@@ -170,49 +221,67 @@ class HSDBuilding extends APP_GameClass
         }
     }
 
-    function getBuildingCostFromKey($building_key){
-        $building = $this->getBuildingFromKey($building_key);
-        $cost = $building['cost'];
-        $building_cost = array(
-            'wood'  =>  '0',
-            'steel' =>  '0',
-            'gold'  =>  '0',
-            'copper' => '0',
-            'food'  =>  '0',
-            'cow'   =>  '0',
-        );
-        if ($cost == "0") 
-            return $building_cost;
-        for ($i =0; $i < strlen($cost); $i++){
-            switch($cost[$i]){
-                case WOOD:
-                    $building_cost['wood'] ++;
-                break;
-                case STEEL:
-                    $building_cost['steel'] ++;
-                break;
-                case GOLD:
-                    $building_cost['gold'] ++;
-                break;
-                case COPPER:
-                    $building_cost['copper'] ++;
-                break;
-                case FOOD:
-                    $building_cost['food'] ++;
-                break;
-                case COW:
-                    $building_cost['cow'] ++;
-                break;
+    function doesPlayerOwnBuilding($player_id, $building_id) {
+        $sql = "SELECT * FROM `buildings` WHERE `player_id`='".$player_id."' AND `building_id`=`$building_id`";
+        $buildings = $this->game->getCollectionFromDB( $sql );
+        if (count($buildings) == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /***** BUYING Building *****/
+    function buyBuilding( $player_id, $building_key )
+    {
+        $afford = $this->canPlayerAffordBuilding ($player_id, $building_key);
+        $building_name = $this->Building->getBuildingNameFromKey($building_key);
+        if (!$afford){
+            throw new BgaUserException( self::_("You cannot afford to buy ".$building_name));
+        }
+        $building_id = $this->getBuildingIdFromKey($building_key);
+        if ($this->doesPlayerOwnBuilding($player_id, $building_id)){
+            throw new BgaUserException( self::_("You have already built a ".$building_name));
+        }
+        $this->payForBuilding($player_id, $building_key);
+        $this->game->notifyAllPlayers( "buyBuilding", 
+                    clienttranslate( '${player_name} buys a building ${building_name} ' ),            
+                    array('player_id' => $player_id,
+                            'player_name' => $this->game->getPlayerName($player_id),
+                            'building_key' => $building_key,
+                            'building_id' => $building_id,
+                            'building_name' => $building_name,) );
+        $this->game->Log->buyBuilding($player_id, $building_id);
+        $sql = "UPDATE `buildings` Set `location`= ".BUILDING_LOC_PLAYER.", `player_id`=".$player_id." WHERE building_key =".$building_key;    
+        self::DbQuery( $sql );
+    }
+
+    function payForBuilding($player_id, $building_key){
+        $building_cost = $this->getBuildingCostFromKey ($building_key);
+        $sql = "SELECT * FROM `resources` WHERE `player_id` =".$player_id;
+        $player_resources = self::getObjectFromDB($sql);
+        $update = false;
+        $sql = "UPDATE `resources` SET ";
+        $values = array();
+        foreach ($building_cost as $type => $cost){
+            if ($building_cost[$type] > 0){
+                $newValue = $player_resources[$type] - $building_cost[$type];
+                $values[] = "`$type` ='$newValue'";
+                $update = true;
             }
         }
-        return $building_cost;
+        if ($update){
+            $sql .= implode( ', ', $values ); 
+            $sql .=" WHERE `player_id` ='".$player_id."'";
+            self::DbQuery( $sql );
+        }
     }
 
     function canPlayerAffordBuilding($player_id, $building_key){
-        return $this->game->canPlayerAfford($player_id, );
+        return $this->game->canPlayerAfford($player_id, getBuildingCostFromKey($building_key));
     }
 
-    function getBuildingIncome($player_id){
+    // INCOME
+    function buildingIncomeForPlayer($player_id){
         $riverPortWorkers = 0;
 
         $sql = "SELECT * FROM `buildings` WHERE `player_id` = '".$player_id."'";
