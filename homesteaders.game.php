@@ -166,9 +166,9 @@ class homesteaders extends Table
         // Get information about players
         $sql = "SELECT `player_id` p_id, `player_score`, `color_name`, `player_name` FROM `player` ";
         $result['players'] = $this->getCollectionFromDb( $sql );
-
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` ";
-        $result['buildings'] = $this->getCollectionFromDb( $sql );
+        
+        $result['round_number'] = $this->getGameStateValue( 'round_number' );
+        $result['buildings'] = $this->Buildings->getAllBuildings();
 
         $sql = "SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` ";
         $result['tracks'] = $this->getCollectionFromDb( $sql );
@@ -182,12 +182,11 @@ class homesteaders extends Table
         $sql = "SELECT `player_id` p_id, `workers`, `track`, `bid_loc`, `rail_adv` FROM `resources` ";
         $result['resources'] = $this->getCollectionFromDb( $sql );
 
-        $sql = "SELECT `auction_id` a_id, `position`, `location`,  `build_type`, `bonus` FROM `auctions` WHERE `location` IN (1,2,3) "; //`state`
-        $result['auctions'] = $this->getCollectionFromDb( $sql );
         
+        $result['auctions'] = $this->Auction->getCurrentRoundAuctions($result['round_number']);
         $result['first_player'] = $this->getGameStateValue( 'first_player');
         $result['current_player'] = $current_player_id;
-        $result['round_number'] = $this->getGameStateValue( 'round_number' );
+        
 
         return $result;
     }
@@ -724,9 +723,18 @@ class homesteaders extends Table
         game state.
     */
 
+    function argStartRound(){
+        $round_number = $this->getGameStateValue('rount_number');
+        $auction_tiles = $this->Auction->getCurrentRoundAuctions($round_number);
+        $buildings = $this->Building->getAllBuildings();
+
+        return array('round_number' => $round_number,
+                     'auction_tiles' => $auction_tiles,
+                     'buildings' => $buildings);
+    }
+
     function argPayWorkers()
     {
-        $res = array ();
         $sql = "SELECT `player_id`, `workers` FROM `resources`";
         $worker_counts = self::getCollectionFromDB($sql);
         return array('worker_counts'=>$worker_counts);

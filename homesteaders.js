@@ -54,10 +54,11 @@ function (dojo, declare) {
     const BUILDING_MARKET = 7;
     const BUILDING_GENERAL_STORE = 14
     const BUILDING_RIVER_PORT = 17;
-    const BUILDING_LAWYER = 27;
+    const BUILDING_BANK = 22;
     const BUILDING_FORGE = 24;
+    const BUILDING_LAWYER = 27;
 
-    //have on Build bonus
+    //have on Build bonus should be able to handle in php...
     const BUILDING_BOARDING_HOUSE = 10;
     const BUILDING_RANCH = 12;
     const BUILDING_WORKSHOP = 19;
@@ -110,6 +111,8 @@ function (dojo, declare) {
             this.main_building_zone = new ebg.zone();
             this.goldCounter = new ebg.counter();
             this.silverCounter = new ebg.counter();
+
+            this.roundCounter = new ebg.counter();
 
             //player zones
             this.player_color = []; // indexed by player id
@@ -185,7 +188,8 @@ function (dojo, declare) {
 
             this.setupPlayerResources(gamedatas.player_resources);
             // Auctions: 
-            this.setupAuctionZones(gamedatas.auctions, gamedatas.round_number);
+            this.setupAuctionZones();
+            this.showCurrentAuctions(gamedatas.auctions, gamedata.round_number);
             this.setupBuildings(gamedatas.buildings);
             this.setupTracks(gamedatas.tracks);
 
@@ -200,6 +204,7 @@ function (dojo, declare) {
             this.setupTradeButtons();
             this.setupBonusButtons();
             this.setupPaymentSection();
+            this.roundCounter.create('round_number');
 
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -221,22 +226,88 @@ function (dojo, declare) {
             }
         },
 
-        setupAuctionZones: function (auctions, current_round ) {
+        setupAuctionZones: function () {
             for (let i=1; i <=3; i++){
                 this.auction_ids[i] = "auction_tile_zone_"+i.toString();
                 this.auction_zones[i].create(this, this.auction_ids[i], this.tile_width, this.tile_height);
                 this.auction_zones[i].setPattern('diagonal');
             }
-            this.showCurrentAuctions(auctions, current_round);
         },
 
         setupBuildings: function(buildings){
             this.main_building_zone.create (this, 'main_building_zone', this.tile_width, this.tile_height );
+            this.main_building_zone.setPattern('custom');
+            this.main_building_zone.itemtIdToCoords = function(i, control_width){
+                // Settlement (only) row 1
+                if (i == 5)return { x: 0, y: 0, w:this.tile_width, h:this.tile_height };
+                if (i <= 9){
+                    let xoff = 150 + (10* (i%6));
+                    let yoff = 0   + (10* (i%6));
+                    return { x:xoff , y: yoff, w:this.tile_width, h:this.tile_height }
+                }
+                if (i <= 12){
+                    let xoff = 310 + (10* (i%6));
+                    let yoff = 0   + (10* (i%6));
+                    return { x:xoff , y: yoff, w:this.tile_width, h:this.tile_height }
+                }
+                if (i <= 15){
+                    let xoff = 470 + (10* (i%6));
+                    let yoff = 0   + (10* (i%6));
+                    return { x:xoff , y: yoff, w:this.tile_width, h:this.tile_height }
+                }
+                if (i == 15) return {x: 630, y: 0, w:this.tile_width, h:this.tile_height}
+                // SETTLEMENT/TOWN row 2
+                if (i == 16) return {x: 0,   y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 17) return {x: 150, y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 18) return {x: 300, y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 19) return {x: 310, y: 230, w:this.tile_width, h:this.tile_height}// stacked 
+                if (i == 20) return {x: 450, y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 21) return {x: 600, y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 22) return {x: 610, y: 230, w:this.tile_width, h:this.tile_height}// stacked
+                //row 3
+                if (i == 23) return {x: 0, y: 430, w:this.tile_width, h:this.tile_height}
+                if (i == 24) return {x: 10, y: 440, w:this.tile_width, h:this.tile_height}// stacked
+                if (i == 25) return {x: 150, y: 430, w:this.tile_width, h:this.tile_height}
+                if (i == 26) return {x: 160, y: 440, w:this.tile_width, h:this.tile_height}// stacked
+                if (i == 27) return {x: 300, y: 430, w:this.tile_width, h:this.tile_height}
+                if (i == 28) return {x: 310, y: 440, w:this.tile_width, h:this.tile_height}// stacked
+                // Town (only) settlement will be gone... so on row 1
+                if (i == 29) return { x: 0, y: 0, w:this.tile_width, h:this.tile_height };
+                if (i == 30) return { x: 150, y: 0, w:this.tile_width, h:this.tile_height };
+                if (i == 31) return { x: 160, y: 10, w:this.tile_width, h:this.tile_height };//stacked
+                if (i == 32) return { x: 300, y: 0, w:this.tile_width, h:this.tile_height };
+                if (i == 33) return { x: 310, y: 10, w:this.tile_width, h:this.tile_height };//stacked
+                if (i == 34) return { x: 450, y: 0, w:this.tile_width, h:this.tile_height };
+                if (i == 35) return { x: 600, y: 0, w:this.tile_width, h:this.tile_height };
+                // row 4
+                if (i == 36) return { x: 0, y: 650, w:this.tile_width, h:this.tile_height };
+                if (i == 37) return { x: 150, y: 650, w:this.tile_width, h:this.tile_height };
+                if (i == 38) return { x: 160, y: 660, w:this.tile_width, h:this.tile_height };//stacked
+                if (i == 39) return { x: 300, y: 650, w:this.tile_width, h:this.tile_height };
+                if (i == 40) return { x: 450, y: 650, w:this.tile_width, h:this.tile_height };
+                if (i == 41) return { x: 600, y: 650, w:this.tile_width, h:this.tile_height };
+                // on end of row 2
+                if (i == 42) return { x: 450, y: 430, w:this.tile_width, h:this.tile_height };
+                // CITY (only) all other tiles should be gone. so row 1
+                if (i == 43) return {x: 0,   y: 0, w:this.tile_width, h:this.tile_height}
+                if (i == 44) return {x: 10, y: 10, w:this.tile_width, h:this.tile_height}// stacked 
+                if (i == 45) return {x: 150, y: 0, w:this.tile_width, h:this.tile_height}
+                if (i == 46) return {x: 300, y: 0, w:this.tile_width, h:this.tile_height}
+                if (i == 47) return {x: 310, y: 10, w:this.tile_width, h:this.tile_height}// stacked 
+                if (i == 48) return {x: 450, y: 0, w:this.tile_width, h:this.tile_height}
+                if (i == 49) return {x: 460, y: 10, w:this.tile_width, h:this.tile_height}// stacked
+                // row 2
+                if (i == 50) return {x: 0,   y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 51) return {x: 10, y: 230, w:this.tile_width, h:this.tile_height} // stacked 
+                if (i == 52) return {x: 150, y: 220, w:this.tile_width, h:this.tile_height}
+                if (i == 53) return {x: 300, y: 220, w:this.tile_width, h:this.tile_height}
+            };
+            
             this.setupInitialHasBuilding();
             for (let b_key in buildings){
                 const building = buildings[b_key];
                 dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: building.b_id}), 'future_building_zone');
-                const building_divId = `building_tile_${building.b_key}`;
+                const building_divId = `building_tile_${b_key}`;
                 if (building.location == BUILDING_LOC_PLAYER){
                     this.player_building_zone[building.p_id].placeInZone(`building_tile_${b_key}`, building.b_id);
                     this.addBuildingWorkerSlots(building);
@@ -244,7 +315,7 @@ function (dojo, declare) {
                         this.updateHasBuilding(building.b_id); 
                     }
                 } else if (building.location == BUILDING_LOC_OFFER) {
-                    this.main_building_zone.placeInZone(`building_tile_${b_key}`, building.b_id);
+                    this.main_building_zone.placeInZone(`building_tile_${b_key}`, b_key);
                     this.addBuildingWorkerSlots(building);
                     dojo.connect($(building_divId), 'onclick', this, 'onClickOnBuilding' );
                 }
@@ -417,7 +488,7 @@ function (dojo, declare) {
             switch( stateName )
             {
                 case 'startRound':
-                    setupTiles (this.gamedatas.round_number);  
+                    setupTiles (this.gamedatas.round_number, this.gamedatas.auction_tiles, this.gamedatas.buildings);  
                     break;
                 case 'payWorkers':
                     this.goldAmount = 0;
@@ -617,6 +688,17 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Utility methods
 
+        /*** setup  ***/
+        setupTiles: function(round_number, auction_tiles, buildings) {
+            this.roundCounter.setValue(round_number);
+            this.showCurrentAuctions(auction_tiles, round_number);
+            
+            if (round_number == 5 || round_number == 9){
+                updateBuildingStocks(buildings);
+            }
+
+        },
+
         /***** building utils *****/
         moveBuildingToPlayer: function(building, player){
             this.player_building_zone[player.player_id].placeInZone(`building_tile_${building.building_key}`);
@@ -624,7 +706,7 @@ function (dojo, declare) {
                 const slots = dojo.query(`#building_tile_${building.building_key} .worker_slot`)            
                 for(let i in slots){
                     if(slots[i].id != null){
-                    dojo.connect($(slots[i].id),'onclick', this, 'onClickOnWorkerSlot');
+                        dojo.connect($(slots[i].id),'onclick', this, 'onClickOnWorkerSlot');
                     }
                 }
             }
@@ -634,22 +716,34 @@ function (dojo, declare) {
             this.main_building_zone.placeInZone(`building_tile_${building.building_key}`);
         },
 
+        moveBuildingToDiscard: function(building){
+            this.main_building_zone.placeInZone(`building_tile_${building.building_key}`);
+        },
+
+        updateBuildingStocks: function(buildings){
+
+        },
+
         updateHasBuilding(b_id) {
             switch (b_id) {
-                case BUILDING_MARKET:
+                case BUILDING_MARKET: //for trade options
                     this.hasBuilding[BUILDING_MARKET] = true;
                 return;
                 case BUILDING_GENERAL_STORE:
                     this.hasBuilding[BUILDING_GENERAL_STORE] = true;
                 return;
-                case BUILDING_RIVER_PORT:
+                case BUILDING_RIVER_PORT: //this needs to be here
                     this.hasBuilding[BUILDING_RIVER_PORT] = true;
                 return;
                 case BUILDING_FORGE:
                     this.hasBuilding[BUILDING_FORGE] = true;
                 return;
-                case BUILDING_LAWYER:
+                 // I think I can handle bids in php...
+                /*case BUILDING_LAWYER:
                     this.hasBuilding[BUILDING_LAWYER] = true;
+                return;*/
+                case BUILDING_BANK: //for trade options
+                    this.hasBuilding[BUILDING_BANK] = true;
                 return;
             } 
         },
@@ -738,9 +832,9 @@ function (dojo, declare) {
         disableTradeIfPossible: function() {
             if (dojo.query('#trade_board .selectable').length >0){
                 dojo.removeClass('trade_top', 'trade_size');
-                this.slideToObject('trade_board', 'bottom').play();
+                this.slideToObject('trade_board', 'trade_bottom').play();
                 // now make the trade options not selectable
-                dojo.query('.trade_option').removeClass( 'selectable' );
+                dojo.query(this.type_selector['trade']).removeClass( 'selectable' );
                 dojo.removeClass('done_trading', 'selectable' );
             }
         },
@@ -751,9 +845,12 @@ function (dojo, declare) {
                 dojo.addClass('trade_top', 'trade_size');
                 this.slideToObject( 'trade_board', 'trade_top').play();
                 //make the trade options selectable
-                dojo.query('div#trade_board .trade_option:not([id^="trade_market"])').addClass('selectable');
-                if (this.hasBuilding['market']){
+                dojo.query('div#trade_board .trade_option:not([id^="trade_market"]):not([id^="trade_bank"])').addClass('selectable');
+                if (this.hasBuilding[BUILDING_MARKET]){
                     dojo.query('#trade_board .trade_option[id^="trade_market"]').addClass('selectable');
+                }
+                if (this.hasBuilding[BUILDING_BANK]){
+                    dojo.query('#trade_board .trade_option[id^="trade_bank"]').addClass('selectable');
                 }
             }
         },
@@ -820,7 +917,7 @@ function (dojo, declare) {
 
         showPaymentSection: function(){
             dojo.addClass( 'payment_top' , 'payment_size');
-            this.slideToObject( 'payment_section', 'top' ).play();
+            this.slideToObject( 'payment_section', 'payment_top' ).play();
         },
 
         lowerGold: function(){
