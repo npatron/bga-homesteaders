@@ -51,6 +51,7 @@ $machinestates = array(
         "description" => clienttranslate('Setup round ${roundNumber}'),
         "type" => "game",
         "action" => "stStartRound",
+        "args" => "argStartRound",
         "updateGameProgression" => true,   
         "transitions" => array( "" => STATE_PLACE_WORKERS )
     ),
