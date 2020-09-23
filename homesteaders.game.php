@@ -114,15 +114,19 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'bonus_option', 0 );
         $this->setGameStateInitialValue( 'dummy_bid_val', 5 );
         
+        $values = array();
+        // set colors
+        foreach ($gamePlayers as $player_id => $p) {
+            $color = $p['player_color'];
+            $sql = "UPDATE `player` SET `color_name`='".self::$playerColorNames[$color]."' WHERE `player_id`='".$player_id."'";
+            self::DbQuery( $sql );
+
+            $values[] = "(".$player_id.")";
+        }
         
         // create building Tiles (in sql)
         $this->Building->createBuildings($players);
         $this->Auction->createAuctionTiles(count($players));
-
-        $values = array();
-        foreach( $players as $player_id => $player ){
-            $values[] = "(".$player_id.")";
-        }
 
         // setup resources table
         $sql = "INSERT INTO `resources` (player_id) VALUES ";
@@ -134,13 +138,6 @@ class homesteaders extends Table
         $sql .= implode( ',', $values );        
         self::DbQuery( $sql );
 
-        // set colors
-        foreach ($gamePlayers as $player_id => $p) {
-            $color = $p['player_color'];
-            $sql = "UPDATE `player` SET `color_name`='".self::$playerColorNames[$color]."' WHERE `player_id`='".$player_id."'";
-            self::DbQuery( $sql );
-        }
-        
         $this->activeNextPlayer();
         $active_player = $this->getActivePlayerId();
         $this->setGameStateValue('first_player', $active_player);
@@ -166,9 +163,8 @@ class homesteaders extends Table
         // Get information about players
         $sql = "SELECT `player_id` p_id, `player_score`, `color_name`, `player_name` FROM `player` ";
         $result['players'] = $this->getCollectionFromDb( $sql );
-        
-        $result['round_number'] = $this->getGameStateValue( 'round_number' );
-        $result['buildings'] = $this->Buildings->getAllBuildings();
+
+        $result['buildings'] = $this->Building->getAllBuildings();
 
         $sql = "SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` ";
         $result['tracks'] = $this->getCollectionFromDb( $sql );
@@ -182,11 +178,11 @@ class homesteaders extends Table
         $sql = "SELECT `player_id` p_id, `workers`, `track`, `bid_loc`, `rail_adv` FROM `resources` ";
         $result['resources'] = $this->getCollectionFromDb( $sql );
 
-        
+        $result['round_number'] = $this->getGameStateValue( 'round_number' );
         $result['auctions'] = $this->Auction->getCurrentRoundAuctions($result['round_number']);
+        
         $result['first_player'] = $this->getGameStateValue( 'first_player');
         $result['current_player'] = $current_player_id;
-        
 
         return $result;
     }
@@ -274,13 +270,9 @@ class homesteaders extends Table
     }
 
     function getPlayerColorName($player_id){
-        $colors = $this->getColorNames();
-        return($colors[$player_id]['color_name']);
-    }
-
-    function getColorNames(){
         $sql = "SELECT `player_id`, `color_name` FROM `player`";
-        return self::getCollectionFromDb( $sql );
+        $colors = self::getCollectionFromDb( $sql );
+        return($colors[$player_id]['color_name']);
     }
 
     function canPlayerAfford($player_id, $resource_arr){
@@ -723,18 +715,19 @@ class homesteaders extends Table
         game state.
     */
 
-    function argStartRound(){
-        $round_number = $this->getGameStateValue('rount_number');
-        $auction_tiles = $this->Auction->getCurrentRoundAuctions($round_number);
+    function argStartRound () {
         $buildings = $this->Building->getAllBuildings();
+        $round_number = $this->getGameStateValue('round_number');
+        $current_auctions = $this->Auction->getCurrentRoundAuctions($round_number);
 
-        return array('round_number' => $round_number,
-                     'auction_tiles' => $auction_tiles,
-                     'buildings' => $buildings);
+        return array ('buildings'=>$buildings,
+                    'round_number'=>$round_number,
+                    'auction_tiles'=>$current_auctions,);
     }
 
     function argPayWorkers()
     {
+        $res = array ();
         $sql = "SELECT `player_id`, `workers` FROM `resources`";
         $worker_counts = self::getCollectionFromDB($sql);
         return array('worker_counts'=>$worker_counts);

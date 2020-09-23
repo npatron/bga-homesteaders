@@ -99,7 +99,7 @@ class HSDBuilding extends APP_GameClass
 
     function getBuildingIdFromKey($b_key){
         $sql = "SELECT `building_id` FROM `buildings` WHERE `building_key`='".$b_key."'";
-        return ($this->game->getCollectionFromDB( $sql));
+        return ($this->game->getUniqueValueFromDB( $sql));
     }
 
     function getBuildingTypeFromId($b_id){
@@ -350,7 +350,7 @@ class HSDBuilding extends APP_GameClass
         }
         foreach($player_workers as $worker_key => $worker ) {
             $building_key = $worker['building_key'];
-            $worker_income_string = 'worker at '.$this->Building->getBuildingNameFromKey($building_key);
+            $worker_income_string = 'worker at '.$this->getBuildingNameFromKey($building_key);
             switch($building_key){
                 case BUILDING_HOMESTEAD_YELLOW:
                 case BUILDING_HOMESTEAD_RED:
