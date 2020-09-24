@@ -11,7 +11,7 @@
 
 -->
 <div id ="top">
-    <span id="round_number">{ROUND_STRING}{ROUND_NUMBER}</span>
+    <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id="buy_zone"> </div>
@@ -83,8 +83,19 @@
 
 <!-- Commmon Building Section-->
 <div id='building_location'>
+    <div class="building_stock"> BUILDING_STOCK </div>
     <div id="building_zone"> 
-        <div class="building_stock"> Buildings Stock 
+        <div id="residential_buildings" class="main_building_zone"> 
+            <div id="residential_zone" class="building_zone"> </div> 
+        </div>
+        <div id="commercial_buildings" class="main_building_zone"> 
+            <div id="commercial_zone" class="building_zone"> </div> 
+        </div>
+        <div id="industrial_buildings" class="main_building_zone"> 
+            <div id="industrial_zone" class="building_zone"> </div> 
+        </div>
+        <div id="special_buildings" class="main_building_zone"> 
+            <div id="special_zone" class="building_zone"> </div> 
         </div>
         <div id="main_building_zone"> </div>
     </div>
@@ -95,22 +106,22 @@
 -->
 <div id='player_zones'>
     <div id="player_zone_yellow" class="noshow whiteblock res_yellow" style="margin-top:4px;">
-        <div id="player_name_yellow" class="boardheader" style="color: yellow;">yellow</div>
+        <div id="player_name_yellow" class="boardheader" style="color: yellow;">YELLOW</div>
         <div id="token_zone_yellow" class="token_zone"> </div>
         <div id="building_zone_yellow"> </div>
     </div>
     <div id="player_zone_red" class="noshow whiteblock res_red" style="margin-top:4px;">
-        <div id="player_name_red" class="boardheader" style="color: red;">red</div>
+        <div id="player_name_red" class="boardheader" style="color: red;">RED</div>
         <div id="token_zone_red" class="token_zone"> </div>
         <div id="building_zone_red"> </div>
     </div>
     <div id="player_zone_green" class="noshow whiteblock res_green" style="margin-top:4px;">
-        <div id="player_name_green" class="boardheader" style="color: green;">green</div>
+        <div id="player_name_green" class="boardheader" style="color: green;">GREEN</div>
         <div id="token_zone_green" class="token_zone"> </div>
         <div id="building_zone_green" class="building_zone"> </div>
     </div>
     <div id="player_zone_blue" class="noshow whiteblock res_blue" style="margin-top:4px;">
-        <div id="player_name_blue" class="boardheader" style="color: blue;">blue</div>
+        <div id="player_name_blue" class="boardheader" style="color: blue;">BLUE</div>
         <div id="token_zone_blue" class="token_zone"> </div>
         <div id="building_zone_blue"> </div>
     </div>
@@ -154,8 +165,9 @@
 <script type="text/javascript">
 
 // templates
-var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
+var jstpl_building_diag= '<div id="building_diag_${key}" class="building_zone building_zone_diag"></div>';
 
+var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
 
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';
