@@ -161,7 +161,7 @@ class homesteaders extends Table
         $current_player_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
     
         // Get information about players
-        $sql = "SELECT `player_id` p_id, `player_score`, `color_name`, `player_name` FROM `player` ";
+        $sql = "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name` FROM `player` ";
         $result['players'] = $this->getCollectionFromDb( $sql );
 
         $result['buildings'] = $this->Building->getAllBuildings();
@@ -221,14 +221,10 @@ class homesteaders extends Table
             'amount' => $amount,
             'player_name' => $this->getPlayerName($player_id),
             ) );
-        $sql = "SELECT `".$type."` FROM `resources` WHERE `player_id`= '".$player_id."'";
-        $resource_count = self::getUniqueValueFromDB( $sql );
-        $resource_count += $amount;
-        $sql = "UPDATE `resources` SET `".$type."`='".$resource_count."' WHERE `player_id`= '".$player_id."'";
-        self::DbQuery( $sql );
+            $this->updateResource($player_id, $type, $amount);
     }
 
-    function updateAndNotifyPayment($player_id, $type, $amount, $reason_string = ""){
+    function updateAndNotifyPayment($player_id, $type, $amount =1, $reason_string = ""){
         $this->notifyAllPlayers( "playerPayment",
             clienttranslate( '${player_name} paid '.$amount.' '.$type.' for '.$reason_string ), 
             array('player_id' => $player_id,
@@ -236,7 +232,7 @@ class homesteaders extends Table
             'amount' => $amount,
             'player_name' => $this->getPlayerName($player_id),
         ) );
-        $this->updateResource($player_id, $type, $amount);
+        $this->updateResource($player_id, $type, -$amount);
     }
 
     /**
@@ -287,7 +283,7 @@ class homesteaders extends Table
     
     function collectIncome() 
     {
-        self::notifyAllPlayers( "beginIncome", clienttranslate( 'Income Phase' ), array() );
+        $this->notifyAllPlayers( "beginIncome", clienttranslate( 'Income Phase' ), array() );
         $sql = "SELECT * FROM `resources` ";
         $resources = self::getCollectionFromDB( $sql );
         foreach ( $resources as $player_id => $player_resource ){
@@ -586,13 +582,13 @@ class homesteaders extends Table
 
     public function playerPayAuction($gold) {
         self::checkAction( "done" );
+        if ($gold <0){ throw new BgaUserException ("cannot have negative gold value");}
         $active_player_id = $this->getActivePlayerId();
         $sql = "SELECT `bid_loc` FROM `resources` WHERE `player_id`='".$active_player_id."'";
         $bid_loc = self::getUniqueValueFromDB( $sql );
         $bid_cost = $this->Bid->getBidCost($bid_loc);
         $bid_cost = max($bid_cost - 5*$gold, 0);
         $this->pay($active_player_id, $bid_cost, $gold, "auction cost");
-
         $this->gamestate->nextstate( 'build' );
     }
 
@@ -746,19 +742,19 @@ class homesteaders extends Table
     }
 
     function argValidBids() {
-        $active_player_id = self::getActivePlayerId();
+        $active_player_id = $this->getActivePlayerId();
         $valid_bids = $this->Bid->getValidBids($active_player_id);
         return array("valid_bids"=>$valid_bids );
     }
 
     function argRailBonus() {
-        $active_player_id = self::getActivePlayerId();
+        $active_player_id = $this->getActivePlayerId();
         $rail_options= $this->getRailAdvBonusOptions($active_player_id);
         return array("rail_options"=>$rail_options);
     }
 
     function argAuctionCost() {
-        $active_player_id = self::getActivePlayerId();
+        $active_player_id = $this->getActivePlayerId();
         $sql = "SELECT `bid_loc` FROM `resources` WHERE `player_id` = '".$active_player_id."'";
         $bid_location = self::getUniqueValueFromDB($sql);
         $bid_cost = $this->Bid->getBidCost($bid_location);
@@ -766,8 +762,8 @@ class homesteaders extends Table
     }
 
     function argAllowedBuildings() {
-        $round_number = self::getGameStateValue('round_number');
-        $current_auction = self::getGameStateValue('current_auction');
+        $round_number = $this->getGameStateValue('round_number');
+        $current_auction = $this->getGameStateValue('current_auction');
         $sql = "SELECT `build_type` FROM `auctions` WHERE `location`='".$current_auction."'AND `position`='".$round_number."'";
         $build_type = self::getUniqueValueFromDB( $sql );// the sql value for the building.
         $build_type_options = $this->getBuildTypeOptions($build_type);// into an array of constants
@@ -805,7 +801,7 @@ class homesteaders extends Table
 
     function stStartRound()
     {
-        $round_number = self::getGameStateValue('round_number');
+        $round_number = $this->getGameStateValue('round_number');
 
         //rd 1 setup buildings
         if($round_number == 1){
@@ -854,24 +850,18 @@ class homesteaders extends Table
 
     function stPayWorkers()
     {
-        $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade`, `loan` FROM `resources` ";
+        $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = self::getCollectionFromDB( $sql );
         $players = array();
         foreach($resources as $player_id => $player){
-            if ($player['gold'] == 0 && $player['trade'] == 0){
-                //no decisions just pay.
+            if ($player['gold'] == 0 && $player['trade'] == 0){//no decisions just pay.
                 $silver = $player['silver'];
-                $loan = $player['loan'];
-                if ($player['silver'] >= $player['workers']){
-                    $silver = $player['silver'] - $player['workers'];
-                } else {
-                    while ($silver < $player['workers']){
-                        $silver +=2;
-                        $loan ++;
-                    } 
+                $worker_cost = $player['workers'];
+                while ($silver < $worker_cost){// forced loan.
+                    $silver +=2;
+                    $this->playerTakeLoan($player_id);
                 }
-                $sql = "UPDATE `resources` SET `silver`='".$silver."', `loan`='".$loan."' WHERE `player_id`='".$player_id."'";
-                self::DbQuery( $sql );
+                $this->updateAndNotifyPayment($player_id, 'silver', $player['workers'], "paying workers");
             } else {
                 $players[] = $player_id;
             }

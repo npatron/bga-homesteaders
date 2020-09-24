@@ -83,9 +83,12 @@
 
 <!-- Commmon Building Section-->
 <div id='building_location'>
+    <div class="building_stock"> Buildings Stock </div>
     <div id="building_zone"> 
-        <div class="building_stock"> Buildings Stock 
-        </div>
+        <div id="residential_buildings"> </div>
+        <div id="commercial_buildings"> </div>
+        <div id="industrial_buildings"> </div>
+        <div id="special_buildings"> </div>
         <div id="main_building_zone"> </div>
     </div>
 </div>
@@ -154,8 +157,9 @@
 <script type="text/javascript">
 
 // templates
-var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
+var jstpl_building_diag= '<div id="building_diag_${key}" class="building_zone building_zone_diag"></div>';
 
+var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
 
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';

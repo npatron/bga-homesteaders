@@ -206,9 +206,6 @@ div#train_advancement_5{
 .train_bonus {
    position: absolute;
    top: 73%;
-   border-color:purple;
-   border-style: solid;
-   border-width: 2px;
    height: 6%;
 }
 div#train_bonus_1_trade{
@@ -388,7 +385,7 @@ div#done_trading {
  **************************/
 #main_building_zone {
    width: auto;
-   max-width: 1000px;
+   max-width: 800px;
    border-radius: 6px;
 }
 #future_building_zone {
@@ -398,8 +395,16 @@ div#done_trading {
 }
 .building_zone {
    width: auto;
-   max-width: 800px;
+   height: auto;
+   max-width: 740px;
    border-radius: 6px;
+   text-align: center;
+   display: inline-block;
+}
+.building_zone_diag {
+   display: inline-block;
+   width: 150px;
+   height: 220px;
 }
 
 #building_zone_red {
@@ -572,7 +577,7 @@ div#done_trading {
    height: 35px;
    width: 35px;
    background-size: 175px 105px;
-   background-position: 75% 50%;
+   background-position: 77% 50%;
 }
 .token_vp {
    background-position: 100% 50%;
@@ -638,7 +643,7 @@ div#done_trading {
    left: 16px;
 }
 .slot_2_6 {
-   top: 8px;
+   bottom: 8px;
    left: 30px;
 }
 .slot_1_7 {
