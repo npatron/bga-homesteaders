@@ -85,7 +85,7 @@
 <div id='building_location'>
     <div class="building_stock"> BUILDING_STOCK </div>
     <div id="building_zone"> 
-        <div id="residential_buildings" class="main_building_zone"> 
+        <!-- <div id="residential_buildings" class="main_building_zone"> 
             <div id="residential_zone" class="building_zone"> </div> 
         </div>
         <div id="commercial_buildings" class="main_building_zone"> 
@@ -96,8 +96,8 @@
         </div>
         <div id="special_buildings" class="main_building_zone"> 
             <div id="special_zone" class="building_zone"> </div> 
-        </div>
-        <div id="main_building_zone"> </div>
+        </div> -->
+        <div id="main_building_zone" class="main_building_zone"> </div>
     </div>
 </div>
 
@@ -165,7 +165,7 @@
 <script type="text/javascript">
 
 // templates
-var jstpl_building_diag= '<div id="building_diag_${key}" class="building_zone building_zone_diag"></div>';
+var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone building_zone_diag" style="order: ${order}"></div>';
 
 var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
