@@ -26,7 +26,7 @@ require_once('modules/HSDAuction.class.php');
 
 class homesteaders extends Table
 {
-    public static $playerColorNames = array("ff0000" =>'red', "008000"=>'green', "0000ff"=>'blue', "ffff00"=> 'yellow');
+    public $playerColorNames = array("ff0000" =>'red', "008000"=>'green', "0000ff"=>'blue', "ffff00"=> 'yellow');
 
 	function __construct( )
 	{
@@ -118,7 +118,7 @@ class homesteaders extends Table
         // set colors
         foreach ($gamePlayers as $player_id => $p) {
             $color = $p['player_color'];
-            $sql = "UPDATE `player` SET `color_name`='".self::$playerColorNames[$color]."' WHERE `player_id`='".$player_id."'";
+            $sql = "UPDATE `player` SET `color_name`='".$this->playerColorNames[$color]."' WHERE `player_id`='".$player_id."'";
             self::DbQuery( $sql );
 
             $values[] = "(".$player_id.")";

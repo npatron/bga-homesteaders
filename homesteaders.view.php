@@ -42,6 +42,22 @@
         $this->tpl['ROUND_STRING'] = self::_("Round: ");
         $number_to_display = $this->game->getGameStateValue('round_number');
         $this->tpl['ROUND_NUMBER'] = $number_to_display;
+        $this->tpl['BUILDING_STOCK'] = self::_("Building Stock");
+
+        foreach($players as $p_id=>$player){
+            $color = $this->game->playerColorNames[$player['player_color']];
+            if ($color === 'yellow'){
+              $this->tpl['YELLOW'] = $player['player_name'];
+            } else if ($color === 'blue'){
+              $this->tpl['BLUE'] = $player['player_name'];
+            } else if ($color === 'green'){
+              $this->tpl['GREEN'] = $player['player_name'];
+            } else if ($color === 'red'){
+              $this->tpl['RED'] = $player['player_name'];
+            }
+        } 
+
+
         
         /*********** Do not change anything below this line  ************/
   	}

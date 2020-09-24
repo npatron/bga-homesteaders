@@ -383,7 +383,7 @@ div#done_trading {
 /***************************
  * Building Zones
  **************************/
-#main_building_zone {
+#building_zone {
    width: auto;
    max-width: 800px;
    border-radius: 6px;
@@ -397,14 +397,17 @@ div#done_trading {
    width: auto;
    height: auto;
    max-width: 740px;
-   border-radius: 6px;
    text-align: center;
-   display: inline-block;
 }
 .building_zone_diag {
-   display: inline-block;
+   position: relative;
+   display: inline-flex;
    width: 150px;
    height: 220px;
+}
+.main_building_zone {
+   position: relative;
+   display: inline;
 }
 
 #building_zone_red {
