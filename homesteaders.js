@@ -156,6 +156,7 @@ function (dojo, declare) {
                         
             // storage for buildings
             this.main_building_diag = [];
+            //this.main_building_zone = new ebg.zone();
             this.main_building_zone = [];
             this.main_building_divId = [];
             this.main_building_divId[TYPE_RESIDENTIAL] = 'residential_zone';
@@ -169,6 +170,8 @@ function (dojo, declare) {
 
             this.tile_width = 144;
             this.tile_height = 196;
+            this.main_width = 155;
+            this.main_height = 210
             this.token_dimension = 50;
             this.bid_dimension = 45;
             this.worker_dimension = 35;
@@ -278,27 +281,20 @@ function (dojo, declare) {
         },
 
         setupBuildingZones: function(buildings) {
-            /*for(let i =0; i < 4; i++){
+            for(let i =0; i < 4; i++){
                 console.log(i +": " + this.main_building_divId[i]);
                 this.main_building_zone[i] = new ebg.zone();
-                this.main_building_zone[i].create(this, this.main_building_divId[i], this.tile_width, this.tile_height);
+                this.main_building_zone[i].create(this, this.main_building_divId[i], this.main_width, this.main_height);
                 this.main_building_zone[i].setPattern('grid');
-            }*/
-            this.main_building_zone[0]= new ebg.zone();
-            this.main_building_zone[0].create(this, 'main_building_zone', this.tile_width, this.tile_height);
+            }
+            //this.main_building_zone.create(this, 'main_building_zone', this.main_width, this.main_height);
             const b_dupes = this.getBuildingDupes(buildings);
 
             for (let b_key in buildings){
                 const building = buildings[b_key];
                 const b_id = building.b_id;
                 dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), 'future_building_zone');
-                const b_divId = `building_tile_${b_key}`;
-                var tile_divIds =[[],[],[],[]];
-/*                tile_divIds[TYPE_RESIDENTIAL]=[];
-                tile_divIds[TYPE_COMMERCIAL] =[];
-                tile_divIds[TYPE_INDUSTRIAL] =[];
-                tile_divIds[TYPE_SPECIAL]    =[];
-  */              
+                const b_divId = `building_tile_${b_key}`;          
                 if (building.location == BUILDING_LOC_PLAYER){
                     this.player_building_zone[building.p_id].placeInZone(`building_tile_${b_key}`, b_id);
                     this.addBuildingWorkerSlots(building);
@@ -315,28 +311,18 @@ function (dojo, declare) {
                             this.main_building_diag[b_id].create (this, zone_id);
                             this.main_building_diag[b_id].setPattern('diagonal');
                             this.main_building_diag[b_id].item_margin = 10;
-                            tile_divIds[building.b_type].push(zone_id);
-                            this.main_building_zone[0].placeInZone(zone_id);
-//                            this.main_building_zone[building.b_type].placeInZone(zone_id);
+                            //this.main_building_zone.placeInZone(zone_id);
+                            this.main_building_zone[building.b_type].placeInZone(zone_id);
                         }
                         this.main_building_diag[b_id].placeInZone(b_divId);
                     } else {
-                        this.main_building_zone[0].placeInZone(b_divId);
-                        tile_divIds[building.b_type].push(b_divId);
-                        //this.main_building_zone[building.b_type].placeInZone(`building_tile_${b_key}`);
+                        //this.main_building_zone.placeInZone(b_divId);
+                        this.main_building_zone[building.b_type].placeInZone(`building_tile_${b_key}`);
                     }
                     this.addBuildingWorkerSlots(building);
                     dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
                 }
             }
-            for (let type=0; type< 4;type++){
-                console.log(`tile_divIds[${type}]: `+tile_divIds[type]);
-                for(let i in tile_divIds[type]){
-                    console.log(`tile_divIds[${type}][${i}]: `+tile_divIds[type][i]);
-                    this.main_building_zone[0].placeInZone(tile_divIds[type][i]);
-                }
-            }
-            console.log("zone.items: "+this.main_building_zone[0].items);
         },
 
         setupTracks: function(tracks){

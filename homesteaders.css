@@ -395,14 +395,12 @@ div#done_trading {
 }
 .building_zone {
    width: auto;
-   height: auto;
-   max-width: 740px;
+   max-width: 800px;
    text-align: center;
 }
 .building_zone_diag {
-   position: relative;
-   display: inline-flex;
-   width: 150px;
+   position: absolute;
+   width: 155px;
    height: 220px;
 }
 .main_building_zone {
