@@ -158,11 +158,11 @@ function (dojo, declare) {
             this.main_building_diag = [];
             //this.main_building_zone = new ebg.zone();
             this.main_building_zone = [];
-            this.main_building_divId = [];
-            this.main_building_divId[TYPE_RESIDENTIAL] = 'residential_zone';
-            this.main_building_divId[TYPE_COMMERCIAL]  = 'commercial_zone';
-            this.main_building_divId[TYPE_INDUSTRIAL]  = 'industrial_zone';
-            this.main_building_divId[TYPE_SPECIAL]     = 'special_zone';
+            //this.main_building_divId = [];
+            //this.main_building_divId[TYPE_RESIDENTIAL] = 'residential_zone';
+            //this.main_building_divId[TYPE_COMMERCIAL]  = 'commercial_zone';
+            //this.main_building_divId[TYPE_INDUSTRIAL]  = 'industrial_zone';
+            //this.main_building_divId[TYPE_SPECIAL]     = 'special_zone';
 
             this.building_worker_zones = [];
             //this.players_railroad_advancements = [];   // indexed by player id
@@ -281,46 +281,12 @@ function (dojo, declare) {
         },
 
         setupBuildingZones: function(buildings) {
-            for(let i =0; i < 4; i++){
-                console.log(i +": " + this.main_building_divId[i]);
-                this.main_building_zone[i] = new ebg.zone();
-                this.main_building_zone[i].create(this, this.main_building_divId[i], this.main_width, this.main_height);
-                this.main_building_zone[i].setPattern('grid');
-            }
-            //this.main_building_zone.create(this, 'main_building_zone', this.main_width, this.main_height);
-            const b_dupes = this.getBuildingDupes(buildings);
-
             for (let b_key in buildings){
-                const building = buildings[b_key];
-                const b_id = building.b_id;
-                dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), 'future_building_zone');
-                const b_divId = `building_tile_${b_key}`;          
+                const building = buildings[b_key];   
                 if (building.location == BUILDING_LOC_PLAYER){
-                    this.player_building_zone[building.p_id].placeInZone(`building_tile_${b_key}`, b_id);
-                    this.addBuildingWorkerSlots(building);
-                    if (building.p_id == this.player_id){
-                        this.updateHasBuilding(b_id); 
-                    }
+                    this.addBuildingToPlayer(building);
                 } else if (building.location == BUILDING_LOC_OFFER) {
-                    if (b_dupes[b_id] != null){ // has more than 1 with this id.
-                        if (this.main_building_diag[b_id] == null){ // make the zone if missing
-                            dojo.place(this.format_block( 'jstpl_building_diag', 
-                                {key: b_id}), 'future_building_zone');
-                            const zone_id = `building_diag_${b_id}`;
-                            this.main_building_diag[b_id] = new ebg.zone();
-                            this.main_building_diag[b_id].create (this, zone_id);
-                            this.main_building_diag[b_id].setPattern('diagonal');
-                            this.main_building_diag[b_id].item_margin = 10;
-                            //this.main_building_zone.placeInZone(zone_id);
-                            this.main_building_zone[building.b_type].placeInZone(zone_id);
-                        }
-                        this.main_building_diag[b_id].placeInZone(b_divId);
-                    } else {
-                        //this.main_building_zone.placeInZone(b_divId);
-                        this.main_building_zone[building.b_type].placeInZone(`building_tile_${b_key}`);
-                    }
-                    this.addBuildingWorkerSlots(building);
-                    dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
+                    this.addBuildingToOffer(building);
                 }
             }
         },
@@ -694,12 +660,17 @@ function (dojo, declare) {
             for (let b_key in buildings){
                 const building = buildings[b_key];
                 const building_divId = `building_tile_${b_key}`;
-                if (building.location == BUILDING_LOC_DISCARD){
-                    dojo.place(`<div id=${building_divId}></div>`, 'future_building_zone');
-                } else if (building.location == BUILDING_LOC_OFFER) {
-                    this.main_building_zone.placeInZone(`building_tile_${b_key}`, b_key);
-                    this.addBuildingWorkerSlots(building);
-                    dojo.connect($(building_divId), 'onclick', this, 'onClickOnBuilding' );
+                if (building.location == BUILDING_LOC_OFFER) {
+                    addBuildingToOffer(building);
+                } else if (building.location == BUILDING_LOC_DISCARD){
+                    if (document.getElementById(building_divId) != null){
+                        // may need to remove the stack
+                        this.fadeOutAndDestroy( building_divId);
+                        this.main_building_zone[building.b_id] --; 
+                        if (this.main_building_zone[building.b_id] == 0){
+                            this.fadeOutAndDestroy( `building_stack_${building.b_id}`);
+                        }
+                    }
                 }
             }
         },
@@ -726,24 +697,62 @@ function (dojo, declare) {
 
 
         /***** building utils *****/
-        moveBuildingToPlayer: function(building, player){
-            this.player_building_zone[player.player_id].placeInZone(`building_tile_${building.building_key}`);
-            if (player.player_id == this.player_id){
-                const slots = dojo.query(`#building_tile_${building.building_key} .worker_slot`)            
-                for(let i in slots){
-                    if(slots[i].id != null){
-                        dojo.connect($(slots[i].id),'onclick', this, 'onClickOnWorkerSlot');
-                    }
+
+        addBuildingToPlayer: function(building){
+            const p_id = building.p_id;
+            const b_id = building.b_id;
+            const b_key = building.b_key;
+            const b_divId = `building_tile_${b_key}`;
+            if (document.querySelector(`#${this.player_building_zone_id[p_id]} #${b_divId}`) != null){
+                console.log(' building alredy added to player');
+                return;
+            }
+            if (document.getElementById(b_divId) != null){ // if element already exists, just move it.
+                this.player_building_zone[building.p_id].placeInZone(b_divId);
+                this.main_building_zone[b_id] --;
+                if (this.main_building_zone[building.b_id] == 0){
+                    this.fadeOutAndDestroy( `building_stack_${building.b_id}`);
                 }
+            } else { // create it as well;
+                dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), 'future_building_zone');
+                this.player_building_zone[building.p_id].placeInZone(`building_tile_${b_key}`, b_id);
+                this.addBuildingWorkerSlots(building);
+                // don't need to connect as there is no selecting buildings owned by players.
+            }
+            if (building.p_id == this.player_id){
+                this.updateHasBuilding(b_id); 
             }
         },
 
-        moveBuildingToMainZone: function(building) {
-            this.main_building_zone.placeInZone(`building_tile_${building.building_key}`);
-        },
-
-        moveBuildingToDiscard: function(building){
-            dojo.place($(`building_tile_${building.building_key}`), '');
+        addBuildingToOffer: function(building){
+            const b_key = building.b_key;
+            const b_divId = `building_tile_${b_key}`;
+            if (document.querySelector(`#main_building_zone #${b_divId}`) != null){
+                console.log(' building alredy added to stock');
+                return;
+            }
+            const b_id = building.b_id;
+            const zone_id = `building_stack_${b_id}`;
+            if (this.main_building_diag[b_id] == null){ // make the zone if missing
+                const b_order = (30*Number(building.b_type)) + Number(b_id);
+                dojo.place(this.format_block( 'jstpl_building_stack', 
+                    {id: b_id, order: b_order}), 'main_building_zone');
+                this.main_building_diag[b_id] = new ebg.zone();
+                this.main_building_diag[b_id].create (this, zone_id);
+                this.main_building_diag[b_id].setPattern('diagonal');
+                this.main_building_diag[b_id].item_margin = 10;
+                this.main_building_zone[b_id] = 0;
+            }
+            
+            if (document.getElementById(b_divId) != null){ // if element already exists, just move it.
+                this.main_building_diag[b_id].placeInZone(b_divId);
+            } else { //otherwise make the building 
+                dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), 'future_building_zone');
+                this.main_building_diag[b_id].placeInZone(b_divId);
+                this.addBuildingWorkerSlots(building);
+                dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
+                this.main_building_zone[b_id]++;
+            }
         },
 
         updateHasBuilding(b_id) {

@@ -385,7 +385,6 @@ div#done_trading {
  **************************/
 #building_zone {
    width: auto;
-   max-width: 800px;
    border-radius: 6px;
 }
 #future_building_zone {
@@ -399,13 +398,14 @@ div#done_trading {
    text-align: center;
 }
 .building_zone_diag {
-   position: absolute;
    width: 155px;
    height: 220px;
 }
 .main_building_zone {
    position: relative;
-   display: inline;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, 155px);
+   grid-template-rows: repeat(auto-fill, 220px);
 }
 
 #building_zone_red {
