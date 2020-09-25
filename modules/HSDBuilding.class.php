@@ -114,12 +114,12 @@ class HSDBuilding extends APP_GameClass
         if ($cost == "0") 
             return array();
         $b_cost = array(
-            'wood'  =>  '0',
-            'steel' =>  '0',
-            'gold'  =>  '0',
-            'copper' => '0',
-            'food'  =>  '0',
-            'cow'   =>  '0',);
+            'wood'  =>  0,
+            'steel' =>  0,
+            'gold'  =>  0,
+            'copper' => 0,
+            'food'  =>  0,
+            'cow'   =>  0,);
         //for each digit in $cost, increment the assiciated array key.
         for ($i =0; $i < strlen($cost); $i++){
             switch($cost[$i]){
@@ -240,11 +240,11 @@ class HSDBuilding extends APP_GameClass
         $b_id = $this->getBuildingIdFromKey($b_key);
         $b_name = $this->getBuildingNameFromId($b_id);
         if (!$afford){
-            throw new BgaUserException( self::_("You cannot afford to buy ".$b_name));
+            throw new BgaUserException( _("You cannot afford to buy ".$b_name));
         }
         
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
-            throw new BgaUserException( self::_("You have already built a ".$b_name));
+            throw new BgaUserException( _("You have already built a ".$b_name));
         }
         $this->payForBuilding($p_id, $b_key);
         $this->game->notifyAllPlayers( "buyBuilding", 
@@ -268,6 +268,7 @@ class HSDBuilding extends APP_GameClass
 
     function payForBuilding($p_id, $b_key){
         $building_cost = $this->getBuildingCostFromKey ($b_key);
+        var_dump($building_cost);
         foreach ($building_cost as $type => $cost){
             if ($building_cost[$type] > 0){
                 $this->game->updateAndNotifyPayment($p_id, $type, $building_cost[$type], "building "+$this->getBuildingNameFromKey($b_key));

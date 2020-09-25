@@ -181,6 +181,7 @@ class homesteaders extends Table
         $result['round_number'] = $this->getGameStateValue( 'round_number' );
         $result['auctions'] = $this->Auction->getCurrentRoundAuctions($result['round_number']);
         
+        $result['player_order'] = $this->getNextPlayerTable();
         $result['first_player'] = $this->getGameStateValue( 'first_player');
         $result['current_player'] = $current_player_id;
 
@@ -648,6 +649,23 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
+    public function playerFreeHireWorker () {
+        $bonus_option = $this->getGameStateValue('bonus_option');
+        if ($bonus_option == WORKER || $bonus_option == TRACK){
+            $active_player = $this->getActivePlayerId();
+            $this->addWorker($active_player, 'hire');
+            if ($bonus_option == WORKER){
+                $next_state = 'done';
+                $this->setGameStateValue('bonus_option', NONE);
+            } else {
+                $this->game->setGameStateValue( 'phase', PHASE_AUCTION_BONUS);
+                $this->game->getRailAdv( $active_player );
+                $next_state = 'railBonus';
+            }
+            $this->gamestate->nextState( $next_state );
+        }
+    }
+
     public function playerWoodForTrack (){
         $active_player = $this->getActivePlayerId();
         if (!$this->canPlayerAfford($active_player, array('wood'=> 1))) {
@@ -697,7 +715,14 @@ class homesteaders extends Table
         $this->notifyAllPlayers( "passBonus", clienttranslate( '${player_name} passes on Auction Bonus' ), array(
             'player_id' => $active_player,
             'player_name' => $this->getActivePlayerName()));
-        $this->gamestate->nextState( 'done' );
+        $next_state = 'done';
+        $bonus_option = $this->getGameStateValue('bonus_option');
+        if ($bonus_option == TRACK) {
+            $this->game->setGameStateValue( 'phase', PHASE_AUCTION_BONUS);
+            $this->game->getRailAdv( $active_player );
+            $next_state = 'railBonus';
+        }
+        $this->gamestate->nextState( $next_state );
     }
 
     

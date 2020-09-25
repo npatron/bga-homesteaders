@@ -81,23 +81,22 @@ class HSDAuction extends APP_GameClass
         $active_player = $this->game->getActivePlayerId();
         $auction_no = $this->game->getGameStateValue( 'current_auction' );
         $round_number = $this->game->getGameStateValue( 'round_number' );
-        $auction_id = self::getUniqueValueFromDB("SELECT `auction_id` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'");
+        $sql = "SELECT `auction_id` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'";
+        $auction_id = $this->game->getUniqueValueFromDB($sql);
+        var_dump($next_state,  $auction_id);
         switch($auction_id){
             case AUCTION1_5:
             case AUCTION1_6:
             case AUCTION1_7: 
                 // worker
-                $this->game->addWorker($active_player, _("Auction Tile Bonus"));
-                $this->game->setGameStateValue( 'bonus_option', NONE );
-                $next_state = "endBuild";
+                $this->game->setGameStateValue( 'bonus_option', WORKER );
+                //$next_state = "endBuild";
             break;
             case AUCTION2_4:
             case AUCTION3_4:
                 $this->game->addWorker( $active_player, "Auction Tile Bonus");
                 // worker and rail adv
-                $this->game->setGameStateValue( 'phase', PHASE_AUCTION_BONUS);
-                $this->game->getRailAdv( $active_player );
-                $next_state = 'railBonus';
+                $this->game->setGameStateValue( 'bonus_option', TRACK );
             break;
             case AUCTION2_8:
             case AUCTION3_7:
@@ -122,6 +121,8 @@ class HSDAuction extends APP_GameClass
                 // trade 1 food for 2 VP.
                 $this->game->setGameStateValue( 'bonus_option' , FOOD);
             break;
+            default:
+                $next_state = 'endBuild';
         }
         $this->game->gamestate->nextState( $next_state );
     }

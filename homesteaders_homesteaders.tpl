@@ -105,6 +105,10 @@
     Player Buildings section
 -->
 <div id='player_zones'>
+    <div id ='First'> </div>
+    <div id ='Second'> </div>
+    <div id ='Third'> </div>
+    <div id ='Fourth'> </div>
     <div id="player_zone_yellow" class="noshow whiteblock res_yellow" style="margin-top:4px;">
         <div id="player_name_yellow" class="boardheader" style="color: yellow;">YELLOW</div>
         <div id="token_zone_yellow" class="token_zone"> </div>
@@ -132,7 +136,7 @@
     <div id="trade_bottom">
         <div id="trade_board" class="">
             <!-- Trade Helper Board -->
-            <div id="done_trading" class=""> </div>
+            <!--<div id="done_trading" class=""> </div>-->
             <div id="trade_buy_wood" class="trade_option"> </div>
             <div id="trade_buy_food" class="trade_option"> </div>
             <div id="trade_buy_steel" class="trade_option"> </div>

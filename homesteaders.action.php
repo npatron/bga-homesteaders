@@ -133,6 +133,12 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
+  public function freeHireWorker (){
+    self::setAjaxMode( );
+    $this->game->playerFreeHireWorker( );
+    self::ajaxResponse( );
+  }
+
   public function woodForTrack (){
     self::setAjaxMode( );
     $this->game->playerWoodForTrack( );

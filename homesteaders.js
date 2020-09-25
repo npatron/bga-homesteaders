@@ -152,6 +152,7 @@ function (dojo, declare) {
             this.player_color = []; // indexed by player id
             this.player_building_zone_id = [];
             this.player_building_zone = [];
+            this.player_order = ['First', 'Second', 'Third', 'Fourth'];
 
                         
             // storage for buildings
@@ -207,6 +208,7 @@ function (dojo, declare) {
             console.log( "Starting game setup" );
 
             this.playerCount = 0;
+            var isSpectator = true;
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
                 this.playerCount++;
@@ -215,7 +217,7 @@ function (dojo, declare) {
                 if( this.player_id == p_id){
                     const player_board_div = $('player_board_'+p_id);
                     dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
-                    dojo.place(`player_zone_${current_player_color}`, 'player_zones', "first");
+                    isSpectator = false;
                 } 
                 dojo.removeClass("player_zone_"+current_player_color.toString(), "noshow");
                 //dojo.byId("player_name_"+current_player_color.toString()).innerText = player.player_name;
@@ -232,6 +234,16 @@ function (dojo, declare) {
                 this.player_building_zone[p_id] = new ebg.zone();
                 this.player_building_zone[p_id].create(this, this.player_building_zone_id[p_id], this.tile_width, this.tile_height);
             }
+            console.log( "isSpectator: "+isSpectator );
+            if (!isSpectator){ // watcher is in the game.
+                let next_pId = this.player_id;    
+                for (let i = 0; i < this.playerCount; i++){
+                    console.log( "next: "+next_pId );
+                    dojo.place(`player_zone_${this.player_color[next_pId]}`, this.player_order[i] , 'replace');
+                    next_pId = gamedatas.player_order[this.player_id];
+                }
+            }
+
 
             this.setupPlayerResources(gamedatas.player_resources);
             // Auctions: 
@@ -251,6 +263,7 @@ function (dojo, declare) {
             this.setupBonusButtons();
             this.setupPaymentSection();
             this.roundCounter.create('round_number');
+            this.roundCounter.setValue( gamedatas.round_number);
 
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -398,7 +411,7 @@ function (dojo, declare) {
                     dojo.connect($(options[i]), 'onclick', this, 'onSelectTradeAction' );
                 }
             }
-            dojo.connect($('done_trading'), 'onclick', this, 'onSelectDoneTrading' );
+            //dojo.connect($('done_trading'), 'onclick', this, 'onSelectDoneTrading' );
         },
 
         setupBonusButtons: function(){
@@ -625,7 +638,10 @@ function (dojo, declare) {
                     break;
                     case 'bonusChoice':
                         const option = args.bonus_option;
-                        if(option == WOOD){
+                        console.log('bonus option: ' + option);
+                        if(option == WORKER || option == TRACK){
+                            this.addActionButton( 'btn_bonus_worker', _('Hire worker (free)'), 'workerForFree');
+                        } else if(option == WOOD){
                             this.addActionButton( 'btn_wood_track', _('Trade wood for rail track'), 'woodForTrack');
                         } else if (option == COPPER){
                             this.addActionButton( 'btn_copper_vp',  _('Trade Copper for 4 VP'),     'copperFor4VP');
@@ -866,7 +882,10 @@ function (dojo, declare) {
                 this.slideToObject('trade_board', 'trade_bottom').play();
                 // now make the trade options not selectable
                 dojo.query(type_selector['trade']).removeClass( 'selectable' );
-                dojo.removeClass('done_trading', 'selectable' );
+                //dojo.removeClass('done_trading', 'selectable' );
+                if (document.getElementById('confirm_trade_btn') != null){
+                    this.fadeOutAndDestroy( 'confirm_trade_btn');
+                }
             }
         },
 
@@ -894,7 +913,7 @@ function (dojo, declare) {
             } else if(bid_loc == BID_PASS){
                 this.bid_zones[0].placeInZone(bid_divId);
             } else { 
-                const bid_pair = this.getBidPairFromBidNo(notif.args.bid_location);
+                const bid_pair = this.getBidPairFromBidNo(bid_loc);
                 this.bid_zones[bid_pair.auction_no][bid_pair.bid_index].placeInZone(bid_divId);
             }
         },
@@ -916,6 +935,11 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * 
+         * @param {*} type 
+         * @param {*} selected_id 
+         */
         updateSelected: function(type, selected_id) {
             // if not selectable or selected 
             console.log ('updated selected type: '+type);
@@ -977,13 +1001,27 @@ function (dojo, declare) {
             console.log( 'onClickOnTradeSlot' );
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
-            if( !this.checkAction( 'trade' )) { return; } 
+            if ( !this.checkAction( 'trade' )) { return; } 
+            this.updateSelected('trade', evt.target.id);
+            if (dojo.hasClass( evt.target.id ,'selected')){
+                console.log( 'trade is selected' );
+                if (document.getElementById('confirm_trade_btn') == null){
+                    console.log( 'add Button' );
+                    this.addActionButton( 'confirm_trade_btn', _('Confirm Trade'), 'confirmTradeButton'); 
+                } // else button already exists...
+            } else if (document.getElementById('confirm_trade_btn') != null){
+                this.fadeOutAndDestroy( 'confirm_trade_btn');
+            }
+        },
+
+        confirmTradeButton: function ( evt ){
             var tradeAction = evt.target.id.substring(6);  
             this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
                 lock: true, 
                 trade_action: tradeAction
              }, this, function( result ) {}, function( is_error) {});
         },
+
         tradeActionButton: function(){
             if( this.checkAction( 'trade' ) ){
                 // if trade options already displayed, set done.
@@ -994,13 +1032,14 @@ function (dojo, declare) {
                 this.enableTradeIfPossible();
             }
         },
-        onSelectDoneTrading: function( evt){
+
+        /*onSelectDoneTrading: function( evt){
             console.log( 'doneTrading' );
             if (evt != null) { dojo.stopEvent( evt ); }
             if ( !dojo.hasClass ('done_trading', 'selectable')) { return; }
             if( !this.checkAction( 'trade' ) ) { return; }
             this.disableTradeIfPossible();
-        },
+        },*/
 
         /***** PLACE WORKERS PHASE *****/
         hireWorkerButton: function() {
@@ -1092,6 +1131,7 @@ function (dojo, declare) {
             }
             this.clearSelectable('bid', true);
         },
+
         onSelectConfirmBidButton: function () 
         {
             if( this.checkAction( 'confirmBid')){
@@ -1165,9 +1205,8 @@ function (dojo, declare) {
                 }
                 const building_key = Number(building_divId.split("_")[2]);
                 this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", {building_key: building_key, lock: true}, this, 
-                        function( result ) {}, 
+                        function( result ) { this.clearSelectable('building', true);}, 
                         function( is_error) {} );
-                this.clearSelectable('building', true);
             }
         },
 
@@ -1223,6 +1262,14 @@ function (dojo, declare) {
         },
 
         /***** Auction Bonus *****/
+        workerForFree: function() {
+            if (this.checkAction( 'auctionBonus' )){
+                this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true }, this, 
+                function( result ) {}, 
+                function( is_error) {} );
+            }
+        },
+
         woodForTrack: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/woodForTrack.html", {lock: true}, this, 
@@ -1262,7 +1309,6 @@ function (dojo, declare) {
                     function( result ) {}, 
                     function( is_error) {} );
                 } ) ); 
-                return; 
             }
         },
 
@@ -1284,12 +1330,19 @@ function (dojo, declare) {
             
             dojo.subscribe( 'updateAuction', this, "notif_updateAuction");
             dojo.subscribe( 'gainWorker',  this, "notif_gainWorker" );
+            this.notifqueue.setSynchronous( 'gainWorker', 500 );
             dojo.subscribe( 'workerMoved', this, "notif_workerMoved" );
+            this.notifqueue.setSynchronous( 'workerMoved', 200 );
             dojo.subscribe( 'railAdv',     this, "notif_railAdv" );
+            this.notifqueue.setSynchronous( 'railAdv', 500 );
             dojo.subscribe( 'moveBid',     this, "notif_moveBid");
+            this.notifqueue.setSynchronous( 'moveBid', 500 );
             dojo.subscribe( 'buyBuilding', this, "notif_buyBuilding" );
+            this.notifqueue.setSynchronous( 'buyBuilding', 500 );
             dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
+            this.notifqueue.setSynchronous( 'playerIncome', 250 );
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
+            this.notifqueue.setSynchronous( 'moveBid', 250 );
             dojo.subscribe( 'clearAllBids', this, "notif_clearAllBids");
         },  
         
@@ -1433,7 +1486,7 @@ notif_cardPlayed: function (notif) {
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' to player '"+ notif.args.player_name+ "'");
-                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`,'limbo' , 'board', player_zone_divId , 500 , 100*i );
+                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo', `building_zone_${this.player_color[notif.args.player_id]}` , player_zone_divId , 500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.type].incValue(1);
                 }

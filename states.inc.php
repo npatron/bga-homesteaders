@@ -192,8 +192,8 @@ $machinestates = array(
         "type" => "activeplayer",
         "args" => "argBonusOption",
         "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan' ),
-        "transitions" => array( "done" => STATE_END_BUILD, 
-                                "auctionBonus"=> STATE_AUCTION_BONUS)
+        "transitions" => array( "done" => STATE_END_BUILD,
+                                "railBonus" => STATE_RAIL_BONUS )
     ),
 
     STATE_END_BUILD => array(
