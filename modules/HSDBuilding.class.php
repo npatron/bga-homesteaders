@@ -14,25 +14,27 @@ class HSDBuilding extends APP_GameClass
     /** SETUP BUILDINGS on game start, IN DB */
     function createBuildings($players){
         self::DbQuery("DELETE FROM `buildings`");
-        $sql = "INSERT INTO `buildings` (building_key, building_id, building_type, `stage`, `location`, player_id, worker_slot) VALUES ";
+        $sql = "INSERT INTO `buildings` (building_id, building_type, `stage`, `location`, player_id, worker_slot) VALUES ";
         $values=array();
         // homestead (assigned to each player by player_id)
         foreach( $players as $player_id => $player ) {
             $player_color = $this->game->getPlayerColorName($player_id);
             if ($player_color === 'yellow'){
-                $values[] = "('1','".BUILDING_HOMESTEAD_YELLOW."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
+                $values[] = "('".BUILDING_HOMESTEAD_YELLOW."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
             } else if ($player_color === 'red'){
-                $values[] = "('2','".BUILDING_HOMESTEAD_RED   ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
+                $values[] = "('".BUILDING_HOMESTEAD_RED   ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
             } else if ($player_color === 'green'){
-                $values[] = "('3','".BUILDING_HOMESTEAD_GREEN ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
+                $values[] = "('".BUILDING_HOMESTEAD_GREEN ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
             } else if ($player_color === 'blue'){
-                $values[] = "('4','".BUILDING_HOMESTEAD_BLUE  ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
+                $values[] = "('".BUILDING_HOMESTEAD_BLUE  ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
+            } else if ($player_color === 'purple'){//if We add purple homestead update the id below.
+                $values[] = "('".BUILDING_HOMESTEAD_BLUE  ."', '".TYPE_RESIDENTIAL."', '0', '".BUILDING_LOC_PLAYER."', '".$player_id."', '2')";
             }
         }
         $sql .= implode( ',', $values ); 
         self::DbQuery( $sql );
 
-        $sql = "INSERT INTO buildings (building_key, building_id, building_type, stage, cost, worker_slot) VALUES ";
+        $sql = "INSERT INTO buildings (building_id, building_type, stage, cost, worker_slot) VALUES ";
         $values=array();
         // some building have 2 copies in 2 player, and 3 copies in 3-4 player
         $count_3x = 3;
@@ -44,43 +46,43 @@ class HSDBuilding extends APP_GameClass
         }
         for($i = 0; $i < $count_3x; $i++) 
         {
-            $values[] = "('".($i+6) ."', '".BUILDING_FARM   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT."','".WOOD."', '2')";
-            $values[] = "('".($i+9) ."', '".BUILDING_MARKET ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT."','".WOOD."', '1')";
-            $values[] = "('".($i+12)."', '".BUILDING_FOUNDRY."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT."','".NONE."', '1')";
+            $values[] = "('".BUILDING_FARM   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT."','".WOOD."', '2')";
+            $values[] = "('".BUILDING_MARKET ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT."','".WOOD."', '1')";
+            $values[] = "('".BUILDING_FOUNDRY."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT."','".NONE."', '1')";
         }
         
         for($i = 0; $i < $count_2x ; $i++) 
         {
-            $values[] = "('".($i+18)."', '".BUILDING_RANCH        ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL.FOOD."', '1')";
-            $values[] = "('".($i+21)."', '".BUILDING_GENERAL_STORE."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".STEEL          ."', '0')";
-            $values[] = "('".($i+23)."', '".BUILDING_GOLD_MINE    ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL     ."', '1')";
-            $values[] = "('".($i+25)."', '".BUILDING_COPPER_MINE  ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD.STEEL."', '1')";
-            $values[] = "('".($i+27)."', '".BUILDING_RIVER_PORT   ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD           ."', '3')";
-            $values[] = "('".($i+30)."', '".BUILDING_WORKSHOP     ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".STEEL          ."', '0')";
-            $values[] = "('".($i+32)."', '".BUILDING_DEPOT        ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".WOOD.STEEL     ."', '0')";
-            $values[] = "('".($i+37)."', '".BUILDING_FORGE        ."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".STEEL.STEEL    ."', '1')";
-            $values[] = "('".($i+43)."', '".BUILDING_DUDE_RANCH   ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.FOOD      ."', '0')";
-            $values[] = "('".($i+46)."', '".BUILDING_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0')";
-            $values[] = "('".($i+48)."', '".BUILDING_TERMINAL     ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".STEEL.STEEL    ."', '0')";
-            $values[] = "('".($i+50)."', '".BUILDING_TRAIN_STATION."','".TYPE_INDUSTRIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0')";
+            $values[] = "('".BUILDING_RANCH        ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL.FOOD."', '1')";
+            $values[] = "('".BUILDING_GENERAL_STORE."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".STEEL          ."', '0')";
+            $values[] = "('".BUILDING_GOLD_MINE    ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL     ."', '1')";
+            $values[] = "('".BUILDING_COPPER_MINE  ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD.STEEL."', '1')";
+            $values[] = "('".BUILDING_RIVER_PORT   ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD           ."', '3')";
+            $values[] = "('".BUILDING_WORKSHOP     ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".STEEL          ."', '0')";
+            $values[] = "('".BUILDING_DEPOT        ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".WOOD.STEEL     ."', '0')";
+            $values[] = "('".BUILDING_FORGE        ."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".STEEL.STEEL    ."', '1')";
+            $values[] = "('".BUILDING_DUDE_RANCH   ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.FOOD      ."', '0')";
+            $values[] = "('".BUILDING_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0')";
+            $values[] = "('".BUILDING_TERMINAL     ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".STEEL.STEEL    ."', '0')";
+            $values[] = "('".BUILDING_TRAIN_STATION."','".TYPE_INDUSTRIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0')";
         }
         //all other buildings
-        $values[] = "('5', '" .BUILDING_GRAIN_MILL       ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT     ."','".WOOD.STEEL             ."', '0')";
-        $values[] = "('15', '".BUILDING_STEEL_MILL       ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT     ."','".WOOD.WOOD.GOLD         ."', '0')";
-        $values[] = "('16', '".BUILDING_BOARDING_HOUSE   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD              ."', '0')";
-        $values[] = "('17', '".BUILDING_RAILWORKERS_HOUSE."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".STEEL.STEEL            ."', '0')";
-        $values[] = "('20', '".BUILDING_TRADING_POST     ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".GOLD                   ."', '0')";
-        $values[] = "('29', '".BUILDING_CHURCH           ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".WOOD.STEEL.GOLD.COPPER ."', '0')";
-        $values[] = "('34', '".BUILDING_BANK             ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".STEEL.COPPER           ."', '0')";
-        $values[] = "('35', '".BUILDING_STABLES          ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".COW                    ."', '2')";
-        $values[] = "('36', '".BUILDING_MEATPACKING_PLANT."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".WOOD.COW               ."', '0')";
-        $values[] = "('39', '".BUILDING_FACTORY          ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".STEEL.STEEL.COPPER     ."', '0')";
-        $values[] = "('40', '".BUILDING_RODEO            ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".FOOD.COW               ."', '0')";
-        $values[] = "('41', '".BUILDING_LAWYER           ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.GOLD.COW          ."', '0')";
-        $values[] = "('42', '".BUILDING_FAIRGROUNDS      ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.WOOD.COPPER.COW   ."', '0')";
-        $values[] = "('45', '".BUILDING_TOWN_HALL        ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.WOOD.COPPER       ."', '0')";
-        $values[] = "('52', '".BUILDING_CIRCUS           ."','".TYPE_SPECIAL    ."','".STAGE_CITY           ."','".FOOD.FOOD.COW          ."', '0')";
-        $values[] = "('53', '".BUILDING_RAIL_YARD        ."','".TYPE_SPECIAL    ."','".STAGE_CITY           ."','".STEEL.STEEL.GOLD.COPPER."', '0')";
+        $values[] = "('".BUILDING_GRAIN_MILL       ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT     ."','".WOOD.STEEL             ."', '0')";
+        $values[] = "('".BUILDING_STEEL_MILL       ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT     ."','".WOOD.WOOD.GOLD         ."', '0')";
+        $values[] = "('".BUILDING_BOARDING_HOUSE   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD              ."', '0')";
+        $values[] = "('".BUILDING_RAILWORKERS_HOUSE."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".STEEL.STEEL            ."', '0')";
+        $values[] = "('".BUILDING_TRADING_POST     ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".GOLD                   ."', '0')";
+        $values[] = "('".BUILDING_CHURCH           ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".WOOD.STEEL.GOLD.COPPER ."', '0')";
+        $values[] = "('".BUILDING_BANK             ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".STEEL.COPPER           ."', '0')";
+        $values[] = "('".BUILDING_STABLES          ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".COW                    ."', '2')";
+        $values[] = "('".BUILDING_MEATPACKING_PLANT."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".WOOD.COW               ."', '0')";
+        $values[] = "('".BUILDING_FACTORY          ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".STEEL.STEEL.COPPER     ."', '0')";
+        $values[] = "('".BUILDING_RODEO            ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".FOOD.COW               ."', '0')";
+        $values[] = "('".BUILDING_LAWYER           ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.GOLD.COW          ."', '0')";
+        $values[] = "('".BUILDING_FAIRGROUNDS      ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.WOOD.COPPER.COW   ."', '0')";
+        $values[] = "('".BUILDING_TOWN_HALL        ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.WOOD.COPPER       ."', '0')";
+        $values[] = "('".BUILDING_CIRCUS           ."','".TYPE_SPECIAL    ."','".STAGE_CITY           ."','".FOOD.FOOD.COW          ."', '0')";
+        $values[] = "('".BUILDING_RAIL_YARD        ."','".TYPE_SPECIAL    ."','".STAGE_CITY           ."','".STEEL.STEEL.GOLD.COPPER."', '0')";
         $sql .= implode( ',', $values ); 
         self::DbQuery( $sql );
     }
@@ -111,36 +113,30 @@ class HSDBuilding extends APP_GameClass
     function getBuildingCostFromKey($b_key){
         $sql = "SELECT `cost` FROM `buildings` WHERE `building_key`='".$b_key."'";
         $cost = $this->game->getUniqueValueFromDb( $sql );
+        $b_cost = array();
         if ($cost == "0") 
-            return array();
-        $b_cost = array(
-            'wood'  =>  0,
-            'steel' =>  0,
-            'gold'  =>  0,
-            'copper' => 0,
-            'food'  =>  0,
-            'cow'   =>  0,);
+            return $b_cost;
         //for each digit in $cost, increment the assiciated array key.
         for ($i =0; $i < strlen($cost); $i++){
+            $type_str = '';
             switch($cost[$i]){
-                case WOOD:
-                    $b_cost['wood'] ++;
+                case WOOD:  $type_str = 'wood';
                 break;
-                case STEEL:
-                    $b_cost['steel'] ++;
+                case STEEL: $type_str = 'steel';
                 break;
-                case GOLD:
-                    $b_cost['gold'] ++;
+                case GOLD:  $type_str = 'gold';
                 break;
-                case COPPER:
-                    $b_cost['copper'] ++;
+                case COPPER:$type_str = 'copper';
                 break;
-                case FOOD:
-                    $b_cost['food'] ++;
+                case FOOD:  $type_str = 'food';
                 break;
-                case COW:
-                    $b_cost['cow'] ++;
+                case COW:   $type_str = 'cow';
                 break;
+            }
+            if (!array_key_exists($type_str, $b_cost)){
+                $b_cost[$type_str] = 1;
+            } else {
+                $b_cost[$type_str] ++;
             }
         }
         return $b_cost;
@@ -234,6 +230,23 @@ class HSDBuilding extends APP_GameClass
     }
 
     /***** BUYING Building *****/
+    /**
+     * returns an array of buildings that can be built.
+     */
+    function getAllowedBuildings() {// into an array of constants
+        $build_type_options = $this->game->Auction->getCurrentAuctionBuildTypeOptions();
+        if (count($build_type_options) ==0){ return array(); }
+            $sql = "SELECT * FROM `buildings` WHERE `location`=".BUILDING_LOC_OFFER." AND (";
+            $values = array();
+            foreach($build_type_options as $i=>$option){
+                $values[] = "`building_type`='".$build_type_options[$i]."'";
+            }
+            $sql .= implode( ' OR ', $values ); 
+            $sql .= ")";
+            $buildings = self::getCollectionFromDB( $sql );
+        return $buildings;
+    }
+
     function buyBuilding( $p_id, $b_key )
     {
         $afford = $this->canPlayerAffordBuilding ($p_id, $b_key);
@@ -270,7 +283,7 @@ class HSDBuilding extends APP_GameClass
         $building_cost = $this->getBuildingCostFromKey ($b_key);
         foreach ($building_cost as $type => $cost){
             if ($building_cost[$type] > 0){
-                $this->game->updateAndNotifyPayment($p_id, $type, $building_cost[$type], "building "+$this->getBuildingNameFromKey($b_key));
+                $this->game->Resource->updateAndNotifyPayment($p_id, $type, $building_cost[$type], "building "+$this->getBuildingNameFromKey($b_key));
             }
         }
     }
@@ -329,7 +342,7 @@ class HSDBuilding extends APP_GameClass
 
     function canPlayerAffordBuilding($p_id, $b_key){
         $building_cost = $this->getBuildingCostFromKey($b_key);
-        return $this->game->canPlayerAfford($p_id, $building_cost);
+        return $this->game->Resource->canPlayerAfford($p_id, $building_cost);
     }
 
     // INCOME
@@ -348,51 +361,51 @@ class HSDBuilding extends APP_GameClass
                 case BUILDING_HOMESTEAD_BLUE:
                 case BUILDING_BOARDING_HOUSE:
                 case BUILDING_DEPOT:
-                    $this->game->updateAndNotifyIncome ($p_id, 'silver', 2, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_GRAIN_MILL:
-                    $this->game->updateAndNotifyIncome ($p_id, 'food', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'food', 1, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_MARKET:
                 case BUILDING_GENERAL_STORE:
-                    $this->game->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_STEEL_MILL:
-                    $this->game->updateAndNotifyIncome ($p_id, 'steel', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'steel', 1, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_RAILWORKERS_HOUSE:
-                    $this->game->updateAndNotifyIncome ($p_id, 'silver', 1, $this->getBuildingNameFromKey($building_key));
-                    $this->game->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_TRADING_POST:
-                    $this->game->updateAndNotifyIncome ($p_id, 'trade', 2, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 2, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_CHURCH:
                 case BUILDING_FACTORY:
                 case BUILDING_LAWYER:
-                    $this->game->updateAndNotifyIncome ($p_id, 'vp', 2, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 2, $this->getBuildingNameFromKey($building_key));
                     break;
                 case BUILDING_WORKSHOP:
-                    $this->game->updateAndNotifyIncome ($p_id, 'vp', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $this->getBuildingNameFromKey($building_key));
                 break;
                 case BUILDING_STABLES:
-                    $this->game->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
-                    $this->game->updateAndNotifyIncome ($p_id, 'vp', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $this->getBuildingNameFromKey($building_key));
                 break;
                 case BUILDING_BANK:
                     $playerLoan = $this->game->getUniqueValueFromDb("SELECT `loan` FROM `resources` WHERE `player_id`='".$p_id."'");
                     if ($playerLoan== 0){
-                        $this->game->updateAndNotifyIncome ($p_id, 'silver', 1, $this->getBuildingNameFromKey($building_key));
+                        $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 1, $this->getBuildingNameFromKey($building_key));
                     } else {
-                        $this->game->updateAndNotifyPayment ($p_id, 'loan', 1, $this->getBuildingNameFromKey($building_key));
+                        $this->game->Resource->updateAndNotifyPayment ($p_id, 'loan', 1, $this->getBuildingNameFromKey($building_key));
                     }
                 break;
                 case BUILDING_RODEO:
                     $rodeoIncome = min($player_workers, 5);
-                    $this->game->updateAndNotifyIncome ($p_id,  'silver', $rodeoIncome, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'silver', $rodeoIncome, $this->getBuildingNameFromKey($building_key));
                 break;
                 case BUILDING_FAIRGROUNDS:
-                    $this->game->updateAndNotifyIncome ($p_id,  'gold', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'gold', 1, $this->getBuildingNameFromKey($building_key));
                 break;
             }
         }
@@ -406,42 +419,42 @@ class HSDBuilding extends APP_GameClass
                 case BUILDING_HOMESTEAD_GREEN:
                 case BUILDING_HOMESTEAD_BLUE:
                     if ($worker['building_slot'] == 1){
-                        $this->game->updateAndNotifyIncome($p_id, 'wood', 1, $worker_income_string);
+                        $this->game->Resource->updateAndNotifyIncome($p_id, 'wood', 1, $worker_income_string);
                     } else {
-                        $this->game->updateAndNotifyIncome($p_id, 'vp', 1, $worker_income_string);
+                        $this->game->Resource->updateAndNotifyIncome($p_id, 'vp', 1, $worker_income_string);
                     }
                     break;
                 case BUILDING_FARM:
                     if ($worker['building_slot'] == 1){
-                        $this->game->updateAndNotifyIncome($p_id, 'trade', 1, $worker_income_string);
-                        $this->game->updateAndNotifyIncome($p_id, 'silver', 2, $worker_income_string);
+                        $this->game->Resource->updateAndNotifyIncome($p_id, 'trade', 1, $worker_income_string);
+                        $this->game->Resource->updateAndNotifyIncome($p_id, 'silver', 2, $worker_income_string);
                     } else {
-                        $this->game->updateAndNotifyIncome($p_id, 'food', 1, $worker_income_string);
+                        $this->game->Resource->updateAndNotifyIncome($p_id, 'food', 1, $worker_income_string);
                     }
                     break;
                 case BUILDING_MARKET:
-                    $this->game->updateAndNotifyIncome($p_id, 'silver', 2, $worker_income_string);
+                    $this->game->Resource->updateAndNotifyIncome($p_id, 'silver', 2, $worker_income_string);
                     break;
                 case BUILDING_FOUNDRY:
-                    $this->game->updateAndNotifyIncome($p_id, 'steel', 1, $worker_income_string);
+                    $this->game->Resource->updateAndNotifyIncome($p_id, 'steel', 1, $worker_income_string);
                     break;
                 case BUILDING_RANCH:
-                    $this->game->updateAndNotifyIncome($p_id, 'cow', 1, $worker_income_string);
+                    $this->game->Resource->updateAndNotifyIncome($p_id, 'cow', 1, $worker_income_string);
                     break;
                 case BUILDING_GOLD_MINE:
-                    $this->game->updateAndNotifyIncome($p_id, 'gold', 1, $worker_income_string);
+                    $this->game->Resource->updateAndNotifyIncome($p_id, 'gold', 1, $worker_income_string);
                     break;
                 case BUILDING_COPPER_MINE:
-                    $this->game->updateAndNotifyIncome($p_id, 'copper', 1, $worker_income_string);
+                    $this->game->Resource->updateAndNotifyIncome($p_id, 'copper', 1, $worker_income_string);
                     break;
                 case BUILDING_RIVER_PORT:
                     if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
-                        $this->game->updateAndNotifyIncome($p_id, 'gold', 1, $worker_income_string);
+                        $this->game->Resource->updateAndNotifyIncome($p_id, 'gold', 1, $worker_income_string);
                     } 
                     break;
                 case BUILDING_MEATPACKING_PLANT:
                 case BUILDING_FORGE:
-                    $this->game->updateAndNotifyIncome($p_id, 'vp', 2, $worker_income_string);
+                    $this->game->Resource->updateAndNotifyIncome($p_id, 'vp', 2, $worker_income_string);
                     break;
             }
         }

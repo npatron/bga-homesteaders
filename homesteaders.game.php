@@ -23,10 +23,11 @@ require_once('modules/HSDLog.class.php');
 require_once('modules/HSDBid.class.php');
 require_once('modules/HSDBuilding.class.php');
 require_once('modules/HSDAuction.class.php');
+require_once('modules/HSDResource.class.php');
 
 class homesteaders extends Table
 {
-    public $playerColorNames = array("ff0000" =>'red', "008000"=>'green', "0000ff"=>'blue', "ffff00"=> 'yellow');
+    public $playerColorNames = array("ff0000" =>'red', "008000"=>'green', "0000ff"=>'blue', "ffff00"=> 'yellow', "982fff"=> 'purple');
 
 	function __construct( )
 	{
@@ -54,6 +55,7 @@ class homesteaders extends Table
         $this->Bid      = new HSDBid($this);
         $this->Building = new HSDBuilding($this);
         $this->Auction  = new HSDAuction($this);
+        $this->Resource = new HSDresource($this);
 
 	}
 	
@@ -161,7 +163,7 @@ class homesteaders extends Table
         $current_player_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
     
         // Get information about players
-        $sql = "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name` FROM `player` ";
+        $sql = "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `bid_loc`, `rail_adv` FROM `player` ";
         $result['players'] = $this->getCollectionFromDb( $sql );
 
         $result['buildings'] = $this->Building->getAllBuildings();
@@ -175,7 +177,7 @@ class homesteaders extends Table
         $sql = "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '".$current_player_id."'";
         $result['player_resources'] = $this->getObjectFromDb( $sql );
 
-        $sql = "SELECT `player_id` p_id, `workers`, `track`, `bid_loc`, `rail_adv` FROM `resources` ";
+        $sql = "SELECT `player_id` p_id, `workers`, `track` FROM `resources` ";
         $result['resources'] = $this->getCollectionFromDb( $sql );
 
         $result['round_number'] = $this->getGameStateValue( 'round_number' );
@@ -214,104 +216,14 @@ class homesteaders extends Table
         return($this->loadPlayersBasicInfos()[$player_id]['player_name']);
     }
 
-    function updateAndNotifyIncome($player_id, $type, $amount, $reason_string = ""){
-        $this->notifyAllPlayers( "playerIncome",
-        clienttranslate( '${player_name} recieved '.$amount.' '.$type.' from '.$reason_string ), 
-        array('player_id' => $player_id,
-            'type' => $type,
-            'amount' => $amount,
-            'player_name' => $this->getPlayerName($player_id),
-            ) );
-            $this->updateResource($player_id, $type, $amount);
-    }
-
-    function updateAndNotifyPayment($player_id, $type, $amount =1, $reason_string = ""){
-        $this->notifyAllPlayers( "playerPayment",
-            clienttranslate( '${player_name} paid '.$amount.' '.$type.' for '.$reason_string ), 
-            array('player_id' => $player_id,
-            'type' => $type,
-            'amount' => $amount,
-            'player_name' => $this->getPlayerName($player_id),
-        ) );
-        $this->updateResource($player_id, $type, -$amount);
-    }
-
-    /**
-     * This will NOT notify the player only for use when notification has already happened (workers), or 
-     * updating the trackers: bid_loc, rail_adv, 
-     */
-    function updateResource($player_id, $type, $amount){
-        $sql = "SELECT `".$type."` FROM `resources` WHERE `player_id`= '".$player_id."'";
-        $resource_count = self::getUniqueValueFromDB( $sql );
-        $resource_count += $amount;
-        $sql = "UPDATE `resources` SET `".$type."`='".$resource_count."' WHERE `player_id`= '".$player_id."'";
-        self::DbQuery( $sql );
-    }
-
-    function addWorker($player_id, $reason_string){
-        if ($reason_string == 'hire'){
-            $this->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token}' ), array(
-                'player_id' => $player_id,
-                'player_name' => $this->getPlayerName($player_id),
-                'token' => 'worker',));
-        } else {
-            $this->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token} as ${reason}' ), array(
-                'player_id' => $player_id,
-                'player_name' => $this->getPlayerName($player_id),
-                'token' => 'worker',
-                'reason' => $reason_string,));
-        }
-        $sql = "INSERT INTO `workers` (`player_id`) VALUES (".$player_id.")";
-        self::DbQuery( $sql );
-        $this->updateResource($player_id, 'workers', 1);
-    }
-
     function getPlayerColorName($player_id){
         $sql = "SELECT `player_id`, `color_name` FROM `player`";
         $colors = self::getCollectionFromDb( $sql );
         return($colors[$player_id]['color_name']);
     }
-
-    function canPlayerAfford($player_id, $resource_arr){
-        $sql = "SELECT * FROM `resources` WHERE `player_id` ='".$player_id."'";
-        $player_resources = self::getObjectFromDB($sql);
-        $enough = true;
-        foreach( $resource_arr as $key => $resource){
-            $enough = $enough && ($player_resources[$key] >= $resource);  
-        }
-        return $enough;
-    }
-    
-    function collectIncome() 
-    {
-        $this->notifyAllPlayers( "beginIncome", clienttranslate( 'Income Phase' ), array() );
-        $sql = "SELECT * FROM `resources` ";
-        $resources = self::getCollectionFromDB( $sql );
-        foreach ( $resources as $player_id => $player_resource ){
-            $this->Building->buildingIncomeForPlayer($player_id);
-            if ($player_resource['track'] > 0){
-                $this->updateAndNotifyIncome($player_id, 'silver', $player_resource['track'], 'rail tracks');
-            }
-        }
-    }
-
-    function getRailAdv($player_id) {
-        $sql = "SELECT `rail_adv` FROM `resources` WHERE `player_id`='".$player_id."'";
-        $rail_adv = self::getUniqueValueFromDB( $sql );
-        if ($rail_adv < 5){
-            $rail_adv++;
-            $sql = "UPDATE `resources` SET `rail_adv`= '".$rail_adv."' WHERE `player_id`='".$player_id."'";
-            self::DbQuery( $sql );
-            $this->notifyAllPlayers( "railAdv", 
-                        clienttranslate( '${player_name} advances their rail track ' ),
-                        array('player_id' => $this->getActivePlayerId(),
-                              'player_name' => $this->getActivePlayerName(),
-                              'rail_destination' => $rail_adv,));
-        }
-    }
     
     function getRailAdvBonusOptions($player_id){
-        $sql = "SELECT `rail_adv` FROM `resources` WHERE `player_id`='".$player_id."'";
+        $sql = "SELECT `rail_adv` FROM `player` WHERE `player_id`='".$player_id."'";
         $rail_adv = self::getUniqueValueFromDB( $sql );
         $options = array();
         if($rail_adv >0){
@@ -337,46 +249,6 @@ class homesteaders extends Table
         return $options; 
     }
 
-    /** gets an array of valid build types from 
-     * a bitwise map of build types (how it's stored in sql)
-     * '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE'
-     * ex: 5 would be IND(4) + RES(1)
-     * ex: 1 would be RES(1)
-     */
-    function getBuildTypeOptions($build_type){
-        $build_type_options = array();
-        if ($build_type %2 == 1){
-            $build_type_options[] = TYPE_RESIDENTIAL;
-            $build_type -=1;
-        }
-        if ($build_type %4 == 2){
-            $build_type_options[] = TYPE_COMMERCIAL;
-            $build_type -=2;
-        }
-        if ($build_type %8 == 4){
-            $build_type_options[] = TYPE_INDUSTRIAL;
-            $build_type -=4;
-        }
-        if ($build_type == 8){
-            $build_type_options[] = TYPE_SPECIAL;
-        }
-        return $build_type_options;
-    }
-
-    function pay($player_id, $silver, $gold, $reason_string){
-        if (!$this->canPlayerAfford($player_id, array('gold'=>$gold, 'silver'=>$silver))){
-            throw new BgaUserException( _("Not enough resources. Take loan(s) or trade") );
-        }
-        if ($gold > 0) {
-            $this->updateAndNotifyPayment($player_id, 'gold', $gold, $reason_string);
-        }
-        if ($silver > 0) {
-            $this->updateAndNotifyPayment($player_id, 'silver', $silver, $reason_string);
-        }
-    }
-
-    
-
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
@@ -390,123 +262,28 @@ class homesteaders extends Table
     public function playerTakeLoan()
     {
         self::checkAction( "takeLoan" );
-        $current_player_id = self::getCurrentPlayerId();
-        $this->updateAndNotifyIncome($current_player_id, 'silver', 2, "loan");
-        $this->updateAndNotifyIncome($current_player_id, 'loan', 1, "loan");
+        $current_player_id = $this->getCurrentPlayerId();
+        $this->Resource->updateAndNotifyIncome($current_player_id, 'silver', 2, "loan");
+        $this->Resource->updateAndNotifyIncome($current_player_id, 'loan', 1, "loan");
         $this->Log->takeLoan($current_player_id);
     }
 
     public function playerTrade( $tradeAction )
     {
         self::checkAction( 'trade' );
-        
         $current_player_id = $this->getCurrentPlayerId();
-        $current_player_name = $this->getCurrentPlayerName();
-        // default trade amounts
-        $sell = false;
-        $trade_away_amt = 1;
-        $trade_for_amt = 1;
-        switch($tradeAction){
-            case 'buy_wood':
-                $trade_away_type = "silver";
-                $trade_for_type = "wood";
-            break;
-            case 'buy_food':
-                $trade_away_amt = 2;
-                $trade_away_type = "silver";
-                $trade_for_type = "food";
-            break;
-            case 'buy_steel':
-                $trade_away_amt = 3;
-                $trade_away_type = "silver";
-                $trade_for_type = "steel";
-            break;
-            case 'buy_gold':
-                $trade_away_amt = 4;
-                $trade_away_type = "silver";
-                $trade_for_type = "gold";
-            break;
-            case 'buy_copper':
-                $trade_away_type = "gold";
-                $trade_for_type = "copper";
-            break;
-            case 'buy_livestock':
-                $trade_away_type = "gold";
-                $trade_for_type = "livestock";
-            break;
-            case 'sell_wood':
-                $trade_away_type = "wood";
-                $trade_for_type = "silver";
-                $sell = true;
-            break;
-            case 'sell_food':
-                $trade_away_type = "food";
-                $trade_for_amt = 2;
-                $trade_for_type = "silver";
-                $sell = true;
-            break;
-            case 'sell_steel':
-                $trade_away_type = "steel";
-                $trade_for_amt = 3;
-                $trade_for_type = "silver";
-                $sell = true;
-            break;
-            case 'sell_gold':
-                $trade_away_type = "gold";
-                $trade_for_amt = 4;
-                $trade_for_type = "silver";
-                $sell = true;
-            break;
-            case 'sell_copper':
-                $trade_away_type = "copper";
-                $trade_for_type = "silver";
-                $sell = true;
-            break;
-            case 'sell_livestock':
-                $trade_away_type = "cow";
-                $trade_for_type = "silver";
-                $sell = true;
-            break;
-            case 'market_wood_food':
-                $trade_away_type = "wood";
-                $trade_for_type = "food";
-            break;
-            case 'market_food_steel':
-                $trade_away_type = "food";
-                $trade_for_type = "steel";
-            break;
-        }
-        $cost = array($trade_away_type => $trade_away_amt, 'trade' => 1);
-        if (!$this->canPlayerAfford($current_player_id, $cost)){
-            throw new BgaUserException( _("You cannot afford to make this trade"));
-        }
-        $this->notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
-            'player_id' => $current_player_id,
-            'player_name' => $current_player_name,
-            'sell' => $sell,
-            'trade1' => $trade_away_type,
-            'trade2' => $trade_for_type,
-        ) );
-        $this->updateAndNotifyPayment($current_player_id, 'trade', 1, 'trade');
-        $this->updateAndNotifyPayment($current_player_id, $trade_away_type, $trade_away_amt, 'trade');
-        $this->updateAndNotifyIncome($current_player_id, $trade_for_type, $trade_for_amt, 'trade');
-        
-        if ($sell){
-            $this->updateAndNotifyIncome($current_player_id, 'vp', 1, 'trade');
-        }
+        $this->Resource->trade($current_player_id, $tradeAction);
     }
 
-    public function playerHireWorker($free = false){
+    public function playerHireWorker(){
         self::checkAction( 'hireWorker' );
-        $current_player_id = self::getCurrentPlayerId();
-        if (!$free){
-            $worker_cost = array('trade'=>1,'food'=>1);
-            if (!$this->canPlayerAfford($current_player_id, $worker_cost))
-                throw new BgaUserException( _("You cannot afford to hire a worker"));
-            $this->updateAndNotifyPayment($current_player_id, 'trade', 1, 'Hire Worker');
-            $this->updateAndNotifyPayment($current_player_id, 'food', 1, 'Hire Worker');
-        }
-        $this->addWorker($current_player_id, 'hire');
+        $current_player_id = $this->getCurrentPlayerId();
+        $worker_cost = array('trade'=>1,'food'=>1);
+        if (!$this->Resource->canPlayerAfford($current_player_id, $worker_cost))
+            throw new BgaUserException( _("You cannot afford to hire a worker"));
+        $this->Resource->updateAndNotifyPayment($current_player_id, 'trade', 1, 'Hire Worker');
+        $this->Resource->updateAndNotifyPayment($current_player_id, 'food', 1, 'Hire Worker');
+        $this->Resource->addWorker($current_player_id, 'hire');
     }
 
     /***  place workers phase ***/
@@ -577,61 +354,28 @@ class homesteaders extends Table
         $sql = "SELECT `workers` FROM `resources` WHERE `player_id`='".$current_player_id."'";
         $workers = self::getUniqueValueFromDB( $sql );
         $cost = max($workers - (5*$gold), 0);
-        $this->pay($current_player_id, $cost, $gold, "paying workers");
+        $this->Resource->pay($current_player_id, $cost, $gold, "paying workers");
         $this->gamestate->setPlayerNonMultiactive($current_player_id, "auction" );
     }
 
     public function playerPayAuction($gold) {
         self::checkAction( "done" );
-        if ($gold <0){ throw new BgaUserException ("cannot have negative gold value");}
+        if ($gold <0){ throw new BgaUserException (_("cannot have negative gold value"));}
         $active_player_id = $this->getActivePlayerId();
-        $sql = "SELECT `bid_loc` FROM `resources` WHERE `player_id`='".$active_player_id."'";
-        $bid_loc = self::getUniqueValueFromDB( $sql );
-        $bid_cost = $this->Bid->getBidCost($bid_loc);
+        
+        $bid_cost = $this->Bid->getBidCost($active_player_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
-        $this->pay($active_player_id, $bid_cost, $gold, "auction cost");
+        $this->Resource->pay($active_player_id, $bid_cost, $gold, "auction cost");
         $this->gamestate->nextstate( 'build' );
     }
 
     public function playerSelectBonusOption($selected_bonus) {
         $active_player = $this->getActivePlayerId();
-        $rail_bonus_string = self::_('Rail Advancement Bonus');
         $options = $this->getRailAdvBonusOptions($active_player);
         if (!in_array ($selected_bonus, $options)){
             throw new BgaUserException( "invalid bonus option selected: " );
         } 
-        switch ($selected_bonus){
-            case WORKER:
-                $this->addWorker($active_player, $rail_bonus_string);
-            break;
-            case TRADE:
-                $this->updateAndNotifyIncome($active_player, 'trade', 1, $rail_bonus_string);
-            break;
-            case TRACK:
-                $this->updateAndNotifyIncome($active_player, 'track', 1, $rail_bonus_string);
-            break;
-            case WOOD:
-                $this->updateAndNotifyIncome($active_player, 'wood', 1, $rail_bonus_string);
-            break;
-            case FOOD:
-                $this->updateAndNotifyIncome($active_player, 'food', 1, $rail_bonus_string);
-            break;
-            case STEEL:
-                $this->updateAndNotifyIncome($active_player, 'steel', 1, $rail_bonus_string);
-            break;
-            case GOLD:
-                $this->updateAndNotifyIncome($active_player, 'gold', 1, $rail_bonus_string);
-            break;
-            case COPPER:
-                $this->updateAndNotifyIncome($active_player, 'copper', 1, $rail_bonus_string);
-            break;
-            case COW:
-                $this->updateAndNotifyIncome($active_player, 'cow', 1, $rail_bonus_string);
-            break;
-            case VP:
-                $this->updateAndNotifyIncome($active_player, 'vp', 3, $rail_bonus_string);
-            break;
-        }
+        $this->Resource->recieveRailBonus($active_player, $selected_bonus);
         $phase = self::getGameStateValue( 'phase' );
         $next_state = "";
         switch($phase){
@@ -649,17 +393,17 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
-    public function playerFreeHireWorker () {
+    public function playerHireWorkerFromAuctionBonus () {
         $bonus_option = $this->getGameStateValue('bonus_option');
         if ($bonus_option == WORKER || $bonus_option == TRACK){
             $active_player = $this->getActivePlayerId();
-            $this->addWorker($active_player, 'hire');
+            $this->Resource->addWorker($active_player, 'hire');
             if ($bonus_option == WORKER){
                 $next_state = 'done';
                 $this->setGameStateValue('bonus_option', NONE);
             } else {
                 $this->game->setGameStateValue( 'phase', PHASE_AUCTION_BONUS);
-                $this->game->getRailAdv( $active_player );
+                $this->game->Resource->getRailAdv( $active_player );
                 $next_state = 'railBonus';
             }
             $this->gamestate->nextState( $next_state );
@@ -668,44 +412,44 @@ class homesteaders extends Table
 
     public function playerWoodForTrack (){
         $active_player = $this->getActivePlayerId();
-        if (!$this->canPlayerAfford($active_player, array('wood'=> 1))) {
-            throw new BgaUserException( self::_("You need a Wood to take this action") );
+        if (!$this->Resource->canPlayerAfford($active_player, array('wood'=> 1))) {
+            throw new BgaUserException( _("You need a Wood to take this action") );
         }
-        $this->updateAndNotifyPayment($active_player, 'wood', 1, 'Auction Bonus');
-        $this->updateAndNotifyIncome($active_player, 'track', 1, 'Auction Bonus');
+        $this->Resource->updateAndNotifyPayment($active_player, 'wood', 1, 'Auction Bonus');
+        $this->Resource->updateAndNotifyIncome($active_player, 'track', 1, 'Auction Bonus');
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerCopperForVp () {
         $active_player = $this->getActivePlayerId();
-        if (!$this->canPlayerAfford($active_player, array('copper'=> 1))){
-            throw new BgaUserException( self::_("You need a Copper to take this action") );
+        if (!$this->Resource->canPlayerAfford($active_player, array('copper'=> 1))){
+            throw new BgaUserException( _("You need a Copper to take this action") );
         }
-        $this->updateAndNotifyPayment($active_player, 'copper', 1, 'Auction Bonus');
-        $this->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus');
+        $this->Resource->updateAndNotifyPayment($active_player, 'copper', 1, 'Auction Bonus');
+        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus');
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerCowForVp () {
         $active_player = $this->getActivePlayerId();
-        if (!$this->canPlayerAfford($active_player,array('cow'=> 1))){
-            throw new BgaUserException( self::_("You need a livestock to take this action ") );
+        if (!$this->Resource->canPlayerAfford($active_player,array('cow'=> 1))){
+            throw new BgaUserException( _("You need a livestock to take this action ") );
         }
-        $this->updateAndNotifyPayment($active_player, 'cow', 1, 'Auction Bonus');
-        $this->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus');
+        $this->Resource->updateAndNotifyPayment($active_player, 'cow', 1, 'Auction Bonus');
+        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus');
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerFoodForVp () {
         $active_player = $this->getActivePlayerId();
-        if (!$this->canPlayerAfford($active_player, array('food'=> 1))){
-            throw new BgaUserException( self::_("You need a food to take this action ") ); 
+        if (!$this->Resource->canPlayerAfford($active_player, array('food'=> 1))){
+            throw new BgaUserException( _("You need a food to take this action ") ); 
         }
-        $this->updateAndNotifyPayment($active_player, 'food', 1, 'Auction Bonus');
-        $this->updateAndNotifyIncome($active_player, 'vp', 2, 'Auction Bonus');
+        $this->Resource->updateAndNotifyPayment($active_player, 'food', 1, 'Auction Bonus');
+        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 2, 'Auction Bonus');
         
         $this->gamestate->nextState( 'done' );
     }
@@ -719,7 +463,7 @@ class homesteaders extends Table
         $bonus_option = $this->getGameStateValue('bonus_option');
         if ($bonus_option == TRACK) {
             $this->game->setGameStateValue( 'phase', PHASE_AUCTION_BONUS);
-            $this->game->getRailAdv( $active_player );
+            $this->game->Resource->getRailAdv( $active_player );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
@@ -780,29 +524,12 @@ class homesteaders extends Table
 
     function argAuctionCost() {
         $active_player_id = $this->getActivePlayerId();
-        $sql = "SELECT `bid_loc` FROM `resources` WHERE `player_id` = '".$active_player_id."'";
-        $bid_location = self::getUniqueValueFromDB($sql);
-        $bid_cost = $this->Bid->getBidCost($bid_location);
+        $bid_cost = $this->Bid->getBidCost($active_player_id);
         return array("auction_cost"=>$bid_cost);
     }
 
     function argAllowedBuildings() {
-        $round_number = $this->getGameStateValue('round_number');
-        $current_auction = $this->getGameStateValue('current_auction');
-        $sql = "SELECT `build_type` FROM `auctions` WHERE `location`='".$current_auction."'AND `position`='".$round_number."'";
-        $build_type = self::getUniqueValueFromDB( $sql );// the sql value for the building.
-        $build_type_options = $this->getBuildTypeOptions($build_type);// into an array of constants
-        $buildings = array(); // this will catch the empty scenario.
-        if (count($build_type_options) >0){
-            $sql = "SELECT * FROM `buildings` WHERE `location`=".BUILDING_LOC_OFFER." AND (";
-            $values = array();
-            foreach($build_type_options as $i=>$option){
-                $values[] = "`building_type`='".$build_type_options[$i]."'";
-            }
-            $sql .= implode( ' OR ', $values ); 
-            $sql .= ")";
-            $buildings = self::getCollectionFromDB( $sql );
-        }
+        $buildings = $this->Building->getAllowedBuildings();
        return(array("allowed_buildings"=> $buildings));
     }
 
@@ -824,8 +551,7 @@ class homesteaders extends Table
     
     //Example for game state "MyGameState":
 
-    function stStartRound()
-    {
+    function stStartRound() {
         $round_number = $this->getGameStateValue('round_number');
 
         //rd 1 setup buildings
@@ -862,19 +588,16 @@ class homesteaders extends Table
         $this->gamestate->nextState( );
     }
 
-    function stPlaceWorkers()
-    {
+    function stPlaceWorkers() {
         $this->gamestate->setAllPlayersMultiactive( );
     }
 
-    function stCollectIncome()
-    {
-        $this->collectIncome( );
+    function stCollectIncome() {
+        $this->Resource->collectIncome( );
         $this->gamestate->nextState( );
     }
 
-    function stPayWorkers()
-    {
+    function stPayWorkers() {
         $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = self::getCollectionFromDB( $sql );
         $players = array();
@@ -886,7 +609,7 @@ class homesteaders extends Table
                     $silver +=2;
                     $this->playerTakeLoan($player_id);
                 }
-                $this->updateAndNotifyPayment($player_id, 'silver', $player['workers'], "paying workers");
+                $this->Resource->updateAndNotifyPayment($player_id, 'silver', $player['workers'], "paying workers");
             } else {
                 $players[] = $player_id;
             }
@@ -894,7 +617,7 @@ class homesteaders extends Table
         $this->gamestate->setPlayersMultiactive($players, 'auction');
     }
     
-    function stBeginAuction(){
+    function stBeginAuction() {
         $this->Bid->clearBids( );
         $first_player = $this->getGameStateValue('first_player');
         $this->gamestate->changeActivePlayer( $first_player );

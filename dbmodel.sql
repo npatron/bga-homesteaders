@@ -20,6 +20,10 @@
 
 -- This color name is used to create css classes
 ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
+ALTER TABLE `player` ADD `bid_loc` INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3';
+ALTER TABLE `player` ADD `rail_adv` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
+ALTER TABLE `player` ADD `outbid` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid';
+ 
 
 CREATE TABLE IF NOT EXISTS `workers` (
   `worker_key`    INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -38,7 +42,7 @@ CREATE TABLE IF NOT EXISTS `tracks` (
 
 
 CREATE TABLE IF NOT EXISTS `buildings` (
-  `building_key`  INT(3) UNSIGNED NOT NULL,
+  `building_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
   `building_type` INT(1) UNSIGNED NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
@@ -47,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
   PRIMARY KEY (`building_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 -- Auction tiles 
 CREATE TABLE IF NOT EXISTS `auctions` (
@@ -74,8 +78,6 @@ CREATE TABLE IF NOT EXISTS `resources` (
   `loan`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `trade`      INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `vp`         INT(3) UNSIGNED NOT NULL DEFAULT '0',
-  `bid_loc`    INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3',
-  `rail_adv`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5',
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB;
 

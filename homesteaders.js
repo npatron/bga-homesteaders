@@ -203,44 +203,35 @@ function (dojo, declare) {
         {
             console.log( "Starting game setup" );
 
+            $isSpectator = true;
             this.playerCount = 0;
-            var isSpectator = true;
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
                 this.playerCount++;
                 const player = gamedatas.players[p_id];
                 const current_player_color = player.color_name;
+                dojo.removeClass("player_zone_"+current_player_color, "noshow");
                 if( this.player_id == p_id){
                     const player_board_div = $('player_board_'+p_id);
                     dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
-                    isSpectator = false;
+                    $isSpectator = false;
                 } 
-                dojo.removeClass("player_zone_"+current_player_color.toString(), "noshow");
-                //dojo.byId("player_name_"+current_player_color.toString()).innerText = player.player_name;
                 
                 this.player_color[p_id] = current_player_color;
-                this.token_divId[p_id] = 'token_zone_' + this.player_color[p_id].toString();
+                this.token_divId[p_id] = 'token_zone_' + this.player_color[p_id];
                 this.token_zone[p_id] = new ebg.zone();
                 this.token_zone[p_id].create ( this, this.token_divId[p_id] , this.worker_dimension, this.worker_dimension );
                 this.player_score_counter[p_id] = new ebg.counter();
                 this.player_score_counter[p_id].create(`player_score_${p_id}`);
                 this.player_score_counter[p_id].setValue(Number(player.score));
 
-                this.player_building_zone_id[p_id] = 'building_zone_'+ this.player_color[p_id].toString();
+                this.player_building_zone_id[p_id] = 'building_zone_'+ this.player_color[p_id];
                 this.player_building_zone[p_id] = new ebg.zone();
                 this.player_building_zone[p_id].create(this, this.player_building_zone_id[p_id], this.tile_width, this.tile_height);
             }
-            console.log( "isSpectator: "+isSpectator );
-            if (!isSpectator){ // watcher is in the game.
-                let next_pId = this.player_id;    
-                for (let i = 0; i < this.playerCount; i++){
-                    console.log( "next: "+next_pId );
-                    dojo.place(`player_zone_${this.player_color[next_pId]}`, this.player_order[i] , 'replace');
-                    next_pId = gamedatas.player_order[this.player_id];
-                }
-            }
-
-
+            if (!$isSpectator)
+                this.orientPlayerZones(gamedatas.player_order);
+            
             this.setupPlayerResources(gamedatas.player_resources);
             // Auctions: 
             this.setupAuctionZones();
@@ -252,9 +243,9 @@ function (dojo, declare) {
             this.player_building_zone[gamedatas.first_player].placeInZone('first_player_tile', 1);
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones ();
-            this.setupBidTokens(gamedatas.resources);
+            this.setupBidTokens(gamedatas.players);
 
-            this.setupRailLines(gamedatas.resources);
+            this.setupRailLines(gamedatas.players);
             this.setupTradeButtons();
             this.setupBonusButtons();
             this.setupPaymentSection();
@@ -270,6 +261,15 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Setup Methods
         ///////////////////////////////////////////////////
+
+        orientPlayerZones: function (order_table){
+            let next_pId = this.player_id;    
+            for (let i = 0; i < this.playerCount; i++){
+                console.log( "next: "+next_pId );
+                dojo.place(`player_zone_${this.player_color[next_pId]}`, this.player_order[i] , 'replace');
+                next_pId = order_table[this.player_id];
+            }
+        },
 
         setupPlayerResources: function (resources){
             for (const [key, value] of Object.entries(resources)) {
@@ -375,9 +375,9 @@ function (dojo, declare) {
             }
         },
 
-        setupBidTokens: function(resources) {
-            for(let p_id in resources){
-                const player_bid_loc = resources[p_id].bid_loc;
+        setupBidTokens: function(players) {
+            for(let p_id in players){
+                const player_bid_loc = players[p_id].bid_loc;
                 const player_color = this.player_color[p_id];
                 this.bid_token_divId[p_id] = `token_bid_${player_color}`;
                 dojo.place(this.format_block( 'jptpl_player_token', 
@@ -386,17 +386,18 @@ function (dojo, declare) {
             }
         },
 
-        setupRailLines: function(resources) {
+        setupRailLines: function(players) {
             for(let i =0; i < 6; i++){
                 this.rail_adv_zone[i].create( this, 'train_advancement_'+i.toString(), this.token_dimension, this.token_dimension);
                 this.rail_adv_zone[i].setPattern( 'horizontalfit' );
             }
-            for(let p_id in resources){
-                const player_rail_loc = 'train_advancement_' + (resources[p_id].rail_adv.toString());
+            // place tokens.
+            for(let p_id in players){
+                const player_rail_adv = players[p_id].rail_adv;
                 this.train_token_divId[p_id] = `token_train_${this.player_color[p_id]}`;
                 dojo.place(this.format_block( 'jptpl_player_token', 
-                    {color: this.player_color[p_id].toString(), type: "train"}), player_rail_loc);
-                this.rail_adv_zone[resources[p_id].rail_adv].placeInZone(this.train_token_divId[p_id]);
+                    {color: this.player_color[p_id].toString(), type: "train"}), 'train_advancement_0');
+                this.rail_adv_zone[player_rail_adv].placeInZone(this.train_token_divId[p_id]);
             }
         },
 
@@ -1335,7 +1336,7 @@ function (dojo, declare) {
             dojo.subscribe( 'buyBuilding', this, "notif_buyBuilding" );
             this.notifqueue.setSynchronous( 'buyBuilding', 500 );
             dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
-            this.notifqueue.setSynchronous( 'playerIncome', 250 );
+            this.notifqueue.setSynchronous( 'playerIncome', 1000 );
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
             this.notifqueue.setSynchronous( 'moveBid', 250 );
             dojo.subscribe( 'clearAllBids', this, "notif_clearAllBids");
@@ -1415,8 +1416,11 @@ notif_cardPlayed: function (notif) {
         notif_workerMoved: function( notif ){
             console.log ( 'notif_workerMoved' );
             console.log ( notif );
-            
-            this.building_worker_zones[notif.args.building_key][notif.args.building_slot].placeInZone('token_worker_'+notif.args.worker_key.toString());
+            const worker_divId = 'token_worker_'+notif.args.worker_key;
+            console.log ( "placing: "+ worker_divId +` in ${notif.args.building_key}:${notif.args.building_slot}`);
+            const worker_slot_divId = `slot_${notif.args.building_slot}_${notif.args.building_key}`;
+            this.building_worker_zones[notif.args.building_key][notif.args.building_slot].placeInZone(worker_divId);
+            this.slideToObject(worker_divId, worker_slot_divId).play();
             if (notif.args.building_slot == 3){
                 dojo.style(`slot_3_${notif.args.building_key}`, 'width', 70);
             }

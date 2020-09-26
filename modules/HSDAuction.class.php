@@ -18,11 +18,12 @@ class HSDAuction extends APP_GameClass
         $build = array( 3, 4, 2, 5, 2, 1, 4,15,15,15,
                         1, 4,15, 0, 3, 6,12, 9, 6, 9,
                         1, 2, 4, 0, 1, 2, 4,15, 3, 0);
+        // does auction tile have bonus 0-no, 1-yes
         $bonus = array( 0, 0, 0, 0, 1, 1, 1, 0, 1, 1,
                         0, 0, 0, 1, 0, 0, 0, 1, 1, 1,
                         0, 0, 0, 1, 0, 0, 1, 0, 1, 1); 
         $values=array();
-        //first auction is in order, and all face-up
+        //first auction is in order, 
         for ($i = 1; $i <11; $i++){
             $values[] = "('$i','$i','".AUCTION_LOC_DECK1."', '".$build[$i-1]."', '".$bonus[$i-1]."')";
         }
@@ -73,7 +74,7 @@ class HSDAuction extends APP_GameClass
         $this->game->notifyAllPlayers( "updateAuction", _( 'Discard Auction Tile' ), 
                 array('auction_no'=>$auction_no, 'state'=>'discard') );
         $sql = "UPDATE `auctions` SET `location`='".AUCTION_LOC_DISCARD."' WHERE `location` = '".$auction_no."' AND position = '".$round_number."'";
-        self::DbQuery( $sql);
+        $this->game->DbQuery( $sql);
     }
 
     function resolveAuctionBonus(){
@@ -94,7 +95,7 @@ class HSDAuction extends APP_GameClass
             break;
             case AUCTION2_4:
             case AUCTION3_4:
-                $this->game->addWorker( $active_player, "Auction Tile Bonus");
+                $this->game->Resource->addWorker( $active_player, "Auction Tile Bonus");
                 // worker and rail adv
                 $this->game->setGameStateValue( 'bonus_option', TRACK );
             break;
@@ -113,7 +114,7 @@ class HSDAuction extends APP_GameClass
                 $this->game->setGameStateValue( 'bonus_option' , COW);
             break;
             case AUCTION3_10:
-                $this->game->updateAndNotifyIncome($active_player, 'vp', 6, 'Auction Reward');
+                $this->game->Resource->updateAndNotifyIncome($active_player, 'vp', 6, 'Auction Reward');
                 // get 6 vp (charity) & get next (food->2VP) -notice no break;
             case AUCTION2_9:
             case AUCTION2_10:
@@ -127,5 +128,41 @@ class HSDAuction extends APP_GameClass
         $this->game->gamestate->nextState( $next_state );
     }
 
+    /**
+     * returns an array of valid build types derived from DB value for current round & auction.
+     */
+    function getCurrentAuctionBuildTypeOptions(){
+        $round_number = $this->game->getGameStateValue('round_number');
+        $current_auction = $this->game->getGameStateValue('current_auction');
+        $sql = "SELECT `build_type` FROM `auctions` WHERE `location`='".$current_auction."'AND `position`='".$round_number."'";
+        $build_type = self::getUniqueValueFromDB( $sql );// the sql value for the building.
+        return $this->parseBuildTypeOptions($build_type);
+    }
+    
+    /** returns an array of valid build types from 
+     * a bitwise map of build types (how it's stored in sql)
+     * '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE'
+     * ex: 5 would be IND(4) + RES(1)
+     * ex: 1 would be RES(1)
+     */
+    function parseBuildTypeOptions($build_type) {
+        $build_type_options = array();
+        if ($build_type %2 == 1){
+            $build_type_options[] = TYPE_RESIDENTIAL;
+            $build_type -=1;
+        }
+        if ($build_type %4 == 2){
+            $build_type_options[] = TYPE_COMMERCIAL;
+            $build_type -=2;
+        }
+        if ($build_type %8 == 4){
+            $build_type_options[] = TYPE_INDUSTRIAL;
+            $build_type -=4;
+        }
+        if ($build_type == 8){
+            $build_type_options[] = TYPE_SPECIAL;
+        }
+        return $build_type_options;
+    }
 
 }

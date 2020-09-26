@@ -126,9 +126,10 @@ class HSDLog extends APP_GameClass
       $args['stats'] = $stats;
     }
 
-    $actionArgs = json_encode($args);
+    //$actionArgs = json_encode($args);
 
-    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action', '$actionArgs')");
+    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action')");
+    // , '$actionArgs'
   }
 
   /*
