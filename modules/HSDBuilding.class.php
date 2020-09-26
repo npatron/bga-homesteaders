@@ -268,7 +268,6 @@ class HSDBuilding extends APP_GameClass
 
     function payForBuilding($p_id, $b_key){
         $building_cost = $this->getBuildingCostFromKey ($b_key);
-        var_dump($building_cost);
         foreach ($building_cost as $type => $cost){
             if ($building_cost[$type] > 0){
                 $this->game->updateAndNotifyPayment($p_id, $type, $building_cost[$type], "building "+$this->getBuildingNameFromKey($b_key));
@@ -398,9 +397,10 @@ class HSDBuilding extends APP_GameClass
             }
         }
         foreach($player_workers as $worker_key => $worker ) {
-            $building_key = $worker['building_key'];
-            $worker_income_string = 'worker at '.$this->getBuildingNameFromKey($building_key);
-            switch($building_key){
+            $b_key = $worker['building_key'];
+            $b_id = $this->getBuildingIdFromKey($b_key);
+            $worker_income_string = 'worker at '.$this->getBuildingNameFromKey($b_key);
+            switch($b_id){
                 case BUILDING_HOMESTEAD_YELLOW:
                 case BUILDING_HOMESTEAD_RED:
                 case BUILDING_HOMESTEAD_GREEN:

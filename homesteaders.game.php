@@ -476,9 +476,9 @@ class homesteaders extends Table
                 $trade_for_type = "steel";
             break;
         }
-        $cost = array($trade_away_type=>$trade_away_amt, 'trade'=> 1);
+        $cost = array($trade_away_type => $trade_away_amt, 'trade' => 1);
         if (!$this->canPlayerAfford($current_player_id, $cost)){
-            throw new BgaUserException( self::_("You cannot afford to make this trade"));
+            throw new BgaUserException( _("You cannot afford to make this trade"));
         }
         $this->notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
             'player_id' => $current_player_id,

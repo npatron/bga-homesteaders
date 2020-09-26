@@ -599,6 +599,37 @@ div#done_trading {
    background-position: 100% 100%;
 }
 
+.player_token_bid {
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-position-x: 100%;
+   background-size: 100px 260px;
+   width: 50px;
+   height: 52px;
+}
+.player_token_train {
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-size: 100px 260px;
+   background-position-x: 0%;
+   width: 50px;
+   height: 52px;
+}
+
+.player_token_yellow {
+   background-position-y: 0%;
+}
+.player_token_red {
+   background-position-y: 25%;
+}
+.player_token_green {
+   background-position-y: 50%;
+}
+.player_token_blue {
+   background-position-y: 75%;
+}
+.player_token_purple {
+   background-position-y: 100%;
+}
+
 /*=========================
     Building Worker Slots
   =========================*/
