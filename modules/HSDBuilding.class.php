@@ -363,6 +363,7 @@ class HSDBuilding extends APP_GameClass
         $sql = "SELECT * FROM `workers` WHERE `player_id` = '".$p_id."'";
         $player_workers = self::getCollectionFromDB( $sql );
         foreach( $player_buildings as $building_key => $building ) {
+            $b_name = $this->getBuildingNameFromKey($building_key);
             switch($building['building_id']) {
                 case BUILDING_HOMESTEAD_YELLOW:
                 case BUILDING_HOMESTEAD_RED:
@@ -370,51 +371,46 @@ class HSDBuilding extends APP_GameClass
                 case BUILDING_HOMESTEAD_BLUE:
                 case BUILDING_BOARDING_HOUSE:
                 case BUILDING_DEPOT:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $b_name);
                     break;
                 case BUILDING_GRAIN_MILL:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'food', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'food', 1, $b_name);
                     break;
                 case BUILDING_MARKET:
                 case BUILDING_GENERAL_STORE:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $b_name);
                     break;
                 case BUILDING_STEEL_MILL:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'steel', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'steel', 1, $b_name);
                     break;
                 case BUILDING_RAILWORKERS_HOUSE:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 1, $this->getBuildingNameFromKey($building_key));
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 1, $b_name);
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $b_name);
                     break;
                 case BUILDING_TRADING_POST:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 2, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 2, $b_name);
                     break;
                 case BUILDING_CHURCH:
                 case BUILDING_FACTORY:
                 case BUILDING_LAWYER:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 2, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 2, $b_name);
                     break;
                 case BUILDING_WORKSHOP:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $b_name);
                 break;
                 case BUILDING_STABLES:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $this->getBuildingNameFromKey($building_key));
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $b_name);
+                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $b_name);
                 break;
                 case BUILDING_BANK:
-                    $playerLoan = $this->game->getUniqueValueFromDb("SELECT `loan` FROM `resources` WHERE `player_id`='".$p_id."'");
-                    if ($playerLoan== 0){
-                        $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 1, $this->getBuildingNameFromKey($building_key));
-                    } else {
-                        $this->game->Resource->updateAndNotifyPayment ($p_id, 'loan', 1, $this->getBuildingNameFromKey($building_key));
-                    }
+                    $this->game->Resource->payLoanOrRecieveSilver($p_id, $b_name);
                 break;
                 case BUILDING_RODEO:
                     $rodeoIncome = min($player_workers, 5);
-                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'silver', $rodeoIncome, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'silver', $rodeoIncome, $b_name);
                 break;
                 case BUILDING_FAIRGROUNDS:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'gold', 1, $this->getBuildingNameFromKey($building_key));
+                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'gold', 1, $b_name);
                 break;
             }
         }

@@ -336,16 +336,19 @@ class homesteaders extends Table
         self::checkAction( "buildBuilding" );
         $active_player = $this->getActivePlayerId();
         $this->Building->buildBuilding($active_player, $selected_building);
+        if ($this->Building->doesPlayerOwnBuilding($active_player, BUILDING_FORGE) && 
+            $this->Building->getBuildingIdFromKey($selected_building) != BUILDING_FORGE){
+            $this->Resource->updateAndNotifyIncome($active_player, 'vp', 1, _("Forge Build Bonus"));
+        }
         $build_bonus = $this->Building->getOnBuildBonusForBuildingKey($selected_building);
         $this->setGameStateValue('building_bonus', $build_bonus);
-        $bonus = $this->getGameStateValue('auction_bonus');
-        $next_state = '';
-        if ($build_bonus == BUILD_BONUS_NONE){
-            if ($bonus == AUCTION_BONUS_NONE){      
-                    $next_state = 'end_build'; } 
-            else {  $next_state = 'auction_bonus'; }
-        } else {    
-                    $next_state = 'build_bonus'; }
+        $bonus = $this->Auction->getCurrentAuctionBonus();
+        $next_state = 'end_build';
+        if ($build_bonus != BUILD_BONUS_NONE){
+            $next_state = 'build_bonus';    
+        } else if ($bonus != AUCTION_BONUS_NONE){      
+            $next_state = 'auction_bonus'; 
+        }
         $this->gamestate->nextState ($next_state);
     }
 
@@ -380,7 +383,12 @@ class homesteaders extends Table
         $bid_cost = $this->Bid->getBidCost($active_player_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
         $this->Resource->pay($active_player_id, $bid_cost, $gold, "auction cost");
-        $this->gamestate->nextstate( 'build' );
+        if ($this->Auction->doesCurrentAuctionHaveBuildPhase()){
+            $this->gamestate->nextstate( 'build' );
+        } else {
+            $this->gamestate->nextstate( 'auction_bonus');
+        }
+        
     }
 
     public function playerSelectRailBonus($selected_bonus) {
@@ -552,6 +560,11 @@ class homesteaders extends Table
                     "riverPort"=>$ownsRiverPort,));
     }
 
+    function argBuildingBonus() {
+        $build_bonus =$this->getGameStateValue('build_bonus');
+        return (array("build_bonus" => $build_bonus));
+    }
+
     function argBonusOption() {
         $auction_bonus = $this->getGameStateValue( 'auction_bonus');
         return (array("auction_bonus"=> $auction_bonus));
@@ -691,24 +704,48 @@ class homesteaders extends Table
     }
 
     function stBuild()
-    {
-        $auction_no = $this->getGameStateValue( 'current_auction' );
+    { 
+        // check for auctions with no build phase.
+        /*$auction_no = $this->getGameStateValue( 'current_auction' );
         $round_number = $this->getGameStateValue( 'round_number' );
         $sql = "SELECT `build_type` FROM `auctions` WHERE `location` = '$auction_no' AND `position` = '$round_number'";
         $build_type = self::getUniqueValueFromDB( $sql );
         if ( $build_type == 0 ){ // skip build, go straight to auction_bonus.
             $this->gamestate->nextState( "auction_bonus" ); 
-        } 
+        } */ //should be able to remove this.  just testing first.
     }
 
     function stResolveBuilding()
-    {
-        $next_state = "auctionBonus";
-        $bonus = $this->getGameStateValue('auction_bonus');
-        if ($bonus == 0){
-            $next_state = "endBuild";
+    { 
+        // if buildingBonus is just get resource, do that now.
+        $active_player_id = $this->getActivePlayerId();
+        $bonus = $this->getGameStateValue('building_bonus');
+        $bonusReason = _('on Build bonus');
+        if ($bonus <3){ 
+            if ($bonus == BUILD_BONUS_PAY_LOAN){
+                $this->Resource->payLoanOrRecieveSilver($active_player_id, $bonusReason);
+            } else if ($bonus == BUILD_BONUS_TRADE){
+                $this->Resource->updateAndNotifyIncome($active_player_id, 'trade', 1, $bonusReason);
+            }
+            $auction_bonus =$this->Auction->getCurrentAuctionBonus();
+            if ($auction_bonus == AUCTION_BONUS_NONE){
+                $this->gamestate->nextState("end_build");
+            } else {
+                $this->gamestate->nextState("auction_bonus");
+            }
+        } else if ($bonus == BUILD_BONUS_RAIL_ADVANCE){
+            $this->Resource->getRailAdv();
+            $this->gamestate->nextState('rail_bonus');
+        } else if ($bonus == BUILD_BONUS_TRACK_AND_BUILD) {
+            $this->Resource->addTrack($active_player_id, $bonusReason);
+            $this->gamestate->nextState('train_station_build');
         }
-        $this->gamestate->nextState( $next_state );
+        //the other case (BUILD_BONUS_WORKER) waits for player_choice    
+    }
+
+    function stTrainStationBuild()
+    {
+        //
     }
 
     function stGetAuctionBonus()

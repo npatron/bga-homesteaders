@@ -14,8 +14,10 @@
     <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
+    <div id='player_top'> </div>
     <div id="buy_zone"> </div>
 </div>
+
 <!-- Auction Board -->
 <div id="board" class="shadow">
     <div id="pending_bids" class="token_zone"> </div>
@@ -85,18 +87,6 @@
 <div id='building_location'>
     <div class="building_stock"> BUILDING_STOCK </div>
     <div id="building_zone"> 
-        <!-- <div id="residential_buildings" class="main_building_zone"> 
-            <div id="residential_zone" class="building_zone"> </div> 
-        </div>
-        <div id="commercial_buildings" class="main_building_zone"> 
-            <div id="commercial_zone" class="building_zone"> </div> 
-        </div>
-        <div id="industrial_buildings" class="main_building_zone"> 
-            <div id="industrial_zone" class="building_zone"> </div> 
-        </div>
-        <div id="special_buildings" class="main_building_zone"> 
-            <div id="special_zone" class="building_zone"> </div> 
-        </div> -->
         <div id="main_building_zone" class="main_building_zone"> </div>
     </div>
 </div>

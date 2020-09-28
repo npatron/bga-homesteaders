@@ -89,9 +89,18 @@ class HSDresource extends APP_GameClass
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
             'token' => 'track',
-            'worker_key'=> $track_key,
+            'key'=> $track_key,
             'reason' => $reason_string));
         $this->updateResource($p_id, 'track', 1);
+    }
+
+    function payLoanOrRecieveSilver($p_id, $reason_string){
+        $playerLoan = $this->game->getUniqueValueFromDb("SELECT `loan` FROM `resources` WHERE `player_id`='".$p_id."'");
+        if ($playerLoan== 0){
+            $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $reason_string);
+        } else {
+            $this->game->Resource->updateAndNotifyPayment ($p_id, 'loan', 1, $reason_string);
+        }
     }
 
     function recieveRailBonus($p_id, $selected_bonus){
@@ -283,14 +292,18 @@ class HSDresource extends APP_GameClass
             'trade1' => $trade_away_type,
             'trade2' => $trade_for_type,
         ) );
+        $trade_message = _('trade');
         if (!$bank){ // bank has no extra trade req.
-            $this->updateAndNotifyPayment($p_id, 'trade', 1, 'trade');
+            $this->updateAndNotifyPayment($p_id, 'trade', 1, $trade_message);
         }
-        $this->updateAndNotifyPayment($p_id, $trade_away_type, $trade_away_amt, 'trade');
-        $this->updateAndNotifyIncome($p_id, $trade_for_type, $trade_for_amt, 'trade');
+        $this->updateAndNotifyPayment($p_id, $trade_away_type, $trade_away_amt, $trade_message);
+        $this->updateAndNotifyIncome($p_id, $trade_for_type, $trade_for_amt, $trade_message);
         
         if ($sell){
-            $this->updateAndNotifyIncome($p_id, 'vp', 1, 'trade');
+            if ($this->game->Building->doesPlayerOwnBuilding($p_id, BUILDING_MARKET)){
+                $this->updateAndNotifyIncome($p_id, 'silver', 1, _('market sell bonus'));
+            }
+            $this->updateAndNotifyIncome($p_id, 'vp', 1, $trade_message);
         }
     }
 

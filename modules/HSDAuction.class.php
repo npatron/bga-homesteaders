@@ -78,11 +78,21 @@ class HSDAuction extends APP_GameClass
         $this->game->DbQuery( $sql);
     }
 
-    function doesCurrentAuctionHaveBonus(){
+    function doesCurrentAuctionHaveBuildPhase(){
+        $round_number = $this->game->getGameStateValue( 'round_number' );
+        $auction_no = $this->game->getGameStateValue( 'current_auction' );
+        $sql = "SELECT `build_type` FROM `auctions`  WHERE `location` = '".$auction_no."' AND `position` = '".$round_number."'";
+        $type = $this->game->getUniqueValueFromDB( $sql );
+        return ($type != 0);
+    }
+
+
+    function getCurrentAuctionBonus(){
         $round_number = $this->game->getGameStateValue( 'round_number' );
         $auction_no = $this->game->getGameStateValue( 'current_auction' );
         $sql = "SELECT `bonus` FROM `auctions`  WHERE `location` = '".$auction_no."' AND `position` = '".$round_number."'";
-        $bonus = self::getUniqueValueFromDB( $sql );
+        $bonus = $this->game->getUniqueValueFromDB( $sql );
+        return ($bonus);
     }
 
     function setupCurrentAuctionBonus(){
@@ -116,7 +126,7 @@ class HSDAuction extends APP_GameClass
         $round_number = $this->game->getGameStateValue('round_number');
         $current_auction = $this->game->getGameStateValue('current_auction');
         $sql = "SELECT `build_type` FROM `auctions` WHERE `location`='".$current_auction."'AND `position`='".$round_number."'";
-        $build_type = self::getUniqueValueFromDB( $sql );// the sql value for the building.
+        $build_type = $this->game->getUniqueValueFromDB( $sql );// the sql value for the building.
         return $this->parseBuildTypeOptions($build_type);
     }
     
