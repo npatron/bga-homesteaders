@@ -129,13 +129,14 @@ class action_homesteaders extends APP_GameAction
   public function doneSelectingBonus (){
     self::setAjaxMode();
     $bonus = self::getArg( "bonus", AT_posint, true);
-    $this->game->playerSelectBonusOption( $bonus );
+    $this->game->playerSelectRailBonus( $bonus );
     self::ajaxResponse( );
   }
 
   public function freeHireWorker (){
     self::setAjaxMode( );
-    $this->game->playerFreeHireWorker( );
+    $rail = self::getArg( 'rail', AT_bool, true);
+    $this->game->playerFreeHireWorker( $rail );
     self::ajaxResponse( );
   }
 

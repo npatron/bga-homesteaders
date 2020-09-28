@@ -129,6 +129,11 @@
         <div id="token_zone_blue" class="token_zone"> </div>
         <div id="building_zone_blue"> </div>
     </div>
+    <div id="player_zone_purple" class="noshow whiteblock res_purple" style="margin-top:4px;">
+        <div id="player_name_purple" class="boardheader" style="color: purple;">PURPLE</div>
+        <div id="token_zone_purple" class="token_zone"> </div>
+        <div id="building_zone_purple"> </div>
+    </div>
 </div>
 
 <!-- bottom area for non-active sections. -->

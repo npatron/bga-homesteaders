@@ -110,6 +110,22 @@
   define("SILVER",   11);
   define("LOAN",     12);
 
+  define("BUILD_BONUS_NONE",           0);
+  define("BUILD_BONUS_PAY_LOAN",       1);
+  define("BUILD_BONUS_TRADE",          2);
+  define("BUILD_BONUS_WORKER",         3);
+  define("BUILD_BONUS_RAIL_ADVANCE",    4);
+  define("BUILD_BONUS_TRACK_AND_BUILD", 5);
+
+  define("AUCTION_BONUS_NONE",            0);
+  define("AUCTION_BONUS_WORKER",          1);
+  define("AUCTION_BONUS_WORKER_RAIL_ADV", 2);
+  define("AUCTION_BONUS_WOOD_FOR_TRACK",  3);
+  define("AUCTION_BONUS_COPPER_FOR_VP",   4);
+  define("AUCTION_BONUS_COW_FOR_VP",      5);
+  define("AUCTION_BONUS_6VP_AND_FOOD_VP", 6);
+  define("AUCTION_BONUS_FOOD_FOR_VP",     7);
+
   // Bid location mapping
   define("NO_BID",     0);
   define("BID_A1_B3",  1);

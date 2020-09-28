@@ -54,6 +54,8 @@
               $this->tpl['GREEN'] = $player['player_name'];
             } else if ($color === 'red'){
               $this->tpl['RED'] = $player['player_name'];
+            } else if ($color === 'purple'){
+              $this->tpl['PURPLE'] = $player['player_name'];
             }
         } 
 

@@ -247,21 +247,21 @@ class HSDBuilding extends APP_GameClass
         return $buildings;
     }
 
-    function buyBuilding( $p_id, $b_key )
+    function buildBuilding( $p_id, $b_key, $goldAsCow = false, $goldAsCopper = false )
     {
-        $afford = $this->canPlayerAffordBuilding ($p_id, $b_key);
+        $afford = $this->canPlayerAffordBuilding ($p_id, $b_key, $goldAsCow, $goldAsCopper);
         $b_id = $this->getBuildingIdFromKey($b_key);
         $b_name = $this->getBuildingNameFromId($b_id);
         if (!$afford){
-            throw new BgaUserException( _("You cannot afford to buy ".$b_name));
+            throw new BgaUserException( _("You cannot afford to build ".$b_name));
         }
         
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
             throw new BgaUserException( _("You have already built a ".$b_name));
         }
-        $this->payForBuilding($p_id, $b_key);
-        $this->game->notifyAllPlayers( "buyBuilding", 
-                    clienttranslate( '${player_name} buys a building ${building_name} ' ),            
+        $this->payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper);
+        $this->game->notifyAllPlayers( "buildBuilding", 
+                    clienttranslate( '${player_name} builds a ${building_name} ' ),            
                     array(  'player_id' => $p_id,
                             'player_name' => $this->game->getPlayerName($p_id),
                             'building_key' => $b_key,
@@ -279,11 +279,16 @@ class HSDBuilding extends APP_GameClass
         $this->game->DbQuery( $sql );
     }
 
-    function payForBuilding($p_id, $b_key){
-        $building_cost = $this->getBuildingCostFromKey ($b_key);
-        foreach ($building_cost as $type => $cost){
-            if ($building_cost[$type] > 0){
-                $this->game->Resource->updateAndNotifyPayment($p_id, $type, $building_cost[$type], "building "+$this->getBuildingNameFromKey($b_key));
+    function payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){
+        $b_cost = $this->getBuildingCostFromKey ($b_key);
+        if ($goldAsCow)
+            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
+        if ($goldAsCopper)
+            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
+        $b_name = $this->getBuildingNameFromKey ($b_key);
+        foreach ($b_cost as $type => $cost){
+            if ($cost > (int)0){
+                $this->game->Resource->updateAndNotifyPayment($p_id, $type, $cost, "building ".$b_name);
             }
         }
     }
@@ -292,19 +297,19 @@ class HSDBuilding extends APP_GameClass
         $b_id = $this->getBuildingIdFromKey($b_key);
         switch ($b_id){
             case BUILDING_BOARDING_HOUSE:
-                return LOAN;
+                return BUILD_BONUS_PAY_LOAN;
             case BUILDING_RANCH:
-                return TRADE;
+                return BUILD_BONUS_TRADE;
             case BUILDING_WORKSHOP:
-                return WORKER;
+                return BUILD_BONUS_WORKER;
             case BUILDING_DEPOT:
             case BUILDING_FORGE:
             case BUILDING_RAIL_YARD:
-                return TRACK;
+                return BUILD_BONUS_RAIL_ADVANCE;
             case BUILDING_TRAIN_STATION:
-                return 1;
+                return BUILD_BONUS_TRACK_AND_BUILD;
             default:
-                return NONE;
+                return BUILD_BONUS_NONE;
         }
     }
 
@@ -340,9 +345,13 @@ class HSDBuilding extends APP_GameClass
         return 0;
     }
 
-    function canPlayerAffordBuilding($p_id, $b_key){
-        $building_cost = $this->getBuildingCostFromKey($b_key);
-        return $this->game->Resource->canPlayerAfford($p_id, $building_cost);
+    function canPlayerAffordBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){
+        $b_cost = $this->getBuildingCostFromKey($b_key);
+        if ($goldAsCow)
+            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
+        if ($goldAsCopper)
+            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
+        return $this->game->Resource->canPlayerAfford($p_id, $b_cost);
     }
 
     // INCOME

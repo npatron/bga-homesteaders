@@ -13,7 +13,7 @@ class HSDresource extends APP_GameClass
         FOOD=>  'food',
         COW=>   'cow',
         TRADE=> 'trade',
-        VP=>    'VP',
+        VP=>    'vp',
         SILVER=>'silver',
         LOAN=>  'loan',);
     public $game;
@@ -57,21 +57,41 @@ class HSDresource extends APP_GameClass
     }
 
     function addWorker($p_id, $reason_string){
+        $sql = "INSERT INTO `workers` (`player_id`) VALUES (".$p_id.")";
+        $this->game->DbQuery( $sql );
+        $sql = "SELECT `worker_key` FROM `workers` WHERE `player_id`='".$p_id."'";
+        $player_workers = $this->game->getObjectListFromDB( $sql );
+        $w_key = $player_workers[count($player_workers)-1];
         if ($reason_string == 'hire'){
             $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token}' ), array(
                 'player_id' => $p_id,
                 'player_name' => $this->game->getPlayerName($p_id),
-                'token' => 'worker',));
+                'token' => 'worker',
+                'worker_key'=> $w_key));
         } else {
             $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token} as ${reason}' ), array(
                 'player_id' => $p_id,
                 'player_name' => $this->game->getPlayerName($p_id),
                 'token' => 'worker',
-                'reason' => $reason_string,));
+                'reason' => $reason_string,
+                'worker_key'=> $w_key));
         }
-        $sql = "INSERT INTO `workers` (`player_id`) VALUES (".$p_id.")";
-        $this->game->DbQuery( $sql );
         $this->updateResource($p_id, 'workers', 1);
+    }
+
+    function addTrack($p_id, $reason_string){
+        $sql = "INSERT INTO `tracks` (`player_id`) VALUES (".$p_id.")";
+        $this->game->DbQuery( $sql );
+        $sql = "SELECT `worker_key` FROM `workers` WHERE `player_id`='".$p_id."'";
+        $p_tracks = $this->game->getObjectListFromDB( $sql );
+        $track_key = $p_tracks[count($p_tracks)-1];
+        $this->game->notifyAllPlayers( "playerRecieveTrack", clienttranslate( '${player_name} lays a new ${token} from ${reason}' ), array(
+            'player_id' => $p_id,
+            'player_name' => $this->game->getPlayerName($p_id),
+            'token' => 'track',
+            'worker_key'=> $track_key,
+            'reason' => $reason_string));
+        $this->updateResource($p_id, 'track', 1);
     }
 
     function recieveRailBonus($p_id, $selected_bonus){
@@ -80,11 +100,11 @@ class HSDresource extends APP_GameClass
             case WORKER:
                 $this->addWorker($p_id, $rail_bonus_string);
             break;
+            case TRACK:
+                $this->addTrack($p_id, $rail_bonus_string);
+            break;
             case TRADE:
                 $this->updateAndNotifyIncome($p_id, 'trade', 1, $rail_bonus_string);
-            break;
-            case TRACK:
-                $this->updateAndNotifyIncome($p_id, 'track', 1, $rail_bonus_string);
             break;
             case WOOD:
                 $this->updateAndNotifyIncome($p_id, 'wood', 1, $rail_bonus_string);
@@ -110,26 +130,37 @@ class HSDresource extends APP_GameClass
         }
     }
 
-    function canPlayerAfford($p_id, $resource_arr){
+    function changeResourceInArray($r_arr, $removed_type, $added_type){
+        if(array_key_exists($r_arr, $removed_type)){
+            $r_arr[$removed_type]--;
+            if (array_key_exists($r_arr, $added_type)){
+                $r_arr[$added_type] ++;
+            } else {
+                $r_arr[$added_type] =1;
+            }
+        }
+        return $r_arr;
+    }
+
+    function canPlayerAfford($p_id, $r_arr){
         $sql = "SELECT * FROM `resources` WHERE `player_id` ='".$p_id."'";
-        $player_resources = $this->game->getObjectFromDB($sql);
+        $p_resources = $this->game->getObjectFromDB($sql);
         $enough = true;
-        foreach( $resource_arr as $key => $resource){
-            $enough = $enough && ($player_resources[$key] >= $resource);  
+        foreach( $r_arr as $key => $resource){
+            $enough = $enough && ($p_resources[$key] >= $resource);  
         }
         return $enough;
     }
     
-    function collectIncome() 
+    function collectIncome($p_id) 
     {
-        $this->game->notifyAllPlayers( "beginIncome", clienttranslate( 'Income Phase' ), array() );
-        $sql = "SELECT * FROM `resources` ";
-        $resources = $this->game->getCollectionFromDB( $sql );
-        foreach ( $resources as $p_id => $player_resource ){
-            $this->game->Building->buildingIncomeForPlayer($p_id);
-            if ($player_resource['track'] > 0){
-                $this->updateAndNotifyIncome($p_id, 'silver', $player_resource['track'], 'rail tracks');
-            }
+        //$this->game->notifyAllPlayers( "beginIncome", clienttranslate( 'Income Phase' ), array() );
+        $sql = "SELECT `track` FROM `resources` WHERE `player_id`='".$p_id."'";
+        $p_tracks = $this->game->getUniqueValueFromDB( $sql ); 
+        //$resources = $this->game->getCollectionFromDB( $sql );
+        $this->game->Building->buildingIncomeForPlayer($p_id);
+        if($p_tracks > 0) {
+            $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, 'rail tracks');
         }
     }
 

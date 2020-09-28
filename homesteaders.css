@@ -457,6 +457,9 @@ div#done_trading {
 .color_red {
     background-color: red; 
 }
+.color_purple {
+   background-color: purple;
+}
 .res_yellow {
    border-color:yellow;
    border-radius: 2px;
@@ -474,6 +477,11 @@ div#done_trading {
 }
 .res_red {
    border-color:red;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_purple {
+   border-color:purple;
    border-radius: 2px;
    border-style: solid;
 }
