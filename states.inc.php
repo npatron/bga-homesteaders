@@ -160,7 +160,7 @@ $machinestates = array(
         "args" => "argAllowedBuildings",
         "action" => "stBuild",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
-        "transitions" => array( "build_bonus" => STATE_RESOLVE_BUILDING, 
+        "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS,
                                 "end_build" => STATE_END_BUILD )
     ),
@@ -184,7 +184,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may build another building'),
         "type" => "activeplayer",
         "args" => "stBuild",
-        "transitions" => array( "build_bonus" => STATE_RESOLVE_BUILDING, 
+        "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS,
                                 "end_build" => STATE_END_BUILD )
     ),

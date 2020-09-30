@@ -106,6 +106,8 @@ function (dojo, declare) {
     const AUCTION_BONUS_6VP_AND_FOOD_VP = 6;
     const AUCTION_BONUS_FOOD_FOR_VP     = 7;
 
+    const BUILD_BONUS_WORKER = 3;
+
 
     const TYPE_SELECTOR = [];
     TYPE_SELECTOR['bid'] = '.bid_slot';
@@ -459,8 +461,7 @@ function (dojo, declare) {
             {
                 case 'startRound':
                     this.setupTiles (this.gamedatas.round_number, 
-                        this.gamedatas.auction_tiles, 
-                        this.gamedatas.buildings);  
+                        this.gamedatas.auctions);  
                     break;
                 case 'payWorkers':
                     this.goldAmount = 0;
@@ -502,6 +503,8 @@ function (dojo, declare) {
             // I don't think I need to do anything here...
             switch( stateName )
             {
+                case 'setupRound':
+                break;
                 case 'collectIncome':
                     break;
                 case 'allocateWorkers':
@@ -533,6 +536,21 @@ function (dojo, declare) {
             {            
                 switch( stateName )
                 {
+                    case 'allocateWorkers':
+                        // show workers that are selectable
+                        console.log(this.player_color[current_player_id]);
+                        console.log("pid:" + current_player_id);
+                        console.log(this.player_color);
+                        const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
+                        workers.addClass('selectable');
+                        // also make building_slots selectable.
+                        const building_slots = dojo.query(`#building_zone_${this.player_color[current_player_id]} .worker_slot`);
+                        building_slots.addClass( 'selectable');
+                        this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
+                        this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray');
+                        this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan', null, false, 'gray');
+                        this.addActionButton( 'btn_trade',       _('Trade'),           'tradeActionButton', null, false, 'gray');
+                        break;
                     case 'payWorkers':
                         this.showPaymentSection();
                         console.log(args.worker_counts);
@@ -548,22 +566,6 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_less_gold', _('Use Less Gold'), 'lowerGold', null, false, 'gray');
                         this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray');
-                        break;
-                    case 'allocateWorkers':
-                        this.movePlayerToTop();
-                        // show workers that are selectable
-                        console.log(this.player_color[current_player_id]);
-                        console.log("pid:" + current_player_id);
-                        console.log(this.player_color);
-                        const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
-                        workers.addClass('selectable');
-                        // also make building_slots selectable.
-                        const building_slots = dojo.query(`#building_zone_${this.player_color[current_player_id]} .worker_slot`);
-                        building_slots.addClass( 'selectable');
-                        this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
-                        this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray');
-                        this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan', null, false, 'gray');
-                        this.addActionButton( 'btn_trade',       _('Trade'),           'tradeActionButton', null, false, 'gray');
                         break;
                     case 'playerBid':
                         console.log('entering playerBid');
@@ -636,6 +638,12 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan',   _('Take Loan'),    'takeLoan', null, false, 'gray');
                     break;
+                    case 'resolveBuilding':
+                        if (args.building_bonus == BUILD_BONUS_WORKER){
+                            this.addActionButton( 'btn_bonus_worker', _('Hire worker (free)'), 'workerForFreeBuilding');
+                            this.addActionButton( 'btn_pass_bonus',  _('Pass on free worker'), 'passBuildingBonus', null, false, 'red');
+                        }
+                    break;
                     case 'bonusChoice':
                         const option = Number(args.auction_bonus);
                         console.log('bonus option: ' + option);
@@ -671,12 +679,9 @@ function (dojo, declare) {
 
         /*** setup new Round ***/
         setupTiles: function(round_number, auction_tiles, buildings) {
+            console.log("r# "+round_number );
             this.roundCounter.setValue(round_number);
             this.showCurrentAuctions(auction_tiles, round_number);
-            
-            if (round_number == 5 || round_number == 9){
-                updateBuildingStocks(buildings);
-            }
         },
 
         updateBuildingStocks: function(buildings){
@@ -684,7 +689,7 @@ function (dojo, declare) {
                 const building = buildings[b_key];
                 const building_divId = `building_tile_${b_key}`;
                 if (building.location == BUILDING_LOC_OFFER) {
-                    addBuildingToOffer(building);
+                    this.addBuildingToOffer(building);
                 } else if (building.location == BUILDING_LOC_DISCARD){
                     if (document.getElementById(building_divId) != null){
                         // may need to remove the stack
@@ -782,27 +787,8 @@ function (dojo, declare) {
         },
 
         updateHasBuilding(b_id) {
-            switch (b_id) {
-                case BUILDING_MARKET: //for trade options
-                    this.hasBuilding[BUILDING_MARKET] = true;
-                return;
-                case BUILDING_GENERAL_STORE:
-                    this.hasBuilding[BUILDING_GENERAL_STORE] = true;
-                return;
-                case BUILDING_RIVER_PORT: //this needs to be here
-                    this.hasBuilding[BUILDING_RIVER_PORT] = true;
-                return;
-                case BUILDING_FORGE:
-                    this.hasBuilding[BUILDING_FORGE] = true;
-                return;
-                 // I think I can handle bids in php...
-                /*case BUILDING_LAWYER:
-                    this.hasBuilding[BUILDING_LAWYER] = true;
-                return;*/
-                case BUILDING_BANK: //for trade options
-                    this.hasBuilding[BUILDING_BANK] = true;
-                return;
-            } 
+            if (this.hasBuilding[b_id] == null)
+                this.hasBuilding[b_id] = true;
         },
 
         /***** Bid utils *****/
@@ -910,22 +896,22 @@ function (dojo, declare) {
                 dojo.place('trade_board', 'trade_top', 'first');
                 //make the trade options selectable
                 dojo.query('div#trade_board .trade_option:not([id^="trade_market"]):not([id^="trade_bank"])').addClass('selectable');
-                if (this.hasBuilding[BUILDING_MARKET]){
-                    dojo.query('#trade_board .trade_option[id^="trade_market"]').addClass('selectable');
+                if (this.hasBuilding[BUILDING_MARKET] != null){
+                    dojo.query('#trade_board [id^="trade_market"]').addClass('selectable');
                 }
-                if (this.hasBuilding[BUILDING_BANK]){
-                    dojo.query('#trade_board .trade_option[id^="trade_bank"]').addClass('selectable');
+                if (this.hasBuilding[BUILDING_BANK] != null){
+                    dojo.query('#trade_board [id^="trade_bank"]').addClass('selectable');
                 }
             }
         },
 
         movePlayerToTop: function (){
-            this.player_zone_divId = `player_board_${this.player_id}`;
+            const player_zone_divId = `player_zone_${this.player_color[this.player_id]}`;
             dojo.place(player_zone_divId, 'player_top', 'first');
         },
 
         movePlayerToNormal: function (){
-            this.player_zone_divId = `player_board_${this.player_id}`;
+            const player_zone_divId = `player_zone_${this.player_color[this.player_id]}`;
             dojo.place(player_zone_divId, 'player_zones', 'first');
         },
 
@@ -1112,6 +1098,12 @@ function (dojo, declare) {
                 this.showMessage( _("You must select 1 worker"), 'error' );
                     return;
             }
+            if (document.querySelector(`#${target_divId} .worker_slot`)){
+                if (!target_divId.startsWith('slot_3')){
+                    this.showMessage(_("You have already assigned a worker there"), 'error');
+                    return;
+                }
+            }
             console.log( `target: ${target_divId}` );
             const building_key = Number(target_divId.split('_')[2]);
             if(target_divId.startsWith('slot_1')){
@@ -1244,8 +1236,10 @@ function (dojo, declare) {
                 }
                 const building_key = Number(building_divId.split("_")[2]);
                 this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", {building_key: building_key, lock: true}, this, 
-                        function( result ) { this.clearSelectable('building', true);}, 
-                        function( is_error) {} );
+                        function( result ) { 
+                            this.disableTradeIfPossible();
+                            this.clearSelectable('building', true);
+                        }, function( is_error) {} );
             }
         },
 
@@ -1273,8 +1267,10 @@ function (dojo, declare) {
             if (this.checkAction( 'doNotBuild' )){
                 this.confirmationDialog( _('Are you sure you want to not build?'), dojo.hitch( this, function() {
                     this.ajaxcall( "/homesteaders/homesteaders/doNotBuild.html", {lock: true}, this, 
-                    function( result ) { this.clearSelectable('building', true); }, 
-                    function( is_error) { } );
+                    function( result ) { 
+                        this.clearSelectable('building', true); 
+                        this.disableTradeIfPossible();
+                    }, function( is_error) { } );
                 } ) ); 
                 return; 
             }
@@ -1320,17 +1316,46 @@ function (dojo, declare) {
             this.player_score_counter[p_id].incValue(value);
         },
 
+        /***** Building Bonus *****/
+
+        workerForFreeBuilding: function (){
+            if (this.checkAction( 'buildBonus' )){
+            this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, auction:false}, this, 
+            function( result ) {}, 
+            function( is_error) {} );}
+        },
+        
+        passBuildingBonus: function (){
+            if (this.checkAction( 'buildBonus' )){
+                this.confirmationDialog( _('Are you sure you want to pass on bonus?'), dojo.hitch( this, function() {
+                    this.ajaxcall( "/homesteaders/homesteaders/passBuildingBonus.html", {lock: true}, this, 
+                    function( result ) {}, 
+                    function( is_error) {} );
+                } ) );
+            } 
+        },
+
         /***** Auction Bonus *****/
-        workerForFree: function(rail = false) {
+        /**
+         * called when auction bonus is only worker for Free
+         */
+        workerForFree: function() {
             if (this.checkAction( 'auctionBonus' )){
-                this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, rail: rail }, this, 
+                this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, rail: false, auction:true }, this, 
                 function( result ) {}, 
                 function( is_error) {} );
             }
         },
 
+        /**
+         * called when auction bonus is worker for free and rail advancement. (it passes rail:true so )
+         */
         workerForFree2: function() {
-            this.workerForFree(true);
+            if (this.checkAction( 'auctionBonus' )){
+                this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, rail: true, auction:true}, this, 
+                function( result ) {}, 
+                function( is_error) {} );
+            }
         },
 
         woodForTrack: function() {
@@ -1392,6 +1417,9 @@ function (dojo, declare) {
             console.log ( 'notifications subscriptions setup' );
             
             dojo.subscribe( 'updateAuction', this, "notif_updateAuction");
+            this.notifqueue.setSynchronous('updateAuction', 1000);
+            dojo.subscribe( 'updateBuildingStocks', this, "notif_updateBuildingStocks");
+            this.notifqueue.setSynchronous('updateBuildingStocks', 1000);
             dojo.subscribe( 'gainWorker',  this, "notif_gainWorker" );
             this.notifqueue.setSynchronous( 'gainWorker', 500 );
             dojo.subscribe( 'workerMoved', this, "notif_workerMoved" );
@@ -1401,9 +1429,9 @@ function (dojo, declare) {
             dojo.subscribe( 'moveBid',     this, "notif_moveBid");
             this.notifqueue.setSynchronous( 'moveBid', 500 );
             dojo.subscribe( 'buildBuilding', this, "notif_buildBuilding" );
-            this.notifqueue.setSynchronous( 'buildBuilding', 500 );
+            this.notifqueue.setSynchronous( 'buildBuilding', 1000 );
             dojo.subscribe( 'playerRecieveTrack', this,"notif_playerRecieveTrack");
-            this.notifqueue.setSynchronous( 'playerRecieveTrack', 500 );
+            this.notifqueue.setSynchronous( 'playerRecieveTrack', 1000 );
             dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
             this.notifqueue.setSynchronous( 'playerIncome', 1000 );
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
@@ -1486,16 +1514,23 @@ notif_cardPlayed: function (notif) {
             }
         },
 
+        notif_updateBuildingStocks: function ( notif ){
+            console.log ( 'notif_updateBuildings' );
+
+            this.updateBuildingStocks(notif.args.buildings);
+            
+        },
+
         notif_workerMoved: function( notif ){
             console.log ( 'notif_workerMoved' );
             console.log ( notif );
-            const worker_divId = 'token_worker_'+notif.args.worker_key;
-            console.log ( "placing: "+ worker_divId +` in ${notif.args.building_key}:${notif.args.building_slot}`);
-            const worker_slot_divId = `slot_${notif.args.building_slot}_${notif.args.building_key}`;
-            this.building_worker_zones[notif.args.building_key][notif.args.building_slot].placeInZone(worker_divId);
+            const worker_divId = 'token_worker_'+Number(notif.args.worker_key);
+            console.log ( "placing: "+ worker_divId +` in ${Number(notif.args.building_key)}:${Number(notif.args.building_slot)}`);
+            const worker_slot_divId = `slot_${Number(notif.args.building_slot)}_${Number(notif.args.building_key)}`;
+            this.building_worker_zones[Number(notif.args.building_key)][Number(notif.args.building_slot)].placeInZone(worker_divId);
             this.slideToObject(worker_divId, worker_slot_divId).play();
             if (notif.args.building_slot == 3){
-                dojo.style(`slot_3_${notif.args.building_key}`, 'width', 70);
+                dojo.style(`slot_3_${Number(notif.args.building_key)}`, 'width', 70);
             }
         },
 
@@ -1509,12 +1544,13 @@ notif_cardPlayed: function (notif) {
         notif_gainWorker: function( notif ){
             console.log ('notif_gainWorker');
             console.log ( notif );
-            const worker_divId = `token_worker_${notif.args.worker_key}`;
+            const worker_divId = `token_worker_${Number(notif.args.worker_key)}`;
             dojo.place(this.format_block( 'jptpl_token', {
-                type: "worker", id: notif.args.worker_key}), this.token_divId[notif.args.player_id] );
+                type: "worker", id: Number(notif.args.worker_key)}), this.token_divId[Number(notif.args.player_id)] );
             this.token_zone[notif.args.player_id].placeInZone(worker_divId);
             if (notif.args.player_id == this.player_id){
                 dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
+                //add if current phase is place worker, make selectable.
             }
         },
 
@@ -1534,10 +1570,9 @@ notif_cardPlayed: function (notif) {
         notif_buildBuilding: function( notif ){
             console.log ('notif_buildBuilding');
             console.log ( notif ); 
-            this.player_building_zone[notif.args.player_id].placeInZone(`building_tile_${notif.args.building_key}`);
-            if (notif.args.player_id == this.player_id)
-                this.updateHasBuilding(notif.args.building_id);
-            this.updateScoreForBuilding(notif.args.player_id, notif.args.building_id);
+
+            this.addBuildingToPlayer(notif.args.building);
+            this.updateScoreForBuilding(notif.args.player_id, notif.args.building['b_id']);
         },
 
         notif_playerRecieveTrack: function( notif){
@@ -1545,7 +1580,7 @@ notif_cardPlayed: function (notif) {
             console.log ( notif );
             
             const building_zone_divId = `building_zone_${this.player_color[notif.args.player_id]}`;
-            const trackToken_divId = `token_track_${notif.args.key}`;
+            const trackToken_divId = `token_track_${Number(notif.args.key)}`;
             dojo.place(this.format_block( 'jptpl_track', {id: notif.args.key, color: this.player_color[notif.args.player_id]}), building_zone_divId);
             this.player_building_zone[notif.args.player_id].placeInZone(trackToken_divId,50);
         },
@@ -1553,10 +1588,19 @@ notif_cardPlayed: function (notif) {
         notif_playerIncome: function( notif ){
             console.log ('notif_playerIncome');
             console.log ( notif);
+
+            var start = `building_zone_${this.player_color[notif.args.player_id]}`;
+            if (notif.args.origin == 'auction'){
+                start = `auction_tile_${Number(notif.args.key)}`;
+            } else if (notif.args.origin == 'building'){
+                start = `building_tile_${Number(notif.args.key)}`;
+            } else if (notif.args.origin == 'worker'){
+                start = `token_worker_${Number(notif.args.key)}`;
+            }
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' to player '"+ notif.args.player_name+ "'");
-                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo', `building_zone_${this.player_color[notif.args.player_id]}` , player_zone_divId , 500 , 100*i );
+                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo', start , player_zone_divId , 500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.type].incValue(1);
                 }
@@ -1566,12 +1610,20 @@ notif_cardPlayed: function (notif) {
         notif_playerPayment: function( notif ){
             console.log ('notif_playerPayment');
             console.log ( notif);
+            
+            var destination = 'board';
+            if (notif.args.origin == 'auction'){
+                destination = `auction_tile_${Number(notif.args.key)}`;
+            } else if  (notif.args.origin == 'building'){
+                destination = `building_tile_${Number(notif.args.key)}`;
+            } else if (notif.args.origin == 'worker'){
+                destination = `token_worker_${Number(notif.args.key)}`;
+            }
             const player_zone_divId = `player_board_${notif.args.player_id}`;
-            console.log ( player_zone_divId );
-            console.log ( notif.args.amount );
+
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' from player '"+ notif.args.player_name+ "'");
-                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo' , player_zone_divId, 'board',  500 , 100*i );
+                this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo' , player_zone_divId, destination,  500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.type].incValue(-1);
                 }

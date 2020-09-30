@@ -340,12 +340,12 @@ class homesteaders extends Table
             $this->Building->getBuildingIdFromKey($selected_building) != BUILDING_FORGE){
             $this->Resource->updateAndNotifyIncome($active_player, 'vp', 1, _("Forge Build Bonus"));
         }
-        $build_bonus = $this->Building->getOnBuildBonusForBuildingKey($selected_building);
-        $this->setGameStateValue('building_bonus', $build_bonus);
+        $building_bonus = $this->Building->getOnBuildBonusForBuildingKey($selected_building);
+        $this->setGameStateValue('building_bonus', $building_bonus);
         $bonus = $this->Auction->getCurrentAuctionBonus();
         $next_state = 'end_build';
-        if ($build_bonus != BUILD_BONUS_NONE){
-            $next_state = 'build_bonus';    
+        if ($building_bonus != BUILD_BONUS_NONE){
+            $next_state = 'building_bonus';    
         } else if ($bonus != AUCTION_BONUS_NONE){      
             $next_state = 'auction_bonus'; 
         }
@@ -414,6 +414,31 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
+    /**** Building Bonus Player actions *****/
+    public function playerFreeHireWorkerBuilding()
+    {
+        $this->checkAction( "buildBonus" );
+        $active_player = $this->getActivePlayerId();
+        $this->Resource->addWorker($active_player, 'Build bonus');
+        $next_state = 'auction_bonus';
+        $auction_bonus = $this->Auction->getCurrentAuctionBonus();
+        if ($auction_bonus == AUCTION_BONUS_NONE){
+            $next_state = 'end_build';
+        }
+        $this->gamestate->nextState( $next_state );
+    }
+
+    public function playerPassBuildingBonus () 
+    {
+        $this->checkAction( "buildBonus" );
+        $auction_bonus = $this->Auction->getCurrentAuctionBonus();
+        if ($auction_bonus == AUCTION_BONUS_NONE){
+            $next_state = 'end_build';
+        }
+        $this->gamestate->nextState( $next_state );
+    }
+
+    /**** Auction Bonus actions ******/
     public function playerFreeHireWorker ( $rail ) 
     {
         $this->checkAction( "auctionBonus" );
@@ -426,7 +451,6 @@ class homesteaders extends Table
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
-        
     }
 
     public function playerWoodForTrack (){
@@ -435,7 +459,7 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player, array('wood'=> 1))) {
             throw new BgaUserException( _("You need a Wood to take this action") );
         }
-        $this->Resource->updateAndNotifyPayment($active_player, 'wood', 1, 'Auction Bonus');
+        $this->Resource->updateAndNotifyPayment($active_player, 'wood', 1, 'a:Auction Bonus', $this->game->getGameStateValue('current_auction'));
         $this->Resource->addTrack($active_player, 'Auction Bonus');
         
         $this->gamestate->nextState( 'done' );
@@ -447,8 +471,9 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player, array('copper'=> 1))){
             throw new BgaUserException( _("You need a Copper to take this action") );
         }
-        $this->Resource->updateAndNotifyPayment($active_player, 'copper', 1, 'Auction Bonus');
-        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus');
+        $auc = $this->game->getGameStateValue('current_auction');
+        $this->Resource->updateAndNotifyPayment($active_player, 'copper', 1, 'a:Auction Bonus', $auc);
+        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'a:Auction Bonus', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -459,8 +484,9 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player,array('cow'=> 1))){
             throw new BgaUserException( _("You need a livestock to take this action ") );
         }
-        $this->Resource->updateAndNotifyPayment($active_player, 'cow', 1, 'Auction Bonus');
-        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus');
+        $auc = $this->game->getGameStateValue('current_auction');
+        $this->Resource->updateAndNotifyPayment($active_player, 'cow', 1, 'a:Auction Bonus', $auc);
+        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'a:Auction Bonus', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -471,8 +497,9 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player, array('food'=> 1))){
             throw new BgaUserException( _("You need a food to take this action ") ); 
         }
-        $this->Resource->updateAndNotifyPayment($active_player, 'food', 1, 'Auction Bonus');
-        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 2, 'Auction Bonus');
+        $auc = $this->game->getGameStateValue('current_auction');
+        $this->Resource->updateAndNotifyPayment($active_player, 'food', 1, 'a:Auction Bonus', $auc);
+        $this->Resource->updateAndNotifyIncome($active_player, 'vp', 2, 'a:Auction Bonus', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -504,19 +531,15 @@ class homesteaders extends Table
         game state.
     */
 
-    function argStartRound () {
-        $buildings = $this->Building->getAllBuildings();
+    function argStartRound(){
         $round_number = $this->getGameStateValue('round_number');
-        $current_auctions = $this->Auction->getCurrentRoundAuctions($round_number);
-
-        return array ('buildings'=>$buildings,
-                    'round_number'=>$round_number,
-                    'auction_tiles'=>$current_auctions,);
+        $round_number++;
+        $auctions = $this->Auction->getCurrentRoundAuctions($round_number);
+        return array('round_number'=>$round_number, 'auctions' => $auctions);
     }
 
     function argPayWorkers()
     {
-        $res = array ();
         $sql = "SELECT `player_id`, `workers` FROM `resources`";
         $worker_counts = self::getCollectionFromDB($sql);
         return array('worker_counts'=>$worker_counts);
@@ -561,8 +584,8 @@ class homesteaders extends Table
     }
 
     function argBuildingBonus() {
-        $build_bonus =$this->getGameStateValue('build_bonus');
-        return (array("build_bonus" => $build_bonus));
+        $building_bonus =$this->getGameStateValue('building_bonus');
+        return (array("building_bonus" => $building_bonus));
     }
 
     function argBonusOption() {
@@ -600,6 +623,7 @@ class homesteaders extends Table
             // remove settlement buildings (not owned)
             $sql = "UPDATE `buildings` SET `location` = '".BUILDING_LOC_DISCARD."' WHERE `stage` = '".STAGE_SETTLEMENT."' AND `location` = '".BUILDING_LOC_OFFER."'";
             self::DbQuery( $sql );
+            $this->Building->updateClientBuildings();
         }
         //rd 9 setup buildings
         if($round_number == 9){
@@ -609,6 +633,7 @@ class homesteaders extends Table
             // add city buildings
             $sql = "UPDATE buildings SET location = '".BUILDING_LOC_OFFER."' WHERE `stage` = '".STAGE_CITY."';";
             self::DbQuery( $sql );
+            $this->Building->updateClientBuildings();
         }
 
         // update Auctions.
@@ -616,6 +641,7 @@ class homesteaders extends Table
             $last_round = $round_number -1;
             $sql = "UPDATE auctions SET location = '".AUCTION_LOC_DISCARD."' WHERE position = '$last_round';";
             self::DbQuery( $sql );
+            //$this->Auction->updateClientAuctions($round_number);
         }
         $this->gamestate->nextState( );
     }
@@ -705,14 +731,7 @@ class homesteaders extends Table
 
     function stBuild()
     { 
-        // check for auctions with no build phase.
-        /*$auction_no = $this->getGameStateValue( 'current_auction' );
-        $round_number = $this->getGameStateValue( 'round_number' );
-        $sql = "SELECT `build_type` FROM `auctions` WHERE `location` = '$auction_no' AND `position` = '$round_number'";
-        $build_type = self::getUniqueValueFromDB( $sql );
-        if ( $build_type == 0 ){ // skip build, go straight to auction_bonus.
-            $this->gamestate->nextState( "auction_bonus" ); 
-        } */ //should be able to remove this.  just testing first.
+        
     }
 
     function stResolveBuilding()
@@ -734,7 +753,8 @@ class homesteaders extends Table
                 $this->gamestate->nextState("auction_bonus");
             }
         } else if ($bonus == BUILD_BONUS_RAIL_ADVANCE){
-            $this->Resource->getRailAdv();
+            $this->Resource->getRailAdv($active_player_id);
+            $this->setGameStateValue('phase', PHASE_BUILD_BONUS);
             $this->gamestate->nextState('rail_bonus');
         } else if ($bonus == BUILD_BONUS_TRACK_AND_BUILD) {
             $this->Resource->addTrack($active_player_id, $bonusReason);
@@ -745,7 +765,7 @@ class homesteaders extends Table
 
     function stTrainStationBuild()
     {
-        //
+        // don't need to do anything...
     }
 
     function stGetAuctionBonus()
@@ -768,7 +788,7 @@ class homesteaders extends Table
         $round_number = $this->incGameStateValue( 'round_number', 1 );
         $next_state = "endGame";
         if ($round_number <= 10) {
-            $this->setGameStateValue( 'current_auction',   1);
+            $this->setGameStateValue( 'current_auction', 1);
             $this->Bid->clearBids();
             $next_state = "nextAuction";
         }

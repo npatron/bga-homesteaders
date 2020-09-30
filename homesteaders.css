@@ -953,3 +953,32 @@ div#auction_tile_30 {
 #first_player_tile { /* First Player */
    background-position: 100% 100%;
 }
+/* EXPANSION BUILDINGS */
+.build_tile_36 { /* Purple homestead */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 0% 0%;
+}
+.build_tile_37 { /* Lumbermill */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 14.29% 0%;
+}
+.build_tile_38 { /* Hotel */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 28.57% 0%;
+}
+.build_tile_39 { /* Saloon */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 42.86% 0%;
+}
+.build_tile_40 { /* Silver Mine */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 71.43% 0%;
+}
+.build_tile_41 { /* Warehouse */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 85.% 0%;
+}
+.build_tile_42 { /* Post Office */
+   background-image: url('img/exp_building_144x196.png');
+   background-position: 100% 0%;
+}

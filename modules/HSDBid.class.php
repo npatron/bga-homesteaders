@@ -24,7 +24,7 @@ class HSDBid extends APP_GameClass
     }
 
     function clearBids(){
-        $this->game->DbQuery( "UPDATE `player` SET `bid_loc`= '0' `outbid`='0' " );
+        $this->game->DbQuery( "UPDATE `player` SET `bid_loc`= '0', `outbid`='0' " );
         $this->game->setGameStateValue('last_bidder', 0);
         $this->game->setGameStateValue('players_passed', 0);
         //$this->game->notifyAllPlayers("clearAllBids",  _('Resetting all bid tokens'), array ());

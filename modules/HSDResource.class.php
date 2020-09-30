@@ -34,26 +34,49 @@ class HSDresource extends APP_GameClass
         $this->game->DbQuery( $sql );
     }  
 
-    function updateAndNotifyIncome($p_id, $type, $amount, $reason_string = ""){
+    function updateAndNotifyIncome($p_id, $type, $amount, $reason_string = "", $key = 0){
+        $decoded_string = $this->decodeReasonString($reason_string);
         $this->game->notifyAllPlayers( "playerIncome",
-        clienttranslate( '${player_name} recieved '.$amount.' '.$type.' from '.$reason_string ), 
+        clienttranslate( '${player_name} recieved '.$amount.' '.$type.' from '.$decoded_string['reason_string'] ), 
         array('player_id' => $p_id,
             'type' => $type,
             'amount' => $amount,
             'player_name' => $this->game->getPlayerName($p_id),
+            'origin' => $decoded_string['origin'],
+            'key' => $key,
             ) );
             $this->updateResource($p_id, $type, $amount);
     }
 
-    function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = ""){
+    function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = "", $key = 0){
+        $decoded_string = $this->decodeReasonString($reason_string);
         $this->game->notifyAllPlayers( "playerPayment",
-            clienttranslate( '${player_name} paid '.$amount.' '.$type.' for '.$reason_string ), 
+            clienttranslate( '${player_name} paid '.$amount.' '.$type.' for '.$decoded_string['reason_string'] ), 
             array('player_id' => $p_id,
             'type' => $type,
             'amount' => $amount,
             'player_name' => $this->game->getPlayerName($p_id),
+            'origin' => $decoded_string['origin'],
+            'key' => $key,
         ) );
         $this->updateResource($p_id, $type, -$amount);
+    }
+
+    private function decodeReasonString($reason_string){
+        $origin = "";
+        if ($reason_string !== ""){
+            if (strpos($reason_string, "b:") === 0){
+                $origin = 'building';
+                $reason_string = substr($reason_string, 2, strlen($reason_string));
+            } else if (strpos($reason_string, "a:") === 0){
+                $origin = 'auction';
+                $reason_string = substr($reason_string, 2, strlen($reason_string));
+            } else if (strpos($reason_string, "w:") === 0){
+                $origin = 'worker';
+                $reason_string = substr($reason_string, 2, strlen($reason_string));
+            }
+        }
+        return array('origin' => $origin, 'reason_string'=>$reason_string);
     }
 
     function addWorker($p_id, $reason_string){

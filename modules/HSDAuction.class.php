@@ -64,6 +64,13 @@ class HSDAuction extends APP_GameClass
         self::DbQuery( $sql );
     }
 
+    function updateClientAuctions($round_number){
+        $auctions = $this->getCurrentRoundAuctions($round_number);
+        $this->game->notifyAllPlayers('updateAuctions', clienttranslate( 'Updating Auctions' ), array(
+            'auctions' => $auctions,
+            'state' => 'show', ));
+    }
+
     function getCurrentRoundAuctions($round_number){
         $sql = "SELECT `auction_id` a_id, `position`, `location`,  `build_type`, `bonus` FROM `auctions` WHERE `location` IN (1,2,3) AND `position`='".$round_number."'"; 
         return ($this->game->getCollectionFromDb( $sql ));
@@ -107,7 +114,7 @@ class HSDAuction extends APP_GameClass
                 $next_state = 'endBuild';
             break;
             case AUCTION_BONUS_6VP_AND_FOOD_VP:
-                $this->game->Resource->updateAndNotifyIncome($active_player, 'vp', 6, 'Auction Reward');
+                $this->game->Resource->updateAndNotifyIncome($active_player, 'vp', 6, 'a:Auction Reward');
             case AUCTION_BONUS_WORKER:
             case AUCTION_BONUS_WORKER_RAIL_ADV:
             case AUCTION_BONUS_WOOD_FOR_TRACK:
