@@ -12,6 +12,7 @@
 -->
 <div id ="top">
     <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
+    <a href="#" id="show_upcoming_auctions_btn" class="bgabutton bgabutton_gray"><span>Show Upcoming Auctions</span></a>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id='player_top'> </div>
@@ -80,7 +81,7 @@
 
 <div id="limbo" style="display: block"> 
     <div id='future_building_zone'> </div>
-    <div id='first_player_tile' class=' building_tile'> </div>
+    <div id='first_player_tile' class='building_tile'> </div>
 </div>
 
 <!-- Commmon Building Section-->
@@ -95,35 +96,14 @@
     Player Buildings section
 -->
 <div id='player_zones'>
-    <div id ='First'> </div>
-    <div id ='Second'> </div>
-    <div id ='Third'> </div>
-    <div id ='Fourth'> </div>
-    <div id="player_zone_yellow" class="noshow whiteblock res_yellow" style="margin-top:4px;">
-        <div id="player_name_yellow" class="boardheader" style="color: yellow;">YELLOW</div>
-        <div id="token_zone_yellow" class="token_zone"> </div>
-        <div id="building_zone_yellow"> </div>
+    <div id ='First'> </div> <div id ='Second'> </div> <div id ='Third'> </div> <div id ='Fourth'> </div>
+    <!-- BEGIN player_zone -->
+    <div id="player_zone_{COLOR}" class="whiteblock res_{COLOR}" style="margin-top:4px;">
+        <div id="player_name_{COLOR}" class="boardheader" style="color: {COLOR};">{NAME}</div>
+        <div id="token_zone_{COLOR}" class="player_token_zone"> </div>
+        <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
-    <div id="player_zone_red" class="noshow whiteblock res_red" style="margin-top:4px;">
-        <div id="player_name_red" class="boardheader" style="color: red;">RED</div>
-        <div id="token_zone_red" class="token_zone"> </div>
-        <div id="building_zone_red"> </div>
-    </div>
-    <div id="player_zone_green" class="noshow whiteblock res_green" style="margin-top:4px;">
-        <div id="player_name_green" class="boardheader" style="color: green;">GREEN</div>
-        <div id="token_zone_green" class="token_zone"> </div>
-        <div id="building_zone_green" class="building_zone"> </div>
-    </div>
-    <div id="player_zone_blue" class="noshow whiteblock res_blue" style="margin-top:4px;">
-        <div id="player_name_blue" class="boardheader" style="color: blue;">BLUE</div>
-        <div id="token_zone_blue" class="token_zone"> </div>
-        <div id="building_zone_blue"> </div>
-    </div>
-    <div id="player_zone_purple" class="noshow whiteblock res_purple" style="margin-top:4px;">
-        <div id="player_name_purple" class="boardheader" style="color: purple;">PURPLE</div>
-        <div id="token_zone_purple" class="token_zone"> </div>
-        <div id="building_zone_purple"> </div>
-    </div>
+    <!-- END player_zone -->
 </div>
 
 <!-- bottom area for non-active sections. -->
@@ -164,6 +144,11 @@
 <script type="text/javascript">
 
 // templates
+var vstpl_player_zone = '<div id="player_zone_${color}" class="whiteblock res_${color}" style="margin-top:4px;">\
+        <div id="player_name_${color}" class="boardheader" style="color: ${color};">${name}</div>\
+        <div id="token_zone_${color}" class="player_token_zone"> </div>\
+        <div id="building_zone_${color}" class="building_zone"> </div>\
+    </div>';
 var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone building_zone_diag" style="order: ${order}"></div>';
 
 var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';

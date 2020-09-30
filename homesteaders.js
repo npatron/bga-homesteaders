@@ -185,6 +185,8 @@ function (dojo, declare) {
             this.bid_height = 52;
             this.bid_width = 50;
             this.worker_dimension = 35;
+            this.rail_width = 85;
+            this.rail_height = 102
             
             this.player_score_counter = []; // indexed by player_id
             this.player_count = 0;
@@ -234,14 +236,14 @@ function (dojo, declare) {
                 this.player_color[p_id] = current_player_color;
                 this.token_divId[p_id] = 'token_zone_' + this.player_color[p_id];
                 this.token_zone[p_id] = new ebg.zone();
-                this.token_zone[p_id].create ( this, this.token_divId[p_id] , this.worker_dimension, this.worker_dimension );
+                this.token_zone[p_id].create ( this, this.token_divId[p_id] , this.rail_width -5, this.rail_height );
                 this.player_score_counter[p_id] = new ebg.counter();
                 this.player_score_counter[p_id].create(`player_score_${p_id}`);
                 this.player_score_counter[p_id].setValue(Number(player.score));
 
                 this.player_building_zone_id[p_id] = 'building_zone_'+ this.player_color[p_id];
                 this.player_building_zone[p_id] = new ebg.zone();
-                this.player_building_zone[p_id].create(this, this.player_building_zone_id[p_id], this.tile_width, this.tile_height);
+                this.player_building_zone[p_id].create(this, this.player_building_zone_id[p_id], this.tile_width, this.tile_height-3);
             }
             if (!$isSpectator)
                 this.orientPlayerZones(gamedatas.player_order);
@@ -316,8 +318,8 @@ function (dojo, declare) {
         setupTracks: function(tracks){
             for(let i in tracks){
                 const track = tracks[i];
-                dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: this.player_color[track.p_id]}), 'future_building_zone');
-                this.player_building_zone[track.p_id].placeInZone(`token_track_${track.r_key}`,50);
+                dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: this.player_color[track.p_id]}), this.token_divId[track.p_id]);
+                //this.token_zone[track.p_id].placeInZone(`token_track_${track.r_key}`,50);
             }
         },
 
@@ -361,9 +363,7 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jptpl_token', {
                     type: "worker", id: w_key.toString()}), this.token_divId[worker.p_id] );
                 const worker_divId = `token_worker_${w_key}`;
-                if (worker.b_key == 0 ){
-                    this.token_zone[worker.p_id].placeInZone(worker_divId );
-                } else { 
+                if (worker.b_key != 0 ){ 
                     this.building_worker_zones[worker.b_key][worker.b_slot].placeInZone(worker_divId);
                 }
                 if (worker.p_id == this.player_id){
@@ -1422,6 +1422,8 @@ function (dojo, declare) {
             this.notifqueue.setSynchronous('updateBuildingStocks', 1000);
             dojo.subscribe( 'gainWorker',  this, "notif_gainWorker" );
             this.notifqueue.setSynchronous( 'gainWorker', 500 );
+            dojo.subscribe( 'gainTrack', this,"notif_gainTrack");
+            this.notifqueue.setSynchronous( 'playerRecieveTrack', 1000 );
             dojo.subscribe( 'workerMoved', this, "notif_workerMoved" );
             this.notifqueue.setSynchronous( 'workerMoved', 200 );
             dojo.subscribe( 'railAdv',     this, "notif_railAdv" );
@@ -1430,8 +1432,6 @@ function (dojo, declare) {
             this.notifqueue.setSynchronous( 'moveBid', 500 );
             dojo.subscribe( 'buildBuilding', this, "notif_buildBuilding" );
             this.notifqueue.setSynchronous( 'buildBuilding', 1000 );
-            dojo.subscribe( 'playerRecieveTrack', this,"notif_playerRecieveTrack");
-            this.notifqueue.setSynchronous( 'playerRecieveTrack', 1000 );
             dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
             this.notifqueue.setSynchronous( 'playerIncome', 1000 );
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
@@ -1516,9 +1516,8 @@ notif_cardPlayed: function (notif) {
 
         notif_updateBuildingStocks: function ( notif ){
             console.log ( 'notif_updateBuildings' );
-
-            this.updateBuildingStocks(notif.args.buildings);
             
+            this.updateBuildingStocks(notif.args.buildings);
         },
 
         notif_workerMoved: function( notif ){
@@ -1545,13 +1544,28 @@ notif_cardPlayed: function (notif) {
             console.log ('notif_gainWorker');
             console.log ( notif );
             const worker_divId = `token_worker_${Number(notif.args.worker_key)}`;
-            dojo.place(this.format_block( 'jptpl_token', {
-                type: "worker", id: Number(notif.args.worker_key)}), this.token_divId[Number(notif.args.player_id)] );
-            this.token_zone[notif.args.player_id].placeInZone(worker_divId);
+            dojo.place(this.format_block( 'jptpl_token', 
+                    {type: "worker", id: Number(notif.args.worker_key)}), 
+                    this.token_divId[Number(notif.args.player_id)] );
+            //this.token_zone[notif.args.player_id].placeInZone(worker_divId);
             if (notif.args.player_id == this.player_id){
                 dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
-                //add if current phase is place worker, make selectable.
+                if (this.currentState == "allocateWorkers" && notif.args.player_id == this.player_id){
+                    dojo.addClass(worker_divId, 'selectable');
+                }
+                
             }
+        },
+
+        notif_gainTrack: function( notif ){
+            console.log ('notif_gainTrack');
+            console.log ( notif );
+            
+            //const trackToken_divId = `token_track_${Number(notif.args.key)}`;
+            dojo.place(this.format_block( 'jptpl_track', 
+                    {id: Number(notif.args.key), color: this.player_color[Number(notif.args.player_id)]}),
+                    this.token_divId[Number(notif.args.player_id)]);
+            //this.player_building_zone[notif.args.player_id].placeInZone(trackToken_divId,50);
         },
 
         notif_moveBid: function( notif ){
@@ -1575,16 +1589,6 @@ notif_cardPlayed: function (notif) {
             this.updateScoreForBuilding(notif.args.player_id, notif.args.building['b_id']);
         },
 
-        notif_playerRecieveTrack: function( notif){
-            console.log ('notif_playerRecieveTrack');
-            console.log ( notif );
-            
-            const building_zone_divId = `building_zone_${this.player_color[notif.args.player_id]}`;
-            const trackToken_divId = `token_track_${Number(notif.args.key)}`;
-            dojo.place(this.format_block( 'jptpl_track', {id: notif.args.key, color: this.player_color[notif.args.player_id]}), building_zone_divId);
-            this.player_building_zone[notif.args.player_id].placeInZone(trackToken_divId,50);
-        },
-
         notif_playerIncome: function( notif ){
             console.log ('notif_playerIncome');
             console.log ( notif);
@@ -1594,9 +1598,7 @@ notif_cardPlayed: function (notif) {
                 start = `auction_tile_${Number(notif.args.key)}`;
             } else if (notif.args.origin == 'building'){
                 start = `building_tile_${Number(notif.args.key)}`;
-            } else if (notif.args.origin == 'worker'){
-                start = `token_worker_${Number(notif.args.key)}`;
-            }
+            } 
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' to player '"+ notif.args.player_name+ "'");
@@ -1616,9 +1618,7 @@ notif_cardPlayed: function (notif) {
                 destination = `auction_tile_${Number(notif.args.key)}`;
             } else if  (notif.args.origin == 'building'){
                 destination = `building_tile_${Number(notif.args.key)}`;
-            } else if (notif.args.origin == 'worker'){
-                destination = `token_worker_${Number(notif.args.key)}`;
-            }
+            } 
             const player_zone_divId = `player_board_${notif.args.player_id}`;
 
             for(let i = 0; i < notif.args.amount; i++){

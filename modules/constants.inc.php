@@ -79,6 +79,10 @@
   define("BUILDING_CIRCUS",        34);
   define("BUILDING_RAIL_YARD",     35);  
   define("FIRST_PLAYER_TILE",      36);
+
+  // expansion
+  define("BUILDING_HOMESTEAD_PURPLE", 36);
+
   // building location mapping
   define("BUILDING_LOC_FUTURE",  0);
   define("BUILDING_LOC_OFFER",   1);

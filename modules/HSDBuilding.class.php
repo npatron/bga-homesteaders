@@ -283,7 +283,7 @@ class HSDBuilding extends APP_GameClass
         $score = $this->game->getUniqueValueFromDB( $sql );
         $building_score = $this->getBuildingScoreFromId( $b_id );
         $score += $building_score;
-        $sql = "UPDATE `player` SET `player_score`='".$score."'";
+        $sql = "UPDATE `player` SET `player_score`='".$score."' WHERE `player_id`='".$p_id."'";
         $this->game->DbQuery( $sql );
     }
 
@@ -372,12 +372,13 @@ class HSDBuilding extends APP_GameClass
         $player_workers = $this->game->getCollectionFromDB( $sql );
         foreach( $player_buildings as $b_key => $building ) {
             $b_name = $this->getBuildingNameFromKey($b_key);
-            $reason = 'b:'+ $b_name;
+            $reason = 'b:'.$b_name;
             switch($building['building_id']) {
                 case BUILDING_HOMESTEAD_YELLOW:
                 case BUILDING_HOMESTEAD_RED:
                 case BUILDING_HOMESTEAD_GREEN:
                 case BUILDING_HOMESTEAD_BLUE:
+                case BUILDING_HOMESTEAD_PURPLE:
                 case BUILDING_BOARDING_HOUSE:
                 case BUILDING_DEPOT:
                     $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $reason, $b_key);
@@ -426,12 +427,13 @@ class HSDBuilding extends APP_GameClass
         foreach($player_workers as $worker_key => $worker ) {
             $b_key = $worker['building_key'];
             $b_id = $this->getBuildingIdFromKey($b_key);
-            $worker_income_string = 'w:Worker at '.$this->getBuildingNameFromKey($b_key);
+            $worker_income_string = 'b:Worker at '.$this->getBuildingNameFromKey($b_key);
             switch($b_id){
                 case BUILDING_HOMESTEAD_YELLOW:
                 case BUILDING_HOMESTEAD_RED:
                 case BUILDING_HOMESTEAD_GREEN:
                 case BUILDING_HOMESTEAD_BLUE:
+                case BUILDING_HOMESTEAD_PURPLE:
                     if ($worker['building_slot'] == 1){
                         $this->game->Resource->updateAndNotifyIncome($p_id, 'wood', 1, $worker_income_string, $b_key);
                     } else {

@@ -530,9 +530,11 @@ div#done_trading {
 /*=========================
     Token images
   =========================*/
-.token_zone {
-   box-sizing: content-box;
-   height: 50px;
+.player_token_zone {
+   position: relative;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, 42.5px);
+   grid-template-rows: repeat(auto-fill, 51px);
 }
 .token {
    background-image: url('img/tokens_50x50.png');
@@ -552,6 +554,8 @@ div#done_trading {
    height: 102px;
    width: 85px;
    background-size: 255px 102px;
+   grid-column: span 2;
+   grid-row: span 2;
 }
 .token_loan {
    background-image: url('img/rail_debt_85x102.png');
@@ -590,7 +594,7 @@ div#done_trading {
    height: 35px;
    width: 35px;
    background-size: 175px 105px;
-   background-position: 77% 50%;
+   background-position: 75% 50%;
 }
 .token_vp {
    background-position: 100% 50%;

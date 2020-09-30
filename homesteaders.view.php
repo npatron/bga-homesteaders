@@ -44,19 +44,13 @@
         $this->tpl['ROUND_NUMBER'] = $number_to_display;
         $this->tpl['BUILDING_STOCK'] = self::_("Building Stock");
 
+        $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
         foreach($players as $p_id=>$player){
             $color = $this->game->playerColorNames[$player['player_color']];
-            if ($color === 'yellow'){
-              $this->tpl['YELLOW'] = $player['player_name'];
-            } else if ($color === 'blue'){
-              $this->tpl['BLUE'] = $player['player_name'];
-            } else if ($color === 'green'){
-              $this->tpl['GREEN'] = $player['player_name'];
-            } else if ($color === 'red'){
-              $this->tpl['RED'] = $player['player_name'];
-            } else if ($color === 'purple'){
-              $this->tpl['PURPLE'] = $player['player_name'];
-            }
+            $this->page->insert_block( "player_zone", array(
+              'COLOR' => $color,
+              'NAME' => $player['player_name']
+             ) );
         } 
 
 

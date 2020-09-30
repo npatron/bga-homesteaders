@@ -71,9 +71,6 @@ class HSDresource extends APP_GameClass
             } else if (strpos($reason_string, "a:") === 0){
                 $origin = 'auction';
                 $reason_string = substr($reason_string, 2, strlen($reason_string));
-            } else if (strpos($reason_string, "w:") === 0){
-                $origin = 'worker';
-                $reason_string = substr($reason_string, 2, strlen($reason_string));
             }
         }
         return array('origin' => $origin, 'reason_string'=>$reason_string);
@@ -84,7 +81,7 @@ class HSDresource extends APP_GameClass
         $this->game->DbQuery( $sql );
         $sql = "SELECT `worker_key` FROM `workers` WHERE `player_id`='".$p_id."'";
         $player_workers = $this->game->getObjectListFromDB( $sql );
-        $w_key = $player_workers[count($player_workers)-1];
+        $w_key = $player_workers[count($player_workers)-1]['worker_key'];
         if ($reason_string == 'hire'){
             $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token}' ), array(
                 'player_id' => $p_id,
@@ -108,7 +105,7 @@ class HSDresource extends APP_GameClass
         $sql = "SELECT `worker_key` FROM `workers` WHERE `player_id`='".$p_id."'";
         $p_tracks = $this->game->getObjectListFromDB( $sql );
         $track_key = $p_tracks[count($p_tracks)-1];
-        $this->game->notifyAllPlayers( "playerRecieveTrack", clienttranslate( '${player_name} lays a new ${token} from ${reason}' ), array(
+        $this->game->notifyAllPlayers( "gainTrack", clienttranslate( '${player_name} lays a new ${token} from ${reason}' ), array(
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
             'token' => 'track',
