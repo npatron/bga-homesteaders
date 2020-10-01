@@ -162,9 +162,6 @@ div#bid_slot_3_21{
    grid-template-rows: repeat(auto-fill, 220px);
 }
 .auction_tiles_zone{
-   border-style: solid;
-   border-color:blue;
-   border-width: 2px;
    position: absolute;
    top: 27%;
    height: 36%;
@@ -403,9 +400,10 @@ div#done_trading {
    width: 0px;
 }
 .building_zone {
-   width: auto;
-   max-width: 800px;
-   text-align: center;
+   position: relative;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, 155px);
+   grid-template-rows: repeat(auto-fill, 220px);
 }
 .building_zone_diag {
    width: 155px;
@@ -508,6 +506,8 @@ div#done_trading {
 .noshow {
    visibility:hidden;
    height:0px;
+   margin: 0px;
+   padding: 0px;
 }
 .show {
    visibility:visible;
@@ -669,10 +669,10 @@ div#done_trading {
 .worker_slot{
    position: absolute;
    height: 35px;
-   width: 35px;
+   width: 33px;
 }
 .slot_1_1 {
-   bottom: 9px;
+   bottom: 10px;
    left: 14px;
 }
 .slot_2_1 {
@@ -688,12 +688,12 @@ div#done_trading {
    left: 64px;
 }
 .slot_1_3 {
-   bottom: 9px;
-   left: 14px;
+   bottom: 10px;
+   left: 8px;
 }
 .slot_2_3 {
-   bottom: 8px;
-   left: 64px;
+   bottom: 10px;
+   left: 65px;
 }
 .slot_1_4 {
    bottom: 9px;
@@ -712,15 +712,15 @@ div#done_trading {
    left: 30px;
 }
 .slot_1_7 {
-   bottom: 8px;
-   left: 44px;
+   bottom: 11px;
+   left: 51px;
 }
 .slot_1_8 {
    bottom: 13px;
    left: 29px;
 }
 .slot_1_12 {
-   bottom: 8px;
+   bottom: 13px;
    left: 26px;
 }
 .slot_1_15 {
@@ -876,108 +876,143 @@ div#auction_tile_30 {
 
 .build_tile_1 { /* Yellow Homestead */
    background-position: 0% 0%;
+   order: 1;
 }
 .build_tile_2 { /* Red Homestead */
    background-position: 12.5% 0%;
+   order: 2;
 }
 .build_tile_3 { /* Green Homestead */
    background-position: 25% 0%;
+   order: 3;
 }
 .build_tile_4 { /* Blue Homestead */
    background-position: 37.5% 0%;
+   order: 4;
 }
 .build_tile_5 { /* Grain Mill */
    background-position: 50% 0%;
+   order: 5;
 }
 .build_tile_6 { /* Farm */
    background-position: 62.5% 0%;
+   order: 6;
 }
 .build_tile_7 { /* Market */
    background-position: 75% 0%;
+   order: 7;
 }
 .build_tile_8 { /* Foundry */
    background-position: 87.5% 0%;
+   order: 8;
 }
 .build_tile_9 { /* Steel Mill */
    background-position: 100% 0%;
+   order: 9;
 }
 .build_tile_10 { /* Boarding House */
    background-position: 0% 33.33%;
+   order: 10;
 }
 .build_tile_11 { /* Railworkers House */
    background-position: 12.5% 33.33%;
+   order: 11;
 }
 .build_tile_12 { /* Ranch */
    background-position: 25% 33.33%;
+   order: 12;
 }
 .build_tile_13 { /* Trading Post */
    background-position: 37.5% 33.33%;
+   order: 13;
 }
 .build_tile_14 { /* General Store */
    background-position: 50% 33.33%;
+   order: 14;
 }
 .build_tile_15 { /* Gold Mine */
    background-position: 62.5% 33.33%;
+   order: 15;
 }
 .build_tile_16 { /* Copper Mine */
    background-position: 75% 33.33%;
+   order: 16;
 }
 .build_tile_17 { /* River Port */
    background-position: 87.5% 33.33%;
+   order: 17;
 }
 .build_tile_18 { /* Church */
    background-position: 100% 33.33%;
+   order: 18;
 }
 .build_tile_19 { /* Workshop */
    background-position: 0% 66.66%;
+   order: 19;
 }
 .build_tile_20 { /* Depot */
    background-position: 12.5% 66.66%;
+   order: 20;
 }
 .build_tile_21 { /* Stables */
    background-position: 25% 66.66%;
+   order: 21;
 }
 .build_tile_22 { /* Bank */
    background-position: 37.5% 66.66%;
+   order: 22;
 }
 .build_tile_23 { /* Meatpacking Plant */
    background-position: 50% 66.66%;
+   order: 23;
 }
 .build_tile_24 { /* Forge */
    background-position: 62.5% 66.66%;
+   order: 24;
 }
 .build_tile_25 { /* Factory */
    background-position: 75% 66.66%;
+   order: 25;
 }
 .build_tile_26 { /* Rodeo */
    background-position: 87.5% 66.66%;
+   order: 26;
 }
 .build_tile_27 { /* Lawyer */
    background-position: 100% 66.66%;
+   order: 27;
 }
 .build_tile_28 { /* Fairgrounds */
    background-position: 0% 100%;
+   order: 28;
 }
 .build_tile_29 { /* Dude Ranch */
    background-position: 12.5% 100%;
+   order: 29;
 }
 .build_tile_30 { /* Town Hall */
    background-position: 25% 100%;
+   order: 30;
 }
 .build_tile_31 { /* Terminal */
    background-position: 37.5% 100%;
+   order: 31;
 }
 .build_tile_32 { /* Restaraunt */
    background-position: 50% 100%;
+   order: 32;
 }
 .build_tile_33 { /* Train Station */
    background-position: 62.5% 100%;
+   order: 33;
 }
 .build_tile_34 { /* Circus */
    background-position: 75% 100%;
+   order: 34;
 }
 .build_tile_35 { /* Rail Yard */
    background-position: 87.5% 100%;
+   order: 35;
 }
 #first_player_tile { /* First Player */
    background-position: 100% 100%;

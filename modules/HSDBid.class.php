@@ -6,6 +6,10 @@
 class HSDBid extends APP_GameClass
 {
     public $game;
+    public $bid_cost_array = array(
+        1 => 3, 2 => 4, 3 => 5,
+        4 => 6, 5 => 7, 6 => 9,
+        7 => 12,8 => 16,9 => 21, );
     public function __construct($game)
     {
         $this->game = $game;
@@ -46,18 +50,7 @@ class HSDBid extends APP_GameClass
         $sql = "SELECT `bid_loc` FROM `player` WHERE `player_id`='".$p_id."'";
         $bid_loc = $this->game->getUniqueValueFromDB( $sql );
         $bid_index = ($bid_loc % 10);
-        $bid_cost_array = array(
-            1 => 3, 
-            2 => 4,
-            3 => 5,
-            4 => 6,
-            5 => 7,
-            6 => 9,
-            7 => 12,
-            8 => 16,
-            9 => 21,
-        );
-        return ($bid_cost_array[$bid_index]);
+        return ($this->bid_cost_array[$bid_index]);
     }
 
     function getWinnerOfAuction() 

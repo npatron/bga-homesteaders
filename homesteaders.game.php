@@ -183,6 +183,7 @@ class homesteaders extends Table
         $result['resources'] = $this->getCollectionFromDb( $sql );
 
         $result['round_number'] = $this->getGameStateValue( 'round_number' );
+        $result['number_auctions'] = $this->getGameStateValue( 'number_auctions' );
         $result['auctions'] = $this->Auction->getAllAuctionsFromDB();
         
         $result['player_order'] = $this->getNextPlayerTable();

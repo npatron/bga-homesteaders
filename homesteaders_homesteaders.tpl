@@ -13,7 +13,8 @@
 <div id ="top">
     <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
     <a href="#" id="show_auctions" class="bgabutton bgabutton_gray"><span>Show Remaining Auctions</span></a>
-    <div id='future_auction_zone' class="noshow"> </div>
+    <div id='auction_string' class='whiteblock noshow'<!-- BEGIN auction_string --><span class="auction_string" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string --> 
+    <div id='future_auction_zone' class="noshow"></div></div>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id='player_top'> </div>
@@ -25,46 +26,17 @@
     <div id="pending_bids" class="token_zone"> </div>
     <div id='passed_bid_zone' class="token_zone"> </div>
 
-    <div id="bid_slot_1_9" class="bid_slot"> </div>
-    <div id="bid_slot_1_12" class="bid_slot"> </div>
-    <div id="bid_slot_1_16" class="bid_slot"> </div>
-    <div id="bid_slot_1_21" class="bid_slot"> </div>
-    <div id="bid_slot_1_7" class="bid_slot"> </div>
-    <div id="bid_slot_1_6" class="bid_slot"> </div>
-    <div id="bid_slot_1_5" class="bid_slot"> </div>
-    <div id="bid_slot_1_4" class="bid_slot"> </div>
-    <div id="bid_slot_1_3" class="bid_slot"> </div>
-    <div id="auction_tile_zone_1" class="auction_tiles_zone"> </div>
+    <!-- BEGIN bid_slot -->
+    <div id="bid_slot_{A}_{B}" class="bid_slot"> </div>
+    <!-- END bid_slot -->
+    <!-- BEGIN auction_stacks -->
+    <div id="auction_tile_zone_{A}" class="auction_tiles_zone"> </div>
+    <!-- END auction_stacks -->
+
+    <!-- BEGIN train_advancement -->
+    <div id="train_advancement_{I}" class="train_advance"> </div>
+    <!-- END train_advancement -->
     
-    <div id="bid_slot_2_9" class="bid_slot"> </div>
-    <div id="bid_slot_2_12" class="bid_slot"> </div>
-    <div id="bid_slot_2_16" class="bid_slot"> </div>
-    <div id="bid_slot_2_21" class="bid_slot"> </div>
-    <div id="bid_slot_2_7" class="bid_slot"> </div>
-    <div id="bid_slot_2_6" class="bid_slot"> </div>
-    <div id="bid_slot_2_5" class="bid_slot"> </div>
-    <div id="bid_slot_2_4" class="bid_slot"> </div>
-    <div id="bid_slot_2_3" class="bid_slot"> </div>
-    <div id="auction_tile_zone_2" class="auction_tiles_zone"> </div>
-
-    <div id="bid_slot_3_9" class="bid_slot"> </div>
-    <div id="bid_slot_3_12" class="bid_slot"> </div>
-    <div id="bid_slot_3_16" class="bid_slot"> </div>
-    <div id="bid_slot_3_21" class="bid_slot"> </div>
-    <div id="bid_slot_3_7" class="bid_slot"> </div>
-    <div id="bid_slot_3_6" class="bid_slot"> </div>
-    <div id="bid_slot_3_5" class="bid_slot"> </div>
-    <div id="bid_slot_3_4" class="bid_slot"> </div>
-    <div id="bid_slot_3_3" class="bid_slot"> </div>
-    <div id="auction_tile_zone_3" class="auction_tiles_zone"> </div>
-
-    <div id="train_advancement_0" class="train_advance"> </div>
-    <div id="train_advancement_1" class="train_advance"> </div>
-    <div id="train_advancement_2" class="train_advance"> </div>
-    <div id="train_advancement_3" class="train_advance"> </div>
-    <div id="train_advancement_4" class="train_advance"> </div>
-    <div id="train_advancement_5" class="train_advance"> </div>
-
     <div id="train_bonus_1_trade" class="train_bonus"> </div>
     <div id="train_bonus_2_track" class="train_bonus"> </div>
     <div id="train_bonus_3_worker" class="train_bonus"> </div>
@@ -148,14 +120,16 @@ var vstpl_player_zone = '<div id="player_zone_${color}" class="whiteblock res_${
         <div id="token_zone_${color}" class="player_token_zone"> </div>\
         <div id="building_zone_${color}" class="building_zone"> </div>\
     </div>';
+
 var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone building_zone_diag" style="order: ${order}"></div>';
 
 var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
 
-var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile"> </div>';
+var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile res_${color}"> </div>';
 
 var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
+
 var jptpl_player_token='<div id="token_${type}_${color}" class="player_token_${color} player_token_${type}"> </div>';
 
 var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> </div>';

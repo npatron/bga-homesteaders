@@ -52,8 +52,24 @@
               'NAME' => $player['player_name']
              ) );
         } 
-
-
+        
+        $auctions = $this->game->getGameStateValue('number_auctions');
+        $color_arr = array(1=>'yellow', 2=>'red', 3=>'blue', 4=>'green', 5=>'purple');
+        $this->page->begin_block( "homesteaders_homesteaders", "auction_string" );
+        $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
+        $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );
+        for ($a=1; $a <= $auctions; $a++){
+          $this->page->insert_block( "auction_stacks", array('A'=> $a) );
+          $this->page->insert_block( "auction_string", array('A'=> $a, 'COLOR'=> $color_arr[$a]) );
+          for ($bid=1; $bid < 10; $bid++){          
+            $this->page->insert_block( "bid_slot", array('A'=> $a, 'B'=> $this->game->Bid->bid_cost_array[$bid]) );
+          }
+        }
+        
+        $this->page->begin_block( "homesteaders_homesteaders", "train_advancement");
+        for ($i=0; $i<6; $i++){
+          $this->page->insert_block( "train_advancement", array('I'=> $i) ); 
+        }
         
         /*********** Do not change anything below this line  ************/
   	}
