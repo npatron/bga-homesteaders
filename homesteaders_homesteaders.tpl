@@ -12,7 +12,8 @@
 -->
 <div id ="top">
     <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
-    <a href="#" id="show_upcoming_auctions_btn" class="bgabutton bgabutton_gray"><span>Show Upcoming Auctions</span></a>
+    <a href="#" id="show_auctions" class="bgabutton bgabutton_gray"><span>Show Remaining Auctions</span></a>
+    <div id='future_auction_zone' class="noshow"> </div>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id='player_top'> </div>
@@ -87,9 +88,7 @@
 <!-- Commmon Building Section-->
 <div id='building_location'>
     <div class="building_stock"> BUILDING_STOCK </div>
-    <div id="building_zone"> 
-        <div id="main_building_zone" class="main_building_zone"> </div>
-    </div>
+    <div id="main_building_zone" class="main_building_zone"> </div>
 </div>
 
 <!--

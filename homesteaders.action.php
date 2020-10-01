@@ -89,15 +89,6 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  /*
-  public function selectWorker() {
-    self::setAjaxMode( );
-    $worker_key = self::getArg( "worker_key", AT_posint, true );
-    $this->game->playerSelectWorker($worker_key);
-    self::ajaxResponse( );
-  }*/
-
-
   // bid actions
   public function confirmBid (){
     self::setAjaxMode( );
@@ -178,6 +169,19 @@ class action_homesteaders extends APP_GameAction
   public function passAuctionBonus (){
     self::setAjaxMode( );
     $this->game->playerPassAuctionBonus( );
+    self::ajaxResponse( );
+  }
+
+  public function payLoan(){
+    self::setAjaxMode( );
+    $gold = self::getArg( 'gold', AT_bool, true);
+    $this->game->playerPayLoan( $gold);
+    self::ajaxResponse( );
+  }
+
+  public function doneEndgameActions(){
+    self::setAjaxMode( );
+    $this->game->playerDoneEndgame();
     self::ajaxResponse( );
   }
 

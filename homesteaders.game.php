@@ -183,7 +183,7 @@ class homesteaders extends Table
         $result['resources'] = $this->getCollectionFromDb( $sql );
 
         $result['round_number'] = $this->getGameStateValue( 'round_number' );
-        $result['auctions'] = $this->Auction->getCurrentRoundAuctions($result['round_number']);
+        $result['auctions'] = $this->Auction->getAllAuctionsFromDB();
         
         $result['player_order'] = $this->getNextPlayerTable();
         $result['first_player'] = $this->getGameStateValue( 'first_player');
@@ -261,6 +261,7 @@ class homesteaders extends Table
         (note: each method below must match an input method in homesteaders.action.php)
     */
 
+    /*****  Common Methods (loan, trade) *****/
     public function playerTakeLoan()
     {
         self::checkAction( "takeLoan" );
@@ -269,7 +270,7 @@ class homesteaders extends Table
         $this->Resource->updateAndNotifyIncome($current_player_id, 'loan', 1, "loan");
         $this->Log->takeLoan($current_player_id);
     }
-
+    
     public function playerTrade( $tradeAction )
     {
         self::checkAction( 'trade' );
@@ -277,6 +278,7 @@ class homesteaders extends Table
         $this->Resource->trade($current_player_id, $tradeAction);
     }
 
+    /***  place workers phase ***/
     public function playerHireWorker(){
         self::checkAction( 'hireWorker' );
         $current_player_id = $this->getCurrentPlayerId();
@@ -288,7 +290,6 @@ class homesteaders extends Table
         $this->Resource->addWorker($current_player_id, 'hire');
     }
 
-    /***  place workers phase ***/
     public function playerSelectWorkerDestination($worker_key, $building_key, $building_slot) 
     {
         self::checkAction( "placeWorker" );
@@ -520,6 +521,23 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
+    public function playerPayLoan($gold) {
+        $current_player_id = $this->getCurrentPlayerId();    
+        if ($gold) $cost = array('gold', 1);
+        else $cost = array('silver', 5);
+        $type = array_keys($cost)[0];
+        if (!$this->Resource->canPlayerAfford($current_player_id, $cost)){
+            throw new BgaUserException( _("You do not have enough ".$type ) );
+        }
+        $this->Resource->updateAndNotifyPayment($current_player_id, $type , $cost[$type] , 'loan');
+        $this->Resource->updateAndNotifyIncome($current_player_id, 'loan' , 1);
+    }
+
+    public function playerDoneEndgame() {
+        $this->checkAction('done');
+        $current_player_id = $this->getCurrentPlayerId();
+        $this->gamestate->setPlayerNonMultiactive($current_player_id, "" );
+    }
     
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
@@ -601,8 +619,6 @@ class homesteaders extends Table
         Here, you can create methods defined as "game state actions" (see "action" property in states.inc.php).
         The action method of state X is called everytime the current game state is set to X.
     */
-    
-    
     
     //Example for game state "MyGameState":
 
@@ -731,7 +747,7 @@ class homesteaders extends Table
 
     function stBuild()
     { 
-        
+
     }
 
     function stResolveBuilding()
@@ -793,6 +809,10 @@ class homesteaders extends Table
             $next_state = "nextAuction";
         }
         $this->gamestate->nextState( $next_state );
+    }
+
+    function stEndGameActions(){
+        $this->gamestate->setAllPlayersMultiactive( );
     }
 
 //////////////////////////////////////////////////////////////////////////////

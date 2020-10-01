@@ -33,6 +33,7 @@ if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, sinc
     define("STATE_RESOLVE_BONUS",      52);
     define("STATE_END_BUILD",          53);
     define("STATE_END_ROUND",          59);
+    define("STATE_ENDGAME_ACTIONS",    60);
     define("STATE_END_GAME",           99);
 }
  
@@ -230,6 +231,17 @@ $machinestates = array(
         "action" => "stEndRound",
         "transitions" => array( "endGame" => STATE_END_GAME, 
                                 "nextAuction" => STATE_START_ROUND )
+    ),
+
+    STATE_ENDGAME_ACTIONS => array(
+        "name" => "endGameActions",
+        "description" => clienttranslate('Some players may choose to take actions before scoring'),
+        "descriptionmyturn" => clienttranslate('${you} may choose to take actions before scoring'),
+        "type" => "multipleactiveplayer",
+        "args" => "argEndGameActions",
+        "action" => "stEndGameActions",
+        "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
+        "transitions" => array( "" => STATE_END_GAME)
     ),
 
     // Final state.

@@ -155,6 +155,12 @@ div#bid_slot_3_21{
 /*************************
  * Auction Zones
 *************************/
+#future_auction_zone{
+   position: relative;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, 155px);
+   grid-template-rows: repeat(auto-fill, 220px);
+}
 .auction_tiles_zone{
    border-style: solid;
    border-color:blue;
@@ -507,6 +513,16 @@ div#done_trading {
    visibility:visible;
 }
 
+.animated {
+	animation: anim_move 2s infinite;
+}
+
+@keyframes anim_move {
+    0% {transform: rotate(-35deg) translateX(4px);} 
+    50% {transform: rotate(35deg) translateX(4px);}
+    100% {transform: rotate(-35deg) translateX(4px);}
+}
+
 /*=========================
     Player board
   =========================*/
@@ -592,9 +608,10 @@ div#done_trading {
 }
 .token_worker {
    height: 35px;
-   width: 35px;
+   width: 33px;
    background-size: 175px 105px;
-   background-position: 75% 50%;
+   background-position: 77% 50%;
+   z-index: 1;
 }
 .token_vp {
    background-position: 100% 50%;
@@ -655,32 +672,32 @@ div#done_trading {
    width: 35px;
 }
 .slot_1_1 {
-   bottom: 10px;
-   left: 5px;
+   bottom: 9px;
+   left: 14px;
 }
 .slot_2_1 {
    bottom: 8px;
    left: 64px;
 }
 .slot_1_2 {
-   bottom: 10px;
-   left: 5px;
+   bottom: 9px;
+   left: 14px;
 }
 .slot_2_2 {
    bottom: 8px;
    left: 64px;
 }
 .slot_1_3 {
-   bottom: 10px;
-   left: 5px;
+   bottom: 9px;
+   left: 14px;
 }
 .slot_2_3 {
    bottom: 8px;
    left: 64px;
 }
 .slot_1_4 {
-   bottom: 10px;
-   left: 5px;
+   bottom: 9px;
+   left: 11px;
 }
 .slot_2_4 {
    bottom: 8px;
@@ -699,16 +716,16 @@ div#done_trading {
    left: 44px;
 }
 .slot_1_8 {
-   bottom: 8px;
-   left: 33px;
+   bottom: 13px;
+   left: 29px;
 }
 .slot_1_12 {
    bottom: 8px;
    left: 26px;
 }
 .slot_1_15 {
-   bottom: 9px;
-   left: 17px;
+   bottom: 14px;
+   left: 39px;
 }
 .slot_1_16 {
    bottom: 9px;
@@ -730,6 +747,14 @@ div#done_trading {
 .slot_1_26 {
    bottom: 8px;
    left: 28px;
+}
+.slot_1_36 {
+   bottom: 8px;
+   left: 5px;
+}
+.slot_2_36 {
+   bottom: 8px;
+   left: 64px;
 }
 
 

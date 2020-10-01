@@ -64,6 +64,11 @@ class HSDAuction extends APP_GameClass
         self::DbQuery( $sql );
     }
 
+    function getAllAuctionsFromDB(){
+        $sql = "SELECT `auction_id` a_id, `position`, `location`,  `build_type`, `bonus` FROM `auctions`"; 
+        return ($this->game->getCollectionFromDb( $sql ));
+    }
+
     function updateClientAuctions($round_number){
         $auctions = $this->getCurrentRoundAuctions($round_number);
         $this->game->notifyAllPlayers('updateAuctions', clienttranslate( 'Updating Auctions' ), array(
