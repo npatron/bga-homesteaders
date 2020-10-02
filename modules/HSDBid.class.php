@@ -147,7 +147,7 @@ class HSDBid extends APP_GameClass
         $sql = "SELECT `bid_loc` FROM `player`";
         $bids = $this->game->getObjectListFromDB( $sql );
         $offset = 0;
-        if ($this->game->Building->doesPlayerOwnBuilding($p_id, BUILDING_LAWYER)){
+        if ($this->game->Building->doesPlayerOwnBuilding($p_id, BLD_LAWYER)){
             $offset = 1;
         }
         for($i=0; $i < count($bids); $i++){

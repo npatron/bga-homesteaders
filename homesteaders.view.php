@@ -39,10 +39,13 @@
 
         /*********** Place your code below:  ************/
 
-        $this->tpl['ROUND_STRING'] = self::_("Round: ");
-        $number_to_display = $this->game->getGameStateValue('round_number');
-        $this->tpl['ROUND_NUMBER'] = $number_to_display;
-        $this->tpl['BUILDING_STOCK'] = self::_("Building Stock");
+        $this->tpl['ROUND_STRING'] = _("Round: ");
+        $round_number = $this->game->getGameStateValue('round_number');
+        $this->tpl['ROUND_NUMBER'] = $round_number;
+        $this->tpl['FUTURE_AUCTION'] = _("Show Upcoming Auctions");
+        $this->tpl['BUILDING_STOCK'] = _("Building Stock");
+        $this->tpl['BUILDING_DISCARD'] = _("Show Discarded Buildings");
+        $this->tpl['FUTURE_BUILDING'] = _("Show Upcoming Buildings");
 
         $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
         foreach($players as $p_id=>$player){

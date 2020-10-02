@@ -12,7 +12,7 @@
 -->
 <div id ="top">
     <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
-    <a href="#" id="show_auctions" class="bgabutton bgabutton_gray"><span>Show Remaining Auctions</span></a>
+    <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc'>{FUTURE_AUCTION}</span></a>
     <div id='auction_string' class='whiteblock noshow'<!-- BEGIN auction_string --><span class="auction_string" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string --> 
     <div id='future_auction_zone' class="noshow"></div></div>
     <div id="payment_top"> </div> 
@@ -53,13 +53,19 @@
 <!-- Token limbo -->
 
 <div id="limbo" style="display: block"> 
-    <div id='future_building_zone'> </div>
+    
     <div id='first_player_tile' class='building_tile'> </div>
 </div>
 
 <!-- Commmon Building Section-->
 <div id='building_location'>
-    <div class="building_stock"> BUILDING_STOCK </div>
+    <div id='hidden_bld'>
+        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard">{BUILDING_DISCARD}</span></a><!--
+-->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future">{FUTURE_BUILDING}</span></a>
+        <div id='past_building_zone' class="main_building_zone noshow res_blue"> </div><!--
+    --> <div id='future_building_zone' class="main_building_zone noshow res_purple"> </div>
+    </div>
+    <div class="building_stock">{BUILDING_STOCK}</div>
     <div id="main_building_zone" class="main_building_zone"> </div>
 </div>
 

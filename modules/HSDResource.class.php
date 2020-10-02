@@ -27,10 +27,10 @@ class HSDresource extends APP_GameClass
      * updating the trackers: bid_loc, rail_adv, 
      */
     function updateResource($p_id, $type, $amount){
-        $sql = "SELECT `".$type."` FROM `resources` WHERE `player_id`= '".$p_id."'";
-        $resource_count = $this->game->getUniqueValueFromDB( $sql );
-        $resource_count += $amount;
-        $sql = "UPDATE `resources` SET `".$type."`='".$resource_count."' WHERE `player_id`= '".$p_id."'";
+        $sign = '+';
+        if ($amount <0) $sign = '-';
+        
+        $sql = "UPDATE `resources` SET `".$type."`=".$type.$sign.$amount." WHERE `player_id`= '".$p_id."'";
         $this->game->DbQuery( $sql );
     }  
 
@@ -320,7 +320,7 @@ class HSDresource extends APP_GameClass
         $this->updateAndNotifyIncome($p_id, $trade_for_type, $trade_for_amt, $trade_message);
         
         if ($sell){
-            if ($this->game->Building->doesPlayerOwnBuilding($p_id, BUILDING_MARKET)){
+            if ($this->game->Building->doesPlayerOwnBuilding($p_id, BLD_MARKET)){
                 $this->updateAndNotifyIncome($p_id, 'silver', 1, _('market sell bonus'));
             }
             $this->updateAndNotifyIncome($p_id, 'vp', 1, $trade_message);

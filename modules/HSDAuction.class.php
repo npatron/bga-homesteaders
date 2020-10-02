@@ -26,7 +26,7 @@ class HSDAuction extends APP_GameClass
         $values=array();
         //first auction is in order, 
         for ($i = 1; $i <11; $i++){
-            $values[] = "('$i','$i','".AUCTION_LOC_DECK1."', '".$build[$i-1]."', '".$bonus[$i-1]."')";
+            $values[] = "('$i','$i','".AUC_LOC_1."', '".$build[$i-1]."', '".$bonus[$i-1]."')";
         }
 
         //second auction has 1-4 , 5-8, and 9-10 shuffled
@@ -37,13 +37,13 @@ class HSDAuction extends APP_GameClass
         shuffle($position2);
         shuffle($position3);
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+11)."','".$position1[$i]."','".AUCTION_LOC_DECK2."', '".$build[$i+10]."', '".$bonus[$i+10]."')";
+            $values[] = "('".($i+11)."','".$position1[$i]."','".AUC_LOC_2."', '".$build[$i+10]."', '".$bonus[$i+10]."')";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+15)."','".$position2[$i]."','".AUCTION_LOC_DECK2."', '".$build[$i+14]."', '".$bonus[$i+14]."')";
+            $values[] = "('".($i+15)."','".$position2[$i]."','".AUC_LOC_2."', '".$build[$i+14]."', '".$bonus[$i+14]."')";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "('".($i+19)."','".$position3[$i]."','".AUCTION_LOC_DECK2."', '".$build[$i+18]."', '".$bonus[$i+18]."')";
+            $values[] = "('".($i+19)."','".$position3[$i]."','".AUC_LOC_2."', '".$build[$i+18]."', '".$bonus[$i+18]."')";
         }
 
         if ($playerCount>3){
@@ -51,13 +51,13 @@ class HSDAuction extends APP_GameClass
             shuffle($position2);
             shuffle($position3);
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+21)."','".$position1[$i]."','".AUCTION_LOC_DECK3."', '".$build[$i+20]."', '".$bonus[$i+20]."')";
+                $values[] = "('".($i+21)."','".$position1[$i]."','".AUC_LOC_3."', '".$build[$i+20]."', '".$bonus[$i+20]."')";
             }
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+25)."','".$position2[$i]."','".AUCTION_LOC_DECK3."', '".$build[$i+24]."', '".$bonus[$i+24]."')";
+                $values[] = "('".($i+25)."','".$position2[$i]."','".AUC_LOC_3."', '".$build[$i+24]."', '".$bonus[$i+24]."')";
             }
             for ($i = 0; $i <2; $i++){
-                $values[] = "('".($i+29)."','".$position3[$i]."','".AUCTION_LOC_DECK3."', '".$build[$i+28]."', '".$bonus[$i+28]."')";
+                $values[] = "('".($i+29)."','".$position3[$i]."','".AUC_LOC_3."', '".$build[$i+28]."', '".$bonus[$i+28]."')";
             }   
         }
         $sql .= implode( ',', $values ); 
@@ -86,7 +86,7 @@ class HSDAuction extends APP_GameClass
         $round_number = $this->game->getGameStateValue( 'round_number' );
         $this->game->notifyAllPlayers( "updateAuction", _( 'Discard Auction Tile' ), 
                 array('auction_no'=>$auction_no, 'state'=>'discard') );
-        $sql = "UPDATE `auctions` SET `location`='".AUCTION_LOC_DISCARD."' WHERE `location` = '".$auction_no."' AND position = '".$round_number."'";
+        $sql = "UPDATE `auctions` SET `location`='".AUC_LOC_DISCARD."' WHERE `location` = '".$auction_no."' AND position = '".$round_number."'";
         $this->game->DbQuery( $sql);
     }
 
@@ -115,16 +115,16 @@ class HSDAuction extends APP_GameClass
         $sql = "SELECT `bonus` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'";
         $bonus = $this->game->getUniqueValueFromDB($sql);
         switch($bonus){
-            case AUCTION_BONUS_NONE:
+            case AUC_BONUS_NONE:
                 $next_state = 'endBuild';
             break;
-            case AUCTION_BONUS_6VP_AND_FOOD_VP:
+            case AUC_BONUS_6VP_AND_FOOD_VP:
                 $this->game->Resource->updateAndNotifyIncome($active_player, 'vp', 6, 'a:Auction Reward');
-            case AUCTION_BONUS_WORKER:
-            case AUCTION_BONUS_WORKER_RAIL_ADV:
-            case AUCTION_BONUS_WOOD_FOR_TRACK:
-            case AUCTION_BONUS_COW_FOR_VP:
-            case AUCTION_BONUS_FOOD_FOR_VP:
+            case AUC_BONUS_WORKER:
+            case AUC_BONUS_WORKER_RAIL_ADV:
+            case AUC_BONUS_WOOD_FOR_TRACK:
+            case AUC_BONUS_COW_FOR_VP:
+            case AUC_BONUS_FOOD_FOR_VP:
                 $this->game->setGameStateValue( 'auction_bonus', $bonus);
             break;
         }

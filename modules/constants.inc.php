@@ -1,93 +1,65 @@
 <?php
 
-  define("AUCTION_LOC_DISCARD", 0);
-  define("AUCTION_LOC_DECK1",   1);
-  define("AUCTION_LOC_DECK2",   2);
-  define("AUCTION_LOC_DECK3",   3);
-  // Auction tiles
-  define("AUCTION1_1",  1);
-  define("AUCTION1_2",  2);
-  define("AUCTION1_3",  3);
-  define("AUCTION1_4",  4);
-  define("AUCTION1_5",  5);
-  define("AUCTION1_6",  6);
-  define("AUCTION1_7",  7);
-  define("AUCTION1_8",  8);
-  define("AUCTION1_9",  9);
-  define("AUCTION1_10", 10);
-
-  define("AUCTION2_1",  11);
-  define("AUCTION2_2",  12);
-  define("AUCTION2_3",  13);
-  define("AUCTION2_4",  14);
-  define("AUCTION2_5",  15);
-  define("AUCTION2_6",  16);
-  define("AUCTION2_7",  17);
-  define("AUCTION2_8",  18);
-  define("AUCTION2_9",  19);
-  define("AUCTION2_10", 20);
-
-  define("AUCTION3_1",  21);
-  define("AUCTION3_2",  22);
-  define("AUCTION3_3",  23);
-  define("AUCTION3_4",  24);
-  define("AUCTION3_5",  25);
-  define("AUCTION3_6",  26);
-  define("AUCTION3_7",  27);
-  define("AUCTION3_8",  28);
-  define("AUCTION3_9",  29);
-  define("AUCTION3_10", 30);
-
-  // Buildings
-  define("BUILDING_HOMESTEAD_YELLOW", 1);
-  define("BUILDING_HOMESTEAD_RED", 2);
-  define("BUILDING_HOMESTEAD_GREEN", 3);
-  define("BUILDING_HOMESTEAD_BLUE", 4);
+  define("AUC_LOC_DISCARD", 0);
+  define("AUC_LOC_1",   1);
+  define("AUC_LOC_2",   2);
+  define("AUC_LOC_3",   3);
+  
+  // Building IDs
+  define("BLD_HOMESTEAD_YELLOW", 1);
+  define("BLD_HOMESTEAD_RED", 2);
+  define("BLD_HOMESTEAD_GREEN", 3);
+  define("BLD_HOMESTEAD_BLUE", 4);
+  define("BLD_HOMESTEAD_PURPLE", 36);
   // Settlement
-  define("BUILDING_GRAIN_MILL", 5);
-  define("BUILDING_FARM" ,      6);
-  define("BUILDING_MARKET" ,    7);
-  define("BUILDING_FOUNDRY" ,   8);
-  define("BUILDING_STEEL_MILL", 9);
+  define("BLD_GRAIN_MILL", 5);
+  define("BLD_FARM" ,      6);
+  define("BLD_MARKET" ,    7);
+  define("BLD_FOUNDRY" ,   8);
+  define("BLD_STEEL_MILL", 9);
   // Settlement or TOWN
-  define("BUILDING_BOARDING_HOUSE" ,   10);
-  define("BUILDING_RAILWORKERS_HOUSE", 11);
-  define("BUILDING_RANCH",             12);
-  define("BUILDING_TRADING_POST",      13);
-  define("BUILDING_GENERAL_STORE",     14);
-  define("BUILDING_GOLD_MINE",         15);
-  define("BUILDING_COPPER_MINE",       16);
-  define("BUILDING_RIVER_PORT",        17);
+  define("BLD_BOARDING_HOUSE" ,   10);
+  define("BLD_RAILWORKERS_HOUSE", 11);
+  define("BLD_RANCH",             12);
+  define("BLD_TRADING_POST",      13);
+  define("BLD_GENERAL_STORE",     14);
+  define("BLD_GOLD_MINE",         15);
+  define("BLD_COPPER_MINE",       16);
+  define("BLD_RIVER_PORT",        17);
   // Town
-  define("BUILDING_CHURCH",            18);
-  define("BUILDING_WORKSHOP",          19);
-  define("BUILDING_DEPOT",             20);
-  define("BUILDING_STABLES",           21);
-  define("BUILDING_BANK",              22);
-  define("BUILDING_MEATPACKING_PLANT", 23);
-  define("BUILDING_FORGE",             24);
-  define("BUILDING_FACTORY",           25);
-  define("BUILDING_RODEO",             26);
-  define("BUILDING_LAWYER",            27);
-  define("BUILDING_FAIRGROUNDS",       28);
+  define("BLD_CHURCH",            18);
+  define("BLD_WORKSHOP",          19);
+  define("BLD_DEPOT",             20);
+  define("BLD_STABLES",           21);
+  define("BLD_BANK",              22);
+  define("BLD_MEATPACKING_PLANT", 23);
+  define("BLD_FORGE",             24);
+  define("BLD_FACTORY",           25);
+  define("BLD_RODEO",             26);
+  define("BLD_LAWYER",            27);
+  define("BLD_FAIRGROUNDS",       28);
   // City
-  define("BUILDING_DUDE_RANCH",    29);
-  define("BUILDING_TOWN_HALL",     30);
-  define("BUILDING_TERMINAL",      31);
-  define("BUILDING_RESTARAUNT",    32);
-  define("BUILDING_TRAIN_STATION", 33);
-  define("BUILDING_CIRCUS",        34);
-  define("BUILDING_RAIL_YARD",     35);  
-  define("FIRST_PLAYER_TILE",      36);
+  define("BLD_DUDE_RANCH",    29);
+  define("BLD_TOWN_HALL",     30);
+  define("BLD_TERMINAL",      31);
+  define("BLD_RESTARAUNT",    32);
+  define("BLD_TRAIN_STATION", 33);
+  define("BLD_CIRCUS",        34);
+  define("BLD_RAIL_YARD",     35);  
 
   // expansion
-  define("BUILDING_HOMESTEAD_PURPLE", 36);
-
+  define("BLD_LUMBERYARD",  37);
+  define("BLD_SALOON",      38);
+  define("BLD_SILVER_MINE", 39);
+  define("BLD_HOTEL",       40);
+  define("BLD_WAREHOUSE",   41);
+  define("BLD_POST_OFFICE", 42);
+  
   // building location mapping
-  define("BUILDING_LOC_FUTURE",  0);
-  define("BUILDING_LOC_OFFER",   1);
-  define("BUILDING_LOC_PLAYER",  2);
-  define("BUILDING_LOC_DISCARD", 3);
+  define("BLD_LOC_FUTURE",  0);
+  define("BLD_LOC_OFFER",   1);
+  define("BLD_LOC_PLAYER",  2);
+  define("BLD_LOC_DISCARD", 3);
   // building available to build stages
   define("STAGE_SETTLEMENT", 1);
   define("STAGE_SETTLEMENT_TOWN", 2);
@@ -121,14 +93,14 @@
   define("BUILD_BONUS_RAIL_ADVANCE",    4);
   define("BUILD_BONUS_TRACK_AND_BUILD", 5);
 
-  define("AUCTION_BONUS_NONE",            0);
-  define("AUCTION_BONUS_WORKER",          1);
-  define("AUCTION_BONUS_WORKER_RAIL_ADV", 2);
-  define("AUCTION_BONUS_WOOD_FOR_TRACK",  3);
-  define("AUCTION_BONUS_COPPER_FOR_VP",   4);
-  define("AUCTION_BONUS_COW_FOR_VP",      5);
-  define("AUCTION_BONUS_6VP_AND_FOOD_VP", 6);
-  define("AUCTION_BONUS_FOOD_FOR_VP",     7);
+  define("AUC_BONUS_NONE",            0);
+  define("AUC_BONUS_WORKER",          1);
+  define("AUC_BONUS_WORKER_RAIL_ADV", 2);
+  define("AUC_BONUS_WOOD_FOR_TRACK",  3);
+  define("AUC_BONUS_COPPER_FOR_VP",   4);
+  define("AUC_BONUS_COW_FOR_VP",      5);
+  define("AUC_BONUS_6VP_AND_FOOD_VP", 6);
+  define("AUC_BONUS_FOOD_FOR_VP",     7);
 
   // Bid location mapping
   define("NO_BID",     0);
@@ -163,7 +135,7 @@
   define("BID_A3_B21", 29);
 
   // phases that caused rail bonus.
-  define ("PHASE_BID_PASS" ,      1);
-  define ("PHASE_BUILD_BONUS" ,   2);
-  define ("PHASE_AUCTION_BONUS" , 3);
+  define ("PHASE_BID_PASS" ,  1);
+  define ("PHASE_BLD_BONUS" , 2);
+  define ("PHASE_AUC_BONUS" , 3);
 

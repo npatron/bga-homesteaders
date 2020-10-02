@@ -394,11 +394,6 @@ div#done_trading {
    width: auto;
    border-radius: 6px;
 }
-#future_building_zone {
-   visibility: hidden;
-   height: 0px;
-   width: 0px;
-}
 .building_zone {
    position: relative;
    display: grid;
@@ -684,12 +679,12 @@ div#done_trading {
    left: 14px;
 }
 .slot_2_2 {
-   bottom: 8px;
-   left: 64px;
+   bottom: 9px;
+   left: 71px;
 }
 .slot_1_3 {
    bottom: 10px;
-   left: 8px;
+   left: 14px;
 }
 .slot_2_3 {
    bottom: 10px;
@@ -697,7 +692,7 @@ div#done_trading {
 }
 .slot_1_4 {
    bottom: 9px;
-   left: 11px;
+   left: 14px;
 }
 .slot_2_4 {
    bottom: 8px;
@@ -716,12 +711,12 @@ div#done_trading {
    left: 51px;
 }
 .slot_1_8 {
-   bottom: 13px;
-   left: 29px;
+   bottom: 15px;
+   left: 39px;
 }
 .slot_1_12 {
    bottom: 13px;
-   left: 26px;
+   left: 31px;
 }
 .slot_1_15 {
    bottom: 14px;
@@ -737,12 +732,8 @@ div#done_trading {
    width: 70px;
 }
 .slot_1_24 {
-   bottom: 8px;
-   left: 30px;
-}
-.slot_2_24 {
-   bottom: 45px;
-   left: 30px;
+   bottom: 13px;
+   left: 38px;
 }
 .slot_1_26 {
    bottom: 8px;
