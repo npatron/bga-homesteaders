@@ -36,53 +36,64 @@ class HSDScore extends APP_GameClass
         return $count;
     }
 
-    
+    function UpdateEndgameScores(){
+        $players = $this->game->loadPlayersBasicInfos();
+        $allScores = array();
+        foreach($players as $p_id=>$player){
+            $p_score = $this->calculateEndgameScore($p_id);
+            $allScores[$p_id]=$p_score;
+            $this->dbSetScore($p_id, $$p_score['total']);
+            $p_silver = $this->game->Resource->getPlayerResourceAmount($p_id,'silver');
+            $this->dbSetAuxScore($p_id, $p_silver);
+            // TODO: add loggers for the different score categories.
+            // $this->setStat($value, $name, $player_id = NULL);
+        }
+    }
 
-    function calculateEndgameScore(){
+    function calculateEndgameScore($p_id){
         // after round 10, final Income Round (no auction) then scoring.
         // also update stats with these values. so endgame will be more interesting.
-        $allScores = array();
-        $players = $this->game->loadPlayersBasicInfos();
-        foreach ($players as $p_id => $player){
-            // Score comes from these places.
-            // VP tokens
-            $vp_tokens = $this->getVPTokens($p_id);
-            // Buildings
-            $bld_score = $this->dbGetScore($p_id);
-            // Building bonuses
-            $bld_bonus_score = $this->getPlayerBonusVPsFromBuildings($p_id);
-            $bld_res_score = $bld_bonus_score[TYPE_RESIDENTIAL];
-            $bld_com_score = $bld_bonus_score[TYPE_COMMERCIAL];
-            $bld_ind_score = $bld_bonus_score[TYPE_INDUSTRIAL];
-            $bld_sp_score = $bld_bonus_score[TYPE_SPECIAL];
-            
-            $vp_res = $this->getPlayerVPFromResources($p_id);
-            // 2VP per gold
-            $gold = $vp_res['gold'];
-            // 2VP per cow
-            $cow = $vp_res['cow'];
-            // 2VP per Copper
-            $copper = $vp_res['copper'];
-            // 1 + 2 + 3 + 4 + 5 etc for loans
-            $loans = $this->getScoreFromLoans($p_id);
-            $allScores[$p_id] = array(
-                'vp'   => $vp_tokens,
-                'bld'  => $bld_score,
-                TYPE_RESIDENTIAL=> $bld_res_score,
-                TYPE_COMMERCIAL => $bld_com_score,
-                TYPE_INDUSTRIAL => $bld_ind_score,
-                TYPE_SPECIAL    => $bld_sp_score,
-                'gold'  => $gold,
-                'cow'   => $cow,
-                'copper'=> $copper,
-                'loan'  => $loans,
-            );
-            $total = 0;
-            foreach ($allScores[$p_id] as $type =>$val){
-                $total += $val;
-            }
-            $allScores[$p_id]['total'] = $total;
+        // Score comes from these places.
+        // VP tokens
+        $vp_tokens = $this->getVPTokens($p_id);
+        // Buildings
+        $bld_score = $this->dbGetScore($p_id);
+        // Building bonuses
+        $bld_bonus = $this->getPlayerBonusVPsFromBuildings($p_id);
+        $bld_bonus_score = $bld_bonus['vp'];
+        $bld_res_score = $bld_bonus_score[TYPE_RESIDENTIAL];
+        $bld_com_score = $bld_bonus_score[TYPE_COMMERCIAL];
+        $bld_ind_score = $bld_bonus_score[TYPE_INDUSTRIAL];
+        $bld_sp_score = $bld_bonus_score[TYPE_SPECIAL];
+        $bld_cnt = $bld_bonus['bld'];
+        
+        $vp_res = $this->getPlayerVPFromResources($p_id);
+        // 2VP per gold
+        $gold = $vp_res['gold'];
+        // 2VP per cow
+        $cow = $vp_res['cow'];
+        // 2VP per Copper
+        $copper = $vp_res['copper'];
+        // 1 + 2 + 3 + 4 + 5 etc for loans
+        $loans = $this->getScoreFromLoans($p_id);
+        $allScores = array(
+            'vp'   => $vp_tokens,
+            'bld'  => $bld_score,
+            TYPE_RESIDENTIAL=> $bld_res_score,
+            TYPE_COMMERCIAL => $bld_com_score,
+            TYPE_INDUSTRIAL => $bld_ind_score,
+            TYPE_SPECIAL    => $bld_sp_score,
+            'gold'  => $gold,
+            'cow'   => $cow,
+            'copper'=> $copper,
+            'loan'  => $loans,
+        );
+        $total = 0;
+        foreach ($allScores[$p_id] as $type =>$val){
+            $total += $val;
         }
+        $allScores['total'] = $total;
+        $allScores['bld_cnt'] = $bld_cnt;
         return $allScores;
     }
 
@@ -162,7 +173,7 @@ class HSDScore extends APP_GameClass
                 break;
             }
         }
-        return $vps;
+        return array('bld' =>$buildings, 'vp'=>$vps);
     }
 
 }

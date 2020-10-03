@@ -34,6 +34,7 @@ if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, sinc
     define("STATE_END_BUILD",          53);
     define("STATE_END_ROUND",          59);
     define("STATE_ENDGAME_ACTIONS",    60);
+    define("STATE_UPDATE_SCORES",      61);
     define("STATE_END_GAME",           99);
 }
  
@@ -74,7 +75,7 @@ $machinestates = array(
         "description" =>  clienttranslate('collect income'),
         "type" => "game",
         "action" => "stCollectIncome",
-        "transitions" => array( "" => STATE_PAY_WORKERS )
+        "transitions" => array( "" => STATE_PAY_WORKERS,  )
     ),
     
     STATE_PAY_WORKERS => array(
@@ -94,7 +95,8 @@ $machinestates = array(
         "type" => "game",
         "action" => "stBeginAuction",
         "updateGameProgression" => true,
-        "transitions" => array( "" => STATE_PLAYER_BID)
+        "transitions" => array( "auction" => STATE_PLAYER_BID, 
+                                "endGame" => STATE_ENDGAME_ACTIONS,)
     ),
 
     STATE_PLAYER_BID => array(
@@ -229,8 +231,7 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stEndRound",
-        "transitions" => array( "endGame" => STATE_END_GAME, 
-                                "nextAuction" => STATE_START_ROUND )
+        "transitions" => array( "nextAuction" => STATE_START_ROUND )
     ),
 
     STATE_ENDGAME_ACTIONS => array(
@@ -243,6 +244,15 @@ $machinestates = array(
         "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
         "transitions" => array( "" => STATE_END_GAME)
     ),
+
+    STATE_UPDATE_SCORES => array(
+        "name" => "UpdateScores",
+        "description" => '',
+        "type" => "game",
+        "action" => "stUpdateScores",
+        "transitions" => array( "nextAuction" => STATE_START_ROUND )
+    ),
+
 
     // Final state.
     // Please do not modify (and do not overload action/args methods).

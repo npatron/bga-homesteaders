@@ -127,10 +127,13 @@ class HSDBid extends APP_GameClass
             $this->outbidPlayer($outbid_id);
         }
         // then update bid for this 
-        
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} places a bid'), array (
+        $auc = ceil($bid_loc/10);
+        $amt = $this->bid_cost_array[$bid_loc%10];
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} bids ${amount} for Auction ${auction}'), array (
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
+                'amount' => $amt,
+                'auction' => $auc,
                 'bid_location'=> $bid_loc) );
         $sql = "UPDATE `player` SET `bid_loc` = '".$bid_loc."', `outbid`='0' WHERE `player_id` = '".$p_id."'";
         $this->game->DbQuery( $sql );

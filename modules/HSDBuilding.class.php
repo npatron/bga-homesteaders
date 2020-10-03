@@ -384,7 +384,7 @@ class HSDBuilding extends APP_GameClass
         foreach( $p_bld as $b_key => $building ) {
             $b_name = $this->getBuildingNameFromKey($b_key);
             $reason = 'b:'.$b_name;
-            switch($building['building_id']) {
+            switch($building['b_id']) {
                 case BLD_HOMESTEAD_YELLOW:
                 case BLD_HOMESTEAD_RED:
                 case BLD_HOMESTEAD_GREEN:

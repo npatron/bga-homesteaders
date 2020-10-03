@@ -269,7 +269,7 @@ class homesteaders extends Table
         self::checkAction( "takeLoan" );
         $current_player_id = $this->getCurrentPlayerId();
         $this->Resource->updateAndNotifyIncome($current_player_id, 'silver', 2, "loan");
-        $this->Resource->updateAndNotifyIncome($current_player_id, 'loan', 1, "loan");
+        $this->Resource->updateResource($current_player_id, 'loan', 1);
         $this->Log->takeLoan($current_player_id);
     }
     
@@ -462,7 +462,7 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player, array('wood'=> 1))) {
             throw new BgaUserException( _("You need a Wood to take this action") );
         }
-        $this->Resource->updateAndNotifyPayment($active_player, 'wood', 1, 'a:Auction Bonus', $this->game->getGameStateValue('current_auction'));
+        $this->Resource->updateAndNotifyPayment($active_player, 'wood', 1, 'a:Auction Bonus', $this->getGameStateValue('current_auction'));
         $this->Resource->addTrack($active_player, 'Auction Bonus');
         
         $this->gamestate->nextState( 'done' );
@@ -474,7 +474,7 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player, array('copper'=> 1))){
             throw new BgaUserException( _("You need a Copper to take this action") );
         }
-        $auc = $this->game->getGameStateValue('current_auction');
+        $auc = $this->getGameStateValue('current_auction');
         $this->Resource->updateAndNotifyPayment($active_player, 'copper', 1, 'a:Auction Bonus', $auc);
         $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'a:Auction Bonus', $auc);
         
@@ -487,7 +487,7 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player,array('cow'=> 1))){
             throw new BgaUserException( _("You need a livestock to take this action ") );
         }
-        $auc = $this->game->getGameStateValue('current_auction');
+        $auc = $this->getGameStateValue('current_auction');
         $this->Resource->updateAndNotifyPayment($active_player, 'cow', 1, 'a:Auction Bonus', $auc);
         $this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'a:Auction Bonus', $auc);
         
@@ -500,7 +500,7 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($active_player, array('food'=> 1))){
             throw new BgaUserException( _("You need a food to take this action ") ); 
         }
-        $auc = $this->game->getGameStateValue('current_auction');
+        $auc = $this->getGameStateValue('current_auction');
         $this->Resource->updateAndNotifyPayment($active_player, 'food', 1, 'a:Auction Bonus', $auc);
         $this->Resource->updateAndNotifyIncome($active_player, 'vp', 2, 'a:Auction Bonus', $auc);
         
@@ -516,8 +516,8 @@ class homesteaders extends Table
         $next_state = 'done';
         $auction_bonus = $this->getGameStateValue('auction_bonus');
         if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV) {
-            $this->game->setGameStateValue( 'phase', PHASE_AUC_BONUS);
-            $this->game->Resource->getRailAdv( $active_player );
+            $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
+            $this->Resource->getRailAdv( $active_player );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
@@ -668,8 +668,7 @@ class homesteaders extends Table
     }
 
     function stCollectIncome() {
-        //$this->Resource->collectIncome( ); //trying out just doing it on assigning workers.
-        $this->gamestate->nextState( );
+        $this->gamestate->nextState( '' );
     }
 
     function stPayWorkers() {
@@ -693,10 +692,15 @@ class homesteaders extends Table
     }
     
     function stBeginAuction() {
-        $this->Bid->clearBids( );
-        $first_player = $this->getGameStateValue('first_player');
-        $this->gamestate->changeActivePlayer( $first_player );
-        $this->gamestate->nextState( );
+        $round_number = $this->getGameStateValue('round_number');
+        if ($round_number == 11){
+            $this->gamestate->nextState( 'endGame');
+        } else{
+            $this->Bid->clearBids( );
+            $first_player = $this->getGameStateValue('first_player');
+            $this->gamestate->changeActivePlayer( $first_player );
+            $this->gamestate->nextState( 'auction' );
+        }
     }
     
     function stRailBonus() {
@@ -802,19 +806,21 @@ class homesteaders extends Table
     }
 
     function stEndRound(){
-        $round_number = $this->incGameStateValue( 'round_number', 1 );
-        $next_state = "endGame";
-        if ($round_number <= 10) {
-            $this->setGameStateValue( 'current_auction', 1);
-            $this->Bid->clearBids();
-            $next_state = "nextAuction";
-        }
-        $this->gamestate->nextState( $next_state );
+        //clean up for new round.
+        $this->incGameStateValue( 'round_number', 1 );
+        $this->setGameStateValue( 'current_auction', 1);
+        $this->Bid->clearBids();
+        $this->gamestate->nextState( "nextAuction" );
     }
 
     function stEndGameActions(){
         $this->gamestate->setAllPlayersMultiactive( );
     }
+
+    function stUpdateScores(){
+        $this->Score->UpdateEndgameScores();
+    }
+    
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie

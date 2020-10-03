@@ -18,7 +18,7 @@ class HSDLog extends APP_GameClass
   public function initStats($players)
   {
     // Init game statistics
-    $this->game->initStat( 'table', 'turns_number', 0 );
+    $this->game->initStat( 'table', 'turns_number', 0 );//TODO: remove this
     $this->game->initStat( 'table', 'outbids_in_auctions', 0 );
     $this->game->initStat( 'table', 'buildings', 0);
     
@@ -30,6 +30,9 @@ class HSDLog extends APP_GameClass
         $this->game->initStat( 'player', 'special', 0, $player_id );
         $this->game->initStat( 'player', 'bids', 0, $player_id);
         $this->game->initStat( 'player', 'auctions_won', 0, $player_id );
+//        $this->game->initStat( 'player', 'win_auction_1', 0, $player_id);
+//        $this->game->initStat( 'player', 'win_auction_2', 0, $player_id);
+//        $this->game->initStat( 'player', 'win_auction_3', 0, $player_id);
         $this->game->initStat( 'player', 'spent_on_auctions', 0, $player_id );
         $this->game->initStat( 'player', 'times_outbid', 0, $player_id );
         $this->game->initStat( 'player', 'outbids', 0, $player_id );
@@ -94,7 +97,7 @@ class HSDLog extends APP_GameClass
   public function insert($player_id, $piece_id, $action, $args = [], $stats = [])
   {
     $player_id = $player_id == -1 ? $this->game->getActivePlayerId() : $player_id;
-    $moveId = self::getUniqueValueFromDB("SELECT `global_value` FROM `global` WHERE `global_id` = 3");
+    $moveId = $this->game->getUniqueValueFromDB("SELECT `global_value` FROM `global` WHERE `global_id` = 3");
     $round = $this->game->getGameStateValue("round_number");
 
     if ($action === 'build'){
@@ -119,7 +122,15 @@ class HSDLog extends APP_GameClass
       $stats[] = [$player_id, 'bids'];
     } else if ($action === 'loan'){
       $stats[] = [$player_id, 'loans'];
+    } else if ($action === 'outbid'){
+      $stats[] = ['table','outbids_in_auctions'];
+      $stats[] = [$player_id,'times_outbid'];
+      $stats[] = [$args['outbid_by'],'outbids'];
+    } else if ($action === 'winAuction'){
+      $stats[] = [$player_id, 'auctions_won'];
+      $stats[] = [$player_id, 'spent_on_auctions', $args['cost']];
     }
+
 
     if (!empty($stats)) {
       $this->incrementStats($stats);
@@ -157,6 +168,16 @@ class HSDLog extends APP_GameClass
     $this->insert($player_id, 0, 'loan');
   }
 
+  public function payOffLoan($player_id, $reason)
+  {
+    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off loan ${reason}' ), array(
+      'player_id' => $player_id,
+      'player_name' => $this->game->getPlayerName($player_id),
+      'reason' => $reason,
+    ) );
+    $this->insert($player_id, 0, 'loanPaid');
+  }
+
   public function passBid($player_id)
   {
     $this->insert($player_id, 0, 'passBid');
@@ -165,6 +186,11 @@ class HSDLog extends APP_GameClass
   public function outbidPlayer($outbid_player_id, $outbidding_player_id)
   {
     $this->insert($outbid_player_id, 0, 'outbid', array('outbid_by'=>$outbidding_player_id));
+  }
+
+  public function winAuction($p_id, $auc_no, $bid_cost)
+  {
+    $this->insert($p_id, $auc_no, 'winAuction', array('cost'=>$bid_cost));
   }
 
 }

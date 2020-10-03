@@ -576,6 +576,12 @@ div#done_trading {
    width: 25px;
    background-size: 75px 30px;
 }
+.loan {
+   top: 0px;
+   height: 102px;
+   width: 85px;
+   background-size: 255px 102px;
+}
 
 .token_wood {
    background-position: 0% 0%;
@@ -731,6 +737,15 @@ div#done_trading {
    left: 28px;
    width: 70px;
 }
+.slot_1_23 {
+   bottom: 47px;
+   left: 32px;
+}
+.slot_2_23 {
+   bottom: 10px;
+   left: 32px;
+}
+
 .slot_1_24 {
    bottom: 13px;
    left: 38px;

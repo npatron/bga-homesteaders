@@ -1510,6 +1510,10 @@ function (dojo, declare) {
             this.notifqueue.setSynchronous( 'playerIncome', 500 );
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
             this.notifqueue.setSynchronous( 'playerPayment', 500 );
+            dojo.subscribe( 'loanTaken', this, "notif_loanTaken" );
+            this.notifqueue.setSynchronous( 'loanTaken', 500 );
+            dojo.subscribe( 'loanPaid', this, "notif_loanPaid");
+            this.notifqueue.setSynchronous( 'loanPaid', 500 );
             dojo.subscribe( 'clearAllBids', this, "notif_clearAllBids");
             this.notifqueue.setSynchronous( 'clearAllBids', 250 );
         },  
@@ -1690,12 +1694,11 @@ notif_cardPlayed: function (notif) {
             
             var destination = 'board';
             if (notif.args.origin == 'auction'){
-                destination = `auction_tile_${Number(notif.args.key)}`;
+                destination = `auction_tile_zone_${Number(notif.args.key)}`;
             } else if  (notif.args.origin == 'building'){
                 destination = `building_tile_${Number(notif.args.key)}`;
             } 
             const player_zone_divId = `player_board_${notif.args.player_id}`;
-
             for(let i = 0; i < notif.args.amount; i++){
                 console.log("sending token '"+notif.args.type+"' from player '"+ notif.args.player_name+ "'");
                 this.slideTemporaryObject( `<div class="token token_${notif.args.type}"></div>`, 'limbo' , player_zone_divId, destination,  500 , 100*i );
@@ -1703,6 +1706,24 @@ notif_cardPlayed: function (notif) {
                     this.resourceCounters[notif.args.type].incValue(-1);
                 }
             }
-        }
+        },
+
+        notif_loanPaid: function( notif ){
+            console.log ('notif_loanPaid');
+
+            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , `player_board_${notif.args.player_id}`, 'board',  500 , 100*i );
+            if (notif.args.player_id == this.player_id){
+                this.resourceCounters['loan'].incValue(-1);
+            }
+        },
+
+        notif_loanTaken: function( notif ){
+            console.log ('notif_loanTaken');
+
+            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', `player_board_${notif.args.player_id}`,  500 , 100*i );
+            if (notif.args.player_id == this.player_id){
+                this.resourceCounters['loan'].incValue(1);
+            }
+        },
    });             
 });

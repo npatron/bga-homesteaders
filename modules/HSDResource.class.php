@@ -22,15 +22,16 @@ class HSDresource extends APP_GameClass
         $this->game = $game;
     }
 
+    function getPlayerResourceAmount($p_id, $type){
+        $this->game->getUniqueValueFromDB("SELECT `$type` FROM `resources` WHERE `player_id`='$p_id'");
+    }
+
     /**
-     * This will NOT notify the player only for use when notification has already happened (workers), or 
+     * This will NOT notify the player only for use when notification has already happened (workers), drack, loan, 
      * updating the trackers: bid_loc, rail_adv, 
      */
     function updateResource($p_id, $type, $amount){
-        $sign = '+';
-        if ($amount <0) $sign = '-';
-        
-        $sql = "UPDATE `resources` SET `".$type."`=".$type.$sign.$amount." WHERE `player_id`= '".$p_id."'";
+        $sql = "UPDATE `resources` SET `".$type."`=".$type."+".$amount." WHERE `player_id`= '".$p_id."'";
         $this->game->DbQuery( $sql );
     }  
 
@@ -119,7 +120,8 @@ class HSDresource extends APP_GameClass
         if ($playerLoan== 0){
             $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $reason_string);
         } else {
-            $this->game->Resource->updateAndNotifyPayment ($p_id, 'loan', 1, $reason_string);
+            $this->game->Log->payOffLoan($p_id, $reason_string);
+            $this->game->Resource->updateResource ($p_id, 'loan', 1);
         }
     }
 
