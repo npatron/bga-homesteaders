@@ -101,30 +101,22 @@ class HSDAuction extends APP_GameClass
 
     function getCurrentAuctionBonus(){
         $round_number = $this->game->getGameStateValue( 'round_number' );
-        $auction_no = $this->game->getGameStateValue( 'current_auction' );
-        $sql = "SELECT `bonus` FROM `auctions`  WHERE `location` = '".$auction_no."' AND `position` = '".$round_number."'";
+        $current_auction = $this->game->getGameStateValue( 'current_auction' );
+        $sql = "SELECT `bonus` FROM `auctions`  WHERE `location` = '".$current_auction."' AND `position` = '".$round_number."'";
         $bonus = $this->game->getUniqueValueFromDB( $sql );
         return ($bonus);
     }
 
     function setupCurrentAuctionBonus(){
         $next_state = "bonusChoice";
-        $active_player = $this->game->getActivePlayerId();
-        $auction_no = $this->game->getGameStateValue( 'current_auction' );
-        $round_number = $this->game->getGameStateValue( 'round_number' );
-        $sql = "SELECT `bonus` FROM `auctions`  WHERE `location` = ".$auction_no." AND `position` = '".$round_number."'";
-        $bonus = $this->game->getUniqueValueFromDB($sql);
+        $bonus = $this->getCurrentAuctionBonus();
         switch($bonus){
             case AUC_BONUS_NONE:
                 $next_state = 'endBuild';
             break;
             case AUC_BONUS_6VP_AND_FOOD_VP:
-                $this->game->Resource->updateAndNotifyIncome($active_player, 'vp', 6, 'a:Auction Reward');
-            case AUC_BONUS_WORKER:
-            case AUC_BONUS_WORKER_RAIL_ADV:
-            case AUC_BONUS_WOOD_FOR_TRACK:
-            case AUC_BONUS_COW_FOR_VP:
-            case AUC_BONUS_FOOD_FOR_VP:
+                $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp', 6, 'a:Auction Reward');
+            default:
                 $this->game->setGameStateValue( 'auction_bonus', $bonus);
             break;
         }

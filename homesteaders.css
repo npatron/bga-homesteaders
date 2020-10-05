@@ -339,7 +339,7 @@ div#trade_market_food_steel{
    left: 79.5%;
    top: 45.5%;
 }
-div#trade_bank_trade_copper{
+div#trade_bank_trade_silver{
    left: 79.5%;
    bottom: 0%;
 }
@@ -721,8 +721,8 @@ div#done_trading {
    left: 39px;
 }
 .slot_1_12 {
-   bottom: 13px;
-   left: 31px;
+   bottom: 14px;
+   left: 26px;
 }
 .slot_1_15 {
    bottom: 14px;
@@ -738,12 +738,12 @@ div#done_trading {
    width: 70px;
 }
 .slot_1_23 {
-   bottom: 47px;
-   left: 32px;
+   bottom: 48px;
+   left: 39px;
 }
 .slot_2_23 {
    bottom: 10px;
-   left: 32px;
+   left: 39px;
 }
 
 .slot_1_24 {

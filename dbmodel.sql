@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `auctions` (
   `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3',
 --  `state`            INT(1) UNSIGNED NOT NULL COMMENT 'state: 0-face-Down, 1-face-Up',
   `build_type`       INT(2) UNSIGNED DEFAULT 0 NOT NULL COMMENT '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE',
-  `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL COMMENT 'Bonus: 0-No, 1-Yes,',
+  `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL,
   PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB ;
 

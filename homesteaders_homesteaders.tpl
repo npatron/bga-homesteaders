@@ -24,11 +24,11 @@
 <!-- Auction Board -->
 <div id="board" class="shadow">
     <div id="pending_bids" class="token_zone"> </div>
-    <div id='passed_bid_zone' class="token_zone"> </div>
 
     <!-- BEGIN bid_slot -->
     <div id="bid_slot_{A}_{B}" class="bid_slot"> </div>
     <!-- END bid_slot -->
+
     <!-- BEGIN auction_stacks -->
     <div id="auction_tile_zone_{A}" class="auction_tiles_zone"> </div>
     <!-- END auction_stacks -->
@@ -36,7 +36,7 @@
     <!-- BEGIN train_advancement -->
     <div id="train_advancement_{I}" class="train_advance"> </div>
     <!-- END train_advancement -->
-    
+
     <div id="train_bonus_1_trade" class="train_bonus"> </div>
     <div id="train_bonus_2_track" class="train_bonus"> </div>
     <div id="train_bonus_3_worker" class="train_bonus"> </div>
@@ -47,7 +47,6 @@
     <div id="train_bonus_4_copper" class="train_bonus"> </div>
     <div id="train_bonus_4_cow" class="train_bonus"> </div>
     <div id="train_bonus_5_vp" class="train_bonus"> </div>
-
 </div>
 
 <!-- Token limbo -->
@@ -105,7 +104,7 @@
 
             <div id="trade_market_wood_food" class="trade_option"> </div>
             <div id="trade_market_food_steel" class="trade_option"> </div>
-            <div id="trade_bank_trade_copper" class="trade_option"> </div>
+            <div id="trade_bank_trade_silver" class="trade_option"> </div>
         </div>
     </div>
     <div id="payment_bottom"> 

@@ -30,7 +30,6 @@ if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, sinc
     define("STATE_TRAIN_STATION_BUILD",44);
     define("STATE_AUCTION_BONUS",      50);
     define("STATE_CHOOSE_BONUS",       51);
-    define("STATE_RESOLVE_BONUS",      52);
     define("STATE_END_BUILD",          53);
     define("STATE_END_ROUND",          59);
     define("STATE_ENDGAME_ACTIONS",    60);
@@ -116,7 +115,6 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must choose a rail bonus'),
         "descriptionmyturn" => clienttranslate('${you} must choose a rail bonus'),
         "type" => "activeplayer",
-        "action" => "stRailBonus",
         "args" => "argRailBonus",
         "possibleactions" => array( "chooseBonus" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
@@ -161,7 +159,6 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may choose a building to build'),
         "type" => "activeplayer",
         "args" => "argAllowedBuildings",
-        "action" => "stBuild",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
         "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS,
@@ -171,12 +168,12 @@ $machinestates = array(
     STATE_RESOLVE_BUILDING =>  array(
         "name" => "resolveBuilding",
         "description" => clienttranslate('${actplayer} may recieve a build bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must decide if you want to recieve a build bonus'),
+        "descriptionmyturn" => clienttranslate('${you} may recieve a build bonus'),
         "type" => "activeplayer",
         "args" => "argBuildingBonus",
         "action" => "stResolveBuilding",
+        "possibleactions" => array("buildBonus"),
         "transitions" => array( "auction_bonus" => STATE_AUCTION_BONUS, 
-                                "end_build" => STATE_END_BUILD,
                                 "rail_bonus" => STATE_RAIL_BONUS,
                                 "train_station_build"=> STATE_TRAIN_STATION_BUILD,)
     ),
@@ -186,7 +183,8 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} may build another building'),
         "descriptionmyturn" => clienttranslate('${you} may build another building'),
         "type" => "activeplayer",
-        "args" => "stBuild",
+        "args" => "argTrainStationBuildings",
+        "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
         "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS,
                                 "end_build" => STATE_END_BUILD )
@@ -197,13 +195,9 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stGetAuctionBonus",
-        "updateGameProgression" => true,
         "transitions" => array( "bonusChoice" => STATE_CHOOSE_BONUS, 
-                             //"railBonus" => STATE_RAIL_BONUS,
                                 "endBuild" => STATE_END_BUILD )
     ),
-    // may need to add a state for resolving specific building when built bonuses separately.
-    // STATE_RESOLVE_BONUS is that one.
 
     STATE_CHOOSE_BONUS => array(
         "name" => "bonusChoice",
@@ -239,7 +233,6 @@ $machinestates = array(
         "description" => clienttranslate('Some players may choose to take actions before scoring'),
         "descriptionmyturn" => clienttranslate('${you} may choose to take actions before scoring'),
         "type" => "multipleactiveplayer",
-        "args" => "argEndGameActions",
         "action" => "stEndGameActions",
         "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
         "transitions" => array( "" => STATE_END_GAME)

@@ -361,11 +361,8 @@ class homesteaders extends Table
         $auction_no = $this->getGameStateValue( 'current_auction' );
         $round_number = $this->getGameStateValue( 'round_number' );
         $bonus = self::getUniqueValueFromDB( "SELECT `bonus` FROM `auctions` WHERE `location` = ".$auction_no." AND `position` = ".$round_number );
-        if ( $bonus ==  1){
-            $this->gamestate->nextState( "bonus" ); 
-        } else { 
-            $this->gamestate->nextState( "endBuild" ); 
-        }
+        $this->gamestate->nextState( "auction_bonus" ); 
+        
     }
 
     public function playerPayWorkers($gold) {
@@ -423,22 +420,13 @@ class homesteaders extends Table
         $this->checkAction( "buildBonus" );
         $active_player = $this->getActivePlayerId();
         $this->Resource->addWorker($active_player, 'Build bonus');
-        $next_state = 'auction_bonus';
-        $auction_bonus = $this->Auction->getCurrentAuctionBonus();
-        if ($auction_bonus == AUC_BONUS_NONE){
-            $next_state = 'end_build';
-        }
-        $this->gamestate->nextState( $next_state );
+        $this->gamestate->nextState( 'auction_bonus' );
     }
 
     public function playerPassBuildingBonus () 
     {
         $this->checkAction( "buildBonus" );
-        $auction_bonus = $this->Auction->getCurrentAuctionBonus();
-        if ($auction_bonus == AUC_BONUS_NONE){
-            $next_state = 'end_build';
-        }
-        $this->gamestate->nextState( $next_state );
+        $this->gamestate->nextState( 'auction_bonus' );
     }
 
     /**** Auction Bonus actions ******/
@@ -524,15 +512,17 @@ class homesteaders extends Table
     }
 
     public function playerPayLoan($gold) {
+        $this->checkAction('payLoan');
         $current_player_id = $this->getCurrentPlayerId();    
-        if ($gold) $cost = array('gold', 1);
-        else $cost = array('silver', 5);
+        if ($gold) $cost = array('gold'=> 1);
+        else $cost = array('silver'=>5);
         $type = array_keys($cost)[0];
         if (!$this->Resource->canPlayerAfford($current_player_id, $cost)){
             throw new BgaUserException( _("You do not have enough ".$type ) );
         }
         $this->Resource->updateAndNotifyPayment($current_player_id, $type , $cost[$type] , 'loan');
-        $this->Resource->updateAndNotifyIncome($current_player_id, 'loan' , 1);
+        $this->Log->payOffLoan($current_player_id, 'loan');
+        $this->Resource->updateResource ($current_player_id, 'loan', -1);
     }
 
     public function playerDoneEndgame() {
@@ -596,10 +586,21 @@ class homesteaders extends Table
 
     function argAllowedBuildings() {
         $active_player_id = $this->getActivePlayerId();
-        $buildings = $this->Building->getAllowedBuildings();
+        $build_type_options = $this->Auction->getCurrentAuctionBuildTypeOptions();
+        $buildings = $this->Building->getAllowedBuildings($build_type_options);
         $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($active_player_id, BLD_RIVER_PORT);
         return(array("allowed_buildings"=> $buildings,
                     "riverPort"=>$ownsRiverPort,));
+    }
+
+    function argTrainStationBuildings() {
+        $active_player_id = $this->getActivePlayerId();
+        $build_type_options = $this->Auction->parseBuildTypeOptions('15');// all
+        $buildings = $this->Building->getAllowedBuildings($build_type_options);
+        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($active_player_id, BLD_RIVER_PORT);    
+        return(array("allowed_buildings"=> $buildings,
+                    "riverPort"=>$ownsRiverPort,));
+        
     }
 
     function argBuildingBonus() {
@@ -649,6 +650,12 @@ class homesteaders extends Table
             self::DbQuery( $sql );
             // add city buildings
             $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` = '".STAGE_CITY."';";
+            self::DbQuery( $sql );
+            $this->Building->updateClientBuildings();
+        }
+        // Final round (just income).
+        if($round_number == 11){
+            $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
             self::DbQuery( $sql );
             $this->Building->updateClientBuildings();
         }
@@ -702,11 +709,6 @@ class homesteaders extends Table
             $this->gamestate->nextState( 'auction' );
         }
     }
-    
-    function stRailBonus() {
-        //$active_player = $this->getActivePlayerId();
-        // wait for player action (select bonus)
-    }
 
     function stNextBid()
     { 
@@ -750,14 +752,8 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
-    function stBuild()
-    { 
-
-    }
-
     function stResolveBuilding()
     { 
-        // if buildingBonus is just get resource, do that now.
         $active_player_id = $this->getActivePlayerId();
         $bonus = $this->getGameStateValue('building_bonus');
         $bonusReason = _('on Build bonus');
@@ -767,12 +763,7 @@ class homesteaders extends Table
             } else if ($bonus == BUILD_BONUS_TRADE){
                 $this->Resource->updateAndNotifyIncome($active_player_id, 'trade', 1, $bonusReason);
             }
-            $auction_bonus =$this->Auction->getCurrentAuctionBonus();
-            if ($auction_bonus == AUC_BONUS_NONE){
-                $this->gamestate->nextState("end_build");
-            } else {
-                $this->gamestate->nextState("auction_bonus");
-            }
+            $this->gamestate->nextState("auction_bonus");
         } else if ($bonus == BUILD_BONUS_RAIL_ADVANCE){
             $this->Resource->getRailAdv($active_player_id);
             $this->setGameStateValue('phase', PHASE_BLD_BONUS);
@@ -782,11 +773,6 @@ class homesteaders extends Table
             $this->gamestate->nextState('train_station_build');
         }
         //the other case (BUILD_BONUS_WORKER) waits for player_choice
-    }
-
-    function stTrainStationBuild()
-    {
-        // don't need to do anything...
     }
 
     function stGetAuctionBonus()

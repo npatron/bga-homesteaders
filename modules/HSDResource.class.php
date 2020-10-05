@@ -121,7 +121,7 @@ class HSDresource extends APP_GameClass
             $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $reason_string);
         } else {
             $this->game->Log->payOffLoan($p_id, $reason_string);
-            $this->game->Resource->updateResource ($p_id, 'loan', 1);
+            $this->game->Resource->updateResource ($p_id, 'loan', -1);
         }
     }
 
@@ -282,12 +282,12 @@ class HSDresource extends APP_GameClass
             break;
             case 'sell_copper':
                 $trade_away_type = "copper";
-                $trade_for_type = "silver";
+                $trade_for_type = "gold";
                 $sell = true;
             break;
             case 'sell_livestock':
                 $trade_away_type = "cow";
-                $trade_for_type = "silver";
+                $trade_for_type = "gold";
                 $sell = true;
             break;
             case 'market_wood_food':
@@ -298,7 +298,7 @@ class HSDresource extends APP_GameClass
                 $trade_away_type = "food";
                 $trade_for_type = "steel";
             break;
-            case 'bank_trade_copper':
+            case 'bank_trade_silver':
                 $trade_away_type = 'trade';
                 $trade_for_type = 'silver';
                 $bank = true;

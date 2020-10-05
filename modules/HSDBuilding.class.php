@@ -42,7 +42,7 @@ class HSDBuilding extends APP_GameClass
         $sql .= implode( ',', $values ); 
         $this->game->DbQuery( $sql );
 
-        $sql = "INSERT INTO buildings (building_id, building_type, stage, cost, worker_slot, vp) VALUES ";
+        $sql = "INSERT INTO buildings (building_id, building_type, stage, cost, worker_slot, b_vp) VALUES ";
         $values=array();
         // some building have 2 copies in 2 player, and 3 copies in 3-4 player
         $count_3x = 3;
@@ -253,8 +253,7 @@ class HSDBuilding extends APP_GameClass
     /**
      * returns an array of buildings that can be built.
      */
-    function getAllowedBuildings() {// into an array of constants
-        $build_type_options = $this->game->Auction->getCurrentAuctionBuildTypeOptions();
+    function getAllowedBuildings( $build_type_options) {// into an array of constants
         if (count($build_type_options) ==0){ return array(); }
             $sql = "SELECT * FROM `buildings` WHERE `location`=".BLD_LOC_OFFER." AND (";
             $values = array();
@@ -292,12 +291,8 @@ class HSDBuilding extends APP_GameClass
         $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
         $this->game->DbQuery( $sql );
         
-        $sql = "SELECT `player_score` FROM `player` WHERE `player_id`='".$p_id."'";
-        $score = $this->game->getUniqueValueFromDB( $sql );
         $building_score = $this->getBuildingScoreFromId( $b_id );
-        $score += $building_score;
-        $sql = "UPDATE `player` SET `player_score`='".$score."' WHERE `player_id`='".$p_id."'";
-        $this->game->DbQuery( $sql );
+        $this->game->Score->dbIncScore($p_id, $building_score);
     }
 
     function payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){

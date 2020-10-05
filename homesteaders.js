@@ -656,6 +656,7 @@ function (dojo, declare) {
                             case AUCBONUS_COW_FOR_VP:
                                 this.addActionButton( 'btn_cow_vp',       _('Trade Livestock for 4 VP'),  'cowFor4VP');
                                 break;
+                            case AUCBONUS_6VP_AND_FOOD_VP:
                             case AUCBONUS_FOOD_FOR_VP:
                                 this.addActionButton( 'btn_food_vp',      _('Trade Food for 2 VP'),       'foodFor2VP');
                         }
@@ -714,8 +715,7 @@ function (dojo, declare) {
         updateBuildingStocks: function(buildings){
             for (let b_key in buildings){
                 const building = buildings[b_key];
-                const building_divId = `building_tile_${b_key}`;
-                if (building.location == BLD_LOC_OFFER, building.location == BLD_LOC_DISCARD) {
+                if (building.location == BLD_LOC_OFFER || building.location == BLD_LOC_DISCARD) {
                     this.addBuildingToOffer(building);
                 }
             }
@@ -1023,7 +1023,7 @@ function (dojo, declare) {
             console.log( 'onClickOnTradeSlot' );
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
-            if ( !this.checkAction( 'trade' )) { return; } 
+            //if ( !this.checkAction( 'trade' )) { return; } 
             this.updateSelected('trade', evt.target.id);
             if (dojo.hasClass( evt.target.id ,'selected')){
                 console.log( 'trade is selected' );
@@ -1166,7 +1166,7 @@ function (dojo, declare) {
              }, this, function( result ) {
                 dojo.removeClass(this.last_selected['worker'], 'selected');
                 this.last_selected['worker'] = '';
-             }, function( is_error) {});
+             }, function( is_error) { });
         },
         /***** PAY WORKERS PHASE *****/
         donePayingWorkers: function(){
@@ -1250,8 +1250,10 @@ function (dojo, declare) {
                 const type = (bonusSelected[0].id).split('_')[3];
                 const typeNum = this.getResourceType(type);
                 this.ajaxcall( "/homesteaders/homesteaders/doneSelectingBonus.html", {bonus: typeNum, lock: true}, this, 
-                    function( result ) { this.clearSelectable('bonus', true); }, 
-                    function( is_error) {} ); 
+                    function( result ) { 
+                        this.disableTradeIfPossible();
+                        this.clearSelectable('bonus', true);}, 
+                    function( is_error) { } ); 
                 
             }
         },
@@ -1288,7 +1290,7 @@ function (dojo, declare) {
                         function( result ) { 
                             this.disableTradeIfPossible();
                             this.clearSelectable('building', true);
-                        }, function( is_error) {} );
+                        }, function( is_error) { } );
             }
         },
 
@@ -1370,16 +1372,16 @@ function (dojo, declare) {
         workerForFreeBuilding: function (){
             if (this.checkAction( 'buildBonus' )){
             this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, auction:false}, this, 
-            function( result ) {}, 
-            function( is_error) {} );}
+            function( result ) { }, 
+            function( is_error) { } );}
         },
         
         passBuildingBonus: function (){
             if (this.checkAction( 'buildBonus' )){
                 this.confirmationDialog( _('Are you sure you want to pass on bonus?'), dojo.hitch( this, function() {
                     this.ajaxcall( "/homesteaders/homesteaders/passBuildingBonus.html", {lock: true}, this, 
-                    function( result ) {}, 
-                    function( is_error) {} );
+                    function( result ) { }, 
+                    function( is_error) { } );
                 } ) );
             } 
         },
@@ -1391,8 +1393,8 @@ function (dojo, declare) {
         workerForFree: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, rail: false, auction:true }, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
@@ -1402,40 +1404,40 @@ function (dojo, declare) {
         workerForFree2: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, rail: true, auction:true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
         woodForTrack: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/woodForTrack.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
         copperFor4VP: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/copperForVp.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
         cowFor4VP: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/cowForVp.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
         foodFor2VP: function() {
             if (this.checkAction( 'auctionBonus' )){
                 this.ajaxcall( "/homesteaders/homesteaders/foodForVp.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) {this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
@@ -1443,8 +1445,8 @@ function (dojo, declare) {
             if (this.checkAction( 'auctionBonus' )){
                 this.confirmationDialog( _('Are you sure you want to pass on bonus?'), dojo.hitch( this, function() {
                     this.ajaxcall( "/homesteaders/homesteaders/passAuctionBonus.html", {lock: true}, this, 
-                    function( result ) {}, 
-                    function( is_error) {} );
+                    function( result ) { this.disableTradeIfPossible(); }, 
+                    function( is_error) { } );
                 } ) ); 
             }
         },
@@ -1453,24 +1455,24 @@ function (dojo, declare) {
         payLoanSilver: function() {
             if (this.checkAction( 'payLoan' )){
                 this.ajaxcall( "/homesteaders/homesteaders/payLoan.html", {lock: true, gold:false}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { }, 
+                function( is_error) { } );
             }
         },
 
         payLoanGold: function () {
             if (this.checkAction( 'payLoan' )){
                 this.ajaxcall( "/homesteaders/homesteaders/payLoan.html", {lock: true, gold:true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { }, 
+                function( is_error) { } );
             }
         },
 
         doneEndgameActions: function () {
             if (this.checkAction( 'done' )){
                 this.ajaxcall( "/homesteaders/homesteaders/doneEndgameActions.html", {lock: true}, this, 
-                function( result ) {}, 
-                function( is_error) {} );
+                function( result ) { this.disableTradeIfPossible(); }, 
+                function( is_error) { } );
             }
         },
 
@@ -1674,7 +1676,7 @@ notif_cardPlayed: function (notif) {
 
             var start = `building_zone_${this.player_color[notif.args.player_id]}`;
             if (notif.args.origin == 'auction'){
-                start = `auction_tile_${Number(notif.args.key)}`;
+                start = `auction_tile_zone_${Number(notif.args.key)}`;
             } else if (notif.args.origin == 'building'){
                 start = `building_tile_${Number(notif.args.key)}`;
             } 
