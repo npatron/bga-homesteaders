@@ -362,6 +362,9 @@ div#done_trading {
    height: 180px;
    width: 690px;
 }
+.log_token {
+   display: inline-block;
+}
 
 #payment_section {
    position: relative;
@@ -618,7 +621,7 @@ div#done_trading {
    height: 35px;
    width: 33px;
    background-size: 175px 105px;
-   background-position: 77% 50%;
+   background-position: 76% 50%;
    z-index: 1;
 }
 .token_vp {

@@ -66,7 +66,7 @@ $machinestates = array(
         "action" => "stPlaceWorkers",
         "args" => "argPlaceWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
-        "transitions" => array( "done" => STATE_BEGIN_AUCTION )
+        "transitions" => array( "auction" => STATE_BEGIN_AUCTION )
     ),
 
     /*STATE_INCOME => array(

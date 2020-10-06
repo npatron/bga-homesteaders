@@ -23,7 +23,7 @@ class HSDresource extends APP_GameClass
     }
 
     function getPlayerResourceAmount($p_id, $type){
-        $this->game->getUniqueValueFromDB("SELECT `$type` FROM `resources` WHERE `player_id`='$p_id'");
+        return $this->game->getUniqueValueFromDB("SELECT `$type` FROM `resources` WHERE `player_id`='$p_id'");
     }
 
     /**
@@ -54,24 +54,26 @@ class HSDresource extends APP_GameClass
         if(count($income_arr) >3){
             $decoded_string = $this->decodeReasonString($income_arr['name']);
             unset($income_arr['name']);
-            $decoded_string['key'] = $income_arr['key'];
+            $key = $income_arr['key'];
             unset($income_arr['key']);
             $this->game->notifyAllPlayers( 'playerIncomeGroup', 
-            clienttranslate( '${player_name} recieved ${resources} from ${reason_string}' ), 
+            clienttranslate( '${reason_string} paid ${player_name} ${resources}' ), 
             array('player_id' => $p_id,
                 'resources' => $income_arr,
                 'player_name' => $this->game->getPlayerName($p_id),
+                'origin' => $decoded_string['origin'],
                 'reason_string' => $decoded_string['reason_string'],
+                'key' => $key,
                 ) );
             foreach( $income_arr as $type => $amt ){
                 $this->updateResource($p_id, $type, $amt);
             }
-        } else if (count($income_arr) == 2) {
+        } else if (count($income_arr) == 3) {
             $reason = $income_arr['name'];
             unset($income_arr['name']);
-            $type = array_keys($income_arr)[0];
             $key = $income_arr['key'];
             unset($income_arr['key']);
+            $type = array_keys($income_arr)[0];
             $this->updateAndNotifyIncome($p_id, $type, $income_arr[$type], $reason, $key);
         }
     }
@@ -79,14 +81,14 @@ class HSDresource extends APP_GameClass
     function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = "", $key = 0){
         $decoded_string = $this->decodeReasonString($reason_string);
         $this->game->notifyAllPlayers( "playerPayment",
-            clienttranslate( '${player_name} paid ${amount} ${type} for ${reason_string}' ), 
+            clienttranslate( '${player_name} paid ${reason_string} ${amount} ${type}' ), 
             array('player_id' => $p_id,
             'type' => $type,
             'amount' => $amount,
             'player_name' => $this->game->getPlayerName($p_id),
             'player_id' => $p_id,
             'origin' => $decoded_string['origin'],
-            '$reason_string' => $decoded_string['reason'],
+            'reason_string' => $decoded_string['reason_string'],
             'key' => $key,
         ) );
         $this->updateResource($p_id, $type, -$amount);

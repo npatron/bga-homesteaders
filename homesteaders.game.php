@@ -318,7 +318,7 @@ class homesteaders extends Table
             'type' => 'worker',
         ) );
         $this->Resource->collectIncome($p_id);
-        $this->gamestate->setPlayerNonMultiactive( $this->getCurrentPlayerId() , '' );
+        //$this->gamestate->setPlayerNonMultiactive( $this->getCurrentPlayerId() , '' );
     }
 
     /*** Player Bid Phase ***/
@@ -359,9 +359,6 @@ class homesteaders extends Table
     public function playerDoNotBuild () {
         self::checkAction( "doNotBuild" );
         //goto next state;
-        $auction_no = $this->getGameStateValue( 'current_auction' );
-        $round_number = $this->getGameStateValue( 'round_number' );
-        $bonus = self::getUniqueValueFromDB( "SELECT `bonus` FROM `auctions` WHERE `location` = ".$auction_no." AND `position` = ".$round_number );
         $this->gamestate->nextState( "auction_bonus" ); 
         
     }
@@ -369,10 +366,9 @@ class homesteaders extends Table
     public function playerPayWorkers($gold) {
         self::checkAction( "done" );
         $current_player_id = $this->getCurrentPlayerId();
-        $sql = "SELECT `workers` FROM `resources` WHERE `player_id`='".$current_player_id."'";
-        $workers = self::getUniqueValueFromDB( $sql );
+        $workers = $this->Resource->getPlayerResourceAmount($current_player_id,'workers');
         $cost = max($workers - (5*$gold), 0);
-        $this->Resource->pay($current_player_id, $cost, $gold, "paying workers");
+        $this->Resource->pay($current_player_id, $cost, $gold, "workers");
         $this->gamestate->setPlayerNonMultiactive($current_player_id, "auction" );
     }
 
@@ -383,7 +379,7 @@ class homesteaders extends Table
         
         $bid_cost = $this->Bid->getBidCost($active_player_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
-        $this->Resource->pay($active_player_id, $bid_cost, $gold, "auction cost");
+        $this->Resource->pay($active_player_id, $bid_cost, $gold, "Bid Cost");
         if ($this->Auction->doesCurrentAuctionHaveBuildPhase()){
             $this->gamestate->nextstate( 'build' );
         } else {
@@ -548,18 +544,24 @@ class homesteaders extends Table
         return array('round_number'=>$round_number, 'auctions' => $auctions);
     }
 
-    function argPayWorkers()
+    /*function argPayWorkers() //in argPlaceWorkers now...
     {
         $sql = "SELECT `player_id`, `workers` FROM `resources`";
-        $worker_counts = self::getCollectionFromDB($sql);
+        $worker_counts = $this->getCollectionFromDB($sql);
         return array('worker_counts'=>$worker_counts);
-    }
+    }*/
 
     function argPlaceWorkers() 
     {
-        $paid = self::getCollectionFromDB("SELECT `player_id`, `paid` FROM `player`");
-        $worker_counts = self::getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
-        return array('worker_counts'=>$worker_counts, 'paid' => $paid);
+        $args = array();
+        $players = $this->loadPlayersBasicInfos();
+        foreach ( $players as $player_id => $player_info ) {
+            $worker = $this->Resource->getPlayerResourceAmount($player_id, 'workers');
+            $sql = "SELECT `paid` FROM `player` WHERE `player_id`='$player_id'";
+            $paid = $this->getUniqueValueFromDB( $sql ); 
+            $args[$player_id] = array("worker"=>$worker, "paid"=>$paid);
+        }
+        return $args;
     }
 
     function argValidBids() {
@@ -623,46 +625,14 @@ class homesteaders extends Table
     function stStartRound() {
         $round_number = $this->getGameStateValue('round_number');
 
-        //rd 1 setup buildings
-        if($round_number == 1){
-            // add 'settlement' and 'settlement/town' buildings
-            $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` in ('".STAGE_SETTLEMENT."','".STAGE_SETTLEMENT_TOWN."');";
-            self::DbQuery( $sql );
-        }
-        //rd 5 setup buildings
-        if($round_number == 5){
-            // add town buildings
-            $sql = "UPDATE `buildings` SET `location` = '".BLD_LOC_OFFER."' WHERE `stage` = '".STAGE_TOWN."'";
-            self::DbQuery( $sql );
-            // remove settlement buildings (not owned)
-            $sql = "UPDATE `buildings` SET `location` = '".BLD_LOC_DISCARD."' WHERE `stage` = '".STAGE_SETTLEMENT."' AND `location` = '".BLD_LOC_OFFER."'";
-            self::DbQuery( $sql );
-            $this->Building->updateClientBuildings();
-        }
-        //rd 9 setup buildings
-        if($round_number == 9){
-            // clear all buildings
-            $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
-            self::DbQuery( $sql );
-            // add city buildings
-            $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` = '".STAGE_CITY."';";
-            self::DbQuery( $sql );
-            $this->Building->updateClientBuildings();
-        }
-        // Final round (just income).
-        if($round_number == 11){
-            $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
-            self::DbQuery( $sql );
-            $this->Building->updateClientBuildings();
-        }
-
-        // update Auctions.
-        if ($round_number>1){
+        $this->Buildings->updateBuildingsForRound($round_number);
+        // update Auctions.  I think this is already done, trying out removing it here.
+        /*if ($round_number>1){
             $last_round = $round_number -1;
             $sql = "UPDATE auctions SET location = '".AUC_LOC_DISCARD."' WHERE position = '$last_round';";
             self::DbQuery( $sql );
             //$this->Auction->updateClientAuctions($round_number);
-        }
+        }*/
         $this->gamestate->nextState( );
     }
 
@@ -671,7 +641,11 @@ class homesteaders extends Table
         $this->gamestate->setAllPlayersMultiactive( );
     }
 
-    /*function stPayWorkers() {
+    function stCollectIncome() {
+        $this->gamestate->nextState( '' );
+    }
+
+    function stPayWorkers() {
         $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = self::getCollectionFromDB( $sql );
         $players = array();
@@ -689,7 +663,7 @@ class homesteaders extends Table
             }
         }
         $this->gamestate->setPlayersMultiactive($players, 'auction');
-    }*/
+    }
     
     function stBeginAuction() {
         $round_number = $this->getGameStateValue('round_number');
