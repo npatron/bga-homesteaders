@@ -534,28 +534,26 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                     case 'allocateWorkers':
-                        this.last_selected['worker'] ="";
-                        // show workers that are selectable
-                        const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
-                        workers.addClass('selectable');
-                        // also make building_slots selectable.
-                        const building_slots = dojo.query(`#building_zone_${this.player_color[current_player_id]} .worker_slot`);
-                        building_slots.addClass( 'selectable');
-                        this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
-                        this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray');
-                        this.addActionButton( 'btn_take_loan',   _('Take Loan'),       'takeLoan', null, false, 'gray');
-                        this.addActionButton( 'btn_trade',       _('Trade'),           'tradeActionButton', null, false, 'gray');
-                        break;
-                    case 'payWorkers':
-                        this.showPaymentSection();
+                        if (args.paid == 0){
+                            this.last_selected['worker'] ="";
+                            // show workers that are selectable
+                            const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
+                            workers.addClass('selectable');
+                            // also make building_slots selectable.
+                            const building_slots = dojo.query(`#building_zone_${this.player_color[current_player_id]} .worker_slot`);
+                            building_slots.addClass( 'selectable');
+                            this.addActionButton( 'btn_done',        _('Done'),            'donePlacingWorkers');
+                            this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray');
+                        } else {
+                            this.showPaymentSection();
 
-                        this.silverCost = Number(args.worker_counts[this.player_id].workers);
-                        this.silverCounter.setValue(Math.max(0 , this.silverCost));
-                        this.goldCounter.setValue(this.goldAmount);
-                        
-                        this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
-                        this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
-                        //this.addActionButton( 'btn_less_gold', _('Use Less Gold'), 'lowerGold', null, false, 'gray');
+                            this.silverCost = Number(args.worker_counts[this.player_id].workers);
+                            this.silverCounter.setValue(Math.max(0 , this.silverCost));
+                            this.goldCounter.setValue(this.goldAmount);
+                            
+                            this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
+                            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
+                        }
                         this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray');
                         break;
@@ -731,6 +729,17 @@ function (dojo, declare) {
                 }
             }
         },
+
+        setupPayWorkers: function () {
+            this.showPaymentSection();
+
+            this.silverCost = Number(args.worker_counts[this.player_id].workers);
+            this.silverCounter.setValue(Math.max(0 , this.silverCost));
+            this.goldCounter.setValue(this.goldAmount);
+            
+            this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
+            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
+            }
 
         /**
          * setup auction cards for the current round in the Auction board.
@@ -1539,13 +1548,9 @@ function (dojo, declare) {
                     for (let i in args) {
                         var key = keys[i];
                         if (typeof args[key] == 'string') {
-                           args[key] = this.getResourceDiv(key, args);
-                        } else if (typeof args[key] == 'token') {
-                            args[key] = this.getTokenDiv(key, args);
-                        } else if (typeof args[key] == 'track' || typeof args[key] == 'loan') {
-                            args[key] = this.getTrackLoanDiv(key, args);
-                        } else if (typeof args[key] == 'resources') {
-                            args.resources = this.getResourcesDiv(args);
+                           args[key] = this.getTokenDiv(key, args);
+                        } else if (typeof args[key] == 'object') {
+                            args[key] = this.getResourcesDiv(args);
                         }
                     }
                 }
@@ -1564,23 +1569,22 @@ function (dojo, declare) {
             var you = "<span style=\"font-weight:bold;color:#" + color + ";" + color_bg + "\">" + __("lang_mainsite", "You") + "</span>";
             return you;
         },
-
-        getResourceDiv : function(key, args) {
-            var token_id = args[key];
-            var tokenDiv = this.format_block('jstpl_resource_log', { "type" : token_id, });
-            return tokenDiv;
-        },
-
+            
         getTokenDiv : function(key, args) {
             var token_id = args[key];
-            var tokenDiv = this.format_block('jstpl_player_token_log', {
-                "color" : token_id['color'], "type" : token_id['type']});
-            return tokenDiv;
-        },
-
-        getTrackLoanDiv : function(key, args) {
-            var token_id = args[key];
-            var tokenDiv = this.format_block('jptpl_track_log', {"type" : token_id});
+            switch (key){
+                case 'type':                      
+                    var tokenDiv = this.format_block('jstpl_resource_log', { "type" : token_id, });
+                    break;
+                case 'track':
+                case 'loan':
+                    var tokenDiv = this.format_block('jptpl_track_log', {"type" : token_id});
+                break;
+                case 'token':
+                    var tokenDiv = this.format_block('jstpl_player_token_log', {
+                        "color" : token_id['color'], "type" : token_id['type']});
+                break;
+            }
             return tokenDiv;
         },
 

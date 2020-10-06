@@ -65,28 +65,28 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
         "args" => "argPlaceWorkers",
-        "possibleactions" => array( "placeWorker", "hireWorker", "trade", "takeLoan", "done" ),
-        "transitions" => array( "done" => STATE_INCOME )
+        "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
+        "transitions" => array( "done" => STATE_BEGIN_AUCTION )
     ),
 
-    STATE_INCOME => array(
+    /*STATE_INCOME => array(
         "name" => "collectIncome",
         "description" =>  clienttranslate('collect income'),
         "type" => "game",
         "action" => "stCollectIncome",
         "transitions" => array( "" => STATE_PAY_WORKERS,  )
-    ),
+    ),*/
     
-    STATE_PAY_WORKERS => array(
+    /*STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),
         "descriptionmyturn" => clienttranslate('${you} must choose how to pay workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPayWorkers",
         "args" => "argPayWorkers",
-        "possibleactions" => array( "takeLoan", "updateGold", "trade", "done" ),
+        "possibleactions" => array( "takeLoan",  "trade", "done" ),
         "transitions" => array( "auction" => STATE_BEGIN_AUCTION)
-    ),
+    ),*/
 
     STATE_BEGIN_AUCTION  => array(
         "name" => "beginAuction",

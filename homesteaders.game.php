@@ -557,14 +557,9 @@ class homesteaders extends Table
 
     function argPlaceWorkers() 
     {
-        $res = array ();
-        $players = $this->loadPlayersBasicInfos();
-        foreach ( $players as $player_id => $player_info ) {
-            $sql = "SELECT `trade` FROM `resources` WHERE `player_id`='$player_id'";
-            $trade = self::getUniqueValueFromDB( $sql ); 
-            $res [$player_id] = array("trade"=>$trade);
-        }
-        return array('placeWorkers'=>$res);
+        $paid = self::getCollectionFromDB("SELECT `player_id`, `paid` FROM `player`");
+        $worker_counts = self::getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
+        return array('worker_counts'=>$worker_counts, 'paid' => $paid);
     }
 
     function argValidBids() {
@@ -672,14 +667,11 @@ class homesteaders extends Table
     }
 
     function stPlaceWorkers() {
+        $this->DbQuery("UPDATE `player` SET `paid`='0'");
         $this->gamestate->setAllPlayersMultiactive( );
     }
 
-    function stCollectIncome() {
-        $this->gamestate->nextState( '' );
-    }
-
-    function stPayWorkers() {
+    /*function stPayWorkers() {
         $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = self::getCollectionFromDB( $sql );
         $players = array();
@@ -697,7 +689,7 @@ class homesteaders extends Table
             }
         }
         $this->gamestate->setPlayersMultiactive($players, 'auction');
-    }
+    }*/
     
     function stBeginAuction() {
         $round_number = $this->getGameStateValue('round_number');
