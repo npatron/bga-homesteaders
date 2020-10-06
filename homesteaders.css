@@ -18,6 +18,13 @@
 
 /********* You can start writing your CSS below this line: **********/
 
+@font-face {
+   font-family: 'Old Standard TT', serif;
+   font-style: normal;
+   font-weight: 400;
+   src: local('OldStandardTT-Regular'), url(https://fonts.googleapis.com/css2?family=Old+Standard+TT&display=swap);
+}
+
 div#board {
    background-image: url('img/auctionBoard.jpg');
    position: relative;

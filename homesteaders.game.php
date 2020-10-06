@@ -296,13 +296,13 @@ class homesteaders extends Table
     {
         self::checkAction( "placeWorker" );
         $current_player_id = $this->getCurrentPlayerId();
-        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${token} to ${building_name}' ), array(
+        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${type} to ${building_name}' ), array(
             'player_id' => $current_player_id,
             'worker_key' => $worker_key,
             'building_key' => $building_key,
             'building_name' => $this->Building->getBuildingNameFromKey($building_key),
             'building_slot' => $building_slot, 
-            'token' => 'worker',
+            'type' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),
         ) );
         $sql = "UPDATE `workers` SET `building_key`= '".$building_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$worker_key."'";
@@ -312,9 +312,10 @@ class homesteaders extends Table
     public function playerDonePlacingWorkers ()
     {
         $p_id = $this->getCurrentPlayerId();
-        $this->notifyAllPlayers( "playerPass", clienttranslate( '${player_name} is done assigning workers' ), array(
+        $this->notifyAllPlayers( "playerPass", clienttranslate( '${player_name} is done assigning ${type}' ), array(
             'player_id' => $p_id,
             'player_name' => $this->getCurrentPlayerName(),
+            'type' => 'worker',
         ) );
         $this->Resource->collectIncome($p_id);
         $this->gamestate->setPlayerNonMultiactive( $this->getCurrentPlayerId() , '' );
@@ -740,10 +741,10 @@ class homesteaders extends Table
         } else {
             if ($current_auction == 1){ // winner of auction 1 gets first player marker.
                 $this->setGameStateValue('first_player', $auction_winner_id);
-                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${token}'),array(
+                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${first}'),array(
                     'player_id'=>$auction_winner_id,
                     'player_name'=>$this->getPlayerName($auction_winner_id),
-                    'token'=>'first_player_tile'
+                    'first'=>'First Player Tile'
                 ));
             }
             $this->gamestate->changeActivePlayer( $auction_winner_id );

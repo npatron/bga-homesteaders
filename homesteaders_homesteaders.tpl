@@ -158,7 +158,9 @@ var jstpl_otherplayer_board = '\<div class="cp_board">\
     <div id="scoreicon_p${id}" class="scoreicon icon"></div><span id="scoreCount_p${id}">0</span>\
 </div>';
 
-var jstpl_resource_log = '<div title = "${type}" class="inlineblock token token_${type}"> </div>';
+var jstpl_resource_log='<div title = "${type}" class="inlineblock token token_${type}"></div>';
+var jstpl_player_token_log='<div title = "${type}_${color}" class="inlineblock player_token_${color} player_token_${type}"></div>';
+var jptpl_track_log='<div title = "${type}" id="token_track" class="inlineblock token_${type}"></div>';
 
 var jstpl_ipiece='<div class="${type} ${type}_${color} inlineblock" aria-label="${name}" title="${name}"></div>';
 

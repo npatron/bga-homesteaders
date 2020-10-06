@@ -38,26 +38,55 @@ class HSDresource extends APP_GameClass
     function updateAndNotifyIncome($p_id, $type, $amount, $reason_string = "", $key = 0){
         $decoded_string = $this->decodeReasonString($reason_string);
         $this->game->notifyAllPlayers( "playerIncome",
-        clienttranslate( '${player_name} recieved '.$amount.' '.$type.' from '.$decoded_string['reason_string'] ), 
+        clienttranslate( '${player_name} recieved ${amount} ${type} from ${reason_string}' ), 
         array('player_id' => $p_id,
             'type' => $type,
             'amount' => $amount,
             'player_name' => $this->game->getPlayerName($p_id),
             'origin' => $decoded_string['origin'],
             'key' => $key,
+            'reason_string' => $decoded_string['reason_string'],
             ) );
             $this->updateResource($p_id, $type, $amount);
+    }
+
+    function updateAndNotifyIncomeGroup($p_id, $income_arr){
+        if(count($income_arr) >3){
+            $decoded_string = $this->decodeReasonString($income_arr['name']);
+            unset($income_arr['name']);
+            $decoded_string['key'] = $income_arr['key'];
+            unset($income_arr['key']);
+            $this->game->notifyAllPlayers( 'playerIncomeGroup', 
+            clienttranslate( '${player_name} recieved ${resources} from ${reason_string}' ), 
+            array('player_id' => $p_id,
+                'resources' => $income_arr,
+                'player_name' => $this->game->getPlayerName($p_id),
+                'reason_string' => $decoded_string['reason_string'],
+                ) );
+            foreach( $income_arr as $type => $amt ){
+                $this->updateResource($p_id, $type, $amt);
+            }
+        } else if (count($income_arr) == 2) {
+            $reason = $income_arr['name'];
+            unset($income_arr['name']);
+            $type = array_keys($income_arr)[0];
+            $key = $income_arr['key'];
+            unset($income_arr['key']);
+            $this->updateAndNotifyIncome($p_id, $type, $income_arr[$type], $reason, $key);
+        }
     }
 
     function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = "", $key = 0){
         $decoded_string = $this->decodeReasonString($reason_string);
         $this->game->notifyAllPlayers( "playerPayment",
-            clienttranslate( '${player_name} paid '.$amount.' '.$type.' for '.$decoded_string['reason_string'] ), 
+            clienttranslate( '${player_name} paid ${amount} ${type} for ${reason_string}' ), 
             array('player_id' => $p_id,
             'type' => $type,
             'amount' => $amount,
             'player_name' => $this->game->getPlayerName($p_id),
+            'player_id' => $p_id,
             'origin' => $decoded_string['origin'],
+            '$reason_string' => $decoded_string['reason'],
             'key' => $key,
         ) );
         $this->updateResource($p_id, $type, -$amount);
@@ -84,16 +113,17 @@ class HSDresource extends APP_GameClass
         $player_workers = $this->game->getObjectListFromDB( $sql );
         $w_key = $player_workers[count($player_workers)-1]['worker_key'];
         if ($reason_string == 'hire'){
-            $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token}' ), array(
+            $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${type}' ), array(
                 'player_id' => $p_id,
                 'player_name' => $this->game->getPlayerName($p_id),
-                'token' => 'worker',
-                'worker_key'=> $w_key));
+                'type' => 'worker',
+                'key'=>$w_key,
+            ));
         } else {
-            $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${token} as ${reason}' ), array(
+            $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a new ${type} as ${reason}' ), array(
                 'player_id' => $p_id,
                 'player_name' => $this->game->getPlayerName($p_id),
-                'token' => 'worker',
+                'type' => 'worker',
                 'reason' => $reason_string,
                 'worker_key'=> $w_key));
         }
@@ -106,11 +136,10 @@ class HSDresource extends APP_GameClass
         $sql = "SELECT `worker_key` FROM `workers` WHERE `player_id`='".$p_id."'";
         $p_tracks = $this->game->getObjectListFromDB( $sql );
         $track_key = $p_tracks[count($p_tracks)-1];
-        $this->game->notifyAllPlayers( "gainTrack", clienttranslate( '${player_name} lays a new ${token} from ${reason}' ), array(
+        $this->game->notifyAllPlayers( "gainTrack", clienttranslate( '${player_name} lays a new ${track} from ${reason}' ), array(
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
-            'token' => 'track',
-            'key'=> $track_key,
+            'track' => 'track',
             'reason' => $reason_string));
         $this->updateResource($p_id, 'track', 1);
     }
@@ -203,9 +232,10 @@ class HSDresource extends APP_GameClass
             $sql = "UPDATE `player` SET `rail_adv`= '".$rail_adv."' WHERE `player_id`='".$p_id."'";
             $this->game->DbQuery( $sql );
             $this->game->notifyAllPlayers( "railAdv", 
-                        clienttranslate( '${player_name} advances their rail track ' ),
+                        clienttranslate( '${player_name} advances their ${token}' ),
                         array('player_id' => $p_id,
                               'player_name' => $this->game->getPlayerName($p_id),
+                              'token' => array('type'=>'train', 'color'=>$this->game->getPlayerColorName($p_id)),
                               'rail_destination' => $rail_adv,));
         }
     }

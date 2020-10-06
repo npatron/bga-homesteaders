@@ -161,19 +161,21 @@ class HSDLog extends APP_GameClass
 
   public function takeLoan($player_id) 
   {
-    $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
+    $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a ${loan}' ), array(
       'player_id' => $player_id,
       'player_name' => $this->game->getPlayerName($player_id),
+      'loan' => 'loan',
     ) );
     $this->insert($player_id, 0, 'loan');
   }
 
   public function payOffLoan($player_id, $reason)
   {
-    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off loan ${reason}' ), array(
+    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off ${loan} ${reason}' ), array(
       'player_id' => $player_id,
       'player_name' => $this->game->getPlayerName($player_id),
       'reason' => $reason,
+      'loan' => 'loan',
     ) );
     $this->insert($player_id, 0, 'loanPaid');
   }

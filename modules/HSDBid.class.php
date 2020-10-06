@@ -21,10 +21,11 @@ class HSDBid extends APP_GameClass
     }
 
     function notifyAllMoveBid($p_id, $bid_loc){
-        $this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} moves bid'), array (
+        $this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} moves ${token}'), array (
             'player_id' => $p_id,
             'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
-            'bid_location'=> $bid_loc ));
+            'bid_location'=> $bid_loc,
+            'token' => 'bid',));
     }
 
     function clearBids(){

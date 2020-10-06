@@ -1509,9 +1509,11 @@ function (dojo, declare) {
             dojo.subscribe( 'buildBuilding', this, "notif_buildBuilding" );
             this.notifqueue.setSynchronous( 'buildBuilding', 1000 );
             dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
-            this.notifqueue.setSynchronous( 'playerIncome', 500 );
+            this.notifqueue.setSynchronous( 'playerIncome', 200 );
+            dojo.subscribe( 'playerIncomeGroup', this, 'notif_playerIncomeGroup');
+            this.notifqueue.setSynchronous( 'playerIncomeGroup', 500 );
             dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
-            this.notifqueue.setSynchronous( 'playerPayment', 500 );
+            this.notifqueue.setSynchronous( 'playerPayment', 200 );
             dojo.subscribe( 'loanTaken', this, "notif_loanTaken" );
             this.notifqueue.setSynchronous( 'loanTaken', 500 );
             dojo.subscribe( 'loanPaid', this, "notif_loanPaid");
@@ -1520,24 +1522,30 @@ function (dojo, declare) {
             this.notifqueue.setSynchronous( 'clearAllBids', 250 );
         },  
         
-        // TODO: from this point and below, you can write your game notifications handling methods
+        /** Override this function to inject html for log items  */
 
         /* @Override */
-        /*format_string_recursive : function(log, args) {
+        format_string_recursive: function (log, args) {
             try {
                 if (log && args && !args.processed) {
                     args.processed = true;
                     
                     if (!this.isSpectator)
                         args.You = this.divYou(); // will replace ${You} with colored version
-
-                    // list of other known variables
-                    var keys = ['token_name'];
                     
-                    for ( var i in keys) {
+                    // list of other known variables
+                    var keys = ['type', 'token', 'track', 'loan', 'resources'];
+                    
+                    for (let i in args) {
                         var key = keys[i];
                         if (typeof args[key] == 'string') {
-                           args[key] = this.getTokenDiv(key, args);                            
+                           args[key] = this.getResourceDiv(key, args);
+                        } else if (typeof args[key] == 'token') {
+                            args[key] = this.getTokenDiv(key, args);
+                        } else if (typeof args[key] == 'track' || typeof args[key] == 'loan') {
+                            args[key] = this.getTrackLoanDiv(key, args);
+                        } else if (typeof args[key] == 'resources') {
+                            args.resources = this.getResourcesDiv(args);
                         }
                     }
                 }
@@ -1547,37 +1555,46 @@ function (dojo, declare) {
             return this.inherited(arguments);
         },
 
-        getTokenDiv : function(key, args) {
-            // ... implement whatever html you want here, example from sharedcode.js
-            var token_id = args[key];
-            var logid = "log" + (this.globalid++) + "_" + token_id;
-            if (token_id != null && $(token_id)) {
-                var clone = dojo.clone($(token_id));
-                dojo.attr(clone, "id", logid);
-                this.stripPosition(clone);
-                dojo.addClass(clone, "logitem");
-                return clone.outerHTML;
+        divYou : function() {
+            var color = this.gamedatas.players[this.player_id].color;
+            var color_bg = "";
+            if (this.gamedatas.players[this.player_id] && this.gamedatas.players[this.player_id].color_back) {
+                color_bg = "background-color:#" + this.gamedatas.players[this.player_id].color_back + ";";
             }
-            var tokenDiv = this.format_block('jstpl_resource_log', {
-                "id" : logid,
-                "type" : args.type,
-                "color" : getPart(token_id,1)});
+            var you = "<span style=\"font-weight:bold;color:#" + color + ";" + color_bg + "\">" + __("lang_mainsite", "You") + "</span>";
+            return you;
+        },
+
+        getResourceDiv : function(key, args) {
+            var token_id = args[key];
+            var tokenDiv = this.format_block('jstpl_resource_log', { "type" : token_id, });
             return tokenDiv;
-       },*/
+        },
 
-       /** 
-        * setupNotifications: function () {
-    dojo.subscribe('cardPlayed', this, "notif_cardPlayed");
-    this.notifqueue.setSynchronous('cardPlayed');
-    
-notif_cardPlayed: function (notif) {
-    var anim = dojo.fx.combine([
-        bla bla bla
-    ]);
-    anim.play();
+        getTokenDiv : function(key, args) {
+            var token_id = args[key];
+            var tokenDiv = this.format_block('jstpl_player_token_log', {
+                "color" : token_id['color'], "type" : token_id['type']});
+            return tokenDiv;
+        },
 
-    // Wait for animation before handling the next notification.
-    this.notifqueue.setSynchronousDuration(anim.duration); */
+        getTrackLoanDiv : function(key, args) {
+            var token_id = args[key];
+            var tokenDiv = this.format_block('jptpl_track_log', {"type" : token_id});
+            return tokenDiv;
+        },
+
+        getResourcesDiv: function(key, args) {
+            var token_id = args.resources;
+            console.log ('token_id: '+token_id);
+            var aggregateString = "<div title='resources'>";
+            for (let type in token_id){
+                var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type});
+                aggregateString += `${token_id[type]} - ${tokenDiv}`;
+            }
+            aggregateString += "</div>";
+            return aggregateString;
+        },
 
         notif_updateAuction: function( notif ) {
             console.log ( 'notif_updateAuction' );
@@ -1688,6 +1705,29 @@ notif_cardPlayed: function (notif) {
                     this.resourceCounters[notif.args.type].incValue(1);
                 }
             }  
+        },
+
+        notif_playerIncomeGroup: function( notif ){
+            console.log ('notif_playerIncomeGroup');
+            console.log ( notif);
+
+            var start = `building_zone_${this.player_color[notif.args.player_id]}`;
+            if (notif.args.origin == 'auction'){
+                start = `auction_tile_zone_${Number(notif.args.key)}`;
+            } else if (notif.args.origin == 'building'){
+                start = `building_tile_${Number(notif.args.key)}`;
+            } 
+            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            for(let type in notif.args.resources){
+                let amt = notif.args.resources[type];
+                for(let i = 0; i < amt; i++){
+                    console.log("sending token '"+type+"' to player '"+ notif.args.player_name+ "'");
+                    this.slideTemporaryObject( `<div class="token token_${type}"></div>`, 'limbo', start , player_zone_divId , 500 , 100*i );
+                    if (notif.args.player_id == this.player_id){
+                        this.resourceCounters[type].incValue(1);
+                    }
+                }   
+            }
         },
 
         notif_playerPayment: function( notif ){
