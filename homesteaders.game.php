@@ -625,7 +625,7 @@ class homesteaders extends Table
     function stStartRound() {
         $round_number = $this->getGameStateValue('round_number');
 
-        $this->Buildings->updateBuildingsForRound($round_number);
+        $this->Building->updateBuildingsForRound($round_number);
         // update Auctions.  I think this is already done, trying out removing it here.
         /*if ($round_number>1){
             $last_round = $round_number -1;

@@ -35,15 +35,15 @@ class HSDresource extends APP_GameClass
         $this->game->DbQuery( $sql );
     }  
 
-    function updateAndNotifyIncome($p_id, $type, $amount, $reason_string = "", $key = 0){
-        $decoded_string = $this->decodeReasonString($reason_string);
+    function updateAndNotifyIncome($p_id, $type, $amount =1, $reason_string = "", $key = 0){
+        $decoded_string = $this->decodeReasonString($reason_string, $key);
         $this->game->notifyAllPlayers( "playerIncome",
-        clienttranslate( '${player_name} recieved ${amount} ${type} from ${reason_string}' ), 
+        clienttranslate( '${reason_string} earned ${player_name} ${type}' ), 
         array('player_id' => $p_id,
-            'type' => $type,
-            'amount' => $amount,
+            'type' => array('type'=>$type, 'amount'=>$amount),
             'player_name' => $this->game->getPlayerName($p_id),
             'origin' => $decoded_string['origin'],
+            'b_type' => $decoded_string['b_type'],
             'key' => $key,
             'reason_string' => $decoded_string['reason_string'],
             ) );
@@ -52,17 +52,18 @@ class HSDresource extends APP_GameClass
 
     function updateAndNotifyIncomeGroup($p_id, $income_arr){
         if(count($income_arr) >3){
-            $decoded_string = $this->decodeReasonString($income_arr['name']);
-            unset($income_arr['name']);
             $key = $income_arr['key'];
+            $decoded_string = $this->decodeReasonString($income_arr['name'], $key);
+            unset($income_arr['name']);
             unset($income_arr['key']);
             $this->game->notifyAllPlayers( 'playerIncomeGroup', 
-            clienttranslate( '${reason_string} paid ${player_name} ${resources}' ), 
+            clienttranslate( '${reason_string} earned ${player_name} ${resources}' ), 
             array('player_id' => $p_id,
                 'resources' => $income_arr,
                 'player_name' => $this->game->getPlayerName($p_id),
                 'origin' => $decoded_string['origin'],
                 'reason_string' => $decoded_string['reason_string'],
+                'b_type' => $decoded_string['b_type'],
                 'key' => $key,
                 ) );
             foreach( $income_arr as $type => $amt ){
@@ -79,33 +80,35 @@ class HSDresource extends APP_GameClass
     }
 
     function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = "", $key = 0){
-        $decoded_string = $this->decodeReasonString($reason_string);
+        $decoded_string = $this->decodeReasonString($reason_string, $key);
         $this->game->notifyAllPlayers( "playerPayment",
-            clienttranslate( '${player_name} paid ${reason_string} ${amount} ${type}' ), 
+            clienttranslate( '${player_name} paid ${reason_string} ${type}' ), 
             array('player_id' => $p_id,
-            'type' => $type,
-            'amount' => $amount,
+            'type' => array('type'=>$type, 'amount'=>$amount),
             'player_name' => $this->game->getPlayerName($p_id),
             'player_id' => $p_id,
             'origin' => $decoded_string['origin'],
             'reason_string' => $decoded_string['reason_string'],
+            'b_type' => $decoded_string['b_type'],
             'key' => $key,
         ) );
         $this->updateResource($p_id, $type, -$amount);
     }
 
-    private function decodeReasonString($reason_string){
+    private function decodeReasonString($reason_string, $key){
         $origin = "";
+        $b_type = -1;
         if ($reason_string !== ""){
             if (strpos($reason_string, "b:") === 0){
                 $origin = 'building';
                 $reason_string = substr($reason_string, 2, strlen($reason_string));
+                $b_type = $this->game->Building->getBuildingTypeFromKey($key);
             } else if (strpos($reason_string, "a:") === 0){
                 $origin = 'auction';
                 $reason_string = substr($reason_string, 2, strlen($reason_string));
             }
         }
-        return array('origin' => $origin, 'reason_string'=>$reason_string);
+        return array('origin' => $origin, 'reason_string'=>$reason_string, 'b_type' =>$b_type);
     }
 
     function addWorker($p_id, $reason_string){
