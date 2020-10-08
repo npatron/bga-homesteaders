@@ -11,10 +11,10 @@
 
 -->
 <div id ="top">
-    <span id="round_text">{ROUND_STRING}</span><span id="round_number">{ROUND_NUMBER}</span>
-    <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc'>{FUTURE_AUCTION}</span></a>
+    <span id="round_text" class="useFont">{ROUND_STRING}</span><span id="round_number" class="useFont">{ROUND_NUMBER}</span>
+    <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a>
     <div id='auction_string' class='whiteblock noshow'<!-- BEGIN auction_string --><span class="auction_string" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string --> 
-    <div id='future_auction_zone' class="noshow"></div></div>
+    <div id='future_auction_zone' class="noshow useFont"></div></div>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id='player_top'> </div>
@@ -59,12 +59,12 @@
 <!-- Commmon Building Section-->
 <div id='building_location'>
     <div id='hidden_bld'>
-        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard">{BUILDING_DISCARD}</span></a><!--
--->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future">{FUTURE_BUILDING}</span></a>
+        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
+-->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a>
         <div id='past_building_zone' class="main_building_zone noshow res_blue"> </div><!--
     --> <div id='future_building_zone' class="main_building_zone noshow res_purple"> </div>
     </div>
-    <div class="building_stock">{BUILDING_STOCK}</div>
+    <div class="building_stock"><span class="useFont">{BUILDING_STOCK}</span></div>
     <div id="main_building_zone" class="main_building_zone"> </div>
 </div>
 
@@ -75,7 +75,7 @@
     <div id ='First'> </div> <div id ='Second'> </div> <div id ='Third'> </div> <div id ='Fourth'> </div>
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock res_{COLOR}" style="margin-top:4px;">
-        <div id="player_name_{COLOR}" class="boardheader" style="color: {COLOR};">{NAME}</div>
+        <div id="player_name_{COLOR}" class="boardheader useFont" style="color: {COLOR};">{NAME}</div>
         <div id="token_zone_{COLOR}" class="player_token_zone"> </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>

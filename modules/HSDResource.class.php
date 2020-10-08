@@ -35,81 +35,125 @@ class HSDresource extends APP_GameClass
         $this->game->DbQuery( $sql );
     }  
 
-    function updateAndNotifyIncome($p_id, $type, $amount =1, $reason_string = "", $key = 0){
-        $decoded_string = $this->decodeReasonString($reason_string, $key);
-        $this->game->notifyAllPlayers( "playerIncome",
-        clienttranslate( '${reason_string} earned ${player_name} ${type}' ), 
-        array('player_id' => $p_id,
+    /**
+     * p_id - player id
+     * $type - 'resource type' as string
+     * $amount - amount of resource to recieve. 
+     * $reason_string => reason_string value
+     * $origin => 'building' for building, 'auction' for auction (these are used for moving tokens)
+     * $key  => building_key or auction_no.
+     */
+    function updateAndNotifyIncome($p_id, $type, $amount =1, $reason_string = "", $origin="", $key = 0){
+        $values = array('player_id' => $p_id,
             'type' => array('type'=>$type, 'amount'=>$amount),
             'player_name' => $this->game->getPlayerName($p_id),
-            'origin' => $decoded_string['origin'],
-            'b_type' => $decoded_string['b_type'],
-            'key' => $key,
-            'reason_string' => $decoded_string['reason_string'],
-            ) );
-            $this->updateResource($p_id, $type, $amount);
+            'reason_string' => $reason_string,);
+        if ($origin === 'building'){
+            $b_type = $this->game->Building->getBuildingTypeFromKey($key);
+            $values['reason_string'] = array($b_type=>$reason_string);
+            $values['origin'] = $origin;
+            $values['key'] = $key;
+        } else if ($origin === 'auction') {
+            $values['origin'] = $origin;
+            $values['key'] = $key;
+        }
+        $this->game->notifyAllPlayers( "playerIncome", clienttranslate( '${reason_string} earned ${player_name} ${type}' ), $values );
+        $this->updateResource($p_id, $type, $amount);
     }
 
-    function updateAndNotifyIncomeGroup($p_id, $income_arr){
-        if(count($income_arr) >3){
-            $key = $income_arr['key'];
-            $decoded_string = $this->decodeReasonString($income_arr['name'], $key);
-            unset($income_arr['name']);
-            unset($income_arr['key']);
+    /**
+     * p_id - player id
+     * $income_arr -> array with the following values {
+     *  'key'  => building_key or auction_no.
+     *  'reason_string' => reason_string value
+     *  'origin' => 'building' for building, 'auction' for auction
+     *  'resource_type' => value, example: 'silver' => 2, 'gold'=> 1
+     * }
+     */
+    function updateAndNotifyIncomeGroup($p_id, $income_arr, $reason_string="", $origin="", $key =0){
+        if(count($income_arr) >1){
+            if ($origin === 'building'){
+                $b_type = $this->game->Building->getBuildingTypeFromKey($key);
+                $reason_string = array($b_type=>$reason_string);
+            } else { $b_type = 0;}
             $this->game->notifyAllPlayers( 'playerIncomeGroup', 
             clienttranslate( '${reason_string} earned ${player_name} ${resources}' ), 
             array('player_id' => $p_id,
                 'resources' => $income_arr,
                 'player_name' => $this->game->getPlayerName($p_id),
-                'origin' => $decoded_string['origin'],
-                'reason_string' => $decoded_string['reason_string'],
-                'b_type' => $decoded_string['b_type'],
+                'origin' => $origin,
+                'reason_string' => $reason_string,
+                'b_type' => $b_type,
                 'key' => $key,
                 ) );
             foreach( $income_arr as $type => $amt ){
                 $this->updateResource($p_id, $type, $amt);
             }
-        } else if (count($income_arr) == 3) {
-            $reason = $income_arr['name'];
-            unset($income_arr['name']);
-            $key = $income_arr['key'];
-            unset($income_arr['key']);
+        } else if (count($income_arr) == 1) {
             $type = array_keys($income_arr)[0];
-            $this->updateAndNotifyIncome($p_id, $type, $income_arr[$type], $reason, $key);
+            $this->updateAndNotifyIncome($p_id, $type, $income_arr[$type], $reason_string, $origin, $key);
         }
     }
 
-    function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = "", $key = 0){
-        $decoded_string = $this->decodeReasonString($reason_string, $key);
-        $this->game->notifyAllPlayers( "playerPayment",
-            clienttranslate( '${player_name} paid ${reason_string} ${type}' ), 
-            array('player_id' => $p_id,
+    /**
+     * p_id - player id
+     * $type - 'resource type' as string
+     * $amount - amount of resource to pay. 
+     * $reason_string => reason_string value
+     * $origin => 'building' for building, 'auction' for auction
+     * $key  => building_key or auction_no.
+     */
+    function updateAndNotifyPayment($p_id, $type, $amount =1, $reason_string = "", $origin="", $key = 0){
+        $values = array('player_id' => $p_id,
             'type' => array('type'=>$type, 'amount'=>$amount),
             'player_name' => $this->game->getPlayerName($p_id),
-            'player_id' => $p_id,
-            'origin' => $decoded_string['origin'],
-            'reason_string' => $decoded_string['reason_string'],
-            'b_type' => $decoded_string['b_type'],
-            'key' => $key,
-        ) );
+            'reason_string' => $reason_string,);
+        if ($origin === 'building'){
+            $values['origin'] = $origin;
+            $values['b_type'] = $this->game->Building->getBuildingTypeFromKey($key);
+            $values['key'] = $key;
+        } else if ($origin === 'auction') {
+            $values['origin'] = $origin;
+            $values['key'] = $key;
+        }
+        $this->game->notifyAllPlayers( "playerPayment", clienttranslate( '${reason_string} cost ${player_name} ${type}' ), $values );
         $this->updateResource($p_id, $type, -$amount);
     }
 
-    private function decodeReasonString($reason_string, $key){
-        $origin = "";
-        $b_type = -1;
-        if ($reason_string !== ""){
-            if (strpos($reason_string, "b:") === 0){
-                $origin = 'building';
-                $reason_string = substr($reason_string, 2, strlen($reason_string));
-                $b_type = $this->game->Building->getBuildingTypeFromKey($key);
-            } else if (strpos($reason_string, "a:") === 0){
-                $origin = 'auction';
-                $reason_string = substr($reason_string, 2, strlen($reason_string));
+    /**
+     * p_id - player id
+     * $income_arr - array with keys of 'resource type' with value for amount.
+     * $reason_string => reason_string value
+     * $origin => 'building' for building, 'auction' for auction
+     * $key  => building_key or auction_no.
+     */
+    function updateAndNotifyPaymentGroup($p_id, $payment_arr, $reason_string = "", $origin="", $key = 0){
+        if(count($payment_arr) >1){
+            $values = array('player_id' => $p_id,
+                        'resources' => $payment_arr,
+                        'player_name' => $this->game->getPlayerName($p_id),
+                        'reason_string' => $reason_string);
+            if ($origin === 'building'){
+                $values['b_type'] = $this->game->Building->getBuildingTypeFromKey($key);
+                $values ['origin'] = $origin;
+                $values['reason_string'] = $reason_string;
+                $values['key'] = $key;
+            } else if ($origin === 'auction'){
+                $values ['origin'] = $origin;
+                $values['reason_string'] = $reason_string;
+                $values['key'] = $key;
             }
+            $this->game->notifyAllPlayers( 'playerPaymentGroup', clienttranslate( '${reason_string} cost ${player_name} ${resources}' ), $values);
+            foreach( $payment_arr as $type => $amt ){
+                $this->updateResource($p_id, $type, -$amt);
+            }
+        } else if (count($payment_arr) == 1) {
+            $type = array_keys($payment_arr)[0];
+            $this->updateAndNotifyIncome($p_id, $type, $payment_arr[$type], $reason_string, $origin, $key);
         }
-        return array('origin' => $origin, 'reason_string'=>$reason_string, 'b_type' =>$b_type);
     }
+
+    
 
     function addWorker($p_id, $reason_string){
         $sql = "INSERT INTO `workers` (`player_id`) VALUES (".$p_id.")";
@@ -154,7 +198,7 @@ class HSDresource extends APP_GameClass
         if ($playerLoan== 0){
             $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $reason_string);
         } else {
-            $this->game->Log->payOffLoan($p_id, $reason_string);
+            $this->game->Log->freePayOffLoan($p_id, $reason_string);
             $this->game->Resource->updateResource ($p_id, 'loan', -1);
         }
     }
@@ -198,11 +242,7 @@ class HSDresource extends APP_GameClass
     function changeResourceInArray($r_arr, $removed_type, $added_type){
         if(array_key_exists($r_arr, $removed_type)){
             $r_arr[$removed_type]--;
-            if (array_key_exists($r_arr, $added_type)){
-                $r_arr[$added_type] ++;
-            } else {
-                $r_arr[$added_type] =1;
-            }
+            $r_arr = $this->updateKeyOrCreate($r_arr, $added_type);
         }
         return $r_arr;
     }
@@ -219,10 +259,8 @@ class HSDresource extends APP_GameClass
     
     function collectIncome($p_id) 
     {
-        //$this->game->notifyAllPlayers( "beginIncome", clienttranslate( 'Income Phase' ), array() );
         $sql = "SELECT `track` FROM `resources` WHERE `player_id`='".$p_id."'";
         $p_tracks = $this->game->getUniqueValueFromDB( $sql ); 
-        //$resources = $this->game->getCollectionFromDB( $sql );
         $this->game->Building->buildingIncomeForPlayer($p_id);
         if($p_tracks > 0) {
             $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, 'rail tracks');
@@ -245,115 +283,115 @@ class HSDresource extends APP_GameClass
         }
     }
 
-    function pay($p_id, $silver, $gold, $reason_string){
-        if (!$this->canPlayerAfford($p_id, array('gold'=>$gold, 'silver'=>$silver))){
+    function pay($p_id, $silver, $gold, $reason_string, $key=0){
+        $cost = array('gold'=>$gold, 'silver'=>$silver);
+        if (!$this->canPlayerAfford($p_id, $cost)){
             throw new BgaUserException( _("Not enough resources. Take loan(s) or trade") );
         }
-        if ($gold > 0) {
-            $this->updateAndNotifyPayment($p_id, 'gold', $gold, $reason_string);
-        }
-        if ($silver > 0) {
-            $this->updateAndNotifyPayment($p_id, 'silver', $silver, $reason_string);
+        if ($key != 0){
+            $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string, 'auction', $key);
+        } else {
+            $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string);
         }
     }
 
     function trade($p_id ,$tradeAction) {
         $p_name = $this->game->getPlayerName($p_id);
         // default trade amounts
+        $tradeAway = array('trade'=>1);
+        $tradeFor = array ();
         $sell = false;
-        $bank = false;
-        $trade_away_amt = 1;
-        $trade_for_amt = 1;
         switch($tradeAction){
             case 'buy_wood':
-                $trade_away_type = "silver";
-                $trade_for_type = "wood";
+                $tradeAway['silver'] = 1;
+                $tradeFor['wood'] = 1;
             break;
             case 'buy_food':
-                $trade_away_amt = 2;
-                $trade_away_type = "silver";
-                $trade_for_type = "food";
+                $tradeAway['silver'] = 2;
+                $tradeFor['food'] = 1;
             break;
             case 'buy_steel':
-                $trade_away_amt = 3;
-                $trade_away_type = "silver";
-                $trade_for_type = "steel";
+                $tradeAway['silver'] = 3;
+                $tradeFor['steel'] = 1;
             break;
             case 'buy_gold':
-                $trade_away_amt = 4;
-                $trade_away_type = "silver";
-                $trade_for_type = "gold";
+                $tradeAway['silver'] = 4;
+                $tradeFor['gold'] = 1;
             break;
             case 'buy_copper':
-                $trade_away_type = "gold";
-                $trade_for_type = "copper";
+                $tradeAway['gold'] = 1;
+                $tradeFor['copper'] = 1;
             break;
             case 'buy_livestock':
-                $trade_away_type = "gold";
-                $trade_for_type = "livestock";
+                $tradeAway['gold'] = 1;
+                $tradeFor['cow'] = 1;
             break;
             case 'sell_wood':
-                $trade_away_type = "wood";
-                $trade_for_type = "silver";
+                $tradeAway['wood'] = 1;
+                $tradeFor['silver'] = 1;
+                $tradeFor['vp'] = 1;
                 $sell = true;
             break;
             case 'sell_food':
-                $trade_away_type = "food";
-                $trade_for_amt = 2;
-                $trade_for_type = "silver";
+                $tradeAway['food'] = 1;
+                $tradeFor['silver'] = 2;
+                $tradeFor['vp'] = 1;
                 $sell = true;
             break;
             case 'sell_steel':
-                $trade_away_type = "steel";
-                $trade_for_amt = 3;
-                $trade_for_type = "silver";
+                $tradeAway['steel'] = 1;
+                $tradeFor['silver'] = 3;
+                $tradeFor['vp'] = 1;
                 $sell = true;
             break;
             case 'sell_gold':
-                $trade_away_type = "gold";
-                $trade_for_amt = 4;
-                $trade_for_type = "silver";
+                $tradeAway['gold'] = 1;
+                $tradeFor['silver'] = 4;
+                $tradeFor['vp'] = 1;
                 $sell = true;
             break;
             case 'sell_copper':
-                $trade_away_type = "copper";
-                $trade_for_type = "gold";
+                $tradeAway['copper'] = 1;
+                $tradeFor['gold'] = 1;
+                $tradeFor['vp'] = 1;
                 $sell = true;
             break;
             case 'sell_livestock':
-                $trade_away_type = "cow";
-                $trade_for_type = "gold";
+                $tradeAway['cow'] = 1;
+                $tradeFor['gold'] = 1;
+                $tradeFor['vp'] = 1;
                 $sell = true;
             break;
             case 'market_wood_food':
-                $trade_away_type = "wood";
-                $trade_for_type = "food";
+                $tradeAway['wood'] = 1;
+                $tradeFor['food'] = 1;
             break;
             case 'market_food_steel':
-                $trade_away_type = "food";
-                $trade_for_type = "steel";
+                $tradeAway['food'] = 1;
+                $tradeFor['steel'] = 1;
             break;
             case 'bank_trade_silver':
-                $trade_away_type = 'trade';
-                $trade_for_type = 'silver';
-                $bank = true;
+                $tradeFor['silver'] = 1;
         }
-        $cost = array($trade_away_type => $trade_away_amt, 'trade' => 1);
-        if (!$this->canPlayerAfford($p_id, $cost)){
+        if (!$this->canPlayerAfford($p_id, $tradeAway)){
             throw new BgaUserException( _("You cannot afford to make this trade"));
         }
-        $this->game->notifyAllPlayers( "trade", clienttranslate( '${player_name} trades ${trade1} for ${trade2}' ), array(
+        if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_MARKET)){
+            $tradeFor['silver'] = ($tradeFor['silver'] ?:0)+1;
+        }
+        $this->game->notifyAllPlayers( "trade", clienttranslate( '${player_name} Trades ${trade1} for ${trade2}' ), array(
             'player_id' => $p_id,
             'player_name' => $p_name,
-            'sell' => $sell,
-            'trade1' => $trade_away_type,
-            'trade2' => $trade_for_type,
+            'trade1' => $tradeAway,
+            'trade2' => $tradeFor,
         ) );
-        $trade_message = _('trade');
-        if (!$bank){ // bank has no extra trade req.
-            $this->updateAndNotifyPayment($p_id, 'trade', 1, $trade_message);
+        foreach($tradeAway as $type=>$amt){
+            $this->updateResource($p_id, $type, -$amt);
         }
-        $this->updateAndNotifyPayment($p_id, $trade_away_type, $trade_away_amt, $trade_message);
+        foreach($tradeFor as $type=>$amt){
+            $this->updateResource($p_id, $type, $amt);
+        }
+        /*$this->updateAndNotifyPayment($p_id, $trade_away_type, $trade_away_amt, $trade_message);
         $this->updateAndNotifyIncome($p_id, $trade_for_type, $trade_for_amt, $trade_message);
         
         if ($sell){
@@ -361,7 +399,13 @@ class HSDresource extends APP_GameClass
                 $this->updateAndNotifyIncome($p_id, 'silver', 1, _('market sell bonus'));
             }
             $this->updateAndNotifyIncome($p_id, 'vp', 1, $trade_message);
-        }
+        }*/
+    }
+
+    /**updates an array by setting  */
+    function updateKeyOrCreate($arr, $key, $amt = 1){
+        $arr[$key] = ($arr[$key] ?:0)+$amt;
+        return $arr;
     }
 
 }

@@ -66,7 +66,7 @@ $machinestates = array(
         "action" => "stPlaceWorkers",
         "args" => "argPlaceWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
-        "transitions" => array( "auction" => STATE_BEGIN_AUCTION )
+        "transitions" => array( "auction" => STATE_PAY_WORKERS )
     ),
 
     /*STATE_INCOME => array(
@@ -77,7 +77,7 @@ $machinestates = array(
         "transitions" => array( "" => STATE_PAY_WORKERS,  )
     ),*/
     
-    /*STATE_PAY_WORKERS => array(
+    STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),
         "descriptionmyturn" => clienttranslate('${you} must choose how to pay workers'),
@@ -86,7 +86,7 @@ $machinestates = array(
         "args" => "argPayWorkers",
         "possibleactions" => array( "takeLoan",  "trade", "done" ),
         "transitions" => array( "auction" => STATE_BEGIN_AUCTION)
-    ),*/
+    ),
 
     STATE_BEGIN_AUCTION  => array(
         "name" => "beginAuction",
@@ -96,7 +96,7 @@ $machinestates = array(
         "updateGameProgression" => true,
         "transitions" => array( "auction" => STATE_PLAYER_BID, 
                                 "endGame" => STATE_ENDGAME_ACTIONS,)
-    ),
+    ), 
 
     STATE_PLAYER_BID => array(
         "name" => "playerBid",
@@ -112,8 +112,8 @@ $machinestates = array(
 
     STATE_RAIL_BONUS => array(
         "name" => "getRailBonus",
-        "description" => clienttranslate('${actplayer} must choose a rail bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must choose a rail bonus'),
+        "description" => clienttranslate('${actplayer} must choose a railroad bonus'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a railroad bonus'),
         "type" => "activeplayer",
         "args" => "argRailBonus",
         "possibleactions" => array( "chooseBonus" ),

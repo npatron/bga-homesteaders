@@ -169,13 +169,26 @@ class HSDLog extends APP_GameClass
     $this->insert($player_id, 0, 'loan');
   }
 
-  public function payOffLoan($player_id, $reason)
+  public function freePayOffLoan($player_id, $reason, $origin ="", $key =0)
   {
-    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off ${loan} ${reason}' ), array(
+    $values = array(  'player_id' => $player_id,
+                      'player_name' => $this->game->getPlayerName($player_id),
+                      'reason_string' => $reason,
+                      'loan' => 'loan',);
+    if ($origin === 'building'){
+      $values['origin']= $origin;
+      $values['key']= $key;
+      $b_type = $this->game->Building->getBuildingTypeFromKey($key);
+      $values['reason_string'] = array($b_type=>$reason);
+    }
+    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${reason_string} pays off ${player_name}\'s ${loan}' ), $values);
+  }
+  public function payOffLoan($player_id, $type){
+    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off ${loan} with ${type}' ), array(
       'player_id' => $player_id,
       'player_name' => $this->game->getPlayerName($player_id),
-      'reason' => $reason,
       'loan' => 'loan',
+      'type' => $type,
     ) );
     $this->insert($player_id, 0, 'loanPaid');
   }

@@ -19,10 +19,11 @@
 /********* You can start writing your CSS below this line: **********/
 
 @font-face {
-   font-family: 'Old Standard TT', serif;
+   font-family: Old Standard TT;
    font-style: normal;
+   font-variant: small-caps;
    font-weight: 400;
-   src: local('OldStandardTT-Regular'), url(https://fonts.googleapis.com/css2?family=Old+Standard+TT&display=swap);
+   src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
 div#board {
@@ -33,6 +34,11 @@ div#board {
    background-size: 740px 545px;
    background-repeat: no-repeat;
    margin: auto;
+}
+
+.useFont {
+   font-family: 'Old Standard TT';
+   font-variant: small-caps;
 }
 
 /*=========================
