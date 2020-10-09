@@ -528,7 +528,7 @@ class HSDBuilding extends APP_GameClass
         foreach ($income_b_id as $b_id =>$income) {
             $name = $income['name'];
             $b_key = $income['key'];
-            array_diff_key($income, array_flip(['name','key']));
+            $income = array_diff_key($income, array_flip(['name','key']));
             $this->game->Resource->updateAndNotifyIncomeGroup($p_id, $income, $name, 'building' ,$b_key);
         }
     }

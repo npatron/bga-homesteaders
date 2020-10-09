@@ -76,7 +76,7 @@
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock res_{COLOR}" style="margin-top:4px;">
         <div id="player_name_{COLOR}" class="boardheader useFont" style="color: {COLOR};">{NAME}</div>
-        <div id="token_zone_{COLOR}" class="player_token_zone"> </div>
+        <div id="token_zone_{COLOR}" class="player_token_zone"><div id="worker_zone_{COLOR}" class="worker_zone"></div> </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
     <!-- END player_zone -->
@@ -122,7 +122,7 @@
 // templates
 var vstpl_player_zone = '<div id="player_zone_${color}" class="whiteblock res_${color}" style="margin-top:4px;">\
         <div id="player_name_${color}" class="boardheader" style="color: ${color};">${name}</div>\
-        <div id="token_zone_${color}" class="player_token_zone"> </div>\
+        <div id="token_zone_${color}" class="player_token_zone"> <div id="worker_zone_${color}" class="worker_zone"></div></div>\
         <div id="building_zone_${color}" class="building_zone"> </div>\
     </div>';
 
@@ -158,7 +158,7 @@ var jstpl_otherplayer_board = '\<div class="cp_board">\
     <div id="scoreicon_p${id}" class="scoreicon icon"></div><span id="scoreCount_p${id}">0</span>\
 </div>';
 
-var jstpl_resource_log='<div title = "${type}" class="token_${type} icon log_token"></div>';
+var jstpl_resource_log='<div title = "${type}" class="token_${type} icon log_token" style="left:${offset}"></div>';
 var jstpl_player_token_log='<div title = "${type}_${color}" class="player_token_${color} player_token_${type} log_token"></div>';
 var jptpl_track_log='<div title = "${type}" class="token_${type} log_token" ></div>';
 

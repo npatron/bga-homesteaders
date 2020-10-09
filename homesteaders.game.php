@@ -268,7 +268,7 @@ class homesteaders extends Table
     {
         self::checkAction( "takeLoan" );
         $current_player_id = $this->getCurrentPlayerId();
-        $this->Resource->updateAndNotifyIncome($current_player_id, 'silver', 2, "loan");
+        $this->Resource->updateResource($current_player_id, 'silver', 2);
         $this->Resource->updateResource($current_player_id, 'loan', 1);
         $this->Log->takeLoan($current_player_id);
     }
@@ -287,8 +287,7 @@ class homesteaders extends Table
         $worker_cost = array('trade'=>1,'food'=>1);
         if (!$this->Resource->canPlayerAfford($current_player_id, $worker_cost))
             throw new BgaUserException( _("You cannot afford to hire a worker"));
-        $this->Resource->updateAndNotifyPayment($current_player_id, 'trade', 1, 'Hire Worker');
-        $this->Resource->updateAndNotifyPayment($current_player_id, 'food', 1, 'Hire Worker');
+        $this->Resource->updateAndNotifyPaymentGroup($current_player_id, $worker_cost, 'Hire Worker');
         $this->Resource->addWorker($current_player_id, 'hire');
     }
 
