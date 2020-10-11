@@ -360,6 +360,8 @@ function (dojo, declare) {
                 this.building_worker_zones[key] = [];
                 this.building_worker_zones[key][3] = new ebg.zone();
                 this.building_worker_zones[key][3].create(this, `slot_3_${key}`, this.worker_width, this.worker_height );
+                this.building_worker_zones[key][3].setPattern('horizontalfit');
+                dojo.style(`slot_3_${key}`, 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(`slot_3_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
             }
         },
@@ -434,7 +436,8 @@ function (dojo, declare) {
                     dojo.connect($(options[i]), 'onclick', this, 'onSelectTradeAction' );
                 }
             }
-            //dojo.connect($('done_trading'), 'onclick', this, 'onSelectDoneTrading' );
+            dojo.connect($('confirm_trade_btn'), 'onclick', this, 'confirmTradeButton' );
+            dojo.addClass('confirm_trade_btn','noshow');
         },
 
         setupBonusButtons: function(){
@@ -914,8 +917,8 @@ function (dojo, declare) {
                 dojo.place('trade_board', 'trade_bottom', 'first');
                 // now make the trade options not selectable
                 this.clearSelectable('trade', true);
-                if ($('confirm_trade_btn') != null){
-                    this.fadeOutAndDestroy( 'confirm_trade_btn');
+                if (!dojo.hasClass('confirm_trade_btn', 'noshow') ){
+                    dojo.hasClass( 'confirm_trade_btn', 'noshow');
                 }
             }
         },
@@ -1043,17 +1046,14 @@ function (dojo, declare) {
             console.log( 'onClickOnTradeSlot' );
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
-            //if ( !this.checkAction( 'trade' )) { return; } 
             this.updateSelected('trade', evt.target.id);
             if (dojo.hasClass( evt.target.id ,'selected')){
                 console.log( 'trade is selected' );
-                if ($('confirm_trade_btn') == null){
-                    console.log( 'add Button' );
-                    this.addActionButton( 'confirm_trade_btn', _('Confirm Trade'), 'confirmTradeButton');
-                    dojo.place('confirm_trade_btn', 'btn_trade', 'before');
-                } // else button already exists...
-            } else if ($('confirm_trade_btn') != null){
-                this.fadeOutAndDestroy( 'confirm_trade_btn');
+                if (dojo.hasClass('confirm_trade_btn', 'noshow')){
+                    dojo.removeClass('confirm_trade_btn', 'noshow');    
+                }
+            } else if (!dojo.hasClass('confirm_trade_btn', 'noshow') ){
+                dojo.addClass('confirm_trade_btn', 'noshow');
             }
         },
 
@@ -1193,6 +1193,8 @@ function (dojo, declare) {
                 var building_slot = 1; 
             } else if(target_divId.startsWith('slot_2')){
                 var building_slot = 2;
+            } else {
+                var building_slot = 3;
             }
             const w_key = this.last_selected['worker'].split('_')[2];
             this.ajaxcall( "/homesteaders/homesteaders/selectWorkerDestination.html", { 
@@ -1691,8 +1693,8 @@ function (dojo, declare) {
             if (notif.args.state == 'discard') {
                 this.auction_zones[notif.args.auction_no].removeAll();
                 const bid_token = dojo.query(`[id^="bid_slot_${notif.args.auction_no}"] [id^="token_bid"]`);
-                if (bid_token.id != null){
-                    this.bid_zones[ZONE_PENDING].placeInZone(bid_token.id);
+                if (bid_token.length >0) {
+                    this.bid_zones[ZONE_PENDING].placeInZone(bid_token[0].id);
                 }
             } else if (notif.args.state == 'show'){
                 for (let i in notif.args.auctions){
@@ -1726,7 +1728,6 @@ function (dojo, declare) {
                 this.token_zone[notif.args.player_id].removeFromZone(worker_divId);
             } 
             if (notif.args.building_slot == 3){
-                dojo.style(parent_id, 'width', '70px');
             }
         },
 

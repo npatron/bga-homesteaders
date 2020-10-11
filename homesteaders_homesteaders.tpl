@@ -12,7 +12,8 @@
 -->
 <div id ="top">
     <span id="round_text" class="useFont">{ROUND_STRING}</span><span id="round_number" class="useFont">{ROUND_NUMBER}</span>
-    <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a>
+    <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a><!--
+--> <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
     <div id='auction_string' class='whiteblock noshow'<!-- BEGIN auction_string --><span class="auction_string" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string --> 
     <div id='future_auction_zone' class="noshow useFont"></div></div>
     <div id="payment_top"> </div> 
@@ -60,8 +61,8 @@
 <div id='building_location'>
     <div id='hidden_bld'>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
--->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a>
-        <div id='past_building_zone' class="main_building_zone noshow"> </div><!--
+-->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a><!--
+-->     <div id='past_building_zone' class="main_building_zone noshow"> </div><!--
     --> <div id='future_building_zone' class="main_building_zone noshow"> </div>
     </div>
     <div class="building_stock"><span class="useFont">{BUILDING_STOCK}</span></div>

@@ -451,7 +451,7 @@ class HSDBuilding extends APP_GameClass
                     break;
                 case BLD_RAILWORKERS_HOUSE:
                     $income_b_id[$b_id]['silver'] = 1;
-
+                    $income_b_id[$b_id]['trade'] = 1;
                     break;
                 case BLD_TRADING_POST:
                     $income_b_id[$b_id]['trade'] = 2;
@@ -466,9 +466,10 @@ class HSDBuilding extends APP_GameClass
                 break;
                 case BLD_STABLES:
                     $income_b_id[$b_id]['trade'] = 1;
+                    $income_b_id[$b_id]['vp'] = 1;
                 break;
                 case BLD_BANK:
-                    $this->game->Resource->payLoanOrRecieveSilver($p_id, $reason, $reason);
+                    $this->game->Resource->payLoanOrRecieveSilver($p_id, "Bank", 'building', $b_key);
                 break;
                 case BLD_RODEO:
                     $rodeoIncome = min($player_workers, 5);

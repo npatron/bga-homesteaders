@@ -104,7 +104,7 @@ class HSDresource extends APP_GameClass
      * p_id - player id
      * $income_arr - array with keys of 'resource type' with value for amount.
      * $reason_string => reason_string value
-     * $origin => 'building' for building, 'auction' for auction
+     * $origin => 'building' for building, 'auction' for auction, etc
      * $key  => building_key or auction_no.
      */
     function updateAndNotifyPaymentGroup($p_id, $payment_arr, $reason_string = "", $origin="", $key = 0){
@@ -329,7 +329,7 @@ class HSDresource extends APP_GameClass
         if ($key != 0){
             $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string, 'auction', $key);
         } else {
-            $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string, 'workers');
+            $this->updateAndNotifyPaymentGroup($p_id, $cost, array('worker'=>$reason_string));
         }
     }
 

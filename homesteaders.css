@@ -771,6 +771,7 @@ div#done_trading {
    position: absolute;
    height: 35px;
    width: 33px;
+   max-width: 33px;
 }
 .slot_1_1 {
    bottom: 10px;

@@ -636,7 +636,7 @@ class homesteaders extends Table
                 $silver +=2;
                 $this->playerTakeLoan($player_id);
             }
-            $this->Resource->updateAndNotifyPayment($player_id, 'silver', $player['workers'], "workers");
+            $this->Resource->updateAndNotifyPayment($player_id, 'silver', $player['workers'], array('worker'=>'worker'));
         
             /*} else {
                 $players[] = $player_id;
