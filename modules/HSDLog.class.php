@@ -175,12 +175,7 @@ class HSDLog extends APP_GameClass
                       'player_name' => $this->game->getPlayerName($player_id),
                       'reason_string' => $reason,
                       'loan' => 'loan',);
-    if ($origin === 'building'){
-      $values['origin']= $origin;
-      $values['key']= $key;
-      $b_type = $this->game->Building->getBuildingTypeFromKey($key);
-      $values['reason_string'] = array($b_type=>$reason);
-    }
+    $values = $this->game->Resource->updateArrForNotify($values, $origin, $key);
     $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${reason_string} pays off ${player_name}\'s ${loan}' ), $values);
   }
   public function payOffLoan($player_id, $type){

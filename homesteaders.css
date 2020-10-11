@@ -40,6 +40,9 @@ div#board {
    font-family: 'Old Standard TT';
    font-variant: small-caps;
 }
+.logFont {
+   font-family: 'Old Standard TT';
+}
 
 /*=========================
     Bid Slot Locations (on board)
@@ -368,9 +371,6 @@ div#done_trading {
    height: 180px;
    width: 690px;
 }
-.log_token {
-   display: inline-block;
-}
 
 #payment_section {
    position: relative;
@@ -495,12 +495,27 @@ div#done_trading {
    border-style: solid;
 }
 .res_red {
-   border-color:red;
+   border-color: red;
    border-radius: 2px;
    border-style: solid;
 }
 .res_purple {
    border-color:purple;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_lightseagreen{
+   border-color:lightseagreen;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_orange{
+   border-color:orange;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_hotpink{
+   border-color:hotpink;
    border-radius: 2px;
    border-style: solid;
 }
@@ -517,6 +532,7 @@ div#done_trading {
 .noshow {
    visibility:hidden;
    height:0px;
+   width:0px;
    margin: 0px;
    padding: 0px;
 }
@@ -570,9 +586,61 @@ div#done_trading {
 }
 .icon {
    background-image: url('img/tokens_50x50.png');
-   height: 25px;
-   width: 25px;
-   background-size: 125px 75px;
+   height: 30px;
+   width: 30px;
+   background-size: 150px 90px;
+}
+
+.log_bid {
+   display: inline-block;
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-position-x: 100%;
+   background-size: 70px 175px;
+   width: 33px;
+   height: 35px;
+}
+.log_train {
+   display: inline-block;
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-size: 98px 249px;
+   background-position-x: 0%;
+   width: 55px;
+   height: 29px;
+}
+
+.log_token {
+   background-image: url('img/tokens_50x50.png');
+   display: inline-block;
+   height: 20px;
+   width: 20px;
+   background-size: 100px 60px;
+}
+
+.log_track{
+   display: inline-block;
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: 0% 13%;
+   height: 26px;
+   width: 33px;
+   background-size: 99px 45px;
+   display: inline-block;
+}
+.log_loan {
+   display: inline-block;
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -87% 30%;
+   top: 4px;
+   height: 21px;
+   width: 31px;
+   background-size: 115px 63px; 
+}
+.log_worker {
+   display: inline-block;
+   background-image: url('img/tokens_50x50.png');
+   height: 29px;
+   width: 23px;
+   background-size: 175px 80px;
+   background-position: 74% 46%;
 }
 
 .token_track {
@@ -633,21 +701,37 @@ div#done_trading {
 .token_vp {
    background-position: 100% 50%;
 }
-.token_yellow {
-   background-position: 0% 100%;
+.bid_yellow {
+   background-position: 100% 0%;
 }
-.token_red {
-   background-position: 25% 100%;  
+.bid_red {
+   background-position: 100% 25%;  
 }
-.token_green {
-   background-position: 50% 100%;
+.bid_green {
+   background-position: 100% 50%;
 }
-.token_blue {
-   background-position: 75% 100%;
+.bid_blue {
+   background-position: 100% 75%;
 }
-.token_purple {
+.bid_purple {
    background-position: 100% 100%;
 }
+.train_yellow {
+   background-position-y: 1%;
+}
+.train_red {
+   background-position-y: 22%;
+}
+.train_green {
+   background-position-y: 45%;
+}
+.train_blue {
+   background-position-y:  68.5%;
+}
+.train_purple {
+   background-position-y: 91.5%;
+}
+
 
 .player_token_bid {
    background-image: url('img/fancy_tokens_80x83.png');

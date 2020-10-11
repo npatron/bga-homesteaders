@@ -61,8 +61,8 @@
     <div id='hidden_bld'>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
 -->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a>
-        <div id='past_building_zone' class="main_building_zone noshow res_blue"> </div><!--
-    --> <div id='future_building_zone' class="main_building_zone noshow res_purple"> </div>
+        <div id='past_building_zone' class="main_building_zone noshow"> </div><!--
+    --> <div id='future_building_zone' class="main_building_zone noshow"> </div>
     </div>
     <div class="building_stock"><span class="useFont">{BUILDING_STOCK}</span></div>
     <div id="main_building_zone" class="main_building_zone"> </div>
@@ -76,7 +76,9 @@
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock res_{COLOR}" style="margin-top:4px;">
         <div id="player_name_{COLOR}" class="boardheader useFont" style="color: {COLOR};">{NAME}</div>
-        <div id="token_zone_{COLOR}" class="player_token_zone"><div id="worker_zone_{COLOR}" class="worker_zone"></div> </div>
+        <div id="token_zone_{COLOR}" class="player_token_zone">
+            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
+        </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
     <!-- END player_zone -->
@@ -127,16 +129,13 @@ var vstpl_player_zone = '<div id="player_zone_${color}" class="whiteblock res_${
     </div>';
 
 var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone building_zone_diag" style="order: ${order}"></div>';
-
 var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
 
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile res_${color}"> </div>';
 
 var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
-
 var jptpl_player_token='<div id="token_${type}_${color}" class="player_token_${color} player_token_${type}"> </div>';
-
 var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> </div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
@@ -158,9 +157,9 @@ var jstpl_otherplayer_board = '\<div class="cp_board">\
     <div id="scoreicon_p${id}" class="scoreicon icon"></div><span id="scoreCount_p${id}">0</span>\
 </div>';
 
-var jstpl_resource_log='<div title = "${type}" class="token_${type} icon log_token" style="left:${offset}"></div>';
-var jstpl_player_token_log='<div title = "${type}_${color}" class="player_token_${color} player_token_${type} log_token"></div>';
-var jptpl_track_log='<div title = "${type}" class="token_${type} log_token" ></div>';
+var jstpl_resource_log= '<div title = "${type}" class="token_${type} log_token" style="left:${offset}"></div>';
+var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
+var jptpl_track_log= '<div title = "${type}" class="log_${type}" ></div>';
 
 </script>  
 

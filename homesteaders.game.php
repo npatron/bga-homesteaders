@@ -50,7 +50,8 @@ class homesteaders extends Table
             "players_passed"    => 16,
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
-            "dummy_bid_val"     => 19,
+            "last_building"     => 19,
+            "dummy_bid_val"     => 20,
         ) );
         
         $this->Log      = new HSDLog($this);
@@ -117,6 +118,7 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'players_passed', 0 );
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
+        $this->setGameStateInitialValue( 'last_building', 0 );
         $this->setGameStateInitialValue( 'dummy_bid_val', 5 );
         
         $values = array();
@@ -226,34 +228,7 @@ class homesteaders extends Table
         return($colors[$player_id]['color_name']);
     }
     
-    function getRailAdvBonusOptions($player_id){
-        $sql = "SELECT `rail_adv` FROM `player` WHERE `player_id`='".$player_id."'";
-        $rail_adv = self::getUniqueValueFromDB( $sql );
-        $options = array();
-        if($rail_adv >0){
-            $options[] = TRADE; 
-        } 
-        if($rail_adv >1){
-            $options[] = TRACK; 
-        } 
-        if($rail_adv >2){
-            $options[] = WORKER;
-        }  
-        if($rail_adv >3){
-            $options[] = WOOD;
-            $options[] = FOOD;
-            $options[] = STEEL;
-            $options[] = GOLD;
-            $options[] = COPPER;
-            $options[] = COW;
-        } 
-        if($rail_adv >4){
-            $options[] = VP;
-        }
-        return $options; 
-    }
-
-
+    
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
 //////////// 
@@ -291,20 +266,20 @@ class homesteaders extends Table
         $this->Resource->addWorker($current_player_id, 'hire');
     }
 
-    public function playerSelectWorkerDestination($worker_key, $building_key, $building_slot) 
+    public function playerSelectWorkerDestination($worker_key, $b_key, $building_slot) 
     {
         self::checkAction( "placeWorker" );
         $current_player_id = $this->getCurrentPlayerId();
         $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${type} to ${building_name}' ), array(
             'player_id' => $current_player_id,
             'worker_key' => $worker_key,
-            'building_key' => $building_key,
-            'building_name' => $this->Building->getBuildingNameFromKey($building_key),
+            'building_key' => $b_key,
+            'building_name' => array('type'=> $this->Building->getBuildingTypeFromKey($b_key) ,'str'=>$this->Building->getBuildingNameFromKey($b_key)),
             'building_slot' => $building_slot, 
             'type' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),
         ) );
-        $sql = "UPDATE `workers` SET `building_key`= '".$building_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$worker_key."'";
+        $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$worker_key."'";
         self::DbQuery( $sql );
     }
 
@@ -378,7 +353,8 @@ class homesteaders extends Table
         
         $bid_cost = $this->Bid->getBidCost($active_player_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
-        $this->Resource->pay($active_player_id, $bid_cost, $gold, "Auction", $this->getGameStateValue('current_auction'));
+        $auction_no = $this->getGameStateValue('current_auction');
+        $this->Resource->pay($active_player_id, $bid_cost, $gold, "AUCTION ".$auction_no, $auction_no);
         if ($this->Auction->doesCurrentAuctionHaveBuildPhase()){
             $this->gamestate->nextstate( 'build' );
         } else {
@@ -389,7 +365,7 @@ class homesteaders extends Table
 
     public function playerSelectRailBonus($selected_bonus) {
         $active_player = $this->getActivePlayerId();
-        $options = $this->getRailAdvBonusOptions($active_player);
+        $options = $this->Resource->getRailAdvBonusOptions($active_player);
         if (!in_array ($selected_bonus, $options)){
             throw new BgaUserException( "invalid bonus option selected: " );
         } 
@@ -434,7 +410,8 @@ class homesteaders extends Table
         $next_state = 'done';    
         if ($rail){
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
-            $this->Resource->getRailAdv( $active_player );
+            $auction_no = $this->getGameStateValue( 'current_auction');
+            $this->Resource->getRailAdv( $active_player, "AUCTION ".$auction_no, 'auction', $auction_no );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
@@ -501,7 +478,8 @@ class homesteaders extends Table
         $auction_bonus = $this->getGameStateValue('auction_bonus');
         if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV) {
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
-            $this->Resource->getRailAdv( $active_player );
+            $auction_no = $this->getGameStateValue('current_auction');
+            $this->Resource->getRailAdv( $active_player, "AUCTION ".$auction_no, 'auction', $auction_no );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
@@ -571,7 +549,7 @@ class homesteaders extends Table
 
     function argRailBonus() {
         $active_player_id = $this->getActivePlayerId();
-        $rail_options= $this->getRailAdvBonusOptions($active_player_id);
+        $rail_options= $this->Resource->getRailAdvBonusOptions($active_player_id);
         return array("rail_options"=>$rail_options);
     }
 
@@ -726,20 +704,21 @@ class homesteaders extends Table
     { 
         $active_player_id = $this->getActivePlayerId();
         $bonus = $this->getGameStateValue('building_bonus');
-        $bonusReason = _('on Build bonus');
+        $b_key = $this->getGameStateValue('last_building');
+        $b_name = $this->Building->getBuildingNameFromKey($b_key);
         if ($bonus <3){ 
             if ($bonus == BUILD_BONUS_PAY_LOAN){
-                $this->Resource->payLoanOrRecieveSilver($active_player_id, $bonusReason);
+                $this->Resource->payLoanOrRecieveSilver($active_player_id, $b_name, 'building', $b_key);
             } else if ($bonus == BUILD_BONUS_TRADE){
-                $this->Resource->updateAndNotifyIncome($active_player_id, 'trade', 1, $bonusReason);
+                $this->Resource->updateAndNotifyIncome($active_player_id, 'trade', 1, $b_name, 'building', $b_key);
             }
             $this->gamestate->nextState("auction_bonus");
         } else if ($bonus == BUILD_BONUS_RAIL_ADVANCE){
-            $this->Resource->getRailAdv($active_player_id);
+            $this->Resource->getRailAdv($active_player_id, $b_name, 'building', $b_key);
             $this->setGameStateValue('phase', PHASE_BLD_BONUS);
             $this->gamestate->nextState('rail_bonus');
         } else if ($bonus == BUILD_BONUS_TRACK_AND_BUILD) {
-            $this->Resource->addTrack($active_player_id, $bonusReason);
+            $this->Resource->addTrack($active_player_id, $b_name, 'building', $b_key);
             $this->gamestate->nextState('train_station_build');
         }
         //the other case (BUILD_BONUS_WORKER) waits for player_choice

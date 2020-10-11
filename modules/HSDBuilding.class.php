@@ -320,30 +320,39 @@ class HSDBuilding extends APP_GameClass
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
             throw new BgaUserException( _("You have already built a ".$b_name));
         }
-        $this->payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper);
-        $building['p_id'] = $p_id;
-        $this->game->notifyAllPlayers( "buildBuilding", 
-                    clienttranslate( '${player_name} builds a ${building_name} ' ),            
-                    array(  'player_id' => $p_id,
-                            'player_name' => $this->game->getPlayerName($p_id),
-                            'building' => $building,
-                            'building_name' => $b_name,) );
-        $this->game->Log->buyBuilding($p_id, $b_id);
-        $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
-        $this->game->DbQuery( $sql );
-        
-        $building_score = $this->getBuildingScoreFromId( $b_id );
-        $this->game->Score->dbIncScore($p_id, $building_score);
-    }
-
-    function payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){
         $b_cost = $this->getBuildingCostFromKey ($b_key);
         if ($goldAsCow)
             $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
         if ($goldAsCopper)
             $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
-        $b_name = $this->getBuildingNameFromKey ($b_key);
-        $this->game->Resource->updateAndNotifyPaymentGroup($p_id, $b_cost , "building ".$b_name, 'building', $b_key);
+        $this->payForBuilding($p_id, $b_cost);
+
+        $message = '${player_name} builds a ${building_name}';
+        $building['p_id'] = $p_id;
+        $values = array(  'player_id' => $p_id,
+                        'player_name' => $this->game->getPlayerName($p_id),
+                        'building' => $building,
+                        'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)),);
+        if (count($b_cost)>0) {
+            $message .= ' for ${resources}';
+            $values['resources'] = $b_cost;
+        }
+        $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
+        $this->game->Log->buyBuilding($p_id, $b_id);
+        $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
+        $this->game->DbQuery( $sql );
+        $this->game->setGameStateValue('last_building', $b_key);
+        
+        $building_score = $this->getBuildingScoreFromId( $b_id );
+        $this->game->Score->dbIncScore($p_id, $building_score);
+    }
+
+    function payForBuilding($p_id, $b_cost){
+        foreach( $b_cost as $type => $amt ){
+            if ($amt != 0){
+                $this->game->Resource->updateResource($p_id, $type, -$amt);
+            }
+        }
     }
 
     function getOnBuildBonusForBuildingKey($b_key){

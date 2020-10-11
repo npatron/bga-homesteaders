@@ -134,8 +134,9 @@ function (dojo, declare) {
             this.bid_zone_width = 36;
             this.bid_val_arr = [3,4,5,6,7,9,12,16,21];
             this.bid_arr_val = {3:0, 4:1, 5:2, 6:3, 7:4, 9:5, 12:6, 16:7, 21:8};
-            this.color_arr = {1:'yellow', 2:'red', 3:'blue', 4:'green', 5:'purple'}; 
-            this.building_color = {0:'green', 1:'red', 2:'blue', 3:'yellow'};
+            //this.color_arr = {1:'yellow', 2:'red', 3:'blue', 4:'green', 5:'purple'}; 
+            this.asset_colors = {0:'lightgreen', 1:'lightsalmon', 2:'royalblue', 3:'gold',
+                            11:'lightseagreen',12:'orange',13:'hotpink'};
 
             // auction bid zones
             this.bid_zones = [];
@@ -193,8 +194,8 @@ function (dojo, declare) {
             this.worker_width = 33;
             this.rail_width = 85;
             this.rail_height = 102;
-            this.hasUpdatedTitle = false;
             
+            this.player_score_counter = []; // indexed by player_id
             this.player_count = 0;
             this.goldAmount = 0;
             this.silverCost = 0;
@@ -245,6 +246,9 @@ function (dojo, declare) {
                 this.token_divId[p_id] = 'token_zone_' + current_player_color;
                 this.token_zone[p_id] = new ebg.zone();
                 this.token_zone[p_id].create ( this, 'worker_zone_'+ current_player_color , this.worker_width, this.worker_height );
+                this.player_score_counter[p_id] = new ebg.counter();
+                this.player_score_counter[p_id].create(`player_score_${p_id}`);
+                this.player_score_counter[p_id].setValue(Number(player.score));
 
                 this.player_building_zone_id[p_id] = 'building_zone_'+ this.player_color[p_id];
                 this.player_building_zone[p_id] = new ebg.zone();
@@ -261,7 +265,7 @@ function (dojo, declare) {
             this.setupBuildings(gamedatas.buildings);
             this.setupTracks(gamedatas.tracks);
 
-            this.player_building_zone[gamedatas.first_player].placeInZone('first_player_tile', 1);
+            this.player_building_zone[gamedatas.first_player].placeInZone('first_player_tile', 0);
             this.first_player = Number(gamedatas.first_player);
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones (gamedatas.number_auctions);
@@ -277,7 +281,6 @@ function (dojo, declare) {
             
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
-            this.hasUpdatedTitle = false;
 
             console.log( "Ending game setup" );
         },
@@ -460,7 +463,7 @@ function (dojo, declare) {
             } else if (dojo.hasClass('tgl_past_bld', 'noshow')){
                 dojo.removeClass('tgl_past_bld', 'noshow');
             }
-            let future_buildings = dojo.query(`#${this.building_zone_divId[BLD_LOC_DISCARD]} .building_tile`);
+            let future_buildings = dojo.query(`#${this.building_zone_divId[BLD_LOC_FUTURE]} .building_tile`);
             if (future_buildings.length == 0){
                 dojo.addClass('tgl_future_bld', 'noshow');
             } else if (dojo.hasClass('tgl_future_bld', 'noshow')){
@@ -501,11 +504,9 @@ function (dojo, declare) {
                 case 'payWorkers':
                     this.goldAmount = 0;
                     break;
-                case 'allocateWorkers':       
-                    this.hasUpdatedTitle = false;
+                case 'allocateWorkers':                    
                 break;
                 case 'playerBid':
-                    this.last_selected['bid']    ="";
                     const active_bid_id = `token_bid_${this.player_color[this.getActivePlayerId()]}`;
                     dojo.addClass(active_bid_id, 'animated');
                     break;
@@ -560,7 +561,7 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                     case 'allocateWorkers':
-                        this.last_selected['worker'] ="";
+                            this.last_selected['worker'] ="";
                             // show workers that are selectable
                             const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
                             workers.addClass('selectable');
@@ -572,12 +573,12 @@ function (dojo, declare) {
                             this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray' );
                             this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
                         break;
-                    case 'payWorkers':
+                    case 'payWorkers':    
                             this.showPaymentSection();
                             this.silverCost = Number(args.worker_counts[this.player_id].workers);
                             this.silverCounter.setValue(Math.max(0 , this.silverCost));
                             this.goldCounter.setValue(this.goldAmount);
-            
+                            
                             this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
                             this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
                             this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray' );
@@ -745,19 +746,13 @@ function (dojo, declare) {
             for (let a_id in auctions){
                 const auction = auctions[a_id];
                 if (auction.location !=AUCLOC_DISCARD) {
-                    color = this.color_arr[Math.ceil(a_id/10)];
+                    color = this.asset_colors[10+Math.ceil(a_id/10)];
                     dojo.place(this.format_block( 'jstpl_auction_tile', {auc: a_id, color:color}), 'future_auction_zone');
                     dojo.style(`auction_tile_${a_id}`, 'order', a_id);
                 }
             }
         },
 
-        // when coming from assignWorkers
-        /*setupPayWorkersTitle: function () {
-            this.hasUpdatedTitle = true;
-            this.gamedatas.gamestate.descriptionmyturn = _('Payment: Choose how to pay workers');
-            this.updatePageTitle();
-        },*/
 
         /**
          * setup auction cards for the current round in the Auction board.
@@ -772,8 +767,8 @@ function (dojo, declare) {
                 const auction = auctions[a_id];
                 if (auction.location !=AUCLOC_DISCARD && auction.position == current_round) {
                     this.auction_zones[auction.location].placeInZone(`auction_tile_${a_id}`);
-                    color = this.color_arr[Math.ceil(a_id/10)];
-                    dojo.removeClass(`auction_tile_${a_id}`, `res_${color}`);
+                    //var color = this.asset_colors[10+Math.ceil(a_id/10)];
+                    //dojo.removeClass(`auction_tile_${a_id}`, `res_${color}`);
                 }
             }
         },
@@ -802,21 +797,19 @@ function (dojo, declare) {
             }
             if ($(b_divId) != null){ // if element already exists, just move it.
                 const wasInMain = (dojo.query( `#main_building_zone #${b_divId}`).length == 1);
-                console.log('was in main? '+wasInMain);
                 if (wasInMain){
                     this.main_building_diag[b_id].removeFromZone(b_divId);
-                    this.player_building_zone[building.p_id].placeInZone(b_divId);
+                    this.player_building_zone[building.p_id].placeInZone(b_divId, b_key);
                     if ((this.main_building_counts[building.b_id]--) == 1){
                         this.fadeOutAndDestroy( `building_stack_${building.b_id}`);
                         this.main_building_diag[b_id]= null;
                     }
-                    console.log ("count: "+this.main_building_counts[building.b_id]);
                 } else {
-                    this.player_building_zone[building.p_id].placeInZone(b_divId);
+                    this.player_building_zone[building.p_id].placeInZone(b_divId, b_key);
                 }
             } else { // create it as well;
                 dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), this.building_zone_divId[BLD_LOC_FUTURE]);
-                this.player_building_zone[building.p_id].placeInZone(`building_tile_${b_key}`, b_id);
+                this.player_building_zone[building.p_id].placeInZone(`building_tile_${b_key}`, b_key);
             }
             this.addBuildingWorkerSlots(building);
             if (building.p_id == this.player_id){
@@ -1133,21 +1126,20 @@ function (dojo, declare) {
                 const tokenZone = this.token_divId[this.player_id];
                 if (dojo.query(`#${tokenZone} .token_worker`).length >0 ){
                     this.confirmationDialog( _('You still have workers to assign, Continue?'), dojo.hitch( this, function() {
-                        this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
-                        function( result ) {
-                            this.disableTradeIfPossible();
-                            this.clearSelectable('worker', true); 
-                            this.clearSelectable('worker_slot', false);
-                        }, 
-                        function( is_error) { } );
-                    } ) );
-                } else {
                     this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
                     function( result ) { 
-                        //this.movePlayerToNormal(); //move player zone back to normal spot. DISABLED, as not needed.
-                        this.disableTradeIfPossible();
-                        this.clearSelectable('worker', true); 
-                        this.clearSelectable('worker_slot', false);
+                    this.disableTradeIfPossible();
+                    this.clearSelectable('worker', true); 
+                    this.clearSelectable('worker_slot', false);
+                }, 
+                function( is_error) { } );
+                } ) );
+            } else {
+                this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
+                function( result ) { 
+                    this.disableTradeIfPossible();
+                    this.clearSelectable('worker', true); 
+                    this.clearSelectable('worker_slot', false);
                     }, function( is_error) {  } ); 
                 }
             }
@@ -1183,13 +1175,13 @@ function (dojo, declare) {
             if (this.last_selected['worker'] == ""){
                 const unassignedWorkers = dojo.query(`#token_zone_${this.player_color[this.player_id]} .token_worker`);// find unassigned workers.
                 if (unassignedWorkers.length == 0){
-                    this.showMessage( _("You must select 1 worker"), 'error' );
+                this.showMessage( _("You must select 1 worker"), 'error' );
                     return;
                 } else {
                     this.last_selected['worker'] = unassignedWorkers[0].id;
-                }
             }
-            if (document.querySelector(`#${target_divId} .worker_slot`)){
+        }
+        if (document.querySelector(`#${target_divId} .worker_slot`)){
                 if (!target_divId.startsWith('slot_3')){
                     this.showMessage(_("You have already assigned a worker there"), 'error');
                     return;
@@ -1251,7 +1243,6 @@ function (dojo, declare) {
         onSelectConfirmBidButton: function () 
         {
             if( this.checkAction( 'confirmBid')){
-                const selected_slot = dojo.query(".bid_slot.selected");
                 if (this.last_selected['bid'] == ""){
                     this.showMessage( _("You must select 1 bid_slot"), 'error' );
                     return;
@@ -1409,7 +1400,7 @@ function (dojo, declare) {
                     value = 10;
                 break;
             }
-            this.scoreCrtl[p_id].incValue(value);
+            this.player_score_counter[p_id].incValue(value);
         },
 
         /***** Building Bonus *****/
@@ -1598,21 +1589,46 @@ function (dojo, declare) {
                             args.type = this.getOneResourceAsDiv(args.typeStr, args.amount);
                         }
                     }
-                    if (args.track != null){
+                    if (args.track != null && typeof args.track == 'string'){
                         args.track = this.format_block('jptpl_track_log', {"type" : 'track'});
                     }
-                    if (args.loan != null){
+                    if (args.loan != null && typeof args.loan == 'string'){
                         args.loan = this.format_block('jptpl_track_log', {"type" : 'loan'});
+                    }    
+
+                    if (args.token != null && typeof (args.null != "string")){
+                        if (args.token.color != null) {
+                            var color = args.token.color;
+                        } else {
+                            var color = this.player_color[args.token.player_id];
+                        }
+                        if (args.token.type != null) {
+                            var type = args.token.type;
+                        } else {
+                            var type = args.token.token;
+                        }
+                        args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : type});
                     }
-                    if (args.token != null){
-                        const color = this.player_color[args.player_id];
-                        args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.token});
+                    if (args.reason_string != null && typeof (args.reason_string) != "string"){
+                        if (args.reason_string.type != null){
+                            let color = this.asset_colors[Number(args.reason_string.type)];
+                            args.reason_string = this.addColor(args.reason_string.str, color);
+                        } else if (args.reason_string.token != null) {
+                            const color = this.player_color[args.reason_string.player_id];
+                            args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
+                        } else if (args.reason_string.worker != null) {
+                            args.reason_string = this.getOneResourceAsDiv('worker', 1);
+                        }
                     }
-                    if (args.origin == 'building' && (typeof (args.reason_string)) != "string"){
-                        console.log(args.reason_string);
-                        let color = this.building_color[Number(args.reason_string.type)];
-                        args.reason_string = this.addColor(args.reason_string.str, color);
+                    if (args.building_name != null && typeof (args.building_name) != "string"){
+                        let color = this.asset_colors[Number(args.building_name.type)];
+                        args.building_name = this.addColor(args.building_name.str, color);
                     }
+                    if (args.auction != null && typeof (args.auction) != 'string'){
+                        let color = this.asset_colors[Number(args.auction.key)+10];
+                        args.auction = this.addColor(args.auction.str, color);
+                    }
+                    
                     if (args.tradeAway != null){
                         args.tradeAway_arr = args.tradeAway;
                         args.tradeFor_arr = args.tradeFor;
@@ -1640,14 +1656,17 @@ function (dojo, declare) {
             var you = "<span style=\"font-weight:bold;color:#" + color + ";" + color_bg + "\">" + __("lang_mainsite", "You") + "</span>";
             return you;
         },
-
+            
         addColor: function(string, color) {
-            return `<span class="useFont" style="color:${color};">${string}</span>`;
+            return `<span class="logFont" style="font-weight:bold;color:${color};">${string}</span>`;
         },
 
         getOneResourceAsDiv: function(type, amount){
+            if (type == 'worker') {
+                return this.format_block('jptpl_track_log', {type : type});
+            }
             var resString = "";
-            if (amount > 0){
+            if (amount > 0){ 
                 var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type, 'offset':0});
                 resString += `${tokenDiv}`;
                 var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type, 'offset':-15});
@@ -1671,7 +1690,7 @@ function (dojo, declare) {
             console.log ( notif );
             if (notif.args.state == 'discard') {
                 this.auction_zones[notif.args.auction_no].removeAll();
-                const bid_token = document.querySelector(`[id^="bid_slot_${notif.args.auction_no}"] [id^="token_bid"]`);
+                const bid_token = dojo.query(`[id^="bid_slot_${notif.args.auction_no}"] [id^="token_bid"]`);
                 if (bid_token.id != null){
                     this.bid_zones[ZONE_PENDING].placeInZone(bid_token.id);
                 }
@@ -1691,9 +1710,6 @@ function (dojo, declare) {
 
         notif_playerPass: function( notif ){
             console.log ( 'notif_playerPass' );
-            /*if (notif.args.player_id == this.player_id){
-                this.setupPayWorkersTitle();
-            }*/
         },
 
         notif_workerMoved: function( notif ){
@@ -1708,7 +1724,7 @@ function (dojo, declare) {
                 dojo.style( parent_id , 'height', this.worker_height.toString()+'px');
             } else {
                 this.token_zone[notif.args.player_id].removeFromZone(worker_divId);
-            }
+            } 
             if (notif.args.building_slot == 3){
                 dojo.style(parent_id, 'width', '70px');
             }
@@ -1733,8 +1749,7 @@ function (dojo, declare) {
                 dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 if (this.currentState == "allocateWorkers" && notif.args.player_id == this.player_id){
                     dojo.addClass(worker_divId, 'selectable');
-                }
-                this.silverCost++;
+                }                
             }
         },
 
@@ -1743,12 +1758,13 @@ function (dojo, declare) {
             console.log ( notif );
             
             dojo.place(this.format_block( 'jptpl_track', 
-                    {id: Number(notif.args.key), color: this.player_color[Number(notif.args.player_id)]}),
+                    {id: Number(notif.args.track_key), color: this.player_color[Number(notif.args.player_id)]}),
                     this.token_divId[Number(notif.args.player_id)]);
         },
 
         notif_moveBid: function( notif ){
             console.log ('notif_moveBid');
+            console.log ( notif );
             this.moveBid(notif.args.player_id, notif.args.bid_location);
         },
 
@@ -1758,7 +1774,7 @@ function (dojo, declare) {
             const tile_id = `first_player_tile`;
             if (p_id != this.first_player){
                 this.player_building_zone[this.first_player].removeFromZone(tile_id);
-                this.player_building_zone[p_id].placeInZone(tile_id);
+                this.player_building_zone[p_id].placeInZone(tile_id, 0);
                 this.first_player = p_id;
             }
         },
@@ -1774,7 +1790,23 @@ function (dojo, declare) {
             //console.log ( notif ); 
 
             this.addBuildingToPlayer(notif.args.building);
-            //this.updateScoreForBuilding(notif.args.player_id, notif.args.building['b_id']);
+            this.updateScoreForBuilding(notif.args.player_id, notif.args.building['b_id']);
+            
+            var destination = `building_tile_${Number(notif.args.building.b_key)}`; 
+            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            var delay = 0;
+            console.log(notif.args.resource_arr);
+            for(let type in notif.args.resource_arr){
+                let amt = notif.args.resource_arr[type];
+                console.log(`${type}: ${amt} `);
+                for(let i = 0; i < amt; i++){
+                    console.log("sending token '"+type+"' to '"+ destination+ "'");
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                    if (notif.args.player_id == this.player_id){
+                        this.resourceCounters[type].incValue(-1);
+                    }
+                }   
+            }
         },
 
         notif_playerIncome: function( notif ){
@@ -1856,7 +1888,7 @@ function (dojo, declare) {
                 let amt = notif.args.resource_arr[type];
                 console.log(`${type}: ${amt} `);
                 for(let i = 0; i < amt; i++){
-                    console.log("sending token '"+type+"' from player '"+ notif.args.player_name+ "'");
+                    console.log("sending token '"+type+"' to '"+ destination+ "'");
                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(-1);
@@ -1909,10 +1941,11 @@ function (dojo, declare) {
             this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', player_zone_divId,  500 , 0 );
             if (notif.args.player_id == this.player_id){
                 this.resourceCounters['loan'].incValue(1);
+                this.resourceCounters['silver'].incValue(2);
             }
             this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver', offset:0}), 'limbo', 'board', player_zone_divId, 500 , 100);
             this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver', offset:0}), 'limbo', 'board', player_zone_divId, 500 , 200);
-            this.resourceCounters['silver'].incValue(2);
+            
         },
    });             
 });
