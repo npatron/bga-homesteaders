@@ -65,17 +65,17 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
         "args" => "argPlaceWorkers",
-        "possibleactions" => array( "placeWorker", "hireWorker", "trade", "takeLoan", "done" ),
-        "transitions" => array( "done" => STATE_INCOME )
+        "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
+        "transitions" => array( "auction" => STATE_PAY_WORKERS )
     ),
 
-    STATE_INCOME => array(
+    /*STATE_INCOME => array(
         "name" => "collectIncome",
         "description" =>  clienttranslate('collect income'),
         "type" => "game",
         "action" => "stCollectIncome",
         "transitions" => array( "" => STATE_PAY_WORKERS,  )
-    ),
+    ),*/
     
     STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
@@ -84,7 +84,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stPayWorkers",
         "args" => "argPayWorkers",
-        "possibleactions" => array( "takeLoan", "updateGold", "trade", "done" ),
+        "possibleactions" => array( "takeLoan",  "trade", "done" ),
         "transitions" => array( "auction" => STATE_BEGIN_AUCTION)
     ),
 
@@ -96,7 +96,7 @@ $machinestates = array(
         "updateGameProgression" => true,
         "transitions" => array( "auction" => STATE_PLAYER_BID, 
                                 "endGame" => STATE_ENDGAME_ACTIONS,)
-    ),
+    ), 
 
     STATE_PLAYER_BID => array(
         "name" => "playerBid",
@@ -112,8 +112,8 @@ $machinestates = array(
 
     STATE_RAIL_BONUS => array(
         "name" => "getRailBonus",
-        "description" => clienttranslate('${actplayer} must choose a rail bonus'),
-        "descriptionmyturn" => clienttranslate('${you} must choose a rail bonus'),
+        "description" => clienttranslate('${actplayer} must choose a railroad bonus'),
+        "descriptionmyturn" => clienttranslate('${you} must choose a railroad bonus'),
         "type" => "activeplayer",
         "args" => "argRailBonus",
         "possibleactions" => array( "chooseBonus" ),

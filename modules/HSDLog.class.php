@@ -161,19 +161,29 @@ class HSDLog extends APP_GameClass
 
   public function takeLoan($player_id) 
   {
-    $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a loan' ), array(
+    $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a ${loan}' ), array(
       'player_id' => $player_id,
       'player_name' => $this->game->getPlayerName($player_id),
+      'loan' => 'loan',
     ) );
     $this->insert($player_id, 0, 'loan');
   }
 
-  public function payOffLoan($player_id, $reason)
+  public function freePayOffLoan($player_id, $reason, $origin ="", $key =0)
   {
-    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off loan ${reason}' ), array(
+    $values = array(  'player_id' => $player_id,
+                      'player_name' => $this->game->getPlayerName($player_id),
+                      'reason_string' => $reason,
+                      'loan' => 'loan',);
+    $values = $this->game->Resource->updateArrForNotify($values, $origin, $key);
+    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${reason_string} pays off ${player_name}\'s ${loan}' ), $values);
+  }
+  public function payOffLoan($player_id, $type){
+    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off ${loan} with ${type}' ), array(
       'player_id' => $player_id,
       'player_name' => $this->game->getPlayerName($player_id),
-      'reason' => $reason,
+      'loan' => 'loan',
+      'type' => $type,
     ) );
     $this->insert($player_id, 0, 'loanPaid');
   }

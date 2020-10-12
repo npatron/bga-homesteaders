@@ -21,10 +21,11 @@ class HSDBid extends APP_GameClass
     }
 
     function notifyAllMoveBid($p_id, $bid_loc){
-        $this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} moves bid'), array (
+        $this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} moves ${token}'), array (
             'player_id' => $p_id,
             'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
-            'bid_location'=> $bid_loc ));
+            'bid_location'=> $bid_loc,
+            'token' => array('token'=> 'bid', 'player_id'=>$p_id),) );
     }
 
     function clearBids(){
@@ -73,15 +74,17 @@ class HSDBid extends APP_GameClass
     function passBid(){
         $p_id = $this->game->getActivePlayerId();
         $players_passed = $this->game->getGameStateValue('players_passed');
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes'), array (
+        $token_arr = array('token'=> 'bid', 'player_id'=>$p_id);
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes ${token}'), array (
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
-                'bid_location'=> BID_PASS ));
+                'bid_location'=> BID_PASS,
+                'token' => $token_arr,));
         $sql = "UPDATE `player` SET `bid_loc` = '".BID_PASS."', `outbid`='0' WHERE `player_id` = '".$p_id."'";
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('players_passed', ++$players_passed);
         $this->game->setGameStateValue('phase', 2);
-        $this->game->Resource->getRailAdv($p_id);
+        $this->game->Resource->getRailAdv($p_id, $token_arr);
     }
 
     function confirmBid($bid_location){
@@ -129,11 +132,11 @@ class HSDBid extends APP_GameClass
         // then update bid for this 
         $auc = ceil($bid_loc/10);
         $amt = $this->bid_cost_array[$bid_loc%10];
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} bids ${amount} for Auction ${auction}'), array (
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} Bids ${amount} for ${auction}'), array (
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
                 'amount' => $amt,
-                'auction' => $auc,
+                'auction' => array('str'=>'AUCTION '.$auc, 'key'=> $auc),
                 'bid_location'=> $bid_loc) );
         $sql = "UPDATE `player` SET `bid_loc` = '".$bid_loc."', `outbid`='0' WHERE `player_id` = '".$p_id."'";
         $this->game->DbQuery( $sql );

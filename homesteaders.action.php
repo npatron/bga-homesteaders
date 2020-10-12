@@ -113,7 +113,10 @@ class action_homesteaders extends APP_GameAction
   public function buildBuilding(){
     self::setAjaxMode( );
     $building_key = self::getArg( "building_key", AT_posint, true);
-    $this->game->playerBuildBuilding( $building_key );
+    $goldAsCow = self::getArg( "goldAsCow", AT_bool, true);
+    $goldAsCopper = self::getArg( "goldAsCopper", AT_bool, true);
+    
+    $this->game->playerBuildBuilding( $building_key, $goldAsCow, $goldAsCopper );
     self::ajaxResponse( );
   }
   

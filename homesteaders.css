@@ -18,6 +18,14 @@
 
 /********* You can start writing your CSS below this line: **********/
 
+@font-face {
+   font-family: Old Standard TT;
+   font-style: normal;
+   font-variant: small-caps;
+   font-weight: 400;
+   src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
+}
+
 div#board {
    background-image: url('img/auctionBoard.jpg');
    position: relative;
@@ -26,6 +34,14 @@ div#board {
    background-size: 740px 545px;
    background-repeat: no-repeat;
    margin: auto;
+}
+
+.useFont {
+   font-family: 'Old Standard TT';
+   font-variant: small-caps;
+}
+.logFont {
+   font-family: 'Old Standard TT';
 }
 
 /*=========================
@@ -479,12 +495,27 @@ div#done_trading {
    border-style: solid;
 }
 .res_red {
-   border-color:red;
+   border-color: red;
    border-radius: 2px;
    border-style: solid;
 }
 .res_purple {
    border-color:purple;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_lightseagreen{
+   border-color:lightseagreen;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_orange{
+   border-color:orange;
+   border-radius: 2px;
+   border-style: solid;
+}
+.res_hotpink{
+   border-color:hotpink;
    border-radius: 2px;
    border-style: solid;
 }
@@ -501,6 +532,7 @@ div#done_trading {
 .noshow {
    visibility:hidden;
    height:0px;
+   width:0px;
    margin: 0px;
    padding: 0px;
 }
@@ -554,9 +586,149 @@ div#done_trading {
 }
 .icon {
    background-image: url('img/tokens_50x50.png');
-   height: 25px;
-   width: 25px;
-   background-size: 125px 75px;
+   height: 30px;
+   width: 30px;
+   background-size: 150px 90px;
+}
+
+.log_bid {
+   display: inline-block;
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-position-x: 100%;
+   background-size: 70px 175px;
+   width: 33px;
+   height: 35px;
+}
+.log_train {
+   display: inline-block;
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-size: 98px 249px;
+   background-position-x: 0%;
+   width: 55px;
+   height: 29px;
+}
+
+.log_token {
+   background-image: url('img/drawn_tokens.png');
+   display: inline-block;
+}
+
+.log_wood{
+   background-size: 147.1px 58.8px;
+   background-position: 0px 0px;
+   width: 8px;
+   height: 20px;
+}
+.log_gold{
+   background-size: 157.9px 63.2px;
+   background-position: -8.6px 0px;
+   width: 20px;
+   height: 19.4px;
+}
+.log_food{
+   background-size: 182.9px 73.2px;
+   background-position: -33.4px 0px;
+   width: 18.8px;
+   height: 20px;
+}
+.log_silver{
+   background-size: 147.1px 58.8px;
+   background-position: -42px 0px;
+   width: 20px;
+   height: 19.6px;
+}
+.log_trade{
+   background-size: 156.3px 62.5px;
+   background-position: -65.8px 0px;
+   width: 20px;
+   height: 19.6px;
+}
+.log_vp{
+   background-size: 129.3px 51.7px;
+   background-position: -73.3px 0px;
+   width: 19.3px;
+   height: 20px;
+}
+.log_vp2{
+   background-size: 129.3px 51.7px;
+   background-position: -91px -0px;
+   width: 19.3px;
+   height: 20px;
+}
+.log_vp4{
+   background-size: 126.1px 50.4px;
+   background-position: -71.4px -19.5px;
+   width: 20px;
+   height: 19.7px;
+}
+.log_vp6{
+   background-size: 84.3px 33.7px;
+   background-position: -60.3px -13.1px;
+   width: 20px;
+   height: 20.8px;
+}
+/*.log_worker{
+   background-size: 91.5px 36.6px;
+   background-position: 0px -13.2px;
+   width: 13.2px;
+   height: 20px;
+}*/
+.log_cow{
+   background-size: 87.7px 35.1px;
+   background-position: -12.0px -11.7px;
+   width: 20px;
+   height: 14.4px;
+}
+.log_copper{
+   background-size: 98.7px 39.5px;
+   background-position: -35.9px -14.2px;
+   width: 20px;
+   height: 12.6px;
+}
+/*.log_track{
+   background-size: 194.8px 77.9px;
+   background-position: -29.4px -58.4px;
+   width: 19.5px;
+   height: 20px;
+}*/
+.log_steel{
+   background-size: 187.5px 75px;
+   background-position: -48.3px -55.3px;
+   width: 20px;
+   height: 19.3px;
+}
+.log_arrow{
+   background-size: 454.5px 181.8px;
+   background-position: -165.5px -141.2px;
+   width: 20px;
+   height: 17.6px;
+}
+
+.log_track{
+   display: inline-block;
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: 0% 13%;
+   height: 26px;
+   width: 33px;
+   background-size: 99px 45px;
+   display: inline-block;
+}
+.log_loan {
+   display: inline-block;
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -87% 30%;
+   top: 4px;
+   height: 21px;
+   width: 31px;
+   background-size: 115px 63px; 
+}
+.log_worker {
+   display: inline-block;
+   background-image: url('img/tokens_50x50.png');
+   height: 29px;
+   width: 23px;
+   background-size: 175px 80px;
+   background-position: 74% 46%;
 }
 
 .token_track {
@@ -581,6 +753,23 @@ div#done_trading {
    height: 102px;
    width: 85px;
    background-size: 255px 102px;
+}
+
+.pay_gold{
+   background-image: url(img/drawn_tokens.png);
+   display: inline-block;
+   background-size: 375px 150px;
+   background-position: -20.5px 0px;
+   width: 48px;
+   height: 46px;
+}
+.pay_silver{
+   background-image: url(img/drawn_tokens.png);
+   display: inline-block;
+   background-size: 375px 150px;
+   background-position: -107px 0px;
+   width: 51px;
+   height: 50px;
 }
 
 .token_wood {
@@ -611,27 +800,43 @@ div#done_trading {
    height: 35px;
    width: 33px;
    background-size: 175px 105px;
-   background-position: 77% 50%;
+   background-position: 76% 50%;
    z-index: 1;
 }
 .token_vp {
    background-position: 100% 50%;
 }
-.token_yellow {
-   background-position: 0% 100%;
+.bid_yellow {
+   background-position: 100% 0%;
 }
-.token_red {
-   background-position: 25% 100%;  
+.bid_red {
+   background-position: 100% 25%;  
 }
-.token_green {
-   background-position: 50% 100%;
+.bid_green {
+   background-position: 100% 50%;
 }
-.token_blue {
-   background-position: 75% 100%;
+.bid_blue {
+   background-position: 100% 75%;
 }
-.token_purple {
+.bid_purple {
    background-position: 100% 100%;
 }
+.train_yellow {
+   background-position-y: 1%;
+}
+.train_red {
+   background-position-y: 22%;
+}
+.train_green {
+   background-position-y: 45%;
+}
+.train_blue {
+   background-position-y:  68.5%;
+}
+.train_purple {
+   background-position-y: 91.5%;
+}
+
 
 .player_token_bid {
    background-image: url('img/fancy_tokens_80x83.png');
@@ -671,6 +876,7 @@ div#done_trading {
    position: absolute;
    height: 35px;
    width: 33px;
+   max-width: 33px;
 }
 .slot_1_1 {
    bottom: 10px;

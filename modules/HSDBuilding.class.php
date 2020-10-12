@@ -123,7 +123,12 @@ class HSDBuilding extends APP_GameClass
         return (reset($building_type));
     }
 
-    function getBuildingCostFromKey($b_key){
+    function getBuildingTypeFromKey($b_key){
+        $sql = "SELECT `building_type` FROM `buildings` WHERE `building_key`='".$b_key."'";
+        return ($this->game->getUniqueValuefromDB( $sql ));
+    }
+
+    function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
         $sql = "SELECT `cost` FROM `buildings` WHERE `building_key`='".$b_key."'";
         $cost = $this->game->getUniqueValueFromDb( $sql );
         $b_cost = array();
@@ -133,24 +138,24 @@ class HSDBuilding extends APP_GameClass
         for ($i =0; $i < strlen($cost); $i++){
             $type_str = '';
             switch($cost[$i]){
-                case WOOD:  $type_str = 'wood';
+                case WOOD: $type_str = 'wood';
                 break;
                 case STEEL: $type_str = 'steel';
                 break;
-                case GOLD:  $type_str = 'gold';
+                case GOLD: $type_str = 'gold';
                 break;
-                case COPPER:$type_str = 'copper';
+                case COPPER:
+                    if ($goldAsCopper) $type_str = 'gold';
+                    else $type_str = 'copper';
                 break;
-                case FOOD:  $type_str = 'food';
+                case FOOD: $type_str = 'food';
                 break;
-                case COW:   $type_str = 'cow';
+                case COW:   
+                    if ($goldAsCow) $type_str = 'gold';
+                    else $type_str = 'cow';
                 break;
             }
-            if (!array_key_exists($type_str, $b_cost)){
-                $b_cost[$type_str] = 1;
-            } else {
-                $b_cost[$type_str] ++;
-            }
+            $b_cost = $this->game->Resource->updateKeyOrCreate($b_cost, $type_str,  1);
         }
         return $b_cost;
     }
@@ -242,6 +247,43 @@ class HSDBuilding extends APP_GameClass
         return false;
     }
 
+
+    function updateBuildingsForRound($round_number){
+        //rd 1 setup buildings
+        if($round_number == 1){
+            // add 'settlement' and 'settlement/town' buildings
+            $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` in ('".STAGE_SETTLEMENT."','".STAGE_SETTLEMENT_TOWN."');";
+            $this->game->DbQuery( $sql );
+            $this->updateClientBuildings();
+        }
+        //rd 5 setup buildings
+        if($round_number == 5){
+            // add town buildings
+            $sql = "UPDATE `buildings` SET `location` = '".BLD_LOC_OFFER."' WHERE `stage` = '".STAGE_TOWN."'";
+            $this->game->DbQuery( $sql );
+            // remove settlement buildings (not owned)
+            $sql = "UPDATE `buildings` SET `location` = '".BLD_LOC_DISCARD."' WHERE `stage` = '".STAGE_SETTLEMENT."' AND `location` = '".BLD_LOC_OFFER."'";
+            $this->game->DbQuery( $sql );
+            $this->updateClientBuildings();
+        }
+        //rd 9 setup buildings
+        if($round_number == 9){
+            // clear all buildings
+            $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
+            $this->game->DbQuery( $sql );
+            // add city buildings
+            $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` = '".STAGE_CITY."';";
+            $this->game->DbQuery( $sql );
+            $this->updateClientBuildings();
+        }
+        // Final round (just income).
+        if($round_number == 11){
+            $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
+            $this->game->DbQuery( $sql );
+            $this->updateClientBuildings();
+        }
+    }
+
     /** cause client to update building Stacks */
     function updateClientBuildings(){
         $buildings = $this->getAllBuildings();
@@ -268,7 +310,8 @@ class HSDBuilding extends APP_GameClass
 
     function buildBuilding( $p_id, $b_key, $goldAsCow = false, $goldAsCopper = false )
     {
-        $afford = $this->canPlayerAffordBuilding ($p_id, $b_key, $goldAsCow, $goldAsCopper);
+        $b_cost = $this->getBuildingCostFromKey ($b_key, $goldAsCow, $goldAsCopper);
+        $afford = $this->game->Resource->canPlayerAfford($p_id, $b_cost);
         $building = $this->getBuildingFromKey($b_key);
         $b_id = $building['b_id'];
         $b_name = $this->getBuildingNameFromId($b_id);
@@ -279,32 +322,32 @@ class HSDBuilding extends APP_GameClass
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
             throw new BgaUserException( _("You have already built a ".$b_name));
         }
-        $this->payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper);
+        
+        $this->payForBuilding($p_id, $b_cost);
+        $message = '${player_name} builds a ${building_name}';
         $building['p_id'] = $p_id;
-        $this->game->notifyAllPlayers( "buildBuilding", 
-                    clienttranslate( '${player_name} builds a ${building_name} ' ),            
-                    array(  'player_id' => $p_id,
-                            'player_name' => $this->game->getPlayerName($p_id),
-                            'building' => $building,
-                            'building_name' => $b_name,) );
+        $values = array(  'player_id' => $p_id,
+                        'player_name' => $this->game->getPlayerName($p_id),
+                        'building' => $building,
+                        'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)),);
+        if (count($b_cost)>0) {
+            $message .= ' for ${resources}';
+            $values['resources'] = $b_cost;
+        }
+        $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
         $this->game->Log->buyBuilding($p_id, $b_id);
         $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
         $this->game->DbQuery( $sql );
+        $this->game->setGameStateValue('last_building', $b_key);
         
         $building_score = $this->getBuildingScoreFromId( $b_id );
         $this->game->Score->dbIncScore($p_id, $building_score);
     }
 
-    function payForBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){
-        $b_cost = $this->getBuildingCostFromKey ($b_key);
-        if ($goldAsCow)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
-        if ($goldAsCopper)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
-        $b_name = $this->getBuildingNameFromKey ($b_key);
-        foreach ($b_cost as $type => $cost){
-            if ($cost > (int)0){
-                $this->game->Resource->updateAndNotifyPayment($p_id, $type, $cost, "building ".$b_name);
+    function payForBuilding($p_id, $b_cost){
+        foreach( $b_cost as $type => $amt ){
+            if ($amt != 0){
+                $this->game->Resource->updateResource($p_id, $type, -$amt);
             }
         }
     }
@@ -361,25 +404,20 @@ class HSDBuilding extends APP_GameClass
         return 0;
     }
 
-    function canPlayerAffordBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){
-        $b_cost = $this->getBuildingCostFromKey($b_key);
-        if ($goldAsCow)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
-        if ($goldAsCopper)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
-        return $this->game->Resource->canPlayerAfford($p_id, $b_cost);
-    }
-
     // INCOME
     function buildingIncomeForPlayer($p_id){
+        if ($this->game->getUniqueValueFromDB("SELECT `paid` FROM `player` WHERE `player_id`=${p_id}") == 1)
+            {return;}
         $riverPortWorkers = 0;
         $p_bld = $this->getAllPlayerBuildings($p_id);
         $sql = "SELECT * FROM `workers` WHERE `player_id` = '".$p_id."'";
         $player_workers = $this->game->getCollectionFromDB( $sql );
+        $income_b_id = array();
         foreach( $p_bld as $b_key => $building ) {
             $b_name = $this->getBuildingNameFromKey($b_key);
-            $reason = 'b:'.$b_name;
-            switch($building['b_id']) {
+            $b_id = $building['b_id'];
+            $income_b_id[$b_id] = array ('name' => $b_name, 'key' =>$b_key);
+            switch($b_id) {
                 case BLD_HOMESTEAD_YELLOW:
                 case BLD_HOMESTEAD_RED:
                 case BLD_HOMESTEAD_GREEN:
@@ -387,98 +425,109 @@ class HSDBuilding extends APP_GameClass
                 case BLD_HOMESTEAD_PURPLE:
                 case BLD_BOARDING_HOUSE:
                 case BLD_DEPOT:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 2, $reason, $b_key);
+                    $income_b_id[$b_id]['silver'] = 2;
                     break;
                 case BLD_GRAIN_MILL:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'food', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['food'] = 1;
                     break;
                 case BLD_MARKET:
                 case BLD_GENERAL_STORE:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['trade'] = 1;
                     break;
                 case BLD_STEEL_MILL:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'steel', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['steel'] = 1;
                     break;
                 case BLD_RAILWORKERS_HOUSE:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'silver', 1, $reason, $b_key);
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['silver'] = 1;
+                    $income_b_id[$b_id]['trade'] = 1;
                     break;
                 case BLD_TRADING_POST:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 2, $reason, $b_key);
+                    $income_b_id[$b_id]['trade'] = 2;
                     break;
                 case BLD_CHURCH:
                 case BLD_FACTORY:
                 case BLD_LAWYER:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 2, $reason, $b_key);
+                    $income_b_id[$b_id]['vp'] = 2;
                     break;
                 case BLD_WORKSHOP:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['vp'] = 1;
                 break;
                 case BLD_STABLES:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'trade', 1, $reason, $b_key);
-                    $this->game->Resource->updateAndNotifyIncome ($p_id, 'vp', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['trade'] = 1;
+                    $income_b_id[$b_id]['vp'] = 1;
                 break;
                 case BLD_BANK:
-                    $this->game->Resource->payLoanOrRecieveSilver($p_id, $reason, $b_key);
+                    $this->game->Resource->payLoanOrRecieveSilver($p_id, "Bank", 'building', $b_key);
                 break;
                 case BLD_RODEO:
                     $rodeoIncome = min($player_workers, 5);
-                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'silver', $rodeoIncome, $reason, $b_key);
+                    $income_b_id[$b_id]['silver'] = $rodeoIncome;
                 break;
                 case BLD_FAIRGROUNDS:
-                    $this->game->Resource->updateAndNotifyIncome ($p_id,  'gold', 1, $reason, $b_key);
+                    $income_b_id[$b_id]['gold'] = 1;
                 break;
             }
         }
         foreach($player_workers as $worker_key => $worker ) {
-            $b_key = $worker['building_key'];
-            $b_id = $this->getBuildingIdFromKey($b_key);
-            $worker_income_string = 'b:Worker at '.$this->getBuildingNameFromKey($b_key);
-            switch($b_id){
-                case BLD_HOMESTEAD_YELLOW:
-                case BLD_HOMESTEAD_RED:
-                case BLD_HOMESTEAD_GREEN:
-                case BLD_HOMESTEAD_BLUE:
-                case BLD_HOMESTEAD_PURPLE:
-                    if ($worker['building_slot'] == 1){
-                        $this->game->Resource->updateAndNotifyIncome($p_id, 'wood', 1, $worker_income_string, $b_key);
-                    } else {
-                        $this->game->Resource->updateAndNotifyIncome($p_id, 'vp', 1, $worker_income_string, $b_key);
-                    }
-                    break;
-                case BLD_FARM:
-                    if ($worker['building_slot'] == 1){
-                        $this->game->Resource->updateAndNotifyIncome($p_id, 'trade', 1, $worker_income_string, $b_key);
-                        $this->game->Resource->updateAndNotifyIncome($p_id, 'silver', 2, $worker_income_string, $b_key);
-                    } else {
-                        $this->game->Resource->updateAndNotifyIncome($p_id, 'food', 1, $worker_income_string, $b_key);
-                    }
-                    break;
-                case BLD_MARKET:
-                    $this->game->Resource->updateAndNotifyIncome($p_id, 'silver', 2, $worker_income_string, $b_key);
-                    break;
-                case BLD_FOUNDRY:
-                    $this->game->Resource->updateAndNotifyIncome($p_id, 'steel', 1, $worker_income_string, $b_key);
-                    break;
-                case BLD_RANCH:
-                    $this->game->Resource->updateAndNotifyIncome($p_id, 'cow', 1, $worker_income_string, $b_key);
-                    break;
-                case BLD_GOLD_MINE:
-                    $this->game->Resource->updateAndNotifyIncome($p_id, 'gold', 1, $worker_income_string, $b_key);
-                    break;
-                case BLD_COPPER_MINE:
-                    $this->game->Resource->updateAndNotifyIncome($p_id, 'copper', 1, $worker_income_string, $b_key);
-                    break;
-                case BLD_RIVER_PORT:
-                    if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
-                        $this->game->Resource->updateAndNotifyIncome($p_id, 'gold', 1, $worker_income_string, $b_key);
-                    } 
-                    break;
-                case BLD_MEATPACKING_PLANT:
-                case BLD_FORGE:
-                    $this->game->Resource->updateAndNotifyIncome($p_id, 'vp', 2, $worker_income_string, $b_key);
-                    break;
+            if ($worker['building_key'] != 0){
+                $b_key = $worker['building_key'];
+                $b_id = $this->getBuildingIdFromKey($b_key);
+                switch($b_id){
+                    case BLD_HOMESTEAD_YELLOW:
+                    case BLD_HOMESTEAD_RED:
+                    case BLD_HOMESTEAD_GREEN:
+                    case BLD_HOMESTEAD_BLUE:
+                    case BLD_HOMESTEAD_PURPLE:
+                        if ($worker['building_slot'] == 1){
+                            $income_b_id[$b_id]['wood']=1;
+                        } else {
+                            $income_b_id[$b_id]['vp']=1;
+                        }
+                        break;
+                    case BLD_FARM:
+                        if ($worker['building_slot'] == 1){
+                            $income_b_id[$b_id]['trade']=1;
+                            $income_b_id[$b_id]['silver']=2;
+                        } else {
+                            $income_b_id[$b_id]['food']=1;
+                        }
+                        break;
+                    case BLD_MARKET:
+                        $income_b_id[$b_id]['silver']=2;
+                        break;
+                    case BLD_FOUNDRY:
+                        $income_b_id[$b_id]['steel']=1;
+                        break;
+                    case BLD_RANCH:
+                        $income_b_id[$b_id]['cow']=1;
+                        break;
+                    case BLD_GOLD_MINE:
+                        $income_b_id[$b_id]['gold']=1;
+                        break;
+                    case BLD_COPPER_MINE:
+                        $income_b_id[$b_id]['copper']=1;
+                        break;
+                    case BLD_RIVER_PORT:
+                        if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
+                            $income_b_id[$b_id]['gold']=1;
+                        } 
+                        break;
+                    case BLD_MEATPACKING_PLANT:
+                    case BLD_FORGE:
+                        if(array_key_exists('vp', $income_b_id[$b_id])){
+                            $income_b_id[$b_id]['vp']+=2;
+                        } else {
+                            $income_b_id[$b_id]['vp']=2;
+                        }
+                        break;
+                }
             }
+        }
+        foreach ($income_b_id as $b_id =>$income) {
+            $name = $income['name'];
+            $b_key = $income['key'];
+            $income = array_diff_key($income, array_flip(['name','key']));
+            $this->game->Resource->updateAndNotifyIncomeGroup($p_id, $income, $name, 'building' ,$b_key);
         }
     }
 

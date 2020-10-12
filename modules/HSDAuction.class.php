@@ -71,7 +71,7 @@ class HSDAuction extends APP_GameClass
 
     function updateClientAuctions($round_number){
         $auctions = $this->getCurrentRoundAuctions($round_number);
-        $this->game->notifyAllPlayers('updateAuctions', clienttranslate( 'Updating Auctions' ), array(
+        $this->game->notifyAllPlayers('updateAuctions', _( 'Updating Auctions' ), array(
             'auctions' => $auctions,
             'state' => 'show', ));
     }
@@ -84,8 +84,8 @@ class HSDAuction extends APP_GameClass
     function discardAuctionTile(){
         $auction_no = $this->game->getGameStateValue( 'current_auction' );
         $round_number = $this->game->getGameStateValue( 'round_number' );
-        $this->game->notifyAllPlayers( "updateAuction", _( 'Discard Auction Tile' ), 
-                array('auction_no'=>$auction_no, 'state'=>'discard') );
+        $this->game->notifyAllPlayers( "updateAuction", _( 'discard ${auction}' ), 
+                array('auction'=> array('str'=>'AUCTION '.$auction_no, 'key'=>$auction_no), 'auction_no'=>$auction_no, 'state'=>'discard') );
         $sql = "UPDATE `auctions` SET `location`='".AUC_LOC_DISCARD."' WHERE `location` = '".$auction_no."' AND position = '".$round_number."'";
         $this->game->DbQuery( $sql);
     }
@@ -97,7 +97,6 @@ class HSDAuction extends APP_GameClass
         $type = $this->game->getUniqueValueFromDB( $sql );
         return ($type != 0);
     }
-
 
     function getCurrentAuctionBonus(){
         $round_number = $this->game->getGameStateValue( 'round_number' );
@@ -115,7 +114,7 @@ class HSDAuction extends APP_GameClass
                 $next_state = 'endBuild';
             break;
             case AUC_BONUS_6VP_AND_FOOD_VP:
-                $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp', 6, 'a:Auction Reward');
+                $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp', 6, 'Auction Reward', 'auction', $this->game->getGameStateValue('current_auction'));
             default:
                 $this->game->setGameStateValue( 'auction_bonus', $bonus);
             break;

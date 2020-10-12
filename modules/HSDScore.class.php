@@ -38,10 +38,10 @@ class HSDScore extends APP_GameClass
 
     function UpdateEndgameScores(){
         $players = $this->game->loadPlayersBasicInfos();
-        $allScores = array();
+        //$allScores = array();
         foreach($players as $p_id=>$player){
             $p_score = $this->calculateEndgameScore($p_id);
-            $allScores[$p_id]=$p_score;
+            //$allScores[$p_id]=$p_score;
             $this->dbSetScore($p_id, $p_score['total']);
             $p_silver = $this->game->Resource->getPlayerResourceAmount($p_id,'silver');
             $this->dbSetAuxScore($p_id, $p_silver);
@@ -58,14 +58,14 @@ class HSDScore extends APP_GameClass
         $vp_tokens = $this->getVPTokens($p_id);
         // Buildings
         $bld_score = $this->dbGetScore($p_id);
-        // Building bonuses
-        $bld_bonus = $this->getPlayerBonusVPsFromBuildings($p_id);
-        $bld_bonus_score = $bld_bonus['vp'];
+        // Building VP's
+        $bld_vps = $this->getPlayerVPsFromBuildings($p_id);
+        $bld_bonus_score = $bld_vps['vp'];
         $bld_res_score = $bld_bonus_score[TYPE_RESIDENTIAL];
         $bld_com_score = $bld_bonus_score[TYPE_COMMERCIAL];
         $bld_ind_score = $bld_bonus_score[TYPE_INDUSTRIAL];
         $bld_sp_score = $bld_bonus_score[TYPE_SPECIAL];
-        $bld_cnt = $bld_bonus['bld'];
+        $bld_cnt = $bld_vps['bld']; // can be used for updating player stats.
         
         $vp_res = $this->getPlayerVPFromResources($p_id);
         // 2VP per gold
@@ -119,7 +119,7 @@ class HSDScore extends APP_GameClass
         return $vp;
     }
 
-    function getPlayerBonusVPsFromBuildings (Int $p_id)
+    function getPlayerVPsFromBuildings (Int $p_id)
     {
         $p_buildings = $this->game->Buildings->getAllPlayerBuildings($p_id);
         $counts =array(TYPE_RESIDENTIAL=>0,
@@ -142,37 +142,37 @@ class HSDScore extends APP_GameClass
                 case BLD_DUDE_RANCH:
                 case BLD_CIRCUS:
                 case BLD_RAILWORKERS_HOUSE: // track worker
-                    $vps[$b_type]=$counts['worker'];
+                    $vps[$b_type]+=$counts['worker'];
                     if ($building[$b_key]['b_id'] != BLD_RAILWORKERS_HOUSE) break;
                 case BLD_DEPOT: 
                 case BLD_TERMINAL:
-                    $vps[$b_type]=$counts['track'];
+                    $vps[$b_type]+=$counts['track'];
                 break;
                 case BLD_STABLES: 
                 case BLD_FAIRGROUNDS:
-                    $vps[$b_type]=$counts[TYPE_RESIDENTIAL];
+                    $vps[$b_type]+=$counts[TYPE_RESIDENTIAL];
                 break;
                 case BLD_LAWYER:
                 case BLD_TOWN_HALL:
-                    $vps[$b_type]=$counts[TYPE_COMMERCIAL];
+                    $vps[$b_type]+=$counts[TYPE_COMMERCIAL];
                 break;
                 case BLD_BOARDING_HOUSE:
                 case BLD_FACTORY:
-                    $vps[$b_type]=$counts[TYPE_INDUSTRIAL];
+                    $vps[$b_type]+=$counts[TYPE_INDUSTRIAL];
                 break;
                 case BLD_BANK:
                 case BLD_RESTARAUNT:
-                    $vps[$b_type]=$counts[TYPE_SPECIAL];
+                    $vps[$b_type]+=$counts[TYPE_SPECIAL];
                 break;
                 case BLD_RAIL_YARD:
-                    $vps[$b_type]=count($p_buildings);
+                    $vps[$b_type]+=count($p_buildings);
                 break;
                 case BLD_POST_OFFICE:
                     // figure this out later when doing expansion.
                     // vp per loan paid at end of game.
                 break;
                 default:   
-                $vps[$b_type]= $building['b_vp'];
+                $vps[$b_type]+= $building['b_vp'];
                 break;
             }
         }
