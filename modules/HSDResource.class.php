@@ -276,14 +276,6 @@ class HSDresource extends APP_GameClass
         }
     }
 
-    function changeResourceInArray($r_arr, $removed_type, $added_type){
-        if(array_key_exists($r_arr, $removed_type)){
-            $r_arr[$removed_type]--;
-            $r_arr = $this->updateKeyOrCreate($r_arr, $added_type);
-        }
-        return $r_arr;
-    }
-
     function canPlayerAfford($p_id, $r_arr){
         $sql = "SELECT * FROM `resources` WHERE `player_id` ='".$p_id."'";
         $p_resources = $this->game->getObjectFromDB($sql);
@@ -433,7 +425,11 @@ class HSDresource extends APP_GameClass
 
     /**updates an array by setting  */
     function updateKeyOrCreate($arr, $key, $amt = 1){
-        $arr[$key] = ($arr[$key] ?:0)+$amt;
+        if (array_key_exists($key, $arr)){
+            $arr[$key] += $amt;
+        } else {
+            $arr[$key] =  $amt;
+        }
         return $arr;
     }
 

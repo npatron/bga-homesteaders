@@ -310,10 +310,10 @@ class homesteaders extends Table
         $this->gamestate->nextState( "rail" );
     }
 
-    public function playerBuildBuilding($selected_building){
+    public function playerBuildBuilding($selected_building, $goldAsCow, $goldAsCopper){
         self::checkAction( "buildBuilding" );
         $active_player = $this->getActivePlayerId();
-        $this->Building->buildBuilding($active_player, $selected_building);
+        $this->Building->buildBuilding($active_player, $selected_building, $goldAsCow, $goldAsCopper);
         if ($this->Building->doesPlayerOwnBuilding($active_player, BLD_FORGE) && 
             $this->Building->getBuildingIdFromKey($selected_building) != BLD_FORGE){
             $this->Resource->updateAndNotifyIncome($active_player, 'vp', 1, _("Forge Build Bonus"));

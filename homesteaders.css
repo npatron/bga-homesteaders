@@ -609,11 +609,99 @@ div#done_trading {
 }
 
 .log_token {
-   background-image: url('img/tokens_50x50.png');
+   background-image: url('img/drawn_tokens.png');
    display: inline-block;
+}
+
+.log_wood{
+   background-size: 147.1px 58.8px;
+   background-position: 0px 0px;
+   width: 8px;
    height: 20px;
+}
+.log_gold{
+   background-size: 157.9px 63.2px;
+   background-position: -8.6px 0px;
    width: 20px;
-   background-size: 100px 60px;
+   height: 19.4px;
+}
+.log_food{
+   background-size: 182.9px 73.2px;
+   background-position: -33.4px 0px;
+   width: 18.8px;
+   height: 20px;
+}
+.log_silver{
+   background-size: 147.1px 58.8px;
+   background-position: -42px 0px;
+   width: 20px;
+   height: 19.6px;
+}
+.log_trade{
+   background-size: 156.3px 62.5px;
+   background-position: -65.8px 0px;
+   width: 20px;
+   height: 19.6px;
+}
+.log_vp{
+   background-size: 129.3px 51.7px;
+   background-position: -73.3px 0px;
+   width: 19.3px;
+   height: 20px;
+}
+.log_vp2{
+   background-size: 129.3px 51.7px;
+   background-position: -91px -0px;
+   width: 19.3px;
+   height: 20px;
+}
+.log_vp4{
+   background-size: 126.1px 50.4px;
+   background-position: -71.4px -19.5px;
+   width: 20px;
+   height: 19.7px;
+}
+.log_vp6{
+   background-size: 84.3px 33.7px;
+   background-position: -60.3px -13.1px;
+   width: 20px;
+   height: 20.8px;
+}
+/*.log_worker{
+   background-size: 91.5px 36.6px;
+   background-position: 0px -13.2px;
+   width: 13.2px;
+   height: 20px;
+}*/
+.log_cow{
+   background-size: 87.7px 35.1px;
+   background-position: -12.0px -11.7px;
+   width: 20px;
+   height: 14.4px;
+}
+.log_copper{
+   background-size: 98.7px 39.5px;
+   background-position: -35.9px -14.2px;
+   width: 20px;
+   height: 12.6px;
+}
+/*.log_track{
+   background-size: 194.8px 77.9px;
+   background-position: -29.4px -58.4px;
+   width: 19.5px;
+   height: 20px;
+}*/
+.log_steel{
+   background-size: 187.5px 75px;
+   background-position: -48.3px -55.3px;
+   width: 20px;
+   height: 19.3px;
+}
+.log_arrow{
+   background-size: 454.5px 181.8px;
+   background-position: -165.5px -141.2px;
+   width: 20px;
+   height: 17.6px;
 }
 
 .log_track{
@@ -665,6 +753,23 @@ div#done_trading {
    height: 102px;
    width: 85px;
    background-size: 255px 102px;
+}
+
+.pay_gold{
+   background-image: url(img/drawn_tokens.png);
+   display: inline-block;
+   background-size: 375px 150px;
+   background-position: -20.5px 0px;
+   width: 48px;
+   height: 46px;
+}
+.pay_silver{
+   background-image: url(img/drawn_tokens.png);
+   display: inline-block;
+   background-size: 375px 150px;
+   background-position: -107px 0px;
+   width: 51px;
+   height: 50px;
 }
 
 .token_wood {

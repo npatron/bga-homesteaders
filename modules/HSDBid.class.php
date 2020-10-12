@@ -74,16 +74,17 @@ class HSDBid extends APP_GameClass
     function passBid(){
         $p_id = $this->game->getActivePlayerId();
         $players_passed = $this->game->getGameStateValue('players_passed');
+        $token_arr = array('token'=> 'bid', 'player_id'=>$p_id);
 		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes ${token}'), array (
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
                 'bid_location'=> BID_PASS,
-                'token' => array('token'=> 'bid', 'player_id'=>$p_id),));
+                'token' => $token_arr,));
         $sql = "UPDATE `player` SET `bid_loc` = '".BID_PASS."', `outbid`='0' WHERE `player_id` = '".$p_id."'";
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('players_passed', ++$players_passed);
         $this->game->setGameStateValue('phase', 2);
-        $this->game->Resource->getRailAdv($p_id);
+        $this->game->Resource->getRailAdv($p_id, $token_arr);
     }
 
     function confirmBid($bid_location){

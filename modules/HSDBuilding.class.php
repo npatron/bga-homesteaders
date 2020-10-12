@@ -128,7 +128,7 @@ class HSDBuilding extends APP_GameClass
         return ($this->game->getUniqueValuefromDB( $sql ));
     }
 
-    function getBuildingCostFromKey($b_key){
+    function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
         $sql = "SELECT `cost` FROM `buildings` WHERE `building_key`='".$b_key."'";
         $cost = $this->game->getUniqueValueFromDb( $sql );
         $b_cost = array();
@@ -138,24 +138,24 @@ class HSDBuilding extends APP_GameClass
         for ($i =0; $i < strlen($cost); $i++){
             $type_str = '';
             switch($cost[$i]){
-                case WOOD:  $type_str = 'wood';
+                case WOOD: $type_str = 'wood';
                 break;
                 case STEEL: $type_str = 'steel';
                 break;
-                case GOLD:  $type_str = 'gold';
+                case GOLD: $type_str = 'gold';
                 break;
-                case COPPER:$type_str = 'copper';
+                case COPPER:
+                    if ($goldAsCopper) $type_str = 'gold';
+                    else $type_str = 'copper';
                 break;
-                case FOOD:  $type_str = 'food';
+                case FOOD: $type_str = 'food';
                 break;
-                case COW:   $type_str = 'cow';
+                case COW:   
+                    if ($goldAsCow) $type_str = 'gold';
+                    else $type_str = 'cow';
                 break;
             }
-            if (!array_key_exists($type_str, $b_cost)){
-                $b_cost[$type_str] = 1;
-            } else {
-                $b_cost[$type_str] ++;
-            }
+            $b_cost = $this->game->Resource->updateKeyOrCreate($b_cost, $type_str,  1);
         }
         return $b_cost;
     }
@@ -283,6 +283,7 @@ class HSDBuilding extends APP_GameClass
             $this->updateClientBuildings();
         }
     }
+
     /** cause client to update building Stacks */
     function updateClientBuildings(){
         $buildings = $this->getAllBuildings();
@@ -309,7 +310,8 @@ class HSDBuilding extends APP_GameClass
 
     function buildBuilding( $p_id, $b_key, $goldAsCow = false, $goldAsCopper = false )
     {
-        $afford = $this->canPlayerAffordBuilding ($p_id, $b_key, $goldAsCow, $goldAsCopper);
+        $b_cost = $this->getBuildingCostFromKey ($b_key, $goldAsCow, $goldAsCopper);
+        $afford = $this->game->Resource->canPlayerAfford($p_id, $b_cost);
         $building = $this->getBuildingFromKey($b_key);
         $b_id = $building['b_id'];
         $b_name = $this->getBuildingNameFromId($b_id);
@@ -320,13 +322,8 @@ class HSDBuilding extends APP_GameClass
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
             throw new BgaUserException( _("You have already built a ".$b_name));
         }
-        $b_cost = $this->getBuildingCostFromKey ($b_key);
-        if ($goldAsCow)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
-        if ($goldAsCopper)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
+        
         $this->payForBuilding($p_id, $b_cost);
-
         $message = '${player_name} builds a ${building_name}';
         $building['p_id'] = $p_id;
         $values = array(  'player_id' => $p_id,
@@ -405,15 +402,6 @@ class HSDBuilding extends APP_GameClass
                 return 10;
         }
         return 0;
-    }
-
-    function canPlayerAffordBuilding($p_id, $b_key, $goldAsCow, $goldAsCopper){
-        $b_cost = $this->getBuildingCostFromKey($b_key);
-        if ($goldAsCow)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'cow', 'gold');
-        if ($goldAsCopper)
-            $b_cost = $this->game->Resource->changeResourceInArray($b_cost,'copper', 'gold');
-        return $this->game->Resource->canPlayerAfford($p_id, $b_cost);
     }
 
     // INCOME

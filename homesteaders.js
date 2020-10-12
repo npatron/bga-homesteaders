@@ -635,8 +635,9 @@ function (dojo, declare) {
                         this.goldAmount = 0;
                         this.silverCounter.setValue(Math.max(0 , this.silverCost));
                         this.goldCounter.setValue(this.goldAmount);
+                        let gold = this.format_block( 'jstpl_resource_log', {type:'gold', offset:0}, ); 
                         this.addActionButton( 'btn_done',      _('Done'),           'donePayAuction');
-                        this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
+                        this.addActionButton( 'btn_more_gold', _('Use More ') +gold , 'raiseGold', null, false, 'gray');
                         this.addActionButton( 'btn_trade',     _('Trade'),  'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan', _('Take Loan'),      'takeLoan',  null, false, 'gray');
                     break;
@@ -652,8 +653,11 @@ function (dojo, declare) {
                         }
                         this.addActionButton( 'btn_choose_building', _('Build'),     'chooseBuilding');
                         if (args.riverPort){
-                            this.addActionButton( 'btn_gold_cow',    _('Use Gold As Cow'),   'toggleGoldAsCow', null, false, 'red');
-                            this.addActionButton( 'btn_gold_copper', _('Use Gold as Copper '), 'toggleGoldAsCopper', null, false, 'red');    
+                            let gold = this.format_block( 'jstpl_resource_log', {type:'gold', offset:0}, ); 
+                            let cow  = this.format_block( 'jstpl_resource_log', {type:'cow', offset:0}, );
+                            let copper = this.format_block( 'jstpl_resource_log', {type:'copper', offset:0}, );
+                            this.addActionButton( 'btn_gold_cow',    gold +_(' As ') + cow,   'toggleGoldAsCow', null, false, 'red');
+                            this.addActionButton( 'btn_gold_copper', gold +_(' As ') + copper, 'toggleGoldAsCopper', null, false, 'red');
                         }
                         this.addActionButton( 'btn_do_not_build', _('Do not Build'), 'doNotBuild', null, false, 'red');
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
@@ -668,12 +672,13 @@ function (dojo, declare) {
                     case 'bonusChoice':
                         const option = Number(args.auction_bonus);
                         console.log('bonus option: ' + option);
+                        var worker = this.format_block( 'jstpl_resource_log', {type:'worker', offset:0}, ); 
                         switch (option){
                             case AUCBONUS_WORKER:
-                                this.addActionButton( 'btn_bonus_worker', _('Hire worker (free)'), 'workerForFree');
+                                this.addActionButton( 'btn_bonus_worker', _('(free) Hire ')+ worker , 'workerForFree');
                             break;
                             case AUCBONUS_WORKER_RAIL_ADV:
-                                this.addActionButton( 'btn_bonus_worker', _('Hire worker (free)'), 'workerForFree2');
+                                this.addActionButton( 'btn_bonus_worker', _('(free)Hire ')+ worker, 'workerForFree2');
                             break;
                             case AUCBONUS_WOOD_FOR_TRACK:
                                 this.addActionButton( 'btn_wood_track',   _('Trade wood for rail track'), 'woodForTrack');
@@ -1036,7 +1041,8 @@ function (dojo, declare) {
             this.silverCounter.setValue(Math.max(0 , this.silverCost));
             console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
             if($('btn_less_gold') == null){
-                this.addActionButton( 'btn_less_gold', _('Use Less Gold'), 'lowerGold', null, false, 'gray');
+                let gold = this.format_block( 'jstpl_resource_log', {type:'gold', offset:0}, ); 
+                this.addActionButton( 'btn_less_gold', _('Use Less ')+ gold, 'lowerGold', null, false, 'gray');
                 dojo.place('btn_less_gold', 'btn_more_gold', 'after');
             }
         },
@@ -1324,7 +1330,8 @@ function (dojo, declare) {
                     return;
                 }
                 const building_key = Number(building_divId.split("_")[2]);
-                this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", {building_key: building_key, lock: true}, this, 
+                this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", 
+                {building_key: building_key, goldAsCow:this.goldAsCow, goldAsCopper:this.goldAsCopper, lock: true}, this, 
                         function( result ) { 
                             this.disableTradeIfPossible();
                             this.clearSelectable('building', true);
@@ -1335,20 +1342,25 @@ function (dojo, declare) {
         toggleGoldAsCopper: function(){
             if (this.goldAsCopper){
                 this.goldAsCopper = false;
-
+                dojo.removeClass('btn_gold_copper', 'bgabutton_blue');
+                dojo.addClass('btn_gold_copper', 'bgabutton_red');
             } else {
                 this.goldAsCopper = true;
-
+                dojo.removeClass('btn_gold_copper', 'bgabutton_red');
+                dojo.addClass('btn_gold_copper', 'bgabutton_blue');
             }
         },
 
         toggleGoldAsCow: function() {
             if (this.goldAsCow) {
                 this.goldAsCow = false;
-
+                dojo.query('btn_gold_cow');  
+                dojo.removeClass('btn_gold_cow', 'bgabutton_blue');
+                dojo.addClass('btn_gold_cow', 'bgabutton_red');
             } else {
                 this.goldAsCow = true;
-
+                dojo.removeClass('btn_gold_cow', 'bgabutton_red');
+                dojo.addClass('btn_gold_cow', 'bgabutton_blue');
             }
         },
 
