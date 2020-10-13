@@ -558,7 +558,18 @@ function (dojo, declare) {
         {
             const current_player_id = this.player_id;
             console.log( 'onUpdateActionButtons: '+stateName );
-                      
+            const tkn_arrow = this.format_block( 'jstpl_resource_inline', {type:'arrow'}, ); 
+            const tkn_copper = this.format_block( 'jstpl_resource_inline', {type:'copper'}, );
+            const tkn_cow  = this.format_block( 'jstpl_resource_inline', {type:'cow'}, );
+            const tkn_food = this.format_block( 'jstpl_resource_inline', {type:'food'}, );     
+            const tkn_gold = this.format_block( 'jstpl_resource_inline', {type:'gold'}); 
+            const tkn_silver = this.format_block( 'jstpl_resource_inline', {type:'silver'});     
+            const tkn_track = this.format_block( 'jstpl_resource_inline', {type:'track'}, ); 
+            const tkn_worker = this.format_block( 'jstpl_resource_inline', {type:'worker'}, );
+            const tkn_wood = this.format_block( 'jstpl_resource_inline', {type:'wood'}, ); 
+            const tkn_vp4 = this.format_block( 'jstpl_resource_inline', {type:'vp4'}, ); 
+            const tkn_vp2 = this.format_block( 'jstpl_resource_inline', {type:'vp2'}, ); 
+                     
             if( this.isCurrentPlayerActive() )
             {            
                 switch( stateName )
@@ -635,9 +646,8 @@ function (dojo, declare) {
                         this.goldAmount = 0;
                         this.silverCounter.setValue(Math.max(0 , this.silverCost));
                         this.goldCounter.setValue(this.goldAmount);
-                        let gold = this.format_block( 'jstpl_resource_log', {type:'gold', offset:0}, ); 
                         this.addActionButton( 'btn_done',      _('Done'),           'donePayAuction');
-                        this.addActionButton( 'btn_more_gold', _('Use More ') +gold , 'raiseGold', null, false, 'gray');
+                        this.addActionButton( 'btn_more_gold', _('Use More ') +tkn_gold , 'raiseGold', null, false, 'gray');
                         this.addActionButton( 'btn_trade',     _('Trade'),  'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan', _('Take Loan'),      'takeLoan',  null, false, 'gray');
                     break;
@@ -653,11 +663,8 @@ function (dojo, declare) {
                         }
                         this.addActionButton( 'btn_choose_building', _('Build'),     'chooseBuilding');
                         if (args.riverPort){
-                            let gold = this.format_block( 'jstpl_resource_log', {type:'gold', offset:0}, ); 
-                            let cow  = this.format_block( 'jstpl_resource_log', {type:'cow', offset:0}, );
-                            let copper = this.format_block( 'jstpl_resource_log', {type:'copper', offset:0}, );
-                            this.addActionButton( 'btn_gold_cow',    gold +_(' As ') + cow,   'toggleGoldAsCow', null, false, 'red');
-                            this.addActionButton( 'btn_gold_copper', gold +_(' As ') + copper, 'toggleGoldAsCopper', null, false, 'red');
+                            this.addActionButton( 'btn_gold_cow',    tkn_gold +_(' As ') + tkn_cow,   'toggleGoldAsCow', null, false, 'red');
+                            this.addActionButton( 'btn_gold_copper', tkn_gold +_(' As ') + tkn_copper, 'toggleGoldAsCopper', null, false, 'red');
                         }
                         this.addActionButton( 'btn_do_not_build', _('Do not Build'), 'doNotBuild', null, false, 'red');
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
@@ -665,43 +672,44 @@ function (dojo, declare) {
                     break;
                     case 'resolveBuilding':
                         if (args.building_bonus == BUILD_BONUS_WORKER){
-                            this.addActionButton( 'btn_bonus_worker', _('Hire worker (free)'), 'workerForFreeBuilding');
-                            this.addActionButton( 'btn_pass_bonus',  _('Pass on free worker'), 'passBuildingBonus', null, false, 'red');
+                            this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+tkn_worker, 'workerForFreeBuilding');
+                            this.addActionButton( 'btn_pass_bonus',  _('Pass on bonus'), 'passBuildingBonus', null, false, 'red');
                         }
                     break;
                     case 'bonusChoice':
                         const option = Number(args.auction_bonus);
                         console.log('bonus option: ' + option);
-                        var worker = this.format_block( 'jstpl_resource_log', {type:'worker', offset:0}, ); 
+                         
                         switch (option){
                             case AUCBONUS_WORKER:
-                                this.addActionButton( 'btn_bonus_worker', _('(free) Hire ')+ worker , 'workerForFree');
+                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker , 'workerForFree');
                             break;
                             case AUCBONUS_WORKER_RAIL_ADV:
-                                this.addActionButton( 'btn_bonus_worker', _('(free)Hire ')+ worker, 'workerForFree2');
+                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker, 'workerForFree2');
                             break;
                             case AUCBONUS_WOOD_FOR_TRACK:
-                                this.addActionButton( 'btn_wood_track',   _('Trade wood for rail track'), 'woodForTrack');
+                                this.addActionButton( 'btn_wood_track', tkn_wood+" "+tkn_arrow+" "+tkn_track, 'woodForTrack');
                             break;
                             case AUCBONUS_COPPER_FOR_VP:
-                                this.addActionButton( 'btn_copper_vp',    _('Trade Copper for 4 VP'),     'copperFor4VP');
+                                this.addActionButton( 'btn_copper_vp', tkn_copper+" "+tkn_arrow+" "+tkn_vp4, 'copperFor4VP');
                                 break;
                             case AUCBONUS_COW_FOR_VP:
-                                this.addActionButton( 'btn_cow_vp',       _('Trade Livestock for 4 VP'),  'cowFor4VP');
+                                this.addActionButton( 'btn_cow_vp', tkn_cow+" "+tkn_arrow+" "+tkn_vp4, 'cowFor4VP');
                                 break;
                             case AUCBONUS_6VP_AND_FOOD_VP:
                             case AUCBONUS_FOOD_FOR_VP:
-                                this.addActionButton( 'btn_food_vp',      _('Trade Food for 2 VP'),       'foodFor2VP');
+                                this.addActionButton( 'btn_food_vp', tkn_food+" "+tkn_arrow+" "+tkn_vp2, 'foodFor2VP');
+                                break;
                         }
                         this.addActionButton( 'btn_pass_bonus',  _('Do not Get Bonus'), 'passBonus', null, false, 'red');
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan',   _('Take Loan'),    'takeLoan', null, false, 'gray');
                     break;
                     case 'endGameActions':
-                        this.addActionButton( 'btn_take_loan',   _('Pay Loan (silver)'), 'payLoanSilver', null, false, 'gray');
-                        this.addActionButton( 'btn_take_loan',   _('Pay Loan (gold)'),   'payLoanGold', null, false, 'gray');
-                        this.addActionButton( 'btn_trade',       _('Trade'),             'tradeActionButton', null, false, 'gray');
-                        this.addActionButton( 'btn_done',        _('Done'),              'doneEndgameActions');
+                        this.addActionButton( 'btn_pay_loan_silver', _('Pay Loan ')+ tkn_silver, 'payLoanSilver', null, false, 'gray');
+                        this.addActionButton( 'btn_pay_loan_gold', _('Pay Loan ')+ tkn_gold,   'payLoanGold', null, false, 'gray');
+                        this.addActionButton( 'btn_trade',         _('Trade'),             'tradeActionButton', null, false, 'gray');
+                        this.addActionButton( 'btn_done',          _('Done'),              'doneEndgameActions');
                     break;
                 }
             }
@@ -1041,7 +1049,7 @@ function (dojo, declare) {
             this.silverCounter.setValue(Math.max(0 , this.silverCost));
             console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
             if($('btn_less_gold') == null){
-                let gold = this.format_block( 'jstpl_resource_log', {type:'gold', offset:0}, ); 
+                let gold = this.format_block( 'jstpl_resource_log', {type:'gold'}, ); 
                 this.addActionButton( 'btn_less_gold', _('Use Less ')+ gold, 'lowerGold', null, false, 'gray');
                 dojo.place('btn_less_gold', 'btn_more_gold', 'after');
             }
@@ -1603,11 +1611,14 @@ function (dojo, declare) {
                             args.type = this.getOneResourceAsDiv(args.typeStr, args.amount);
                         }
                     }
+                    if (args.arrow != null){
+                        args.arrow = this.format_block('jstpl_resource_inline', {type: 'arrow'});
+                    }
                     if (args.track != null && typeof args.track == 'string'){
-                        args.track = this.format_block('jptpl_track_log', {"type" : 'track'});
+                        args.track = this.format_block('jptpl_track_log', {type: 'track'});
                     }
                     if (args.loan != null && typeof args.loan == 'string'){
-                        args.loan = this.format_block('jptpl_track_log', {"type" : 'loan'});
+                        args.loan = this.format_block('jptpl_track_log', {type: 'loan'});
                     }    
 
                     if (args.token != null && typeof (args.null != "string")){
@@ -1632,6 +1643,8 @@ function (dojo, declare) {
                             args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
                         } else if (args.reason_string.worker != null) {
                             args.reason_string = this.getOneResourceAsDiv('worker', 1);
+                        } else if (args.reason_string.track != null) {
+                            args.reason_string = this.format_block('jptpl_track_log', {type:'track'});
                         }
                     }
                     if (args.building_name != null && typeof (args.building_name) != "string"){
@@ -1676,27 +1689,32 @@ function (dojo, declare) {
         },
 
         getOneResourceAsDiv: function(type, amount){
-            if (type == 'worker') {
-                return this.format_block('jptpl_track_log', {type : type});
-            }
-            var resString = "";
+            var resString = '<div class="log_container">';
             if (amount > 0){ 
-                var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type, 'offset':0});
+                var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type});
                 resString += `${tokenDiv}`;
-                var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type, 'offset':-15});
+                var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type});
                 for(let i=1; i < amount; i++){
                     resString += `${tokenDiv}`;
                 }
             }
-            return resString;
+            return resString +"</div>";
         },
 
         getResourceArrayAsDiv: function( array){
-            var aggregateString = "";
+            var aggregateString = '<div class="log_container">';
             for (let type in array){
-                aggregateString += this.getOneResourceAsDiv(type, array[type]);
+                let amt = array[type];
+                if (amt > 0){ 
+                    var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type});
+                    aggregateString += `${tokenDiv}`;
+                    var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type});
+                    for(let i=1; i < amt; i++){
+                        aggregateString += `${tokenDiv}`;
+                    }
+                }
             }
-            return aggregateString;
+            return aggregateString + "</div>";
         },
 
         notif_updateAuction: function( notif ) {
@@ -1814,7 +1832,7 @@ function (dojo, declare) {
                 console.log(`${type}: ${amt} `);
                 for(let i = 0; i < amt; i++){
                     console.log("sending token '"+type+"' to '"+ destination+ "'");
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(-1);
                     }
@@ -1835,7 +1853,7 @@ function (dojo, declare) {
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 console.log(`sending token '${notif.args.type}' from '${start}' to '${player_zone_divId}'`);
-                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr), offset:0}), 'limbo', start , player_zone_divId , 500 , 100*i );
+                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr)}), 'limbo', start , player_zone_divId , 500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.typeStr].incValue(1);
                 }
@@ -1857,7 +1875,7 @@ function (dojo, declare) {
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', start , player_zone_divId , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', start , player_zone_divId , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(1);
                     }
@@ -1877,7 +1895,7 @@ function (dojo, declare) {
             } 
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
-                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:notif.args.typeStr, offset:0}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
+                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:notif.args.typeStr}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     this.resourceCounters[notif.args.typeStr].incValue(-1);
                 }
@@ -1902,7 +1920,7 @@ function (dojo, declare) {
                 console.log(`${type}: ${amt} `);
                 for(let i = 0; i < amt; i++){
                     console.log("sending token '"+type+"' to '"+ destination+ "'");
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(-1);
                     }
@@ -1920,7 +1938,7 @@ function (dojo, declare) {
             for(let type in notif.args.tradeAway_arr){
                 let amt = notif.args.tradeAway_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', player_zone, trade_board , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone, trade_board , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(-1);
                     }
@@ -1929,7 +1947,7 @@ function (dojo, declare) {
             for(let type in notif.args.tradeFor_arr){
                 let amt = notif.args.tradeFor_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type, offset:0}), 'limbo', trade_board, player_zone, 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', trade_board, player_zone, 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(1);
                     }
@@ -1956,8 +1974,8 @@ function (dojo, declare) {
                 this.resourceCounters['loan'].incValue(1);
                 this.resourceCounters['silver'].incValue(2);
             }
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver', offset:0}), 'limbo', 'board', player_zone_divId, 500 , 100);
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver', offset:0}), 'limbo', 'board', player_zone_divId, 500 , 200);
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 100);
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 200);
             
         },
    });             

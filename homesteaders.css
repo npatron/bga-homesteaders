@@ -19,9 +19,8 @@
 /********* You can start writing your CSS below this line: **********/
 
 @font-face {
-   font-family: Old Standard TT;
+   font-family: 'Old Standard TT';
    font-style: normal;
-   font-variant: small-caps;
    font-weight: 400;
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
@@ -37,22 +36,41 @@ div#board {
 }
 
 .useFont {
-   font-family: 'Old Standard TT';
+   font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
+}
+.biggerFont {
+   font: italic 30px/1 "Old Standard TT";
 }
 .logFont {
    font-family: 'Old Standard TT';
 }
 
 /*=========================
+   Button css
+  =========================*/
+#btn_more_gold{
+   display: inline-flex;
+}
+#btn_less_gold{
+   display: inline-flex;
+}
+#btn_gold_cow{
+   display: inline-flex;
+}
+#btn_gold_copper{
+   display: inline-flex;
+}
+/*=========================
     Bid Slot Locations (on board)
   =========================*/
 div#pending_bids{
    position: absolute;
+   top: 1%;
+   left: 40%; 
+
    height: 50px;
    width: 200px;
-   top: 1%;
-   left: 40%;
 }
 .bid_slot {
    position: absolute;
@@ -608,10 +626,24 @@ div#done_trading {
    height: 29px;
 }
 
-.log_token {
+.log_container {
+   display: inline-flex;
+   flex-direction: row-reverse;
+}
+.token_inline{
    background-image: url('img/drawn_tokens.png');
+   position: relative;
    display: inline-block;
 }
+.log_token {
+   background-image: url('img/drawn_tokens.png');
+   position: relative;
+   overflow: hidden;
+   flex-direction: row-reverse;
+}
+.log_token:not(:last-child) {
+   margin-left: -10px;
+ }
 
 .log_wood{
    background-size: 147.1px 58.8px;
@@ -619,6 +651,9 @@ div#done_trading {
    width: 8px;
    height: 20px;
 }
+.log_wood:not(:last-child) {
+   margin-left: -2px;
+ }
 .log_gold{
    background-size: 157.9px 63.2px;
    background-position: -8.6px 0px;
@@ -667,12 +702,15 @@ div#done_trading {
    width: 20px;
    height: 20.8px;
 }
-/*.log_worker{
+.log_worker{
    background-size: 91.5px 36.6px;
    background-position: 0px -13.2px;
    width: 13.2px;
    height: 20px;
-}*/
+}
+.log_worker:not(:last-child) {
+   margin-left: -8px;
+ }
 .log_cow{
    background-size: 87.7px 35.1px;
    background-position: -12.0px -11.7px;
@@ -699,7 +737,7 @@ div#done_trading {
 }
 .log_arrow{
    background-size: 454.5px 181.8px;
-   background-position: -165.5px -141.2px;
+   background-position: -165.5px -135px;
    width: 20px;
    height: 17.6px;
 }
@@ -722,14 +760,14 @@ div#done_trading {
    width: 31px;
    background-size: 115px 63px; 
 }
-.log_worker {
+/*.log_worker {
    display: inline-block;
    background-image: url('img/tokens_50x50.png');
    height: 29px;
    width: 23px;
    background-size: 175px 80px;
    background-position: 74% 46%;
-}
+}*/
 
 .token_track {
    background-image: url('img/rail_debt_85x102.png');

@@ -59,7 +59,7 @@
         
         $auctions = $this->game->getGameStateValue('number_auctions');
         $color_arr = array(1=>'yellow', 2=>'red', 3=>'blue', 4=>'green', 5=>'purple',
-                      11=>'lightseargreen', 12=>'orange', 13=>'hotpink');
+                      11=>'lightseagreen', 12=>'orange', 13=>'hotpink');
         $this->page->begin_block( "homesteaders_homesteaders", "auction_string" );
         $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
         $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );

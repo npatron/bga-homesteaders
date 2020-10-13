@@ -292,7 +292,7 @@ class HSDresource extends APP_GameClass
         $p_tracks = $this->game->getUniqueValueFromDB( $sql ); 
         $this->game->Building->buildingIncomeForPlayer($p_id);
         if($p_tracks > 0) {
-            $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, 'rail tracks');
+            $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, array('track'=>'track'));
         }
     }
 
@@ -409,11 +409,12 @@ class HSDresource extends APP_GameClass
         if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_MARKET)){
             $tradeFor['silver'] = ($tradeFor['silver'] ?:0)+1;
         }
-        $this->game->notifyAllPlayers( "trade", clienttranslate( '${player_name} Trades ${tradeAway} for ${tradeFor}' ), array(
+        $this->game->notifyAllPlayers( "trade", clienttranslate( '${player_name} Trades ${tradeAway} ${arrow} ${tradeFor}' ), array(
             'player_id' => $p_id,
             'player_name' => $p_name,
             'tradeAway' => $tradeAway,
             'tradeFor' => $tradeFor,
+            'arrow' => ' ',
         ) );
         foreach($tradeAway as $type=>$amt){
             $this->updateResource($p_id, $type, -$amt);
