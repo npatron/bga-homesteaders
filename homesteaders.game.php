@@ -119,7 +119,7 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building', 0 );
-        $this->setGameStateInitialValue( 'dummy_bid_val', 5 );
+        $this->setGameStateInitialValue( 'dummy_bid_val', 3 ); //3-> 5 silver
         
         $values = array();
         // set colors
@@ -134,6 +134,7 @@ class homesteaders extends Table
         // create building Tiles (in sql)
         $this->Building->createBuildings($players);
         $this->Auction->createAuctionTiles(count($players));
+        $this->Bid->setupBidDB($players);
 
         // setup resources table
         $sql = "INSERT INTO `resources` (player_id) VALUES ";
@@ -142,7 +143,7 @@ class homesteaders extends Table
 
         // create 1 worker for each player.
         $sql = "INSERT INTO `workers` (player_id) VALUES ";
-        $sql .= implode( ',', $values );        
+        $sql .= implode( ',', $values );   
         self::DbQuery( $sql );
 
         $this->activeNextPlayer();
@@ -168,30 +169,23 @@ class homesteaders extends Table
         $current_player_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
     
         // Get information about players
-        $sql = "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `bid_loc`, `rail_adv` FROM `player` ";
-        $result['players'] = $this->getCollectionFromDb( $sql );
-
-        $result['buildings'] = $this->Building->getAllBuildings();
-
-        $sql = "SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` ";
-        $result['tracks'] = $this->getCollectionFromDb( $sql );
-  
-        $sql = "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot, `selected` FROM `workers`";
-        $result['workers'] = $this->getCollectionFromDb( $sql );
-
-        $sql = "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '".$current_player_id."'";
-        $result['player_resources'] = $this->getObjectFromDb( $sql );
-
-        $sql = "SELECT `player_id` p_id, `workers`, `track` FROM `resources` ";
-        $result['resources'] = $this->getCollectionFromDb( $sql );
-
-        $result['round_number'] = $this->getGameStateValue( 'round_number' );
-        $result['number_auctions'] = $this->getGameStateValue( 'number_auctions' );
-        $result['auctions'] = $this->Auction->getAllAuctionsFromDB();
+        $result['players'] = $this->getCollectionFromDb( 
+            "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " );
         
-        $result['player_order'] = $this->getNextPlayerTable();
-        $result['first_player'] = $this->getGameStateValue( 'first_player');
+        $result['auctions'] = $this->Auction->getAllAuctionsFromDB();
+        $result['bids'] = $this->getCollectionFromDB("SELECT `player_id` p_id, `bid_loc` FROM `bids`");
+        $result['buildings'] = $this->Building->getAllBuildings();
         $result['current_player'] = $current_player_id;
+        $result['first_player'] = $this->getGameStateValue( 'first_player');
+        $result['number_auctions'] = $this->getGameStateValue( 'number_auctions' );
+        $result['player_order'] = $this->getNextPlayerTable();
+        $result['player_resources'] = $this->getObjectFromDb( 
+            "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '$current_player_id'" );
+        $result['tracks'] = $this->getCollectionFromDb("SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` ");
+        $result['resources'] = $this->getCollectionFromDb("SELECT `player_id` p_id, `workers`, `track` FROM `resources` ");
+        $result['round_number'] = $this->getGameStateValue( 'round_number' );
+        $result['workers'] = $this->getCollectionFromDb(
+            "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot, `selected` FROM `workers`");
 
         return $result;
     }
@@ -257,7 +251,7 @@ class homesteaders extends Table
 
     /***  place workers phase ***/
     public function playerHireWorker(){
-        self::checkAction( 'hireWorker' );
+        $this->checkAction( 'hireWorker' );
         $current_player_id = $this->getCurrentPlayerId();
         $worker_cost = array('trade'=>1,'food'=>1);
         if (!$this->Resource->canPlayerAfford($current_player_id, $worker_cost))
@@ -268,7 +262,7 @@ class homesteaders extends Table
 
     public function playerSelectWorkerDestination($worker_key, $b_key, $building_slot) 
     {
-        self::checkAction( "placeWorker" );
+        $this->checkAction( "placeWorker" );
         $current_player_id = $this->getCurrentPlayerId();
         $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${type} to ${building_name}' ), array(
             'player_id' => $current_player_id,
@@ -280,7 +274,7 @@ class homesteaders extends Table
             'player_name' => $this->getCurrentPlayerName(),
         ) );
         $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$worker_key."'";
-        self::DbQuery( $sql );
+        $this->DbQuery( $sql );
     }
 
     public function playerDonePlacingWorkers ()
@@ -296,14 +290,20 @@ class homesteaders extends Table
     }
 
     /*** Player Bid Phase ***/
+    public function playerConfirmDummyBid($bid_location){
+        $this->checkAction('dummy');
+        $this->Bid->confirmDummyBid($bid_location);
+        $this->gamestate->nextState( "auction" );
+    }
+
     public function playerConfirmBid($bid_location){
-        self::checkAction( "confirmBid" );
+        $this->checkAction( "confirmBid" );
         $this->Bid->confirmBid($bid_location);
         $this->gamestate->nextState( "nextBid" );
     }
 
     public function playerPassBid(){
-        self::checkAction( "pass" );
+        $this->checkAction( "pass" );
         $this->Log->passBid($this->getActivePlayerId());
         $this->Bid->passBid();
         $this->setGameStateValue('phase', PHASE_BID_PASS );
@@ -311,7 +311,7 @@ class homesteaders extends Table
     }
 
     public function playerBuildBuilding($selected_building, $goldAsCow, $goldAsCopper){
-        self::checkAction( "buildBuilding" );
+        $this->checkAction( "buildBuilding" );
         $active_player = $this->getActivePlayerId();
         $this->Building->buildBuilding($active_player, $selected_building, $goldAsCow, $goldAsCopper);
         if ($this->Building->doesPlayerOwnBuilding($active_player, BLD_FORGE) && 
@@ -331,14 +331,14 @@ class homesteaders extends Table
     }
 
     public function playerDoNotBuild () {
-        self::checkAction( "doNotBuild" );
+        $this->checkAction( "doNotBuild" );
         //goto next state;
         $this->gamestate->nextState( "auction_bonus" ); 
         
     }
 
     public function playerPayWorkers($gold) {
-        self::checkAction( "done" );
+        $this->checkAction( "done" );
         $current_player_id = $this->getCurrentPlayerId();
         $workers = $this->Resource->getPlayerResourceAmount($current_player_id,'workers');
         $cost = max($workers - (5*$gold), 0);
@@ -347,7 +347,7 @@ class homesteaders extends Table
     }
 
     public function playerPayAuction($gold) {
-        self::checkAction( "done" );
+        $this->checkAction( "done" );
         if ($gold <0){ throw new BgaUserException ( _("cannot have negative gold value"));}
         $active_player_id = $this->getActivePlayerId();
         
@@ -528,17 +528,9 @@ class homesteaders extends Table
         return array('worker_counts'=>$worker_counts);
     }
 
-    function argPlaceWorkers() 
-    {
-        $args = array();
-        /*$players = $this->loadPlayersBasicInfos();
-        foreach ( $players as $player_id => $player_info ) {
-            $worker = $this->Resource->getPlayerResourceAmount($player_id, 'workers');
-            $sql = "SELECT `paid` FROM `player` WHERE `player_id`='$player_id'";
-            $paid = $this->getUniqueValueFromDB( $sql ); 
-            $args[$player_id] = array("worker"=>$worker, "paid"=>$paid);
-        }*/
-        return $args;
+    function argDummyValidBids() {
+        $dummy_bids = $this->Bids->getDummyBidOptions();
+        return array('valid_bids'=>$dummy_bids);
     }
 
     function argValidBids() {

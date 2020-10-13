@@ -64,7 +64,6 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must allocate workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
-        "args" => "argPlaceWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
         "transitions" => array( "auction" => STATE_PAY_WORKERS )
     ),
@@ -95,15 +94,25 @@ $machinestates = array(
         "action" => "stBeginAuction",
         "updateGameProgression" => true,
         "transitions" => array( "auction" => STATE_PLAYER_BID, 
+                                "2p_auction" => STATE_2_PLAYER_DUMMY_BID,
                                 "endGame" => STATE_ENDGAME_ACTIONS,)
     ), 
+
+    STATE_2_PLAYER_DUMMY_BID => array(
+        "name" => "dummyPlayerBid",
+        "description" => clienttranslate('${actplayer} must place dummy bid on auction'),
+        "descriptionmyturn" => clienttranslate('${you} must place dummy bid on auction'),
+        "type" => "activeplayer",
+        "args" => "argDummyValidBids",
+        "possibleactions" => array( "selectBid", "confirmBid", "dummy"),
+        "transitions" => array( "nextBid" => STATE_PLAYER_BID,),
+    ),
 
     STATE_PLAYER_BID => array(
         "name" => "playerBid",
         "description" => clienttranslate('${actplayer} must bid on auction or pass'),
         "descriptionmyturn" => clienttranslate('${you} must bid on auction or pass'),
         "type" => "activeplayer",
-//        "action" => "stMakeBidOrPass",
         "args" => "argValidBids",
         "possibleactions" => array( "selectBid", "confirmBid", "pass" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 

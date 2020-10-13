@@ -1,5 +1,7 @@
 <?php
 
+  define('DUMMY_PID', 0);
+
   define("AUC_LOC_DISCARD", 0);
   define("AUC_LOC_1",   1);
   define("AUC_LOC_2",   2);

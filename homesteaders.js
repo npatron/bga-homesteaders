@@ -256,7 +256,10 @@ function (dojo, declare) {
             }
             if (!$isSpectator)
                 this.orientPlayerZones(gamedatas.player_order);
-            
+            if (this.player_count == 2){
+                this.player_color[0] = this.getAvailableColor();
+            }
+
             this.setupPlayerResources(gamedatas.player_resources);
             // Auctions: 
             this.setupAuctionZones(gamedatas.number_auctions);
@@ -269,7 +272,7 @@ function (dojo, declare) {
             this.first_player = Number(gamedatas.first_player);
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones (gamedatas.number_auctions);
-            this.setupBidTokens(gamedatas.players);
+            this.setupBidTokens(gamedatas.bids);
 
             this.setupRailLines(gamedatas.players);
             this.setupTradeButtons();
@@ -295,6 +298,14 @@ function (dojo, declare) {
                 console.log( "next: "+next_pId );
                 dojo.place(`player_zone_${this.player_color[next_pId]}`, this.player_order[i] , 'replace');
                 next_pId = order_table[this.player_id];
+            }
+        },
+
+        getAvailableColor: function(){
+            let player_color_option = ['purple', 'blue', 'yellow', 'green', 'red'];
+            for(let i in player_color_option){
+                if (!this.player_color.includes(player_color_option[i]))
+                    return player_color_option[i];
             }
         },
 
@@ -397,8 +408,8 @@ function (dojo, declare) {
             }
         },
 
-        setupBidTokens: function(players) {
-            for(let p_id in players){
+        setupBidTokens: function(bids) {
+            for(let p_id in bids){
                 const player_bid_loc = players[p_id].bid_loc;
                 const player_color = this.player_color[p_id];
                 this.bid_token_divId[p_id] = `token_bid_${player_color}`;
