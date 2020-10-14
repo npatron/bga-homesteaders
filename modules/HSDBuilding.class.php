@@ -324,15 +324,16 @@ class HSDBuilding extends APP_GameClass
         }
         
         $this->payForBuilding($p_id, $b_cost);
-        $message = '${player_name} builds a ${building_name}';
+        $message = '${player_name} builds ${building_name}';
         $building['p_id'] = $p_id;
         $values = array(  'player_id' => $p_id,
                         'player_name' => $this->game->getPlayerName($p_id),
                         'building' => $building,
                         'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)),);
         if (count($b_cost)>0) {
-            $message .= ' for ${resources}';
+            $message .= ' ${arrow} ${resources}';
             $values['resources'] = $b_cost;
+            $values['arrow'] = "arrow";
         }
         $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
         $this->game->Log->buyBuilding($p_id, $b_id);

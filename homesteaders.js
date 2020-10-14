@@ -931,7 +931,7 @@ function (dojo, declare) {
                 // now make the trade options not selectable
                 this.clearSelectable('trade', true);
                 if (!dojo.hasClass('confirm_trade_btn', 'noshow') ){
-                    dojo.hasClass( 'confirm_trade_btn', 'noshow');
+                    dojo.addClass( 'confirm_trade_btn', 'noshow');
                 }
             }
         },
@@ -1049,8 +1049,8 @@ function (dojo, declare) {
             this.silverCounter.setValue(Math.max(0 , this.silverCost));
             console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
             if($('btn_less_gold') == null){
-                let gold = this.format_block( 'jstpl_resource_log', {type:'gold'}, ); 
-                this.addActionButton( 'btn_less_gold', _('Use Less ')+ gold, 'lowerGold', null, false, 'gray');
+                const tkn_gold = this.format_block( 'jstpl_resource_inline', {type:'gold'}, ); 
+                this.addActionButton( 'btn_less_gold', _('Use Less ')+ tkn_gold, 'lowerGold', null, false, 'gray');
                 dojo.place('btn_less_gold', 'btn_more_gold', 'after');
             }
         },
@@ -1072,7 +1072,8 @@ function (dojo, declare) {
         },
 
         confirmTradeButton: function ( evt ){
-            var tradeAction = this.last_selected['trade'].substring(6);  
+            if (this.last_selected['trade'] == "") { return; }
+            var tradeAction = this.last_selected['trade'].substring(6);
             this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
                 lock: true, 
                 trade_action: tradeAction
