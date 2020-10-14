@@ -342,7 +342,20 @@ class HSDresource extends APP_GameClass
     function specialTrade($p_id, $cost_arr, $income_arr, $reason_string, $origin="", $key=0){
         $p_name = $this->game->getPlayerName($p_id);
         if (array_key_exists('track', $income_arr)){
-            //special case for Track make special handler.
+            $this->game->DbQuery( "INSERT INTO `tracks` (`player_id`) VALUES ($p_id)" );
+           $p_tracks = $this->game->getObjectListFromDB( "SELECT `rail_key` FROM `tracks` WHERE `player_id`='$p_id'" );
+           $track_key = $p_tracks[count($p_tracks)-1];
+           $values = array('player_id' => $p_id,
+                    'player_name' => $this->game->getPlayerName($p_id),
+                    'track' => 'track',
+                    'reason_string' => $reason_string,
+                    'track_key'=> $track_key, 
+                    'tradeAway' => $cost_arr,
+                    'arrow' => 'arrow',);
+            $values = $this->updateArrForNotify($values, $origin, $key); 
+            $this->game->notifyAllPlayers( "gainTrack", 
+                    clienttranslate('${player_name} Trades ${tradeAway} ${arrow} ${track} from ${reason_string}'), $values);
+            $this->updateResource($p_id, 'track', 1);
         } else {
             $values = array('player_id' => $p_id,   'player_name' => $p_name,
                         'tradeAway' => $cost_arr,   'tradeFor' => $income_arr,

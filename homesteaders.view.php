@@ -44,6 +44,7 @@
         $this->tpl['ROUND_NUMBER'] = $round_number;
         $this->tpl['FUTURE_AUCTION'] = _("Show Upcoming Auctions");
         $this->tpl['CONFIRM_TRADE'] = _("Confirm Trade");
+        $this->tpl['UNDO_TRADE'] = _("Undo Trades");
         $this->tpl['BUILDING_STOCK'] = _("Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Show Discarded Buildings");
         $this->tpl['FUTURE_BUILDING'] = _("Show Upcoming Buildings");

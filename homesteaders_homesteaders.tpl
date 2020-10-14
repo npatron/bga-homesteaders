@@ -12,7 +12,8 @@
 -->
 <div id ="top">
     <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}</span>  </span>
-    <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
+    <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a><!--
+--> <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id='player_top'> </div>
