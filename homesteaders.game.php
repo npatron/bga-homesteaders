@@ -224,7 +224,7 @@ class homesteaders extends Table
 
     function getPlayerColorName($player_id){
         $sql = "SELECT `player_id`, `color_name` FROM `player`";
-        $colors = self::getCollectionFromDb( $sql );
+        $colors = $this->getCollectionFromDb( $sql );
         return($colors[$player_id]['color_name']);
     }
     
@@ -242,17 +242,13 @@ class homesteaders extends Table
     public function playerTakeLoan()
     {
         $this->checkAction( "takeLoan" );
-        $current_player_id = $this->getCurrentPlayerId();
-        $this->Resource->updateResource($current_player_id, 'silver', 2);
-        $this->Resource->updateResource($current_player_id, 'loan', 1);
-        $this->Log->takeLoan($current_player_id);
+        $this->Resource->takeLoan($this->getCurrentPlayerId());
     }
     
     public function playerTrade( $tradeAction )
     {
         $this->checkAction( 'trade' );
-        $current_player_id = $this->getCurrentPlayerId();
-        $this->Resource->trade($current_player_id, $tradeAction);
+        $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
     }
 
     /***  place workers phase ***/
@@ -498,15 +494,8 @@ class homesteaders extends Table
     public function playerPayLoan($gold) {
         $this->checkAction('payLoan');
         $current_player_id = $this->getCurrentPlayerId();    
-        if ($gold) $cost = array('gold'=> 1);
-        else $cost = array('silver'=>5);
-        $type = array_keys($cost)[0];
-        if (!$this->Resource->canPlayerAfford($current_player_id, $cost)){
-            throw new BgaUserException( _("You do not have enough ".$type ) );
-        }
-        $this->Resource->updateAndNotifyPayment($current_player_id, $type , $cost[$type] , 'loan');
-        $this->Log->payOffLoan($current_player_id, array($type =>$cost[$type]));
-        $this->Resource->updateResource ($current_player_id, 'loan', -1);
+        $this->Resource->payOffLoan($current_player_id, $gold);
+        $this->Log->payOffLoan($current_player_id);
     }
 
     public function playerDoneEndgame() {
@@ -536,19 +525,6 @@ class homesteaders extends Table
         $sql = "SELECT `player_id`, `workers` FROM `resources`";
         $worker_counts = $this->getCollectionFromDB($sql);
         return array('worker_counts'=>$worker_counts);
-    }
-
-    function argPlaceWorkers() 
-    {
-        $args = array();
-        /*$players = $this->loadPlayersBasicInfos();
-        foreach ( $players as $player_id => $player_info ) {
-            $worker = $this->Resource->getPlayerResourceAmount($player_id, 'workers');
-            $sql = "SELECT `paid` FROM `player` WHERE `player_id`='$player_id'";
-            $paid = $this->getUniqueValueFromDB( $sql ); 
-            $args[$player_id] = array("worker"=>$worker, "paid"=>$paid);
-        }*/
-        return $args;
     }
 
     function argValidBids() {
@@ -625,14 +601,18 @@ class homesteaders extends Table
 
     function stPlaceWorkers() {
         $this->DbQuery("UPDATE `player` SET `paid`='0'");
+        $this->Log->startTurnAllPlayers();
         $this->gamestate->setAllPlayersMultiactive( );
+        
     }
 
-    function stCollectIncome() {
+    // removed this state (as it was not necessary)
+    /*function stCollectIncome() {
         $this->gamestate->nextState( '' );
-    }
+    }*/
 
-    function stPayWorkers() {
+    function stPayWorkers() 
+    {
         $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = $this->getCollectionFromDB( $sql );
         //$players = array();
@@ -686,6 +666,12 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
+    // for states where no backend actions are req, but want to set start turn for trades.
+    function stSetupTrade()
+    {
+        $this->Log->startTurn($this->getActivePlayerId());
+    }
+
     function stBuildingPhase()
     {
         $next_state = "";
@@ -731,7 +717,7 @@ class homesteaders extends Table
             $this->Resource->addTrack($active_player_id, $b_name, 'building', $b_key);
             $this->gamestate->nextState('train_station_build');
         }
-        //the other case (BUILD_BONUS_WORKER) waits for player_choice
+        //the other case (BUILD_BONUS_WORKER) waits for player_choice so we don't always want to go to next state
     }
 
     function stGetAuctionBonus()
@@ -759,6 +745,7 @@ class homesteaders extends Table
     }
 
     function stEndGameActions(){
+        $this->Log->startAllPlayerTurns();
         $this->gamestate->setAllPlayersMultiactive( );
     }
 

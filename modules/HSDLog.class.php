@@ -39,7 +39,8 @@ class HSDLog extends APP_GameClass
         $this->game->initStat( 'player', 'loans', 0, $player_id );
     }
   }
-    /*
+
+  /*
    * gameEndStats: compute end-of-game statistics
    */
   public function gameEndStats()
@@ -131,24 +132,34 @@ class HSDLog extends APP_GameClass
       $stats[] = [$player_id, 'spent_on_auctions', $args['cost']];
     }
 
-
     if (!empty($stats)) {
       $this->incrementStats($stats);
       $args['stats'] = $stats;
     }
 
-    //$actionArgs = json_encode($args);
+    $actionArgs = json_encode($args);
 
-    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action')");
-    // , '$actionArgs'
+    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action', '$actionArgs')");
   }
 
   /*
-   * starTurn: logged whenever a player start its turn, very useful to fetch last actions
+   * starTurn: logged whenever a player start its turn, very useful for get current trade/loans
    */
   public function startTurn($player_id)
   {
     $this->insert($player_id, 0, 'startTurn');
+  }
+  public function startAllPlayerTurns()
+  {
+    $players = $this->game->loadPlayersBasicInfos();
+    foreach($players as $p_id=>$player){
+      $this->insert($p_id, 0,'startTurn');
+    }
+  }
+
+  /** for undo of trades during current action */
+  public function getAllCurentTrades($player_id) {
+    //self::getCollectionFromDB("SELECT "); do thing here.
   }
 
   /*
@@ -161,31 +172,16 @@ class HSDLog extends APP_GameClass
 
   public function takeLoan($player_id) 
   {
-    $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a ${loan}' ), array(
-      'player_id' => $player_id,
-      'player_name' => $this->game->getPlayerName($player_id),
-      'loan' => 'loan',
-    ) );
     $this->insert($player_id, 0, 'loan');
   }
 
-  public function freePayOffLoan($player_id, $reason, $origin ="", $key =0)
-  {
-    $values = array(  'player_id' => $player_id,
-                      'player_name' => $this->game->getPlayerName($player_id),
-                      'reason_string' => $reason,
-                      'loan' => 'loan',);
-    $values = $this->game->Resource->updateArrForNotify($values, $origin, $key);
-    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${reason_string} pays off ${player_name}\'s ${loan}' ), $values);
-  }
-  public function payOffLoan($player_id, $type){
-    $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays off ${loan} with ${type}' ), array(
-      'player_id' => $player_id,
-      'player_name' => $this->game->getPlayerName($player_id),
-      'loan' => 'loan',
-      'type' => $type,
-    ) );
+  public function payOffLoan($player_id){
     $this->insert($player_id, 0, 'loanPaid');
+  }
+
+  public function tradeResource($player_id, $trade_away, $trade_for, $undo = false)
+  {
+    $this->insert($player_id, 0, 'trade', array('tradeAway'=> $trade_away, 'tradeFor'=>$trade_for, 'undo'=>$undo));
   }
 
   public function passBid($player_id)

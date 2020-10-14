@@ -77,6 +77,8 @@ $machinestates = array(
         "transitions" => array( "" => STATE_PAY_WORKERS,  )
     ),*/
     
+    // currently enforcing auto-pay of workers just to speed things up, plan to add checkbox for auto-pay option
+    // could just auto-pay if they have enough silver, & less than 5 workers. not sure yet.
     STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),
@@ -148,6 +150,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must pay for auction'),
         "type" => "activeplayer",
         "args" => "argAuctionCost",
+        "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "takeLoan", "updateGold", "done" ),
         "transitions" => array( "build" => STATE_CHOOSE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS)
@@ -159,6 +162,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may choose a building to build'),
         "type" => "activeplayer",
         "args" => "argAllowedBuildings",
+        "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
         "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS,
@@ -184,6 +188,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may build another building'),
         "type" => "activeplayer",
         "args" => "argTrainStationBuildings",
+        "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
         "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS,
@@ -205,6 +210,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may recieve a Bonus '),
         "type" => "activeplayer",
         "args" => "argBonusOption",
+        "action" => "stSetupTrade",
         "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan' ),
         "transitions" => array( "done" => STATE_END_BUILD,
                                 "railBonus" => STATE_RAIL_BONUS )

@@ -213,16 +213,56 @@ class HSDresource extends APP_GameClass
     /** 
      * Helper method to allow automating income of payLoan
      * to force player to get 2 silver if have no loan to payoff
-     * Bank income, and Build Bonus for , but more are options from expansion.
+     * Bank income, and Build Bonus for Boarding House, but there are additional options from expansion.
      */
     function payLoanOrRecieveSilver($p_id, $reason_string, $origin='',$key=0){
         $playerLoan = $this->game->getUniqueValueFromDb("SELECT `loan` FROM `resources` WHERE `player_id`='".$p_id."'");
         if ($playerLoan== 0){
-            $this->game->Resource->updateAndNotifyIncome($p_id, 'silver', 2, $reason_string, $origin, $key);
+            $this->updateAndNotifyIncome($p_id, 'silver', 2, $reason_string, $origin, $key);
         } else {
-            $this->game->Log->freePayOffLoan($p_id, $reason_string, $origin, $key);
-            $this->game->Resource->updateResource ($p_id, 'loan', -1);
+            $this->freePayOffLoan($p_id, $reason_string, $origin, $key);
+            $this->updateResource ($p_id, 'loan', -1);
         }
+    }
+
+    function takeLoan($p_id){
+        $this->Resource->updateResource($p_id, 'silver', 2);
+        $this->Resource->updateResource($p_id, 'loan', 1);
+        $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a ${loan}' ), array(
+            'player_id' => $p_id,
+            'player_name' => $this->game->getPlayerName($p_id),
+            'loan' => 'loan',
+          ) );
+        $this->game->Log->takeLoan($p_id);
+    }
+
+    function payOffLoan($p_id, $gold){
+        if ($gold) $cost = array('gold'=> 1);
+        else $cost = array('silver'=>5);
+        $type = array_keys($cost)[0];
+        if (!$this->Resource->canPlayerAfford($p_id, $cost)){
+            throw new BgaUserException( _("You do not have enough ".$type ) );
+        }
+        $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays ${loan} {arrow} ${type}' ), array(
+            'player_id' => $p_id,
+            'player_name' => $this->game->getPlayerName($p_id),
+            'loan' => 'loan',
+            'arrow' => 'arrow',
+            'type' => $type,
+          ) );
+        $this->updateResource($p_id, $type, -($cost[$type]));
+        $this->updateResource ($p_id, 'loan', -1);
+    }
+    
+
+    function freePayOffLoan($player_id, $reason, $origin ="", $key =0)
+    {
+        $values = array(  'player_id' => $player_id,
+                      'player_name' => $this->game->getPlayerName($player_id),
+                      'reason_string' => $reason,
+                      'loan' => 'loan',);
+        $values = $this->updateArrForNotify($values, $origin, $key);
+        $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${reason_string} buys ${player_name}\'s ${loan}' ), $values);
     }
 
     /////// RAIL ADVANCEMENT METHODS /////
@@ -470,6 +510,7 @@ class HSDresource extends APP_GameClass
         if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_MARKET)){
             $tradeFor['silver'] = ($tradeFor['silver'] ?:0)+1;
         }
+        $this->game->Log->trade($p_id, $tradeAway, $tradeFor);
         $buy_sell = ($sell?'Sells':"Buys");
         if ($bldg == 0){
             $log_message = clienttranslate( '${player_name} ${buy_sell} ${tradeAway} ${arrow} ${tradeFor}' );

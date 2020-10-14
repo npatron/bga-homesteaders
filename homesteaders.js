@@ -108,13 +108,8 @@ function (dojo, declare) {
     // only one with player action required
     const BUILD_BONUS_WORKER = 3; 
 
-    const TYPE_SELECTOR = [];
-    TYPE_SELECTOR['bid'] = '.bid_slot';
-    TYPE_SELECTOR['bonus'] = '.train_bonus';
-    TYPE_SELECTOR['worker_slot'] = '.worker_slot';
-    TYPE_SELECTOR['building'] = '.building_tile';
-    TYPE_SELECTOR['worker'] = '.token_worker';
-    TYPE_SELECTOR['trade'] = '.trade_option';
+    const TYPE_SELECTOR = {'bid':'.bid_slot', 'bonus':'.train_bonus', 'worker_slot':'.worker_slot',
+                    'building':'.building_tile', 'worker':'.token_worker', 'trade':'.trade_option'};
     const BUILDING_ZONE_DIVID = ['future_building_zone', 'main_building_zone', '', 'past_building_zone'];
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];
     const BID_VAL_ARR_BACK = {3:0, 4:1, 5:2, 6:3, 7:4, 9:5, 12:6, 16:7, 21:8};
@@ -911,21 +906,15 @@ function (dojo, declare) {
             };
         },
 
-        /**
-         * This will clear the selectable and selected (if true) flags from assets by type.
-         * type locators are set in global TYPE_SELECTOR.
-         * if selected is true it will also clear the last_selected[] for this type
-         */
-        clearSelectable: function(type, selected = false){
-            console.log(`clearing ${type} selectable/selected`);
-            
-            const selectables = dojo.query(TYPE_SELECTOR[type]);
-            selectables.removeClass('selectable');
-            
-            if (selected == true && this.last_selected[type] != ""){
-                console.log("clearing selected:"+ this.last_selected[type]);
-                dojo.removeClass(this.last_selected[type], 'selected');
-                this.last_selected[type] = "";
+        addUndoButtonIfPossible: function(){
+            if (!$('undo_trade_loan_btn')){
+                this.addActionButton( 'undo_trade_loan_btn', _('Undo Trades/Loans'), 'undoTradeLoanButton', null, false, 'red');
+            }
+        },
+
+        removeUndoButtonIfPossible: function(){
+            if ($('undo_trade_loan_btn')){
+                this.fadeOutAndDestroy('undo_trade_loan_btn', 100);
             }
         },
         
@@ -975,7 +964,7 @@ function (dojo, declare) {
             }
         },
 
-        getResourceType: function( type ){
+        getResourceTypeAsInt: function( type ){
             switch (type){
                 case 'wood':   return WOOD;
                 case 'steel':  return STEEL;
@@ -993,12 +982,30 @@ function (dojo, declare) {
         },
 
         /**
-         * 
+         * This will clear the selectable and selected (if true) flags from assets by type.
+         * type locators are set in global TYPE_SELECTOR.
+         * if selected is true it will also clear the last_selected[] for this type
+         */
+        clearSelectable: function(type, selected = false){
+            console.log(`clearing ${type} selectable/selected`);
+            
+            const selectables = dojo.query(TYPE_SELECTOR[type]);
+            selectables.removeClass('selectable');
+            
+            if (selected == true && this.last_selected[type] != ""){
+                console.log("clearing selected:"+ this.last_selected[type]);
+                dojo.removeClass(this.last_selected[type], 'selected');
+                this.last_selected[type] = "";
+            }
+        },
+
+        /**
+         * this will toggle selection of element of type defined by type;
          * @param {*} type 
          * @param {*} selected_id 
          */
         updateSelected: function(type, selected_id) {
-            // if not selectable or selected 
+            // if not selectable, ignore the call.
             console.log ('updated selected type: '+type);
             if (!( dojo.hasClass (selected_id, 'selectable')))
             { return; }
@@ -1313,7 +1320,7 @@ function (dojo, declare) {
                     return;
                  }
                 const type = this.last_selected['bonus'].split('_')[3];
-                const typeNum = this.getResourceType(type);
+                const typeNum = this.getResourceTypeAsInt(type);
                 this.ajaxcall( "/homesteaders/homesteaders/doneSelectingBonus.html", {bonus: typeNum, lock: true}, this, 
                     function( result ) { 
                         this.disableTradeIfPossible();
@@ -1805,12 +1812,7 @@ function (dojo, declare) {
                     this.token_divId[Number(notif.args.player_id)]);
             
             if (notif.args.tradeAway_arr != null){
-                var destination = 'board';
-                if (notif.args.origin == 'auction'){
-                    destination = `auction_tile_zone_${Number(notif.args.key)}`;
-                } else if  (notif.args.origin == 'building'){
-                    destination = `building_tile_${Number(notif.args.key)}`;
-                } 
+                var destination = this.getTargetFromNotifArgs(notif);
                 const player_zone_divId = `player_board_${notif.args.player_id}`;
                 for(let type in notif.args.tradeAway_arr){
                     for(let i = 0; i < notif.args.tradeAway_arr[type]; i++){
@@ -1874,12 +1876,7 @@ function (dojo, declare) {
             console.log ('notif_playerIncome');
             //console.log ( notif);
 
-            var start = `building_zone_${this.player_color[notif.args.player_id]}`;
-            if (notif.args.origin == 'auction'){
-                start = `auction_tile_zone_${Number(notif.args.key)}`;
-            } else if (notif.args.origin == 'building'){
-                start = `building_tile_${Number(notif.args.key)}`;
-            } 
+            var start = getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 console.log(`sending token '${notif.args.type}' from '${start}' to '${player_zone_divId}'`);
@@ -1899,12 +1896,7 @@ function (dojo, declare) {
             console.log ('notif_playerIncomeGroup');
             console.log ( notif);
 
-            var start = `building_zone_${this.player_color[notif.args.player_id]}`;
-            if (notif.args.origin == 'auction'){
-                start = `auction_tile_zone_${Number(notif.args.key)}`;
-            } else if (notif.args.origin == 'building'){
-                start = `building_tile_${Number(notif.args.key)}`;
-            } 
+            var start = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
@@ -1926,12 +1918,7 @@ function (dojo, declare) {
             console.log ('notif_playerPayment');
             //console.log ( notif);
             
-            var destination = 'board';
-            if (notif.args.origin == 'auction'){
-                destination = `auction_tile_zone_${Number(notif.args.key)}`;
-            } else if  (notif.args.origin == 'building'){
-                destination = `building_tile_${Number(notif.args.key)}`;
-            } 
+            var destination = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:notif.args.typeStr}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
@@ -1945,12 +1932,7 @@ function (dojo, declare) {
             console.log ('notif_playerPaymentGroup');
             console.log ( notif );
 
-            var destination = `building_zone_${this.player_color[notif.args.player_id]}`;
-            if (notif.args.origin == 'auction'){
-                destination = `auction_tile_zone_${Number(notif.args.key)}`;
-            } else if (notif.args.origin == 'building'){
-                destination = `building_tile_${Number(notif.args.key)}`;
-            } 
+            var destination = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             var delay = 0;
             console.log(notif.args.resource_arr);
@@ -1999,9 +1981,26 @@ function (dojo, declare) {
         notif_loanPaid: function( notif ){
             console.log ('notif_loanPaid');
 
-            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , `player_board_${notif.args.player_id}`, 'board',  500 , 0 );
+            const player_board_div = `player_board_${notif.args.player_id}`;
+            var destination = this.getTargetFromNotifArgs(notif);
+            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , player_board_div, destination,  500 , 0 );
             if (notif.args.player_id == this.player_id){
                 this.resourceCounters['loan'].incValue(-1);
+            }
+            if (notif.args.type != null ){
+                if (typeStr == 'gold'){
+                    this.slideTemporaryObject( notif.args.type , 'limbo', player_board_div, 'board', 500, 100);
+                    if (notif.args.player_id == this.player_id){
+                        this.resourceCounters['gold'].incValue(-1);
+                    }
+                } else {
+                    for (let i = 0; i < 5; i++){
+                        this.slideTemporaryObject( notif.args.type, 'limbo', player_board_div, 'board', 500, 100 +(i*100)); 
+                    }
+                    if (notif.args.player_id == this.player_id){
+                        this.resourceCounters['silver'].incValue(-5);
+                    }
+                }
             }
         },
 
@@ -2010,13 +2009,22 @@ function (dojo, declare) {
 
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', player_zone_divId,  500 , 0 );
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 100);
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 200);
             if (notif.args.player_id == this.player_id){
                 this.resourceCounters['loan'].incValue(1);
                 this.resourceCounters['silver'].incValue(2);
-            }
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 100);
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 200);
-            
+            }            
+        },
+
+        getTargetFromNotifArgs: function( notif ){
+            var target = `board`;
+            if (notif.args.origin == 'auction'){
+                target = `auction_tile_zone_${Number(notif.args.key)}`;
+            } else if (notif.args.origin == 'building'){
+                target = `building_tile_${Number(notif.args.key)}`;
+            } 
+            return target;
         },
    });             
 });

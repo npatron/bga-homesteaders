@@ -38,16 +38,18 @@ class HSDScore extends APP_GameClass
 
     function UpdateEndgameScores(){
         $players = $this->game->loadPlayersBasicInfos();
-        //$allScores = array();
+        $allScores = array();
         foreach($players as $p_id=>$player){
             $p_score = $this->calculateEndgameScore($p_id);
-            //$allScores[$p_id]=$p_score;
-            $this->dbSetScore($p_id, $p_score['total']);
+            $allScores[$p_id]=$p_score;
+            /*$this->dbSetScore($p_id, $p_score['total']);
             $p_silver = $this->game->Resource->getPlayerResourceAmount($p_id,'silver');
             $this->dbSetAuxScore($p_id, $p_silver);
             // TODO: add loggers for the different score categories.
-            // $this->setStat($value, $name, $player_id = NULL);
+            // $this->setStat($value, $name, $player_id = NULL);*/
         }
+        var_dump($allScores);
+        die('ok');
     }
 
     function calculateEndgameScore($p_id){
