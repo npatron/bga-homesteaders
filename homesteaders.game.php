@@ -491,6 +491,50 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
+    public function undoTradeLoans ($player_id){
+        $this->checkAction('trade');
+        // undo current state trades & loans
+    }
+
+    // undo
+    public function playerRedoPhase () {
+        $this->checkAction('undo');
+        // undo all actions since beginning of STATE_PAY_AUCTION
+        $last_actions = $this->Log->getLastActions($this->getActivePlayerId());
+        foreach ($last_actions as $logId=> $action){
+            //notify clients to undo 
+            if ($action['name'] === 'build'){
+                // undo build.
+            } else if ($action['name'] === 'trade'){
+                // undo trade.
+            } else if ($action['name'] === 'loan'){
+                // undo loan
+            } else if ($action['name'] === 'build_bonus'){
+                // undo this.
+            } else if ($action['name'] === 'auction_bonus'){
+                // undo this.
+            } 
+            // that should be all the action types that might need undo 
+            // (and logging I guess)
+        }
+    }
+
+
+    /** endBuildRound */
+    // this one moves to next auction (or next turn entirely)  
+    public function playerConfirmChoices (){
+        $this->checkAction('confirm');
+        $this->Auction->discardAuctionTile();
+        $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
+        $auction_no = $this->incGameStateValue( 'current_auction', 1);
+        $next_state = "nextBuilding";
+        if ($auction_no > $this->getGameStateValue( 'number_auctions' )){
+            $next_state = "endRound";
+        } 
+        $this->gamestate->nextState( $next_state );
+    }
+
+    // endGameActions Actions
     public function playerPayLoan($gold) {
         $this->checkAction('payLoan');
         $current_player_id = $this->getCurrentPlayerId();    
@@ -601,7 +645,7 @@ class homesteaders extends Table
 
     function stPlaceWorkers() {
         $this->DbQuery("UPDATE `player` SET `paid`='0'");
-        $this->Log->startTurnAllPlayers();
+        $this->Log->allowTradesAllPlayers();
         $this->gamestate->setAllPlayersMultiactive( );
         
     }
@@ -669,7 +713,13 @@ class homesteaders extends Table
     // for states where no backend actions are req, but want to set start turn for trades.
     function stSetupTrade()
     {
+        $this->Log->allowTrades($this->getActivePlayerId());
+    }
+
+    function stStartTurn()
+    {
         $this->Log->startTurn($this->getActivePlayerId());
+        $this->Log->allowTrades($this->getActivePlayerId());
     }
 
     function stBuildingPhase()
@@ -725,15 +775,16 @@ class homesteaders extends Table
         $this->Auction->setupCurrentAuctionBonus();
     }
 
+    //
     function stEndBuildRound() {
-        $this->Auction->discardAuctionTile();
+        /*$this->Auction->discardAuctionTile();
         $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
         $auction_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
         if ($auction_no > $this->getGameStateValue( 'number_auctions' )){
             $next_state = "endRound";
         } 
-        $this->gamestate->nextState( $next_state );
+        $this->gamestate->nextState( $next_state );*/
     }
 
     function stEndRound(){

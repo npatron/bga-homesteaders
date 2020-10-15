@@ -145,22 +145,38 @@ class HSDLog extends APP_GameClass
   /*
    * starTurn: logged whenever a player start its turn, very useful for get current trade/loans
    */
-  public function startTurn($player_id)
+  public function startTurn($p_id)
   {
-    $this->insert($player_id, 0, 'startTurn');
+    $this->insert($p_id, 0, 'startTurn');
   }
-  public function startAllPlayerTurns()
+
+  public function allowTrades($p_id)
   {
     $players = $this->game->loadPlayersBasicInfos();
     foreach($players as $p_id=>$player){
-      $this->insert($p_id, 0,'startTurn');
+      $this->insert($p_id, 0,'allowTrades');
     }
   }
 
-  /** for undo of trades during current action */
-  public function getAllCurentTrades($player_id) {
-    //self::getCollectionFromDB("SELECT "); do thing here.
+  public function allowTradesAllPlayers()
+  {
+    $players = $this->game->loadPlayersBasicInfos();
+    foreach($players as $p_id=>$player){
+      $this->insert($p_id, 0,'allowTrades');
+    }
   }
+
+   /*
+   * getLastActions : get works and actions of player (used to cancel previous action)
+   */
+  public function getLastActions($actions = ['build', 'trade', 'loan'], $pId = null, $offset = 0)
+  {
+    $pId = $pId ?? $this->game->getActivePlayerId();
+    $actionsNames = "'" . implode("','", $actions) . "'";
+
+    return self::getObjectListFromDb("SELECT * FROM log WHERE `action` IN ($actionsNames) AND `player_id` = '$pId' AND `round` = (SELECT round FROM log WHERE `player_id` = $pId AND `action` = 'startTurn' ORDER BY log_id DESC LIMIT 1) - $offset ORDER BY log_id DESC");
+  }
+
 
   /*
    * addBuild: add a new build entry to log

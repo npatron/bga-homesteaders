@@ -670,6 +670,7 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_do_not_build', _('Do not Build'), 'doNotBuild', null, false, 'red');
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan',   _('Take Loan'),    'takeLoan', null, false, 'gray');
+                        this.addActionButton( 'btn_redo_build_phase', _('Redo turn'),  'redoTurn', null, false, 'red');
                     break;
                     case 'resolveBuilding':
                         if (args.building_bonus == BUILD_BONUS_WORKER){
@@ -705,6 +706,11 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_pass_bonus',  _('Do not Get Bonus'), 'passBonus', null, false, 'red');
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
                         this.addActionButton( 'btn_take_loan',   _('Take Loan'),    'takeLoan', null, false, 'gray');
+                        this.addActionButton( 'btn_redo_build_phase', _('Redo turn'),  'redoTurn', null, false, 'red');
+                    break;
+                    case 'endBuildRound':
+                        this.addActionButton( 'confirm_build_phase', _('Confirm'),  'confirmBuildPhase');
+                        this.addActionButton( 'btn_redo_build_phase') _('Redo Build Phase', 'redoTurn', null, false, 'red');
                     break;
                     case 'endGameActions':
                         this.addActionButton( 'btn_pay_loan_silver', _('Pay Loan ')+ tkn_silver, 'payLoanSilver', null, false, 'gray');
@@ -906,15 +912,15 @@ function (dojo, declare) {
             };
         },
 
-        addUndoButtonIfPossible: function(){
-            if (!$('undo_trade_loan_btn')){
-                this.addActionButton( 'undo_trade_loan_btn', _('Undo Trades/Loans'), 'undoTradeLoanButton', null, false, 'red');
+        showUndoTradesButtonIfPossible: function(){
+            if (dojo.hasclass('undo_trades_btn', 'noshow')) {
+                dojo.removeClass('undo_trades_btn', 'noshow');
             }
         },
 
-        removeUndoButtonIfPossible: function(){
-            if ($('undo_trade_loan_btn')){
-                this.fadeOutAndDestroy('undo_trade_loan_btn', 100);
+        hideUndoTradesButtonIfPossible: function(){
+            if (!dojo.hasClass('undo_trades_btn', 'noshow')){
+                dojo.addClass('undo_trades_btn', 'noshow');
             }
         },
         
@@ -1975,7 +1981,11 @@ function (dojo, declare) {
                     }
                 }   
             }
-
+            if (notif.args.undo == null){
+                this.showUndoTradesButtonIfPossible();
+            } else {
+                this.hideUndoTradesButtonIfPossible();
+            }
         },
 
         notif_loanPaid: function( notif ){
