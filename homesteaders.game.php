@@ -491,7 +491,7 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
-    public function undoTradeLoans ($player_id){
+    public function cancelTurn ($player_id){
         $this->checkAction('trade');
         // undo current state trades & loans
     }
@@ -499,31 +499,20 @@ class homesteaders extends Table
     /*
      * restartTurn: called when a player decide to go back at the beginning of the player build phase
      */
-    public function playerRedoPhase () {
+    public function playerCancelPhase () {
         $this->checkAction('undo');
         // undo all actions since beginning of STATE_PAY_AUCTION
-        $last_actions = $this->Log->getLastActions($this->getActivePlayerId());
-        foreach ($last_actions as $logId=> $action){
-            //notify clients to undo 
-            if ($action['name'] === 'build'){
-                // undo build.
-            } else if ($action['name'] === 'trade'){
-                // undo trade.
-            } else if ($action['name'] === 'loan'){
-                // undo loan
-            } else if ($action['name'] === 'build_bonus'){
-                // undo this.
-            } else if ($action['name'] === 'auction_bonus'){
-                // undo this.
-            } 
-            // that should be all the action types that might need undo 
-            // (and logging I guess)
-        }
+
+        $moveIds = $this->Log->redoPhase();
+        self::notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
+            'player_name' => self::getActivePlayerName(),
+            'moveIds' => $moveIds,
+            'player_id' => $this->getActivePlayerId()));
     }
         
-    public function restartTurn()
+    public function cancelTransactions()
     {
-        self::checkAction('restartTurn');
+        self::checkAction('trade');
 
         if ($this->log->getLastActions() == null) {
         throw new BgaUserException(_("You have nothing to cancel"));
@@ -531,7 +520,7 @@ class homesteaders extends Table
 
         // Undo the turn
         $moveIds = $this->log->cancelTurn();
-        self::notifyAllPlayers('cancel', clienttranslate('${player_name} restarts their turn'), array(
+        self::notifyAllPlayers('cancel', clienttranslate('${player_name} cancels their transactions'), array(
               'player_name' => self::getActivePlayerName(),
             'moveIds' => $moveIds,
             'board' => $this->board->getUiData(),

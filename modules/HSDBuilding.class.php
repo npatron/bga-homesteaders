@@ -336,7 +336,7 @@ class HSDBuilding extends APP_GameClass
             $values['arrow'] = "arrow";
         }
         $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
-        $this->game->Log->buyBuilding($p_id, $b_id);
+        $this->game->Log->buyBuilding($p_id, $b_id, $b_cost);
         $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('last_building', $b_key);
@@ -344,6 +344,8 @@ class HSDBuilding extends APP_GameClass
         $building_score = $this->getBuildingScoreFromId( $b_id );
         $this->game->Score->dbIncScore($p_id, $building_score);
     }
+
+    function undoBuild(){}
 
     function payForBuilding($p_id, $b_cost){
         foreach( $b_cost as $type => $amt ){
