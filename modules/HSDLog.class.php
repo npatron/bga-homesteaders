@@ -143,21 +143,29 @@ class HSDLog extends APP_GameClass
   }
 
   /*
-   * starTurn: logged whenever a player start its turn, very useful for get current trade/loans
+   * startTurn: logged to track save points
+   * should only be called at beginning of payAuction 
    */
-  public function startTurn($p_id)
+  public function startTurn()
   {
+    $p_id = $this->game->getActivePlayerId();
     $this->insert($p_id, 0, 'startTurn');
   }
-
-  public function allowTrades($p_id)
+  
+  /*
+   * allowTrades: logged whenever a player start a turn in which trading is an option, 
+   * it is required for undo trade/loans.
+   */
+  public function allowTrades($p_id = null)
   {
-    $players = $this->game->loadPlayersBasicInfos();
-    foreach($players as $p_id=>$player){
-      $this->insert($p_id, 0,'allowTrades');
-    }
+    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $this->insert($p_id, 0,'allowTrades');
   }
-
+  
+  /*
+   * allowTrades: logged whenever a player start a turn in which trading is an option, 
+   * it is required for undo trade/loans.
+   */
   public function allowTradesAllPlayers()
   {
     $players = $this->game->loadPlayersBasicInfos();
@@ -166,53 +174,129 @@ class HSDLog extends APP_GameClass
     }
   }
 
-   /*
-   * getLastActions : get works and actions of player (used to cancel previous action)
-   */
-  public function getLastActions($actions = ['build', 'trade', 'loan'], $pId = null, $offset = 0)
-  {
-    $pId = $pId ?? $this->game->getActivePlayerId();
-    $actionsNames = "'" . implode("','", $actions) . "'";
-
-    return self::getObjectListFromDb("SELECT * FROM log WHERE `action` IN ($actionsNames) AND `player_id` = '$pId' AND `round` = (SELECT round FROM log WHERE `player_id` = $pId AND `action` = 'startTurn' ORDER BY log_id DESC LIMIT 1) - $offset ORDER BY log_id DESC");
-  }
-
-
   /*
    * addBuild: add a new build entry to log
    */
-  public function buyBuilding($player_id, $building_id)
+  public function buyBuilding($p_id, $building_id)
   {
-      $this->insert($player_id, $building_id, 'build');
+      $this->insert($p_id, $building_id, 'build');
   }
 
-  public function takeLoan($player_id) 
+  public function takeLoan($p_id) 
   {
-    $this->insert($player_id, 0, 'loan');
+    $this->insert($p_id, 0, 'loan');
   }
 
-  public function payOffLoan($player_id){
-    $this->insert($player_id, 0, 'loanPaid');
+  public function payOffLoan($p_id){
+    $this->insert($p_id, 0, 'loanPaid');
   }
 
-  public function tradeResource($player_id, $trade_away, $trade_for, $undo = false)
+  public function tradeResource($p_id, $trade_away, $trade_for, $undo = false)
   {
-    $this->insert($player_id, 0, 'trade', array('tradeAway'=> $trade_away, 'tradeFor'=>$trade_for, 'undo'=>$undo));
+    $this->insert($p_id, 0, 'trade', array('tradeAway'=> $trade_away, 'tradeFor'=>$trade_for, 'undo'=>$undo));
   }
 
-  public function passBid($player_id)
+  public function passBid($p_id)
   {
-    $this->insert($player_id, 0, 'passBid');
+    $this->insert($p_id, 0, 'passBid');
   }
 
-  public function outbidPlayer($outbid_player_id, $outbidding_player_id)
+  public function outbidPlayer($outbid_p_id, $outbidding_p_id)
   {
-    $this->insert($outbid_player_id, 0, 'outbid', array('outbid_by'=>$outbidding_player_id));
+    $this->insert($outbid_p_id, 0, 'outbid', array('outbid_by'=>$outbidding_p_id));
   }
 
   public function winAuction($p_id, $auc_no, $bid_cost)
   {
     $this->insert($p_id, $auc_no, 'winAuction', array('cost'=>$bid_cost));
   }
+
+  /************************* 
+   * CANCEL and UNDO METHODS 
+   *************************/
+  
+   /*
+   * getLastActions : get works and actions of player (used to cancel previous action)
+   * for undo trades set afterAction = 'allowTrades', for undo afterAction = 'startTurn'
+   */
+  public function getLastActions($actions = ['build', 'trade', 'loan'], $p_id = null, $afterAction = 'startTurn')
+  {
+    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $actionsNames = "'" . implode("','", $actions) . "'";
+
+    return self::getObjectListFromDb("SELECT * FROM log WHERE `action` IN ($actionsNames) AND `player_id` = '$p_id' AND `round` = (SELECT round FROM log WHERE `player_id` = $p_id AND `action` = '$afterAction' ORDER BY log_id DESC LIMIT 1) - $offset ORDER BY log_id DESC");
+  }
+
+  /*
+   * cancelTurn: cancel the last actions of active player of current turn
+   */
+  public function cancelTradeLoan($p_id= null)
+  {
+    $p_Id = $p_id?? $this->game->getActivePlayerId();
+    $logs = $this->getLastActions(['trade', 'loan'], $p_Id, 'allowTrades');
+    return $this->cancelLogs($logs, $p_Id);
+  }
+
+  /*
+   * cancelTurn: cancel the last actions of active player of current turn
+   */
+  public function UndoToPayAuction()
+  {
+    $p_id = $this->game->getActivePlayerId();
+    $logs = self::getObjectListFromDb("SELECT * FROM log WHERE `player_id` = '$pId' AND `round` = (SELECT round FROM log WHERE `player_id` = $p_id AND `action` = 'startTurn' ORDER BY log_id DESC LIMIT 1) ORDER BY log_id DESC");
+    return $this->cancelLogs($logs, $p_id);
+  }
+
+  public function cancelLogs($logs, $p_id)
+  {
+    $ids = [];
+    $moveIds = [];
+    foreach ($logs as $log) {
+      $args = json_decode($log['action_arg'], true);
+
+      switch($log['action']){
+        // Build : remove piece from board
+        case 'build':
+        case 'tileBuild':
+          self::DbQuery("UPDATE piece SET x = NULL, y = NULL, location = 'hand' WHERE id = {$log['piece_id']}");
+          break;
+
+        // ObtainTile : put tile back on board
+        case 'obtainTile':
+          self::DbQuery("UPDATE piece SET location = 'board', player_id = NULL WHERE id = {$log['piece_id']}");
+          break;
+
+        // LoseTile : put tile back on board
+        case 'loseTile':
+          self::DbQuery("UPDATE piece SET location = '{$args["location"]}' WHERE id = {$log['piece_id']}");
+          break;
+
+        // SwitchTile : put tile back on pending
+        case 'switchTile':
+          self::DbQuery("UPDATE piece SET location = 'pending' WHERE id = {$log['piece_id']}");
+          break;
+
+        // UseTile : put tile back in hand
+        case 'useTile':
+          self::DbQuery("UPDATE piece SET location = 'hand' WHERE id = {$log['piece_id']}");
+          break;
+
+        // move : move back
+        case 'move':
+          self::DbQuery("UPDATE piece SET x = {$args['from']['x']}, y = {$args['from']['y']} WHERE id = {$log['piece_id']}");
+          break;
+      }
+
+
+      // Undo statistics
+      if (array_key_exists('stats', $args)) {
+        $this->incrementStats($args['stats'], -1);
+      }
+
+      $ids[] = intval($log['log_id']);
+      if ($log['action'] != 'startTurn') {
+        $moveIds[] = array_key_exists('move_id', $log)? intval($log['move_id']) : 0; // TODO remove the array_key_exists
+      }
+    }
 
 }

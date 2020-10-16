@@ -164,7 +164,7 @@ $machinestates = array(
         "args" => "argAllowedBuildings",
         "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
-        "transitions" => array( "undo"           => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
                                 "end_build"      => STATE_END_BUILD )
@@ -191,7 +191,7 @@ $machinestates = array(
         "args" => "argTrainStationBuildings",
         "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
-        "transitions" => array( "undo"           => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
                                 "end_build"      => STATE_END_BUILD )
@@ -214,7 +214,7 @@ $machinestates = array(
         "args" => "argBonusOption",
         "action" => "stSetupTrade",
         "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan', "undo" ),
-        "transitions" => array( "undo"      => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"      => STATE_PAY_AUCTION,
                                 "done"      => STATE_END_BUILD,
                                 "railBonus" => STATE_RAIL_BONUS )
     ),
@@ -227,7 +227,7 @@ $machinestates = array(
         "action" => "stEndBuildRound",
         "possibleActions" => array( 'undo', 'confirm'),
         "updateGameProgression" => true,
-        "transitions" => array( "undo"     => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"     => STATE_PAY_AUCTION,
                                 "endRound" => STATE_END_ROUND, 
                                 "nextBuilding" => STATE_NEXT_BUILDING )
     ),

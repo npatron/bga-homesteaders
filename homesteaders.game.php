@@ -496,7 +496,9 @@ class homesteaders extends Table
         // undo current state trades & loans
     }
 
-    // undo
+    /*
+     * restartTurn: called when a player decide to go back at the beginning of the player build phase
+     */
     public function playerRedoPhase () {
         $this->checkAction('undo');
         // undo all actions since beginning of STATE_PAY_AUCTION
@@ -517,6 +519,25 @@ class homesteaders extends Table
             // that should be all the action types that might need undo 
             // (and logging I guess)
         }
+    }
+        
+    public function restartTurn()
+    {
+        self::checkAction('restartTurn');
+
+        if ($this->log->getLastActions() == null) {
+        throw new BgaUserException(_("You have nothing to cancel"));
+        }
+
+        // Undo the turn
+        $moveIds = $this->log->cancelTurn();
+        self::notifyAllPlayers('cancel', clienttranslate('${player_name} restarts their turn'), array(
+              'player_name' => self::getActivePlayerName(),
+            'moveIds' => $moveIds,
+            'board' => $this->board->getUiData(),
+            'fplayers' => $this->playerManager->getUiData(self::getCurrentPlayerId()),));
+
+        $this->gamestate->nextState('restartTurn');
     }
 
 
