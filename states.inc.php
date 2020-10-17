@@ -191,7 +191,7 @@ $machinestates = array(
         "args" => "argTrainStationBuildings",
         "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
-        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"       => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
                                 "end_build"      => STATE_END_BUILD )

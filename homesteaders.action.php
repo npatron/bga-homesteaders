@@ -138,7 +138,7 @@ class action_homesteaders extends APP_GameAction
     $auction = self::getArg( 'auction', AT_bool, true);
     if ($auction){
       $rail = self::getArg( 'rail', AT_bool, true);
-      $this->game->playerFreeHireWorker( $rail );
+      $this->game->playerFreeHireWorkerAuction( $rail );
     } else {
       $this->game->playerFreeHireWorkerBuilding();
     }

@@ -146,8 +146,8 @@ class homesteaders extends Table
         self::DbQuery( $sql );
 
         $this->activeNextPlayer();
-        $active_player = $this->getActivePlayerId();
-        $this->setGameStateValue('first_player', $active_player);
+        $act_p_id = $this->getActivePlayerId();
+        $this->setGameStateValue('first_player', $act_p_id);
         
         /************ End of the game initialization *****/
     }
@@ -165,7 +165,7 @@ class homesteaders extends Table
     {
         $result = array();
     
-        $current_player_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
+        $cur_p_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
     
         // Get information about players
         $sql = "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `bid_loc`, `rail_adv` FROM `player` ";
@@ -179,7 +179,7 @@ class homesteaders extends Table
         $sql = "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot, `selected` FROM `workers`";
         $result['workers'] = $this->getCollectionFromDb( $sql );
 
-        $sql = "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '".$current_player_id."'";
+        $sql = "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '".$cur_p_id."'";
         $result['player_resources'] = $this->getObjectFromDb( $sql );
 
         $sql = "SELECT `player_id` p_id, `workers`, `track` FROM `resources` ";
@@ -191,7 +191,7 @@ class homesteaders extends Table
         
         $result['player_order'] = $this->getNextPlayerTable();
         $result['first_player'] = $this->getGameStateValue( 'first_player');
-        $result['current_player'] = $current_player_id;
+        $result['current_player'] = $cur_p_id;
 
         return $result;
     }
@@ -208,9 +208,9 @@ class homesteaders extends Table
     */
     function getGameProgression()
     {
-        $gameprogress = ($this->getGameStateValue('round_number')-1) * 10;
-        $gameprogress += $this->getGameStateValue('current_auction');
-        return $gameprogress;
+        $game_progress = ($this->getGameStateValue('round_number')-1) * 10;
+        $game_progress += $this->getGameStateValue('current_auction');
+        return $game_progress;
     }
 
 
@@ -223,8 +223,7 @@ class homesteaders extends Table
     }
 
     function getPlayerColorName($player_id){
-        $sql = "SELECT `player_id`, `color_name` FROM `player`";
-        $colors = $this->getCollectionFromDb( $sql );
+        $colors = $this->getCollectionFromDb( "SELECT `player_id`, `color_name` FROM `player`" );
         return($colors[$player_id]['color_name']);
     }
     
@@ -254,20 +253,20 @@ class homesteaders extends Table
     /***  place workers phase ***/
     public function playerHireWorker(){
         $this->checkAction( 'hireWorker' );
-        $current_player_id = $this->getCurrentPlayerId();
+        $cur_p_id = $this->getCurrentPlayerId();
         $worker_cost = array('trade'=>1,'food'=>1);
-        if (!$this->Resource->canPlayerAfford($current_player_id, $worker_cost))
+        if (!$this->Resource->canPlayerAfford($cur_p_id, $worker_cost))
             throw new BgaUserException( _("You cannot afford to hire a worker"));
-        $this->Resource->updateAndNotifyPaymentGroup($current_player_id, $worker_cost, 'Hire Worker');
-        $this->Resource->addWorker($current_player_id, 'hire');
+        $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, 'Hire Worker');
+        $this->Resource->addWorker($cur_p_id, 'hire');
     }
 
     public function playerSelectWorkerDestination($worker_key, $b_key, $building_slot) 
     {
         $this->checkAction( "placeWorker" );
-        $current_player_id = $this->getCurrentPlayerId();
+        $cur_p_id = $this->getCurrentPlayerId();
         $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${type} to ${building_name}' ), array(
-            'player_id' => $current_player_id,
+            'player_id' => $cur_p_id,
             'worker_key' => $worker_key,
             'building_key' => $b_key,
             'building_name' => array('type'=> $this->Building->getBuildingTypeFromKey($b_key) ,'str'=>$this->Building->getBuildingNameFromKey($b_key)),
@@ -308,11 +307,12 @@ class homesteaders extends Table
 
     public function playerBuildBuilding($selected_building, $goldAsCow, $goldAsCopper){
         $this->checkAction( "buildBuilding" );
-        $active_player = $this->getActivePlayerId();
-        $this->Building->buildBuilding($active_player, $selected_building, $goldAsCow, $goldAsCopper);
-        if ($this->Building->doesPlayerOwnBuilding($active_player, BLD_FORGE) && 
+        $act_p_id = $this->getActivePlayerId();
+        $this->Building->buildBuilding($act_p_id, $selected_building, $goldAsCow, $goldAsCopper);
+        if ($this->Building->doesPlayerOwnBuilding($act_p_id, BLD_FORGE) && 
             $this->Building->getBuildingIdFromKey($selected_building) != BLD_FORGE){
-            $this->Resource->updateAndNotifyIncome($active_player, 'vp', 1, array('type'=>TYPE_INDUSTRIAL, 'str'=>"Forge") );
+            $this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 1, array('type'=>TYPE_INDUSTRIAL, 'str'=>"Forge") );
+            $this->Log->updateResource($act_p_id, 'vp', 1);
         }
         $building_bonus = $this->Building->getOnBuildBonusForBuildingKey($selected_building);
         $this->setGameStateValue('building_bonus', $building_bonus);
@@ -335,22 +335,22 @@ class homesteaders extends Table
 
     public function playerPayWorkers($gold) {
         $this->checkAction( "done" );
-        $current_player_id = $this->getCurrentPlayerId();
-        $workers = $this->Resource->getPlayerResourceAmount($current_player_id,'workers');
+        $cur_p_id = $this->getCurrentPlayerId();
+        $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
         $cost = max($workers - (5*$gold), 0);
-        $this->Resource->pay($current_player_id, $cost, $gold, "workers");
-        $this->gamestate->setPlayerNonMultiactive($current_player_id, "auction" );
+        $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
+        $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
     }
 
     public function playerPayAuction($gold) {
         $this->checkAction( "done" );
         if ($gold <0){ throw new BgaUserException ( _("cannot have negative gold value"));}
-        $active_player_id = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         
-        $bid_cost = $this->Bid->getBidCost($active_player_id);
+        $bid_cost = $this->Bid->getBidCost($act_p_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
-        $auction_no = $this->getGameStateValue('current_auction');
-        $this->Resource->pay($active_player_id, $bid_cost, $gold, "AUCTION ".$auction_no, $auction_no);
+        $auc_no = $this->getGameStateValue('current_auction');
+        $this->Resource->pay($act_p_id, $bid_cost, $gold, "AUCTION ".$auc_no, $auc_no);
         if ($this->Auction->doesCurrentAuctionHaveBuildPhase()){
             $this->gamestate->nextstate( 'build' );
         } else {
@@ -360,12 +360,12 @@ class homesteaders extends Table
     }
 
     public function playerSelectRailBonus($selected_bonus) {
-        $active_player = $this->getActivePlayerId();
-        $options = $this->Resource->getRailAdvBonusOptions($active_player);
+        $act_p_id = $this->getActivePlayerId();
+        $options = $this->Resource->getRailAdvBonusOptions($act_p_id);
         if (!in_array ($selected_bonus, $options)){
             throw new BgaUserException( "invalid bonus option selected: " );
         } 
-        $this->Resource->recieveRailBonus($active_player, $selected_bonus);
+        $this->Resource->recieveRailBonus($act_p_id, $selected_bonus);
         $phase = $this->getGameStateValue( 'phase' );
         $next_state = "";
         switch($phase){
@@ -386,8 +386,10 @@ class homesteaders extends Table
     public function playerFreeHireWorkerBuilding()
     {
         $this->checkAction( "buildBonus" );
-        $active_player = $this->getActivePlayerId();
-        $this->Resource->addWorker($active_player, 'Build bonus');
+        $act_p_id = $this->getActivePlayerId();
+        $b_key = $this->getGameStateValue('last_building');
+        $b_name = $this->Building->getBuildingNameFromKey($b_key);
+        $this->Resource->addWorker($act_p_id, $b_name, 'building', $b_key);
         $this->gamestate->nextState( 'auction_bonus' );
     }
 
@@ -398,16 +400,16 @@ class homesteaders extends Table
     }
 
     /**** Auction Bonus actions ******/
-    public function playerFreeHireWorker ( $rail ) 
+    public function playerFreeHireWorkerAuction ( $rail ) 
     {
         $this->checkAction( "auctionBonus" );
-        $active_player = $this->getActivePlayerId();
-        $this->Resource->addWorker($active_player, 'auction bonus');
+        $act_p_id = $this->getActivePlayerId();
+        $this->Resource->addWorker($act_p_id, 'auction bonus');
         $next_state = 'done';    
         if ($rail){
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
-            $auction_no = $this->getGameStateValue( 'current_auction');
-            $this->Resource->getRailAdv( $active_player, "AUCTION ".$auction_no, 'auction', $auction_no );
+            $auc_no = $this->getGameStateValue( 'current_auction');
+            $this->Resource->getRailAdv( $act_p_id, "AUCTION ".$auc_no, 'auction', $auc_no );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
@@ -415,85 +417,90 @@ class homesteaders extends Table
 
     public function playerWoodForTrack (){
         $this->checkAction( "auctionBonus" );
-        $active_player = $this->getActivePlayerId();
-        if (!$this->Resource->canPlayerAfford($active_player, array('wood'=> 1))) {
+        $act_p_id = $this->getActivePlayerId();
+        if (!$this->Resource->canPlayerAfford($act_p_id, array('wood'=> 1))) {
             throw new BgaUserException( _("You need a WOOD to take this action") );
         }
-        //$this->Resource->updateAndNotifyPayment($active_player, 'wood', 1, 'Auction Bonus', 'auction', $this->getGameStateValue('current_auction'));
+        //$this->Resource->updateAndNotifyPayment($act_p_id, 'wood', 1, 'Auction Bonus', 'auction', $this->getGameStateValue('current_auction'));
         $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($active_player, array('wood'=>1), array('track'=>1), "AUCTION ".$auc, 'auction', $auc);
-        //$this->Resource->addTrack($active_player, 'Auction Bonus', 'auction', $auc = $this->getGameStateValue('current_auction'));
+        $this->Resource->specialTrade($act_p_id, array('wood'=>1), array('track'=>1), "AUCTION ".$auc, 'auction', $auc);
+        //$this->Resource->addTrack($act_p_id, 'Auction Bonus', 'auction', $auc = $this->getGameStateValue('current_auction'));
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerCopperForVp ($goldAsCopper= false) {
         $this->checkAction( "auctionBonus" );
-        $active_player = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         $costType = ($goldAsCopper?'gold':'copper');
         $cost = array($costType=> 1);
-        if (!$this->Resource->canPlayerAfford($active_player, $cost)){
+        if (!$this->Resource->canPlayerAfford($act_p_id, $cost)){
             throw new BgaUserException( _("You need a ".strtoupper($costType)." to take this action") );
         }
         $auc = $this->getGameStateValue('current_auction');
         
-        $this->Resource->specialTrade($active_player, $cost, array('vp4'=>1), "AUCTION "+$auc, 'auction', $auc);
-        //$this->Resource->updateAndNotifyPayment($active_player, 'copper', 1, 'Auction Bonus', 'auction', $auc);
-        //$this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus', 'auction', $auc);
+        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION "+$auc, 'auction', $auc);
+        //$this->Resource->updateAndNotifyPayment($act_p_id, 'copper', 1, 'Auction Bonus', 'auction', $auc);
+        //$this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 4, 'Auction Bonus', 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerCowForVp ($goldAsCow) {
         $this->checkAction( "auctionBonus" );
-        $active_player = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         $cost = array(($goldAsCow?'gold':'cow')=>1);
-        if (!$this->Resource->canPlayerAfford($active_player,$cost)){
+        if (!$this->Resource->canPlayerAfford($act_p_id,$cost)){
             $costType = ($goldAsCow?'gold':'livestock');
             throw new BgaUserException( _("You need a ".strtoupper($costType)." to take this action ") );
         }
         $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($active_player, $cost, array('vp4'=>1), "AUCTION "+$auc, 'auction', $auc);
-        //$this->Resource->updateAndNotifyPayment($active_player, 'cow', 1, 'Auction Bonus', 'auction', $auc);
-        //$this->Resource->updateAndNotifyIncome($active_player, 'vp', 4, 'Auction Bonus', 'auction', $auc);
+        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION "+$auc, 'auction', $auc);
+        //$this->Resource->updateAndNotifyPayment($act_p_id, 'cow', 1, 'Auction Bonus', 'auction', $auc);
+        //$this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 4, 'Auction Bonus', 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerFoodForVp () {
         $this->checkAction( "auctionBonus" );
-        $active_player = $this->getActivePlayerId();
-        if (!$this->Resource->canPlayerAfford($active_player, array('food'=> 1))){
+        $act_p_id = $this->getActivePlayerId();
+        if (!$this->Resource->canPlayerAfford($act_p_id, array('food'=> 1))){
             throw new BgaUserException( _("You need a FOOD to take this action ") ); 
         }
         $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($active_player, array('food'=>1), array('vp2'=>1), "AUCTION "+$auc, 'auction', $auc);
-        //$this->Resource->updateAndNotifyPayment($active_player, 'food', 1, 'Auction Bonus','auction', $auc);
-        //$this->Resource->updateAndNotifyIncome($active_player, 'vp', 2, 'Auction Bonus','auction', $auc);
+        $this->Resource->specialTrade($act_p_id, array('food'=>1), array('vp2'=>1), "AUCTION "+$auc, 'auction', $auc);
+        //$this->Resource->updateAndNotifyPayment($act_p_id, 'food', 1, 'Auction Bonus','auction', $auc);
+        //$this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 2, 'Auction Bonus','auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
 
     public function playerPassAuctionBonus () {
         $this->checkAction( "auctionBonus" );
-        $active_player = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         $this->notifyAllPlayers( "passBonus", clienttranslate( '${player_name} passes on Auction Bonus' ), array(
-            'player_id' => $active_player,
+            'player_id' => $act_p_id,
             'player_name' => $this->getActivePlayerName()));
         $next_state = 'done';
         $auction_bonus = $this->getGameStateValue('auction_bonus');
         if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV) {
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
-            $auction_no = $this->getGameStateValue('current_auction');
-            $this->Resource->getRailAdv( $active_player, "AUCTION ".$auction_no, 'auction', $auction_no );
+            $auc_no = $this->getGameStateValue('current_auction');
+            $this->Resource->getRailAdv( $act_p_id, "AUCTION ".$auc_no, 'auction', $auc_no );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
     }
 
-    public function cancelTurn ($player_id){
+    public function cancelTurn ($p_id){
         $this->checkAction('trade');
         // undo current state trades & loans
+        $move_ids = $this->Log->cancelTransactions($p_id);
+        $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
+            'player_name' => $this->getActivePlayerName(),
+            'move_ids' => $move_ids,
+            'player_id' => $this->getActivePlayerId()));
     }
 
     /*
@@ -503,10 +510,10 @@ class homesteaders extends Table
         $this->checkAction('undo');
         // undo all actions since beginning of STATE_PAY_AUCTION
 
-        $moveIds = $this->Log->redoPhase();
-        self::notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
-            'player_name' => self::getActivePlayerName(),
-            'moveIds' => $moveIds,
+        $move_ids = $this->Log->redoPhase();
+        $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
+            'player_name' => $this->getActivePlayerName(),
+            'move_ids' => $move_ids,
             'player_id' => $this->getActivePlayerId()));
     }
         
@@ -520,7 +527,7 @@ class homesteaders extends Table
 
         // Undo the turn
         $moveIds = $this->log->cancelTurn();
-        self::notifyAllPlayers('cancel', clienttranslate('${player_name} cancels their transactions'), array(
+        $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels their transactions'), array(
               'player_name' => self::getActivePlayerName(),
             'moveIds' => $moveIds,
             'board' => $this->board->getUiData(),
@@ -536,9 +543,9 @@ class homesteaders extends Table
         $this->checkAction('confirm');
         $this->Auction->discardAuctionTile();
         $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
-        $auction_no = $this->incGameStateValue( 'current_auction', 1);
+        $auc_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
-        if ($auction_no > $this->getGameStateValue( 'number_auctions' )){
+        if ($auc_no > $this->getGameStateValue( 'number_auctions' )){
             $next_state = "endRound";
         } 
         $this->gamestate->nextState( $next_state );
@@ -547,15 +554,15 @@ class homesteaders extends Table
     // endGameActions Actions
     public function playerPayLoan($gold) {
         $this->checkAction('payLoan');
-        $current_player_id = $this->getCurrentPlayerId();    
-        $this->Resource->payOffLoan($current_player_id, $gold);
-        $this->Log->payOffLoan($current_player_id);
+        $cur_p_id = $this->getCurrentPlayerId();    
+        $this->Resource->payOffLoan($cur_p_id, $gold);
+        $this->Log->payOffLoan($cur_p_id);
     }
 
     public function playerDoneEndgame() {
         $this->checkAction('done');
-        $current_player_id = $this->getCurrentPlayerId();
-        $this->gamestate->setPlayerNonMultiactive($current_player_id, "" );
+        $cur_p_id = $this->getCurrentPlayerId();
+        $this->gamestate->setPlayerNonMultiactive($cur_p_id, "" );
     }
     
 //////////////////////////////////////////////////////////////////////////////
@@ -582,37 +589,37 @@ class homesteaders extends Table
     }
 
     function argValidBids() {
-        $active_player_id = $this->getActivePlayerId();
-        $valid_bids = $this->Bid->getValidBids($active_player_id);
+        $act_p_id = $this->getActivePlayerId();
+        $valid_bids = $this->Bid->getValidBids($act_p_id);
         return array("valid_bids"=>$valid_bids );
     }
 
     function argRailBonus() {
-        $active_player_id = $this->getActivePlayerId();
-        $rail_options= $this->Resource->getRailAdvBonusOptions($active_player_id);
+        $act_p_id = $this->getActivePlayerId();
+        $rail_options= $this->Resource->getRailAdvBonusOptions($act_p_id);
         return array("rail_options"=>$rail_options);
     }
 
     function argAuctionCost() {
-        $active_player_id = $this->getActivePlayerId();
-        $bid_cost = $this->Bid->getBidCost($active_player_id);
+        $act_p_id = $this->getActivePlayerId();
+        $bid_cost = $this->Bid->getBidCost($act_p_id);
         return array("auction_cost"=>$bid_cost);
     }
 
     function argAllowedBuildings() {
-        $active_player_id = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         $build_type_options = $this->Auction->getCurrentAuctionBuildTypeOptions();
         $buildings = $this->Building->getAllowedBuildings($build_type_options);
-        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($active_player_id, BLD_RIVER_PORT);
+        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($act_p_id, BLD_RIVER_PORT);
         return(array("allowed_buildings"=> $buildings,
                     "riverPort"=>$ownsRiverPort,));
     }
 
     function argTrainStationBuildings() {
-        $active_player_id = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         $build_type_options = $this->Auction->parseBuildTypeOptions('15');// all
         $buildings = $this->Building->getAllowedBuildings($build_type_options);
-        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($active_player_id, BLD_RIVER_PORT);    
+        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($act_p_id, BLD_RIVER_PORT);    
         return(array("allowed_buildings"=> $buildings,
                     "riverPort"=>$ownsRiverPort,));
         
@@ -654,7 +661,6 @@ class homesteaders extends Table
     }
 
     function stPlaceWorkers() {
-        $this->DbQuery("UPDATE `player` SET `paid`='0'");
         $this->Log->allowTradesAllPlayers();
         $this->gamestate->setAllPlayersMultiactive( );
         
@@ -706,13 +712,13 @@ class homesteaders extends Table
     { 
         $this->activeNextPlayer( );
         // figure out if bid round is complete, 
-        $active_player = $this->getActivePlayerId();
+        $act_p_id = $this->getActivePlayerId();
         $last_bidder = $this->getGameStateValue( 'last_bidder' );
         // if bidding is complete
         $players_passed = $this->getGameStateValue('players_passed');
-        if ($active_player == $last_bidder || $players_passed >= $this->getPlayersNumber()) {
+        if ($act_p_id == $last_bidder || $players_passed >= $this->getPlayersNumber()) {
             $next_state = "endAuction";
-        } else if ($this->Bid->canPlayerBid($active_player)) {// if this player can bid.
+        } else if ($this->Bid->canPlayerBid($act_p_id)) {// if this player can bid.
             $next_state = "playerBid";
         } else { // if not, let next player bid
             $next_state = "skipPlayer";
@@ -758,23 +764,24 @@ class homesteaders extends Table
 
     function stResolveBuilding()
     { 
-        $active_player_id = $this->getActivePlayerId();
+        $active_p_id = $this->getActivePlayerId();
         $bonus = $this->getGameStateValue('building_bonus');
         $b_key = $this->getGameStateValue('last_building');
         $b_name = $this->Building->getBuildingNameFromKey($b_key);
         if ($bonus <3){ 
             if ($bonus == BUILD_BONUS_PAY_LOAN){
-                $this->Resource->payLoanOrRecieveSilver($active_player_id, $b_name, 'building', $b_key);
+                $this->Resource->payLoanOrRecieveSilver($active_p_id, $b_name, 'building', $b_key);
             } else if ($bonus == BUILD_BONUS_TRADE){
-                $this->Resource->updateAndNotifyIncome($active_player_id, 'trade', 1, $b_name, 'building', $b_key);
+                $this->Resource->updateAndNotifyIncome($active_p_id, 'trade', 1, $b_name, 'building', $b_key);
+                $this->Log->updateResource($active_p_id, 'trade', 1);
             }
             $this->gamestate->nextState("auction_bonus");
         } else if ($bonus == BUILD_BONUS_RAIL_ADVANCE){
-            $this->Resource->getRailAdv($active_player_id, $b_name, 'building', $b_key);
+            $this->Resource->getRailAdv($active_p_id, $b_name, 'building', $b_key);
             $this->setGameStateValue('phase', PHASE_BLD_BONUS);
             $this->gamestate->nextState('rail_bonus');
         } else if ($bonus == BUILD_BONUS_TRACK_AND_BUILD) {
-            $this->Resource->addTrack($active_player_id, $b_name, 'building', $b_key);
+            $this->Resource->addTrack($active_p_id, $b_name, 'building', $b_key);
             $this->gamestate->nextState('train_station_build');
         }
         //the other case (BUILD_BONUS_WORKER) waits for player_choice so we don't always want to go to next state
@@ -789,9 +796,9 @@ class homesteaders extends Table
     function stEndBuildRound() {
         /*$this->Auction->discardAuctionTile();
         $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
-        $auction_no = $this->incGameStateValue( 'current_auction', 1);
+        $auc_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
-        if ($auction_no > $this->getGameStateValue( 'number_auctions' )){
+        if ($auc_no > $this->getGameStateValue( 'number_auctions' )){
             $next_state = "endRound";
         } 
         $this->gamestate->nextState( $next_state );*/
@@ -832,7 +839,7 @@ class homesteaders extends Table
         you must _never_ use getCurrentPlayerId() or getCurrentPlayerName(), otherwise it will fail with a "Not logged" error message. 
     */
 
-    function zombieTurn( $state, $active_player )
+    function zombieTurn( $state, $act_p_id )
     {
     	$statename = $state['name'];
     	
@@ -848,7 +855,7 @@ class homesteaders extends Table
 
         if ($state['type'] === "multipleactiveplayer") {
             // Make sure player is in a non blocking status for role turn
-            $this->gamestate->setPlayerNonMultiactive( $active_player );
+            $this->gamestate->setPlayerNonMultiactive( $act_p_id );
             
             return;
         }

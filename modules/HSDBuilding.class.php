@@ -345,8 +345,6 @@ class HSDBuilding extends APP_GameClass
         $this->game->Score->dbIncScore($p_id, $building_score);
     }
 
-    function undoBuild(){}
-
     function payForBuilding($p_id, $b_cost){
         foreach( $b_cost as $type => $amt ){
             if ($amt != 0){
