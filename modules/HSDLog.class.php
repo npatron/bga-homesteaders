@@ -130,6 +130,10 @@ class HSDLog extends APP_GameClass
     } else if ($action === 'winAuction'){
       $stats[] = [$player_id, 'auctions_won'];
       $stats[] = [$player_id, 'spent_on_auctions', $args['cost']];
+    } else if ($action === 'gainWorker'){
+      $args['key'] = $piece_id;
+    } else if ($action === 'gainTrack'){
+      
     }
 
     if (!empty($stats)) {
@@ -192,7 +196,7 @@ class HSDLog extends APP_GameClass
 
   // have Resource->updateResource update this, (and we can avoid extra cost stuff)
   public function updateResource($p_id, $type, $amt){
-    // TODO: STUB
+    $this->insert($p_id, 0, "updateResource", array($type=>$amt));
   }
 
   // Begin Undo-able by cancelTransactions
@@ -287,10 +291,15 @@ class HSDLog extends APP_GameClass
             } else if ($action['name'] === 'loan'){
                 $this->Resource->updateResource($p_id, 'loan', -1);
                 $this->Resource->updateResource($p_id, 'silver', -2);
-            } else if ($action['name'] === 'build_bonus'){
-                $this->Building->undoBuildBonus($p_id, $action['piece_id']);
-            } else if ($action['name'] === 'auction_bonus'){
-                $this->Auction->undoAuctionBonus($p_id, $action['piece_id']);
+            } else if ($action['name'] === 'gainWorker'){
+                $action['']
+            } else if ($action['name'] === 'gainTrack'){
+                
+            } else if ($action['name'] === 'updateResource'){
+                $args = json_decode($action['action_arg']);
+                foreach($args['tradeFor'] as $type=> $amt){
+                    $this->Resource->updateResource($p_id, $type, -$amt);
+                }
             } 
       }
     return $this->cancelLogs($logs, $p_id);
