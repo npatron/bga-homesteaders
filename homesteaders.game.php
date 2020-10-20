@@ -173,6 +173,8 @@ class homesteaders extends Table
 
         $result['buildings'] = $this->Building->getAllBuildings();
 
+        $result['can_undo_trades'] = (count($this->Log->getLastTransactions($cur_p_id))> 0);
+        
         $sql = "SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` ";
         $result['tracks'] = $this->getCollectionFromDb( $sql );
   
@@ -189,9 +191,10 @@ class homesteaders extends Table
         $result['number_auctions'] = $this->getGameStateValue( 'number_auctions' );
         $result['auctions'] = $this->Auction->getAllAuctionsFromDB();
         
-        $result['player_order'] = $this->getNextPlayerTable();
         $result['first_player'] = $this->getGameStateValue( 'first_player');
+        $result['player_order'] = $this->getNextPlayerTable();
         $result['current_player'] = $cur_p_id;
+        
 
         return $result;
     }
@@ -261,20 +264,22 @@ class homesteaders extends Table
         $this->Resource->addWorker($cur_p_id, 'hire');
     }
 
-    public function playerSelectWorkerDestination($worker_key, $b_key, $building_slot) 
+    public function playerSelectWorkerDestination($w_key, $b_key, $building_slot) 
     {
         $this->checkAction( "placeWorker" );
         $cur_p_id = $this->getCurrentPlayerId();
+        $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
+        if ($w_owner != $cur_p_id){ throw new BgaUserException("This is not your worker.");}
         $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${type} to ${building_name}' ), array(
             'player_id' => $cur_p_id,
-            'worker_key' => $worker_key,
+            'worker_key' => $w_key,
             'building_key' => $b_key,
             'building_name' => array('type'=> $this->Building->getBuildingTypeFromKey($b_key) ,'str'=>$this->Building->getBuildingNameFromKey($b_key)),
             'building_slot' => $building_slot, 
             'type' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),
         ) );
-        $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$worker_key."'";
+        $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$w_key."'";
         $this->DbQuery( $sql );
     }
 
@@ -493,16 +498,6 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
-    public function cancelTurn ($p_id){
-        $this->checkAction('trade');
-        // undo current state trades & loans
-        $move_ids = $this->Log->cancelTransactions($p_id);
-        $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
-            'player_name' => $this->getActivePlayerName(),
-            'move_ids' => $move_ids,
-            'player_id' => $this->getActivePlayerId()));
-    }
-
     /*
      * restartTurn: called when a player decide to go back at the beginning of the player build phase
      */
@@ -510,45 +505,35 @@ class homesteaders extends Table
         $this->checkAction('undo');
         // undo all actions since beginning of STATE_PAY_AUCTION
 
-        $move_ids = $this->Log->redoPhase();
+        $move_ids = $this->Log->cancelPhase();
         $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
             'player_name' => $this->getActivePlayerName(),
             'move_ids' => $move_ids,
             'player_id' => $this->getActivePlayerId()));
     }
         
-    public function cancelTransactions()
+    public function playerCancelTransactions()
     {
         self::checkAction('trade');
 
-        if ($this->log->getLastActions() == null) {
-        throw new BgaUserException(_("You have nothing to cancel"));
+        if ($this->Log->getLastActions() == null) {
+            throw new BgaUserException(_("You have nothing to cancel"));
         }
 
         // Undo the turn
-        $moveIds = $this->log->cancelTurn();
+        $moveIds = $this->Log->cancelTransactions();
         $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels their transactions'), array(
-              'player_name' => self::getActivePlayerName(),
+            'player_name' => self::getActivePlayerName(),
             'moveIds' => $moveIds,
-            'board' => $this->board->getUiData(),
-            'fplayers' => $this->playerManager->getUiData(self::getCurrentPlayerId()),));
+            'player_id' => $this->getActivePlayerId()));
 
         $this->gamestate->nextState('restartTurn');
     }
 
-
     /** endBuildRound */
-    // this one moves to next auction (or next turn entirely)  
     public function playerConfirmChoices (){
-        $this->checkAction('confirm');
-        $this->Auction->discardAuctionTile();
-        $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
-        $auc_no = $this->incGameStateValue( 'current_auction', 1);
-        $next_state = "nextBuilding";
-        if ($auc_no > $this->getGameStateValue( 'number_auctions' )){
-            $next_state = "endRound";
-        } 
-        $this->gamestate->nextState( $next_state );
+        $this->checkAction('done');
+        $this->gamestate->nextState( 'done' );
     }
 
     // endGameActions Actions
@@ -581,7 +566,7 @@ class homesteaders extends Table
         return array('round_number'=>$round_number, 'auctions' => $auctions);
     }
 
-    function argPayWorkers() //in argPlaceWorkers now...
+    function argPayWorkers()
     {
         $sql = "SELECT `player_id`, `workers` FROM `resources`";
         $worker_counts = $this->getCollectionFromDB($sql);
@@ -794,14 +779,14 @@ class homesteaders extends Table
 
     //
     function stEndBuildRound() {
-        /*$this->Auction->discardAuctionTile();
+        $this->Auction->discardAuctionTile();
         $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
         $auc_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
         if ($auc_no > $this->getGameStateValue( 'number_auctions' )){
             $next_state = "endRound";
         } 
-        $this->gamestate->nextState( $next_state );*/
+        $this->gamestate->nextState( $next_state );
     }
 
     function stEndRound(){

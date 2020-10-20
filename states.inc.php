@@ -30,6 +30,7 @@ if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, sinc
     define("STATE_TRAIN_STATION_BUILD",44);
     define("STATE_AUCTION_BONUS",      50);
     define("STATE_CHOOSE_BONUS",       51);
+    define("STATE_CONFIRM_AUCTION",    52);
     define("STATE_END_BUILD",          53);
     define("STATE_END_ROUND",          59);
     define("STATE_ENDGAME_ACTIONS",    60);
@@ -64,7 +65,6 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must allocate workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
-        "args" => "argPlaceWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
         "transitions" => array( "auction" => STATE_PAY_WORKERS )
     ),
@@ -167,7 +167,7 @@ $machinestates = array(
         "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
-                                "end_build"      => STATE_END_BUILD )
+                                "end_build"      => STATE_CONFIRM_AUCTION )
     ),
 
     STATE_RESOLVE_BUILDING =>  array(
@@ -191,10 +191,10 @@ $machinestates = array(
         "args" => "argTrainStationBuildings",
         "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
-        "transitions" => array( "undoTurn"       => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
-                                "end_build"      => STATE_END_BUILD )
+                                "end_build"      => STATE_CONFIRM_AUCTION )
     ),
 
     STATE_AUCTION_BONUS => array(
@@ -203,7 +203,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stGetAuctionBonus",
         "transitions" => array( "bonusChoice" => STATE_CHOOSE_BONUS, 
-                                "endBuild" => STATE_END_BUILD )
+                                "endBuild" => STATE_CONFIRM_AUCTION )
     ),
 
     STATE_CHOOSE_BONUS => array(
@@ -214,21 +214,29 @@ $machinestates = array(
         "args" => "argBonusOption",
         "action" => "stSetupTrade",
         "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan', "undo" ),
-        "transitions" => array( "undoTurn"      => STATE_PAY_AUCTION,
-                                "done"      => STATE_END_BUILD,
+        "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
+                                "done"      => STATE_CONFIRM_AUCTION,
                                 "railBonus" => STATE_RAIL_BONUS )
+    ),
+
+    STATE_CONFIRM_AUCTION => array(
+        "name" => "confirmActions",
+        "description" => clienttranslate('${actplayer} may confirm actions '),
+        "descriptionmyturn" => clienttranslate('${you} may confirm actions '),
+        "type" => "activeplayer",
+        "possibleactions" => array( "done", "undo" ),
+        "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
+                                "done"      => STATE_END_BUILD,)
     ),
 
     STATE_END_BUILD => array(
         "name" => "endBuildRound",
-        "description" => clienttranslate('${actplayer} may confirm actions '),
-        "descriptionmyturn" => clienttranslate('${you} may confirm actions '),
-        "type" => "action",
+        "description" => '',
+        "type" => "game",
         "action" => "stEndBuildRound",
-        "possibleActions" => array( 'undo', 'confirm'),
         "updateGameProgression" => true,
         "transitions" => array( "undoTurn"     => STATE_PAY_AUCTION,
-                                "endRound" => STATE_END_ROUND, 
+                                "endRound"     => STATE_END_ROUND, 
                                 "nextBuilding" => STATE_NEXT_BUILDING )
     ),
     

@@ -213,9 +213,14 @@ class HSDLog extends APP_GameClass
     $this->insert($p_id, $w_key, 'gainWorker');
   }
 
-  public function payOffLoan($p_id)
+  public function payOffLoan($p_id, $type="", $amt=0)
   {
-    $this->insert($p_id, 0, 'loanPaid');
+    if ($type === ""){
+      $this->insert($p_id, 0, 'loanPaid', array($type=>$amt));
+    } else {
+      $this->insert($p_id, 0, 'loanPaid', array($type=>$amt));
+    }
+    
   }
 
   public function tradeResource($p_id, $trade_away, $trade_for)
@@ -316,7 +321,10 @@ class HSDLog extends APP_GameClass
           break;
         case 'loanPaid':
           $this->game->Resource->updateResource($p_id, 'loan', 1);
-          $this->game->Resource->updateResource($p_id, 'silver', 2);
+          if (count($args) == 0){
+            $type = array_keys($args)[0];
+            $this->game->Resource->updateResource($p_id, $type, $args[$type]);
+          }
           break;
         case 'updateResource':
           $type = $args['type'];
@@ -349,9 +357,11 @@ class HSDLog extends APP_GameClass
       }
     }
     // Remove the logs
-    self::DbQuery("DELETE FROM log WHERE `player_id` = '$pId' AND `log_id` IN (" . implode(',', $ids) . ")");
+    if (count($ids)>0)
+      self::DbQuery("DELETE FROM log WHERE `player_id` = '$pId' AND `log_id` IN (" . implode(',', $ids) . ")");
 
     // Cancel the game notifications
+    if (count($moveIds)>0)
     self::DbQuery("UPDATE gamelog SET `cancel` = 1 WHERE `gamelog_move_id` IN (" . implode(',', $moveIds) . ")");
     return $moveIds;
   }

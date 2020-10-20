@@ -60,10 +60,10 @@ class HSDresource extends APP_GameClass
         $this->game->notifyAllPlayers( "playerIncome", clienttranslate( '${reason_string} earned ${player_name} ${type}' ), $values );
         if (in_array($type, $this->resource_map)){
             $this->updateResource($p_id, $type, $amt);
-        } else {
+        } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
             $actual_type = array_keys($this->special_resource_map[$type])[0];
             $amount = $amt * $this->special_resource_map[$type][$actual_type];
-            $this->updateResource($p_id, $type, $amount);
+            $this->updateResource($p_id, $actual_type, $amount);
         }
     }
 
@@ -90,7 +90,7 @@ class HSDresource extends APP_GameClass
                 } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
                     $actual_type = array_keys($this->special_resource_map[$type])[0];
                     $amount = $amt * $this->special_resource_map[$type][$actual_type];
-                    $this->updateResource($p_id, $type, $amount);
+                    $this->updateResource($p_id, $actual_type, $amount);
                 }
             }
         } else if (count($income_arr) == 1) {
@@ -229,8 +229,8 @@ class HSDresource extends APP_GameClass
     }
 
     function takeLoan($p_id){
-        $this->Resource->updateResource($p_id, 'silver', 2);
-        $this->Resource->updateResource($p_id, 'loan', 1);
+        $this->updateResource($p_id, 'silver', 2);
+        $this->updateResource($p_id, 'loan', 1);
         $this->game->notifyAllPlayers( "loanTaken", clienttranslate( '${player_name} takes a ${loan}' ), array(
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
@@ -243,7 +243,7 @@ class HSDresource extends APP_GameClass
         if ($gold) $cost = array('gold'=> 1);
         else $cost = array('silver'=>5);
         $type = array_keys($cost)[0];
-        if (!$this->Resource->canPlayerAfford($p_id, $cost)){
+        if (!$this->canPlayerAfford($p_id, $cost)){
             throw new BgaUserException( _("You do not have enough ".$type ) );
         }
         $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays ${loan} {arrow} ${type}' ), array(
@@ -437,6 +437,7 @@ class HSDresource extends APP_GameClass
         $tradeAway = array('trade'=>1);
         $tradeFor = array ();
         $sell = false;
+        $building_name = "";
         switch($tradeAction){
             case 'buy_wood':
                 $tradeAway['silver'] = 1;
@@ -519,11 +520,11 @@ class HSDresource extends APP_GameClass
             throw new $this->BgaUserException( _("You cannot afford to make this trade"));
         }
         if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_MARKET)){
-            $tradeFor['silver'] = ($tradeFor['silver'] ?:0)+1;
+            $tradeFor = $this->updateKeyOrCreate($tradeFor, 'silver', 1);
         }
-        $this->game->Log->trade($p_id, $tradeAway, $tradeFor);
+        $this->game->Log->tradeResource($p_id, $tradeAway, $tradeFor);
         $buy_sell = ($sell?'Sells':"Buys");
-        if ($building_name == null){
+        if ($building_name === ""){
             $log_message = clienttranslate( '${player_name} ${buy_sell} ${tradeAway} ${arrow} ${tradeFor}' );
             $this->game->notifyAllPlayers( "trade", clienttranslate($log_message) , array(
                     'player_id' => $p_id,               'player_name' => $p_name,

@@ -448,7 +448,7 @@ class HSDBuilding extends APP_GameClass
                 case BLD_CHURCH:
                 case BLD_FACTORY:
                 case BLD_LAWYER:
-                    $income_b_id[$b_id]['vp'] = 2;
+                    $income_b_id[$b_id]['vp2'] = 1;
                     break;
                 case BLD_WORKSHOP:
                     $income_b_id[$b_id]['vp'] = 1;
@@ -515,10 +515,10 @@ class HSDBuilding extends APP_GameClass
                         break;
                     case BLD_MEATPACKING_PLANT:
                     case BLD_FORGE:
-                        if(array_key_exists('vp', $income_b_id[$b_id])){
-                            $income_b_id[$b_id]['vp']+=2;
+                        if(array_key_exists('vp2', $income_b_id[$b_id])){
+                            $income_b_id[$b_id]['vp2']+=1;
                         } else {
-                            $income_b_id[$b_id]['vp']=2;
+                            $income_b_id[$b_id]['vp2']=1;
                         }
                         break;
                 }

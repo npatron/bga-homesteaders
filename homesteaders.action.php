@@ -52,6 +52,12 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
+  public function undoTransactions(){
+    self::setAjaxMode( );
+    $this->game->playerCancelTransactions();
+    self::ajaxResponse( );
+  }
+
   // pay workers
   public function payWorkers() {
     self::setAjaxMode( );
@@ -64,6 +70,18 @@ class action_homesteaders extends APP_GameAction
     self::setAjaxMode( );
     $gold = self::getArg( "gold", AT_posint, true);
     $this->game->playerPayAuction($gold);
+    self::ajaxResponse( );
+  }
+
+  public function redoTurn() {
+    self::setAjaxMode( );
+    $this->game->playerCancelPhase();
+    self::ajaxResponse( );
+  }
+
+  public function confirmChoices() {
+    self::setAjaxMode( );
+    $this->game->playerConfirmChoices();
     self::ajaxResponse( );
   }
 
