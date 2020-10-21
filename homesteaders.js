@@ -22,7 +22,14 @@ define([
     "ebg/zone",
 ],
 function (dojo, declare) {
-    
+    function override_addMoveToLog(logId, moveId) {
+        // [Undocumented] Called by BGA framework on new log notification message
+        // Handle cancelled notifications
+        this.inherited(override_addMoveToLog, arguments);
+        if (this.gamedatas.cancel_move_ids && this.gamedatas.cancel_move_ids.includes(+moveId)) {
+          dojo.addClass('log_' + logId, 'cancel');
+        }
+      }
     const NO_BID   = 0;
     const OUTBID   = 10;
     const BID_PASS = 20;
@@ -121,6 +128,8 @@ function (dojo, declare) {
             
 
     return declare("bgagame.homesteaders", ebg.core.gamegui, {
+        addMoveToLog: override_addMoveToLog,
+
         constructor: function(){
             console.log('homesteaders constructor');
 
@@ -135,8 +144,6 @@ function (dojo, declare) {
             
             // indexed by location [discard-0, Auctions-(1,2,3)]
             this.bid_token_divId =[];
-            this.bid_zone_height = 36;
-            this.bid_zone_width = 36;
             
             // auction bid zones
             this.bid_zones = [];
@@ -179,18 +186,12 @@ function (dojo, declare) {
             this.tile_width = 144;
             this.tile_height = 196;
 
-            // what is this...
-            this.main_width = 155;
-            this.main_height = 210;
-
             this.token_dimension = 50;
 
             this.bid_height = 52;
             this.bid_width = 46;
             this.worker_height = 35;
             this.worker_width = 33;
-            this.rail_width = 85;
-            this.rail_height = 102;
             
             this.player_score_counter = []; // indexed by player_id
             this.player_count = 0;
@@ -202,9 +203,6 @@ function (dojo, declare) {
             this.last_selected = [];
             this.goldAsCopper = false;
             this.goldAsCow = false;
-            
-            this.canal_tile_divId = "";     // Division Id of Canal tile
-            // on click handlers
         },
         
         /*
@@ -278,7 +276,7 @@ function (dojo, declare) {
             this.roundCounter.setValue( gamedatas.round_number);
             
             // Setup game notifications to handle (see "setupNotifications" method below)
-            this.setupNotifications();
+            this.setupNotifications(gamedatas.cancel_move_ids);
 
             console.log( "Ending game setup" );
         },
@@ -435,7 +433,7 @@ function (dojo, declare) {
             }   }
             dojo.connect($('confirm_trade_btn'), 'onclick', this, 'confirmTradeButton' );
             dojo.addClass('confirm_trade_btn','noshow');
-            dojo.connect($('undo_trades_btn'), 'onclick', this, 'undoTradesButton');
+            dojo.connect($('undo_trades_btn'), 'onclick', this, 'undoTransactionsButton');
             if (!can_undo_trades)
                 dojo.addClass('undo_trades_btn','noshow');
         },
@@ -548,7 +546,7 @@ function (dojo, declare) {
                 case 'trainStationBuild':
                 case 'chooseBuildingToBuild':
                 case 'bonusChoice':
-                    this.hideUndoTradesButtonIfPossible();
+                    this.hideUndoTransactionsButtonIfPossible();
                     break;
                 case 'endRound':
                 case 'dummy':
@@ -916,13 +914,13 @@ function (dojo, declare) {
             };
         },
 
-        showUndoTradesButtonIfPossible: function(){
+        showUndoTransactionsButtonIfPossible: function(){
             //if (dojo.hasclass('undo_trades_btn', 'noshow')) {
                 dojo.removeClass('undo_trades_btn', 'noshow');
             //}
         },
 
-        hideUndoTradesButtonIfPossible: function(){
+        hideUndoTransactionsButtonIfPossible: function(){
             //if (!dojo.hasClass('undo_trades_btn', 'noshow')){
                 dojo.addClass('undo_trades_btn', 'noshow');
             //}
@@ -1099,17 +1097,17 @@ function (dojo, declare) {
                 lock: true, 
                 trade_action: tradeAction
              }, this, function( result ) {
-                this.showUndoTradesButtonIfPossible();
+                this.showUndoTransactionsButtonIfPossible();
              }, function( is_error) {});
         },
 
-        undoTradesButton: function( ){
+        undoTransactionsButton: function( ){
             if( this.checkAction( 'trade' ) ){
                 this.ajaxcall( "/homesteaders/homesteaders/undoTransactions.html", { 
                     lock: true, 
                  }, this, function( result ) {
                     this.disableTradeIfPossible();
-                    this.hideUndoTradesButtonIfPossible();
+                    this.hideUndoTransactionsButtonIfPossible();
                  }, function( is_error) {});
             }
         },
@@ -1166,7 +1164,7 @@ function (dojo, declare) {
             if( this.checkAction( 'hireWorker')){
                 this.ajaxcall( "/homesteaders/homesteaders/hireWorker.html", {lock: true}, this, 
                 function( result ) {
-                    this.showUndoTradesButtonIfPossible();
+                    this.showUndoTransactionsButtonIfPossible();
                 }, 
                 function( is_error) { } );                
             }
@@ -1322,7 +1320,7 @@ function (dojo, declare) {
             if( this.checkAction( 'undo' )){
                 this.ajaxcall( "/homesteaders/homesteaders/redoTurn.html", {lock: true}, this, 
                 function( result ) { 
-                    this.hideUndoTradesButtonIfPossible();    
+                    this.hideUndoTransactionsButtonIfPossible();    
                 }, function( is_error) { } ); 
             }
         },
@@ -1601,46 +1599,35 @@ function (dojo, declare) {
                   your homesteaders.game.php file.
         
         */
-        setupNotifications: function()
+       
+        setupNotifications: function(cancel_move_ids)
         {
             console.log ( 'notifications subscriptions setup' );
-            
-            dojo.subscribe( 'updateAuction', this, "notif_updateAuction");
-            this.notifqueue.setSynchronous('updateAuction', 500);
-            dojo.subscribe( 'updateBuildingStocks', this, "notif_updateBuildingStocks");
-            this.notifqueue.setSynchronous('updateBuildingStocks', 1000);
-            dojo.subscribe( 'playerPass', this, "notif_playerPass");
-            this.notifqueue.setSynchronous('playerPass', 50);
-            dojo.subscribe( 'gainWorker',  this, "notif_gainWorker" );
-            this.notifqueue.setSynchronous( 'gainWorker', 500 );
-            dojo.subscribe( 'gainTrack', this,"notif_gainTrack");
-            this.notifqueue.setSynchronous( 'gainTrack', 500 );
-            dojo.subscribe( 'workerMoved', this, "notif_workerMoved" );
-            this.notifqueue.setSynchronous( 'workerMoved', 200 );
-            dojo.subscribe( 'railAdv',     this, "notif_railAdv" );
-            this.notifqueue.setSynchronous( 'railAdv', 250 );
-            dojo.subscribe( 'moveBid',     this, "notif_moveBid");
-            this.notifqueue.setSynchronous( 'moveBid', 250 );
-            dojo.subscribe( 'moveFirstPlayer', this, 'notif_moveFirstPlayer');
-            this.notifqueue.setSynchronous( 'moveFirstPlayer', 100 );
-            dojo.subscribe( 'buildBuilding', this, "notif_buildBuilding" );
-            this.notifqueue.setSynchronous( 'buildBuilding', 1000 );
-            dojo.subscribe( 'playerIncome', this, "notif_playerIncome");
-            this.notifqueue.setSynchronous( 'playerIncome', 200 );
-            dojo.subscribe( 'playerIncomeGroup', this, 'notif_playerIncomeGroup');
-            this.notifqueue.setSynchronous( 'playerIncomeGroup', 500 );
-            dojo.subscribe( 'playerPayment', this, "notif_playerPayment");
-            this.notifqueue.setSynchronous( 'playerPayment', 200 );
-            dojo.subscribe( 'playerPaymentGroup', this, 'notif_playerPaymentGroup');
-            this.notifqueue.setSynchronous( 'playerPaymentGroup', 500 );
-            dojo.subscribe( 'trade', this, 'notif_trade');
-            this.notifqueue.setSynchronous( 'trade', 200 );
-            dojo.subscribe( 'loanTaken', this, "notif_loanTaken" );
-            this.notifqueue.setSynchronous( 'loanTaken', 500 );
-            dojo.subscribe( 'loanPaid', this, "notif_loanPaid");
-            this.notifqueue.setSynchronous( 'loanPaid', 500 );
-            dojo.subscribe( 'clearAllBids', this, "notif_clearAllBids");
-            this.notifqueue.setSynchronous( 'clearAllBids', 250 );
+            var notifs = [
+                ['updateAuction', 500],
+                ['updateBuildingStocks', 1000],
+                ['gainWorker', 200],
+                ['gainTrack', 200],
+                ['workerMoved', 200],
+                ['railAdv', 250],
+                ['moveBid', 250],
+                ['moveFirstPlayer', 100],
+                ['buildBuilding', 1000],
+                ['playerIncome', 200],
+                ['playerIncomeGroup', 500],
+                ['playerPayment', 200],
+                ['playerPaymentGroup', 500],
+                ['trade', 200],
+                ['loanTaken', 500],
+                ['loanPaid', 500],
+                ['clearAllBids', 250],
+                ['cancel', 200],
+              ];
+
+            notifs.forEach(notif => {
+                dojo.subscribe(notif[0], this, "notif_" + notif[0]);
+                this.notifqueue.setSynchronous(notif[0], notif[1]);
+            });        
         },  
         
         /** Override this function to inject html for log items  */
@@ -2012,9 +1999,9 @@ function (dojo, declare) {
                 }   
             }
             if (notif.args.undo == null){
-                this.showUndoTradesButtonIfPossible();
+                this.showUndoTransactionsButtonIfPossible();
             } else {
-                this.hideUndoTradesButtonIfPossible();
+                this.hideUndoTransactionsButtonIfPossible();
             }
         },
 
@@ -2055,6 +2042,17 @@ function (dojo, declare) {
                 this.resourceCounters['loan'].incValue(1);
                 this.resourceCounters['silver'].incValue(2);
             }            
+        },
+
+        notif_cancel: function( notif ){
+            console.log ("notif_cancel");
+
+            for (let action in notif.args.transactions);
+            for (let log_id in notif.args.log_ids){
+                if (!dojo.hasClass('log_'+log_id, 'cancel')) {
+                    dojo.addClass('log_' + logId, 'cancel');
+                }
+            }
         },
 
         getTargetFromNotifArgs: function( notif ){

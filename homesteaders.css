@@ -45,6 +45,11 @@ div#board {
 .logFont {
    font-family: 'Old Standard TT';
 }
+/* Cancelled notification messages */
+.log.cancel {
+   color: #c62828 !important;
+   text-decoration: line-through;
+ }
 
 /*=========================
    Button css

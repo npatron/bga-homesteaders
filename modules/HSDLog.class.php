@@ -143,7 +143,7 @@ class HSDLog extends APP_GameClass
 
     $actionArgs = json_encode($args);
 
-    self::DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action', '$actionArgs')");
+    $this->game->DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action', '$actionArgs')");
   }
 
   /*
@@ -216,7 +216,7 @@ class HSDLog extends APP_GameClass
   public function payOffLoan($p_id, $type="", $amt=0)
   {
     if ($type === ""){
-      $this->insert($p_id, 0, 'loanPaid', array($type=>$amt));
+      $this->insert($p_id, 0, 'loanPaid');
     } else {
       $this->insert($p_id, 0, 'loanPaid', array($type=>$amt));
     }
@@ -225,7 +225,7 @@ class HSDLog extends APP_GameClass
 
   public function tradeResource($p_id, $trade_away, $trade_for)
   {
-    $this->insert($p_id, 0, 'trade', array('cost' => $trade_away, 'gain' => $trade_for));
+    $this->insert($p_id, 0, 'trade', array('trade_away' => $trade_away, 'trade_for' => $trade_for));
   }
   // END undo-able from cancelTransactions
 
@@ -254,18 +254,19 @@ class HSDLog extends APP_GameClass
    * getLastActions : get works and actions of player (used to cancel previous action)
    * for undo trades set afterAction = 'allowTrades', for undo afterAction = 'startTurn'
    */
-  public function getLastActions($actions = ['build', 'trade', 'loan'], $p_id = null, $afterAction = 'startTurn')
+  public function getLastActions($p_id = null, $actions = ['build', 'trade', 'loan', 'gainTrack', 'gainWorker', 'railAdv', 'updateResource'], $afterAction = 'startTurn')
   {
     $p_id = $p_id ?? $this->game->getActivePlayerId();
     $actionsNames = "'" . implode("','", $actions) . "'";
-
-    return self::getObjectListFromDb("SELECT * FROM log WHERE `action` IN ($actionsNames) AND `player_id` = '$p_id' AND `round` = (SELECT round FROM log WHERE `player_id` = $p_id AND `action` = '$afterAction' ORDER BY log_id DESC LIMIT 1) ORDER BY log_id DESC");
+    $sql = "SELECT * FROM `log` WHERE `action` IN ($actionsNames) AND `player_id` = '$p_id' AND log_id > (SELECT `log_id` FROM `log` WHERE `player_id` = '$p_id' AND `action` = '$afterAction' ORDER BY log_id DESC LIMIT 1) ORDER BY `log_id` DESC";
+    return $this->game->getCollectionFromDB( $sql );
   }
 
   public function getLastTransactions($p_id = null)
   {
     $p_id = $p_id ?? $this->game->getActivePlayerId();
-    return $this->getLastActions(['trade', 'loan', 'hireWorker'], $p_id, 'allowTrades');
+    $actions =  $this->getLastActions($p_id, ['trade', 'loan', 'gainWorker', 'updateResource', 'loanPaid'], 'allowTrades');
+    return $actions;
   }
 
   /*
@@ -273,9 +274,9 @@ class HSDLog extends APP_GameClass
    */
   public function cancelTransactions($p_id = null)
   {
-    $p_Id = $p_id ?? $this->game->getActivePlayerId();
-    $logs = $this->getLastActions(['trade', 'loan'], $p_Id, 'allowTrades');
-    return $this->cancelLogs($logs, $p_Id);
+    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $logs = $this->getLastTransactions($p_id);
+    return $this->cancelLogs($p_id, $logs);
   }
 
   /*
@@ -285,20 +286,20 @@ class HSDLog extends APP_GameClass
   {
     $p_id = $this->game->getActivePlayerId();
     $logs = $this->getLastActions($p_id);
-    return $this->cancelLogs($logs, $p_id);
+    return $this->cancelLogs($p_id, $logs);
   }
 
-  public function cancelLogs($logs, $p_id)
+  public function cancelLogs($p_id, $logs)
   {
-    $ids = [];
-    $moveIds = [];
+    $ids = array();
+    $js_update_arr = array();
+    $move_arr = array();
     foreach ($logs as $log) {
       $args = json_decode($log['action_arg'], true);
-
       switch ($log['action']) {
         case 'build':
           $b_key = $log['piece_id'];
-          $this->DBQuery("UPDATE `building` SET `location`= '1', `player_id`='0' WHERE `building_key`='$b_key'");
+          $this->game->DBQuery("UPDATE `building` SET `location`= '1', `player_id`='0' WHERE `building_key`='$b_key'");
           foreach ($args as $type => $amt) {
             if ($this->game->Resource->resource_map . include($type)) {
               $this->game->Resource->updateResource($p_id, $type, $amt);
@@ -308,23 +309,33 @@ class HSDLog extends APP_GameClass
 
           $building_score = $this->game->Building->getBuildingScoreFromId($b_id);
           $this->game->Score->dbIncScore($p_id, -$building_score);
+          $js_update_arr[] = array('action'=>'build', 'building'=>$this->game->getBuildingFromKey($b_key));
           break;
         case 'trade':
-          foreach ($args['tradeFor'] as $type => $amt)
+          foreach ($args['trade_for'] as $type => $amt)
             $this->Resource->updateResource($p_id, $type, -$amt);
-          foreach ($args['tradeAway'] as $type => $amt)
+          foreach ($args['trade_away'] as $type => $amt)
             $this->Resource->updateResource($p_id, $type, $amt);
+            $js_update_arr[] = array('action'=>'trade', 
+                                'tradeAway_arr'=> $args['trade_away'], 
+                                'tradeFor_arr' => $args['trade_for']);
           break;
         case 'loan':
           $this->game->Resource->updateResource($p_id, 'loan', -1);
           $this->game->Resource->updateResource($p_id, 'silver', -2);
+          $tradeFor_arr[] = array('action'=>'trade', 'tradeAway_arr'=> array('loan'=>'1', 'silver'=>2));
           break;
         case 'loanPaid':
           $this->game->Resource->updateResource($p_id, 'loan', 1);
+
           if (count($args) == 0){
             $type = array_keys($args)[0];
             $this->game->Resource->updateResource($p_id, $type, $args[$type]);
+            $tradeFor_arr[] = array('action'=>'loanPaid' );
+          } else {
+            $tradeFor_arr[] = array('action'=>'loanPaid', );
           }
+          
           break;
         case 'updateResource':
           $type = $args['type'];
@@ -333,16 +344,16 @@ class HSDLog extends APP_GameClass
           break;
         case 'gainWorker':
           $w_key = $args['key'];
-          self::DbQuery("DELETE FROM `workers` WHERE `worker_key`='$w_key'");
-          $this->game->Resource->updateResource($p_id, 'worker', -1);
+          $this->game->DbQuery("DELETE FROM `workers` WHERE `worker_key`='$w_key'");
+          $this->game->Resource->updateResource($p_id, 'workers', -1);
           break;
         case 'gainTrack':
           $r_key = $args['key'];
-          self::DbQuery("DELETE FROM `tracks` WHERE `rail_key`='$r_key'");
-          $this->game->Resource->updateResource($p_id, 'worker', -1);
+          $this->game->DbQuery("DELETE FROM `tracks` WHERE `rail_key`='$r_key'");
+          $this->game->Resource->updateResource($p_id, 'track', -1);
           break;
         case 'railAdv':
-          self::DbQuery("UPDATE `player` SET rail_adv=(rail_adv -1) WHERE `player_id`='$p_id'");
+          $this->game->DbQuery("UPDATE `player` SET rail_adv=(rail_adv -1) WHERE `player_id`='$p_id'");
           break;
       }
 
@@ -353,16 +364,29 @@ class HSDLog extends APP_GameClass
 
       $ids[] = intval($log['log_id']);
       if ($log['action'] != 'startTurn') {
-        $moveIds[] = array_key_exists('move_id', $log) ? intval($log['move_id']) : 0; // TODO remove the array_key_exists
+        $move_arr[] = array_key_exists('move_id', $log) ? intval($log['move_id']) : 0; // TODO remove the array_key_exists
       }
     }
     // Remove the logs
-    if (count($ids)>0)
-      self::DbQuery("DELETE FROM log WHERE `player_id` = '$pId' AND `log_id` IN (" . implode(',', $ids) . ")");
+    if (count($ids)>0){
+      $ids_group = "'".implode("','", $ids)."'";
+      $this->game->DbQuery("DELETE FROM log WHERE `player_id` = '$p_id' AND `log_id` IN ($ids_group)");
+    }
 
     // Cancel the game notifications
-    if (count($moveIds)>0)
-    self::DbQuery("UPDATE gamelog SET `cancel` = 1 WHERE `gamelog_move_id` IN (" . implode(',', $moveIds) . ")");
-    return $moveIds;
+    if (count($move_arr)>0){
+      $move_id_group = "'".implode("','", array_unique($move_arr))."'";
+      $this->game->DbQuery("UPDATE gamelog SET `cancel` = 1 WHERE `gamelog_move_id` IN ($move_id_group)");
+    }
+    return array('log_id' => $move_arr, '' =>$action_arr);
+  }
+
+  /*
+   * getCancelMoveIds : get all cancelled move IDs from BGA gamelog, used for styling the notifications on page reload
+   */
+  public function getCancelMoveIds()
+  {
+    $moveIds = self::getObjectListFromDb("SELECT `gamelog_move_id` FROM gamelog WHERE `cancel` = 1 ORDER BY 1", true);
+    return array_map('intval', $moveIds);
   }
 }

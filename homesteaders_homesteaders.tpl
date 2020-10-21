@@ -153,12 +153,7 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="player_copper score_text">0</span>\
 <div></div>';
 
-var jstpl_otherplayer_board = '\<div class="cp_board">\
-    <div id="scoreicon_p${id}" class="scoreicon icon"></div><span id="scoreCount_p${id}">0</span>\
-</div>';
-
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
-
 var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
 var jptpl_track_log= '<div title = "${type}" class="log_inline_${type}" ></div>';
