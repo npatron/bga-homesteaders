@@ -19,6 +19,7 @@ class HSDresource extends APP_GameClass
     public $special_resource_map = array(
         'vp2' => array('vp'=>2),
         'vp4' => array('vp'=>4),
+        'vp6' => array('vp'=>6),
         'vp8' => array('vp'=>8),
     );
     public $game;
@@ -186,7 +187,7 @@ class HSDresource extends APP_GameClass
     function addTrack($p_id, $reason_string, $origin="", $key = 0){
         $this->game->DbQuery( "INSERT INTO `tracks` (`player_id`) VALUES ($p_id)" );
         $p_tracks = $this->game->getObjectListFromDB( "SELECT `rail_key` FROM `tracks` WHERE `player_id`='$p_id'" );
-        $track_key = $p_tracks[count($p_tracks)-1];
+        $track_key = $p_tracks[count($p_tracks)-1]['rail_key'];
         $values = array('player_id' => $p_id,
                     'player_name' => $this->game->getPlayerName($p_id),
                     'track' => 'track',
@@ -240,20 +241,27 @@ class HSDresource extends APP_GameClass
     }
 
     function payOffLoan($p_id, $gold){
-        if ($gold) $cost = array('gold'=> 1);
-        else $cost = array('silver'=>5);
-        $type = array_keys($cost)[0];
-        if (!$this->canPlayerAfford($p_id, $cost)){
+        if ($gold) {
+            $type = 'gold';
+            $amt = 1;
+        } else {
+            $type ='silver';
+            $amt = 5;
+        }
+        if (!$this->canPlayerAfford($p_id, array($type=>$amt))){
             throw new BgaUserException( _("You do not have enough ".$type ) );
         }
-        $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays ${loan} {arrow} ${type}' ), array(
+        if (!$this->canPlayerAfford($p_id, array('loan'=>1))){
+            throw new BgaUserException( _("You do have no DEBT to pay" ) );
+        }
+        $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays ${loan} ${arrow} ${type}' ), array(
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
             'loan' => 'loan',
             'arrow' => 'arrow',
-            'type' => $type,
+            'type' => array('type'=>$type, 'amount'=>$amt),
           ) );
-        $this->updateResource($p_id, $type, -($cost[$type]));
+        $this->updateResource ($p_id, $type, -$amt);
         $this->updateResource ($p_id, 'loan', -1);
     }
     
@@ -372,7 +380,7 @@ class HSDresource extends APP_GameClass
     function pay($p_id, $silver, $gold, $reason_string, $key=0){
         $cost = array('gold'=>$gold, 'silver'=>$silver);
         if (!$this->canPlayerAfford($p_id, $cost)){
-            throw new $this->BgaUserException( _("Not enough resources. Take loan(s) or trade") );
+            throw new BgaUserException( _("Not enough resources. Take loan(s) or trade") );
         }
         if ($key != 0){
             $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string, 'auction', $key);
@@ -514,12 +522,12 @@ class HSDresource extends APP_GameClass
                 $tradeFor['silver'] = 1;
             break;
             default: 
-                throw new $this->BgaVisibleSystemException ('Invalid TradeAction: ' + $tradeAction);
+                throw new BgaVisibleSystemException ('Invalid TradeAction: ' + $tradeAction);
         }
         if (!$this->canPlayerAfford($p_id, $tradeAway)){
-            throw new $this->BgaUserException( _("You cannot afford to make this trade"));
+            throw new BgaUserException( _("You cannot afford to make this trade") );
         }
-        if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_MARKET)){
+        if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_GENERAL_STORE)){
             $tradeFor = $this->updateKeyOrCreate($tradeFor, 'silver', 1);
         }
         $buy_sell = ($sell?'Sells':"Buys");

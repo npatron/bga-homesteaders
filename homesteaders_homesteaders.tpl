@@ -60,7 +60,7 @@
     <div id='future_auction_zone' class="noshow useFont"></div></div>
     <div id='hidden_bld'>
         <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a><!--
--->      <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
+-->     <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
 -->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a><!--
 -->     <div id='past_building_zone' class="whiteblock main_building_zone noshow"> </div><!--
     --> <div id='future_building_zone' class="whiteblock main_building_zone noshow"> </div>

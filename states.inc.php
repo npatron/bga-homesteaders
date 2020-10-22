@@ -224,6 +224,7 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} may confirm actions '),
         "descriptionmyturn" => clienttranslate('${you} may confirm actions '),
         "type" => "activeplayer",
+        "action" => "stSetupTrade",
         "possibleactions" => array( "done", "undo" ),
         "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
                                 "done"      => STATE_END_BUILD,)

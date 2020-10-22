@@ -255,7 +255,7 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
         if ($w_owner != $cur_p_id){ throw new BgaUserException("This is not your worker.");}
-        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves a ${type} to ${building_name}' ), array(
+        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${type} to ${building_name}' ), array(
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
             'building_key' => $b_key,
@@ -271,13 +271,8 @@ class homesteaders extends Table
     public function playerDonePlacingWorkers ()
     {
         $p_id = $this->getCurrentPlayerId();
-        $this->notifyAllPlayers( "playerPass", clienttranslate( '${player_name} is done assigning ${type}' ), array(
-            'player_id' => $p_id,
-            'player_name' => $this->getCurrentPlayerName(),
-            'type' => 'worker',
-        ) );
         $this->Resource->collectIncome($p_id);
-        $this->gamestate->setPlayerNonMultiactive( $this->getCurrentPlayerId() , '' );
+        $this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
     }
 
     /*** Player Bid Phase ***/
@@ -419,7 +414,7 @@ class homesteaders extends Table
         $this->gamestate->nextState( 'done' );
     }
 
-    public function playerCopperForVp ($goldAsCopper= false) {
+    public function playerCopperForVp ($goldAsCopper) {
         $this->checkAction( "auctionBonus" );
         $act_p_id = $this->getActivePlayerId();
         $costType = ($goldAsCopper?'gold':'copper');
@@ -429,9 +424,7 @@ class homesteaders extends Table
         }
         $auc = $this->getGameStateValue('current_auction');
         
-        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION "+$auc, 'auction', $auc);
-        //$this->Resource->updateAndNotifyPayment($act_p_id, 'copper', 1, 'Auction Bonus', 'auction', $auc);
-        //$this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 4, 'Auction Bonus', 'auction', $auc);
+        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION ".$auc, 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -445,9 +438,7 @@ class homesteaders extends Table
             throw new BgaUserException( _("You need a ".strtoupper($costType)." to take this action ") );
         }
         $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION "+$auc, 'auction', $auc);
-        //$this->Resource->updateAndNotifyPayment($act_p_id, 'cow', 1, 'Auction Bonus', 'auction', $auc);
-        //$this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 4, 'Auction Bonus', 'auction', $auc);
+        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION ".$auc, 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -459,9 +450,7 @@ class homesteaders extends Table
             throw new BgaUserException( _("You need a FOOD to take this action ") ); 
         }
         $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, array('food'=>1), array('vp2'=>1), "AUCTION "+$auc, 'auction', $auc);
-        //$this->Resource->updateAndNotifyPayment($act_p_id, 'food', 1, 'Auction Bonus','auction', $auc);
-        //$this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 2, 'Auction Bonus','auction', $auc);
+        $this->Resource->specialTrade($act_p_id, array('food'=>1), array('vp2'=>1), "AUCTION ".$auc, 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -490,15 +479,8 @@ class homesteaders extends Table
         $this->checkAction('undo');
         // undo all actions since beginning of STATE_PAY_AUCTION
 
-        $transactions = $this->Log->getLastActions();
-        $move_ids = $this->Log->cancelPhase();
-        $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
-            'player_name' => $this->getActivePlayerName(),
-            'transactions' => $transactions,
-            'move_ids' => $move_ids,
-            'player_id' => $this->getActivePlayerId()));
-
-        $this->gamestate->nextState('restartTurn');
+        $this->Log->cancelPhase();
+        $this->gamestate->nextState('undoTurn');
     }
         
     public function playerCancelTransactions()
@@ -512,12 +494,7 @@ class homesteaders extends Table
         }
 
         // Undo the turn
-        $log_ids = $this->Log->cancelTransactions($p_id);
-        $this->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels their transactions'), array(
-            'player_name' => $this->getPlayerName($p_id),
-            'transactions' => $transactions,
-            'log_ids' => $log_ids,
-            'player_id' => $p_id));
+        $this->Log->cancelTransactions($p_id);
     }
 
     /** endBuildRound */
@@ -558,46 +535,39 @@ class homesteaders extends Table
 
     function argPayWorkers()
     {
-        $sql = "SELECT `player_id`, `workers` FROM `resources`";
-        $worker_counts = $this->getCollectionFromDB($sql);
+        $worker_counts = $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
         return array('worker_counts'=>$worker_counts);
     }
 
     function argValidBids() {
-        $act_p_id = $this->getActivePlayerId();
-        $valid_bids = $this->Bid->getValidBids($act_p_id);
+        $valid_bids = $this->Bid->getValidBids($this->getActivePlayerId());
         return array("valid_bids"=>$valid_bids );
     }
 
     function argRailBonus() {
-        $act_p_id = $this->getActivePlayerId();
-        $rail_options= $this->Resource->getRailAdvBonusOptions($act_p_id);
+        $rail_options= $this->Resource->getRailAdvBonusOptions($this->getActivePlayerId());
         return array("rail_options"=>$rail_options);
     }
 
     function argAuctionCost() {
-        $act_p_id = $this->getActivePlayerId();
-        $bid_cost = $this->Bid->getBidCost($act_p_id);
+        $bid_cost = $this->Bid->getBidCost($this->getActivePlayerId());
         return array("auction_cost"=>$bid_cost);
     }
 
     function argAllowedBuildings() {
-        $act_p_id = $this->getActivePlayerId();
         $build_type_options = $this->Auction->getCurrentAuctionBuildTypeOptions();
         $buildings = $this->Building->getAllowedBuildings($build_type_options);
-        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($act_p_id, BLD_RIVER_PORT);
+        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($this->getActivePlayerId(), BLD_RIVER_PORT);
         return(array("allowed_buildings"=> $buildings,
                     "riverPort"=>$ownsRiverPort,));
     }
 
     function argTrainStationBuildings() {
-        $act_p_id = $this->getActivePlayerId();
         $build_type_options = $this->Auction->parseBuildTypeOptions('15');// all
         $buildings = $this->Building->getAllowedBuildings($build_type_options);
-        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($act_p_id, BLD_RIVER_PORT);    
+        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($this->getActivePlayerId(), BLD_RIVER_PORT);    
         return(array("allowed_buildings"=> $buildings,
                     "riverPort"=>$ownsRiverPort,));
-        
     }
 
     function argBuildingBonus() {
@@ -607,7 +577,9 @@ class homesteaders extends Table
 
     function argBonusOption() {
         $auction_bonus = $this->getGameStateValue( 'auction_bonus');
-        return (array("auction_bonus"=> $auction_bonus));
+        $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($this->getActivePlayerId(), BLD_RIVER_PORT);    
+        return (array("auction_bonus"=> $auction_bonus, 
+                      "riverPort" => $ownsRiverPort));
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -625,13 +597,6 @@ class homesteaders extends Table
         $round_number = $this->getGameStateValue('round_number');
 
         $this->Building->updateBuildingsForRound($round_number);
-        // update Auctions.  I think this is already done, trying out removing it here.
-        /*if ($round_number>1){
-            $last_round = $round_number -1;
-            $sql = "UPDATE auctions SET location = '".AUC_LOC_DISCARD."' WHERE position = '$last_round';";
-            self::DbQuery( $sql );
-            //$this->Auction->updateClientAuctions($round_number);
-        }*/
         $this->gamestate->nextState( );
     }
 
@@ -650,25 +615,26 @@ class homesteaders extends Table
     {
         $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = $this->getCollectionFromDB( $sql );
-        //$players = array();
+        $players = array();
         foreach($resources as $player_id => $player){
-// currently just auto-paying with silver, 
-// TODO: make this toggleable.
-            //if ($player['gold'] == 0 && $player['trade'] == 0){//no decisions just pay.
-            $silver = $player['silver'];
-            $worker_cost = $player['workers'];
-            while ($silver < $worker_cost){// forced loan.
-                $silver +=2;
-                $this->playerTakeLoan($player_id);
-            }
-            $this->Resource->updateAndNotifyPayment($player_id, 'silver', $player['workers'], array('worker'=>'worker'));
-        
-            /*} else {
+            // TODO: make this toggleable.
+            if ($player['gold'] == 0 && $player['trade'] == 0){//no decisions just pay.
+                $silver = $player['silver'];
+                $worker_cost = $player['workers'];
+                while ($silver < $worker_cost){// forced loan.
+                    $silver +=2;
+                    $this->playerTakeLoan($player_id);
+                }
+                $this->Resource->updateAndNotifyPayment($player_id, 'silver', $player['workers'], array('worker'=>'worker'));
+            } else {
                 $players[] = $player_id;
-            }*/
+            }
         }
-        $this->gamestate->nextState('auction');
-        //$this->gamestate->setPlayersMultiactive($players, 'auction');
+        if (count($players) == 0){
+            $this->gamestate->nextState('auction');
+        } else {
+            $this->gamestate->setPlayersMultiactive($players, 'auction');
+        }
     }
     
     function stBeginAuction() {
@@ -788,7 +754,7 @@ class homesteaders extends Table
     }
 
     function stEndGameActions(){
-        $this->Log->startAllPlayerTurns();
+        $this->Log->allowTradesAllPlayers();
         $this->gamestate->setAllPlayersMultiactive( );
     }
 

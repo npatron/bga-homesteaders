@@ -114,7 +114,7 @@ class HSDAuction extends APP_GameClass
                 $next_state = 'endBuild';
             break;
             case AUC_BONUS_6VP_AND_FOOD_VP:
-                $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp', 6, 'Auction Reward', 'auction', $this->game->getGameStateValue('current_auction'));
+                $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp6', 1, 'Auction Reward', 'auction', $this->game->getGameStateValue('current_auction'));
             default:
                 $this->game->setGameStateValue( 'auction_bonus', $bonus);
             break;

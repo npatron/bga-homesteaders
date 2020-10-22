@@ -586,7 +586,7 @@ div#done_trading {
 }
 .score_group {
    display: grid;
-   grid-template-columns: repeat(5, 40px 6px);
+   grid-template-columns: repeat(5, 36px 10px);
    grid-template-rows: 40px 40px;
 }
 .score_token {
@@ -617,7 +617,7 @@ div#done_trading {
    transform: scale(.6);
    grid-column: 3 / 4;
    grid-row: 1 / 2;
-   left: -4px;
+   left: -3px;
    top: -5px;
 }
 .player_silver {
@@ -723,7 +723,7 @@ div#done_trading {
    transform: scale(.38, .45);
    grid-column: 7 / 8;
    grid-row: 2 / 3;
-   left: -19px;
+   left: -21px;
    top: -9px;
 }
 .player_cow {
@@ -738,7 +738,7 @@ div#done_trading {
    transform: scale(.42, .55);
    grid-column: 9 / 10;
    grid-row: 2 / 3;
-   left: -16px;
+   left: -17px;
    top: -5px;
 }
 .player_copper {

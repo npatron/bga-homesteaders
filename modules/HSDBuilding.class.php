@@ -70,7 +70,7 @@ class HSDBuilding extends APP_GameClass
             $values[] = "('".BLD_DEPOT        ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".WOOD.STEEL     ."', '0', '".$vp[BLD_DEPOT]   ."')";
             $values[] = "('".BLD_FORGE        ."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".STEEL.STEEL    ."', '1', '".$vp[BLD_FORGE]   ."')";
             $values[] = "('".BLD_DUDE_RANCH   ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.FOOD      ."', '0', '".$vp[BLD_DUDE_RANCH]   ."')";
-            $values[] = "('".BLD_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0', '".$vp[BLD_RESTARAUNT]   ."')";
+            $values[] = "('".BLD_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COW       ."', '0', '".$vp[BLD_RESTARAUNT]   ."')";
             $values[] = "('".BLD_TERMINAL     ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".STEEL.STEEL    ."', '0', '".$vp[BLD_TERMINAL]   ."')";
             $values[] = "('".BLD_TRAIN_STATION."','".TYPE_INDUSTRIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0', '".$vp[BLD_TRAIN_STATION]   ."')";
         }
@@ -336,8 +336,8 @@ class HSDBuilding extends APP_GameClass
             $values['arrow'] = "arrow";
         }
         $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
-        $this->game->Log->buyBuilding($p_id, $b_id, $b_cost);
-        $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
+        $this->game->Log->buyBuilding($p_id, $b_key, $b_cost);
+        $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('last_building', $b_key);
         
@@ -371,6 +371,10 @@ class HSDBuilding extends APP_GameClass
             default:
                 return BUILD_BONUS_NONE;
         }
+    }
+
+    function getBuildingScoreFromKey($b_key){
+        return ($this->getBuildingScoreFromId($this->getBuildingIdFromKey($b_key)));
     }
 
     function getBuildingScoreFromId($b_id) {

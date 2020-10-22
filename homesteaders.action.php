@@ -73,7 +73,7 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function redoTurn() {
+  public function cancelTurn() {
     self::setAjaxMode( );
     $this->game->playerCancelPhase();
     self::ajaxResponse( );
@@ -171,13 +171,15 @@ class action_homesteaders extends APP_GameAction
 
   public function copperForVp (){
     self::setAjaxMode( );
-    $this->game->playerCopperForVp( );
+    $goldAsCopper = self::getArg( "useGold", AT_bool, true);
+    $this->game->playerCopperForVp($goldAsCopper );
     self::ajaxResponse( );
   }
 
   public function cowForVp (){
     self::setAjaxMode( );
-    $this->game->playerCowForVp( );
+    $goldAsCow = self::getArg( "useGold", AT_bool, true);
+    $this->game->playerCowForVp($goldAsCow );
     self::ajaxResponse( );
   }
 

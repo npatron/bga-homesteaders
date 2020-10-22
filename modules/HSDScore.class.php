@@ -38,18 +38,9 @@ class HSDScore extends APP_GameClass
 
     function UpdateEndgameScores(){
         $players = $this->game->loadPlayersBasicInfos();
-        $allScores = array();
         foreach($players as $p_id=>$player){
             $p_score = $this->calculateEndgameScore($p_id);
-            $allScores[$p_id]=$p_score;
-            /*$this->dbSetScore($p_id, $p_score['total']);
-            $p_silver = $this->game->Resource->getPlayerResourceAmount($p_id,'silver');
-            $this->dbSetAuxScore($p_id, $p_silver);
-            // TODO: add loggers for the different score categories.
-            // $this->setStat($value, $name, $player_id = NULL);*/
         }
-        var_dump($allScores);
-        die('ok');
     }
 
     function calculateEndgameScore($p_id){
@@ -58,26 +49,30 @@ class HSDScore extends APP_GameClass
         // Score comes from these places.
         // VP tokens
         $vp_tokens = $this->getVPTokens($p_id);
+        $this->game->setStat($vp_tokens, 'vp_chits', $p_id);
         // Buildings
         $bld_score = $this->dbGetScore($p_id);
+        $this->game->setStat($bld_score, 'building_vp', $p_id);
         // Building VP's
-        $bld_vps = $this->getPlayerVPsFromBuildings($p_id);
-        $bld_bonus_score = $bld_vps['vp'];
+        $bld_bonus_score =  $this->getPlayerVPsFromBuildings($p_id);
         $bld_res_score = $bld_bonus_score[TYPE_RESIDENTIAL];
         $bld_com_score = $bld_bonus_score[TYPE_COMMERCIAL];
         $bld_ind_score = $bld_bonus_score[TYPE_INDUSTRIAL];
-        $bld_sp_score = $bld_bonus_score[TYPE_SPECIAL];
-        $bld_cnt = $bld_vps['bld']; // can be used for updating player stats.
+        $bld_sp_score =  $bld_bonus_score[TYPE_SPECIAL];
         
         $vp_res = $this->getPlayerVPFromResources($p_id);
         // 2VP per gold
         $gold = $vp_res['gold'];
+        $this->game->setStat($gold, 'vp_gold', $p_id);
         // 2VP per cow
         $cow = $vp_res['cow'];
+        $this->game->setStat($cow, 'vp_cow', $p_id);
         // 2VP per Copper
         $copper = $vp_res['copper'];
+        $this->game->setStat($copper, 'vp_copper', $p_id);
         // 1 + 2 + 3 + 4 + 5 etc for loans
         $loans = $this->getScoreFromLoans($p_id);
+        $this->game->setStat($loans, 'vp_loan', $p_id);
         $allScores = array(
             'vp'   => $vp_tokens,
             'bld'  => $bld_score,
@@ -95,7 +90,9 @@ class HSDScore extends APP_GameClass
             $total += $val;
         }
         $allScores['total'] = $total;
-        $allScores['bld_cnt'] = $bld_cnt;
+        $this->dbSetScore($p_id, $total);
+        $p_silver = $this->game->Resource->getPlayerResourceAmount($p_id,'silver');
+        $this->dbSetAuxScore($p_id, $p_silver);
         return $allScores;
     }
 
@@ -134,51 +131,67 @@ class HSDScore extends APP_GameClass
         $counts['worker'] = $this->game->getUniqueValueFromDB("SELECT `workers` FROM `resources` WHERE `player_id`='$p_id'");
         $counts['track'] = $this->game->getUniqueValueFromDB("SELECT `track` FROM `resources` WHERE `player_id`='$p_id'");
         
+        $this->game->setStat(count($p_buildings), 'buildings', $p_id);
+        $this->game->setStat($counts[TYPE_RESIDENTIAL], 'residential', $p_id);
+        $this->game->setStat($counts[TYPE_COMMERCIAL], 'industrial', $p_id);
+        $this->game->setStat($counts[TYPE_INDUSTRIAL], 'commercial', $p_id);
+        $this->game->setStat($counts[TYPE_SPECIAL],    'special', $p_id);
+
         $vps = array(TYPE_RESIDENTIAL=>0,
                      TYPE_COMMERCIAL=>0,
                      TYPE_INDUSTRIAL=>0,
                      TYPE_SPECIAL=>0,);
         foreach($p_buildings as $b_key => $building){
             $b_type = $p_buildings[$b_key]['b_type'];
-            switch($building[$b_key]['b_id']){
+            $b_id   = $p_buildings[$b_key]['b_id']; 
+            switch($b_id){
                 case BLD_DUDE_RANCH:
                 case BLD_CIRCUS:
+                    $vps[$b_type] += $counts['worker'];
+                    $this->game->setStat($counts['worker'], `bonus_vp_${b_id}`, $p_id);
+                break;
                 case BLD_RAILWORKERS_HOUSE: // track worker
-                    $vps[$b_type]+=$counts['worker'];
-                    if ($building[$b_key]['b_id'] != BLD_RAILWORKERS_HOUSE) break;
+                    $vps[$b_type] += $counts['worker'] + $counts['track'];
+                    $this->game->setStat($counts['worker'] + $counts['track'], `bonus_vp_${b_id}`, $p_id);
+                     break;
                 case BLD_DEPOT: 
                 case BLD_TERMINAL:
-                    $vps[$b_type]+=$counts['track'];
+                    $vps[$b_type] += $counts['track'];
+                    $this->game->setStat($counts['track'], `bonus_vp_${b_id}`, $p_id);
                 break;
                 case BLD_STABLES: 
                 case BLD_FAIRGROUNDS:
-                    $vps[$b_type]+=$counts[TYPE_RESIDENTIAL];
+                    $vps[$b_type] += $counts[TYPE_RESIDENTIAL];
+                    $this->game->setStat($counts[TYPE_RESIDENTIAL], `bonus_vp_${b_id}`, $p_id);
                 break;
                 case BLD_LAWYER:
                 case BLD_TOWN_HALL:
-                    $vps[$b_type]+=$counts[TYPE_COMMERCIAL];
+                    $vps[$b_type] += $counts[TYPE_COMMERCIAL];
+                    $this->game->setStat($counts[TYPE_COMMERCIAL], `bonus_vp_${b_id}`, $p_id);
                 break;
                 case BLD_BOARDING_HOUSE:
                 case BLD_FACTORY:
-                    $vps[$b_type]+=$counts[TYPE_INDUSTRIAL];
+                    $vps[$b_type] += $counts[TYPE_INDUSTRIAL];
+                    $this->game->setStat($counts[TYPE_INDUSTRIAL], `bonus_vp_${b_id}`, $p_id);
                 break;
                 case BLD_BANK:
                 case BLD_RESTARAUNT:
-                    $vps[$b_type]+=$counts[TYPE_SPECIAL];
+                    $vps[$b_type] += $counts[TYPE_SPECIAL];
+                    $this->game->setStat($counts[TYPE_SPECIAL], `bonus_vp_${b_id}`, $p_id);
                 break;
                 case BLD_RAIL_YARD:
-                    $vps[$b_type]+=count($p_buildings);
+                    $vps[$b_type] += count($p_buildings);
+                    $this->game->setStat(count($p_buildings), `bonus_vp_${b_id}`, $p_id);
                 break;
                 case BLD_POST_OFFICE:
                     // figure this out later when doing expansion.
                     // vp per loan paid at end of game.
                 break;
                 default:   
-                $vps[$b_type]+= $building['b_vp'];
+                    //$vps[$b_type]+= $building['b_vp'];
                 break;
             }
         }
-        return array('bld' =>$counts, 'vp'=>$vps);
+        return $vps;
     }
-
 }
