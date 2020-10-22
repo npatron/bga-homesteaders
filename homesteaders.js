@@ -30,6 +30,7 @@ function (dojo, declare) {
           dojo.addClass('log_' + logId, 'cancel');
         }
       }
+    const DUMMY_PID= 0;
     const NO_BID   = 0;
     const OUTBID   = 10;
     const BID_PASS = 20;
@@ -218,30 +219,12 @@ function (dojo, declare) {
             for( let p_id in gamedatas.players ) {
                 this.playerCount++;
                 const player = gamedatas.players[p_id];
-                const current_player_color = player.color_name;
-                dojo.removeClass("player_zone_"+current_player_color, "noshow");
-                if( this.player_id == p_id){
-                    const player_board_div = $('player_board_'+p_id);
-                    dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
-                    $isSpectator = false;
-                } 
-                
-                this.player_color[p_id] = current_player_color;
-                this.token_divId[p_id] = 'token_zone_' + current_player_color;
-                this.token_zone[p_id] = new ebg.zone();
-                this.token_zone[p_id].create ( this, 'worker_zone_'+ current_player_color , this.worker_width, this.worker_height );
-                this.player_score_counter[p_id] = new ebg.counter();
-                this.player_score_counter[p_id].create(`player_score_${p_id}`);
-                this.player_score_counter[p_id].setValue(Number(player.score));
-
-                this.player_building_zone_id[p_id] = 'building_zone_'+ this.player_color[p_id];
-                this.player_building_zone[p_id] = new ebg.zone();
-                this.player_building_zone[p_id].create(this, this.player_building_zone_id[p_id], this.tile_width, this.tile_height-3);
+                this.setupPlayerAssets(player);
             }
             if (!$isSpectator)
                 this.orientPlayerZones(gamedatas.player_order);
             if (this.player_count == 2){
-                this.player_color[0] = this.getAvailableColor();
+                this.player_color[DUMMY_PID] = this.getAvailableColor();
             }
 
             this.setupPlayerResources(gamedatas.player_resources);
@@ -259,8 +242,6 @@ function (dojo, declare) {
             this.setupBidTokens(gamedatas.bids);
 
             this.setupRailLines(gamedatas.players);
-            //TODO: Add this can_undo_trades, handler to server_side, and figure out how to track undo-able trades. 
-            // probably use the Log code, that I have neglected.
             this.setupTradeButtons(gamedatas.can_undo_trades);
             this.setupBonusButtons();
             this.setupShowButtons();
@@ -277,6 +258,28 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// Setup Methods
         ///////////////////////////////////////////////////
+
+        setupPlayerAssets: function (player){
+            const current_player_color = player.color_name;
+            dojo.removeClass("player_zone_"+current_player_color, "noshow");
+            if( this.player_id == p_id){
+                const player_board_div = $('player_board_'+p_id);
+                dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
+                $isSpectator = false;
+            } 
+            this.player_color[p_id] = current_player_color;
+            this.token_divId[p_id] = 'token_zone_' + current_player_color;
+            this.token_zone[p_id] = new ebg.zone();
+            this.token_zone[p_id].create ( this, 'worker_zone_'+ current_player_color , this.worker_width, this.worker_height );
+
+            this.player_score_counter[p_id] = new ebg.counter();
+            this.player_score_counter[p_id].create(`player_score_${p_id}`);
+            this.player_score_counter[p_id].setValue(Number(player.score));
+
+            this.player_building_zone_id[p_id] = 'building_zone_'+ this.player_color[p_id];
+            this.player_building_zone[p_id] = new ebg.zone();
+            this.player_building_zone[p_id].create(this, this.player_building_zone_id[p_id], this.tile_width, this.tile_height-3);
+        },
 
         orientPlayerZones: function (order_table){
             let next_pId = this.player_id;    
@@ -440,7 +443,7 @@ function (dojo, declare) {
             dojo.connect($('confirm_trade_btn'), 'onclick', this, 'confirmTradeButton' );
             dojo.addClass('confirm_trade_btn','noshow');
             dojo.connect($('undo_trades_btn'), 'onclick', this, 'undoTransactionsButton');
-            if (!can_undo_trades)
+            if (!can_undo_trades && this.isCurrentPlayerActive())
                 dojo.addClass('undo_trades_btn','noshow');
         },
 
@@ -513,6 +516,11 @@ function (dojo, declare) {
                     break;
                 case 'allocateWorkers':                    
                 break;
+
+                case 'dummyPlayerBid':
+                    const dummy_bid_id = `token_bid_${this.player_color[-1]}`;
+                    dojo.addClass()
+                break;
                 case 'playerBid':
                     const active_bid_id = `token_bid_${this.player_color[this.getActivePlayerId()]}`;
                     dojo.addClass(active_bid_id, 'animated');
@@ -583,29 +591,39 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                     case 'allocateWorkers':
-                            this.last_selected['worker'] ="";
-                            // show workers that are selectable
-                            const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
-                            workers.addClass('selectable');
-                            // also make building_slots selectable.
-                            const building_slots = dojo.query( `#building_zone_${this.player_color[current_player_id]} .worker_slot` );
-                            building_slots.addClass( 'selectable' );
-                            this.addActionButton( 'btn_done',       _('Done'),       'donePlacingWorkers' );
-                            this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
-                            this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray' );
-                            this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
-                        break;
+                        this.last_selected['worker'] ="";
+                        // show workers that are selectable
+                        const workers = dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` );
+                        workers.addClass('selectable');
+                        // also make building_slots selectable.
+                        const building_slots = dojo.query( `#building_zone_${this.player_color[current_player_id]} .worker_slot` );
+                        building_slots.addClass( 'selectable' );
+                        this.addActionButton( 'btn_done',       _('Done'),       'donePlacingWorkers' );
+                        this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
+                        this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray' );
+                        this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
+                    break;
                     case 'payWorkers':    
-                            this.showPaymentSection();
-                            this.silverCost = Number(args.worker_counts[this.player_id].workers);
-                            this.silverCounter.setValue(Math.max(0 , this.silverCost));
-                            this.goldCounter.setValue(this.goldAmount);
-                            
-                            this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
-                            this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
-                            this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray' );
-                            this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
-                        break;
+                        this.showPaymentSection();
+                        this.silverCost = Number(args.worker_counts[this.player_id].workers);
+                        this.silverCounter.setValue(Math.max(0 , this.silverCost));
+                        this.goldCounter.setValue(this.goldAmount);
+                        
+                        this.addActionButton( 'btn_done',      _('Done'),     'donePayingWorkers');
+                        this.addActionButton( 'btn_more_gold', _('Use More Gold '), 'raiseGold', null, false, 'gray');
+                        this.addActionButton( 'btn_trade',     _('Trade'), 'tradeActionButton', null, false, 'gray' );
+                        this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
+                    break;
+                    case 'dummyPlayerBid'://2-player dummy bid phase
+                        for (let bid_key in args.valid_bids) {
+                            const bid = args.valid_bids[bid_key];
+                            const bid_pair = this.getBidPairFromBidNo(bid);
+                            const bid_slot = BID_VAL_ARR[bid_pair.bid_index];
+                            const bid_slot_id = `bid_slot_${bid_pair.auction_no}_${bid_slot}`;
+                            dojo.addClass(bid_slot_id, "selectable" );
+                        }
+                        this.addActionButton( 'btn_confirm', _('Confirm Dummy Bid'), 'confirmDummyBidButton' );
+                    break;
                     case 'playerBid':
                         console.log('entering playerBid');
                         for (let bid_key in args.valid_bids) {// mark bid_slots as selectable
@@ -615,8 +633,8 @@ function (dojo, declare) {
                             const bid_slot_id = `bid_slot_${bid_pair.auction_no}_${bid_slot}`;
                             dojo.addClass(bid_slot_id, "selectable" );
                         }
-                        this.addActionButton( 'btn_confirm', _('Confirm Bid'), 'onSelectConfirmBidButton' );
-                        this.addActionButton( 'btn_pass',    _('Pass'),    'onSelectPassBidButton', null, false, 'red' );
+                        this.addActionButton( 'btn_confirm', _('Confirm Bid'), 'confirmBidButton' );
+                        this.addActionButton( 'btn_pass',    _('Pass'),    'passBidButton', null, false, 'red' );
                     break;
                     case 'getRailBonus':
                         this.last_selected['bonus']  ="";
@@ -1285,6 +1303,20 @@ function (dojo, declare) {
             }
         },
 
+        confirmDummyBidButton: function ( evt )
+        {
+            if( this.checkAction( 'dummy' )){
+                if (this.last_selected['bid'] == ""){
+                    this.showMessage( _("You must select 1 bid_slot"), 'error' );
+                    return;
+                }
+                const bid_loc = this.getBidNoFromSlotId(this.last_selected['bid']);
+                this.ajaxcall( "/homesteaders/homesteaders/confirmDummyBid.html", {lock: true, bid_loc: bid_loc}, this, 
+                function( result ) { this.clearSelectable('bid', true); },
+                 function( is_error) { } );
+            }
+        },
+
         /***** PLAYER BID PHASE *****/
         onClickOnBidSlot: function ( evt ) 
         {
@@ -1300,7 +1332,7 @@ function (dojo, declare) {
             this.updateSelected('bid', bid_loc_divId);
         },
 
-        onSelectPassBidButton: function() {
+        passBidButton: function() {
             if( this.checkAction( 'pass')){
                 this.ajaxcall( "/homesteaders/homesteaders/passBid.html", {lock: true}, this, 
                 function( result ) { this.clearSelectable('bid', true); }, 
@@ -1308,7 +1340,7 @@ function (dojo, declare) {
             }
         },
 
-        onSelectConfirmBidButton: function () 
+        confirmBidButton: function () 
         {
             if( this.checkAction( 'confirmBid')){
                 if (this.last_selected['bid'] == ""){

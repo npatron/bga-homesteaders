@@ -115,6 +115,13 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
+  public function confirmDummyBid (){
+    self::setAjaxMode( );
+    $bid_loc = self::getArg( "bid_loc", AT_posint, true);
+    $this->game->playerConfirmDummyBid( $bid_loc );
+    self::ajaxResponse( );
+  }
+
   public function passBid (){
     self::setAjaxMode( );
     $this->game->playerPassBid( );

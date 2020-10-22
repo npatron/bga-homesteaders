@@ -117,9 +117,9 @@ class HSDBid extends APP_GameClass
     function outbidPlayer($p_id) {
         if (!$this->isPlayerOutbid($p_id)){
             $this->game->DbQuery( "UPDATE `bids` SET `outbid` = '1' WHERE `player_id` = '$p_id'");
-            if ($p_id == 0){ 
+            if ($p_id == DUMMY_PID){ // don't add logs for dummy player 
                 $this->updateDummyBidWeight(false);
-            } else { // don't add logs for dummy player
+            } else { 
                 $outbid_byId = $this->game->getActivePlayerId();
                 $this->game->Log->outbidPlayer($p_id, $outbid_byId);
             }
@@ -196,9 +196,9 @@ class HSDBid extends APP_GameClass
         }
     }
 
-    function updateDummyBidWeight($dummy_win){
+    function updateDummyBidWeight($down){
         $val = $this->game->getGameStateValue ('dummy_bid_val');
-        if ($dummy_win){ // on outbid
+        if ($down){ // on outbid
             $val = max(1, $val -1); // 1 or -1; (1-> 3-silver)
         } else { // on pass
             $val = min(6, $val +1); // 6 or +1; (6-> 9-silver)
@@ -209,7 +209,7 @@ class HSDBid extends APP_GameClass
     function getDummyBidOptions(){
         $dummy_1 = $this->game->getGameStateValue ('dummy_bid_val');
         $dummy_2 = $dummy_1+10;
-        return (array(0=>$dummy_1,1=> $dummy_2));
+        return ([$dummy_1, $dummy_2]);
     }
 
 }

@@ -46,8 +46,8 @@ class HSDLog extends APP_GameClass
       $this->game->initStat('player', 'bonus_vp_34', 0, $player_id);
       $this->game->initStat('player', 'bonus_vp_35', 0, $player_id);
 
-      $this->game->initStat('player', 'buildings', 0, $player_id);
-      $this->game->initStat('player', 'residential', 0, $player_id);
+      $this->game->initStat('player', 'buildings', 1, $player_id);
+      $this->game->initStat('player', 'residential', 1, $player_id);
       $this->game->initStat('player', 'industrial', 0, $player_id);
       $this->game->initStat('player', 'commercial', 0, $player_id);
       $this->game->initStat('player', 'special', 0, $player_id);
