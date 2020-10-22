@@ -70,7 +70,7 @@ class HSDBuilding extends APP_GameClass
             $values[] = "('".BLD_DEPOT        ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".WOOD.STEEL     ."', '0', '".$vp[BLD_DEPOT]   ."')";
             $values[] = "('".BLD_FORGE        ."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".STEEL.STEEL    ."', '1', '".$vp[BLD_FORGE]   ."')";
             $values[] = "('".BLD_DUDE_RANCH   ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.FOOD      ."', '0', '".$vp[BLD_DUDE_RANCH]   ."')";
-            $values[] = "('".BLD_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0', '".$vp[BLD_RESTARAUNT]   ."')";
+            $values[] = "('".BLD_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COW       ."', '0', '".$vp[BLD_RESTARAUNT]   ."')";
             $values[] = "('".BLD_TERMINAL     ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".STEEL.STEEL    ."', '0', '".$vp[BLD_TERMINAL]   ."')";
             $values[] = "('".BLD_TRAIN_STATION."','".TYPE_INDUSTRIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0', '".$vp[BLD_TRAIN_STATION]   ."')";
         }
@@ -254,7 +254,7 @@ class HSDBuilding extends APP_GameClass
             // add 'settlement' and 'settlement/town' buildings
             $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` in ('".STAGE_SETTLEMENT."','".STAGE_SETTLEMENT_TOWN."');";
             $this->game->DbQuery( $sql );
-            $this->updateClientBuildings();
+            $this->updateClientBuildings(_("SETTLEMENT"));
         }
         //rd 5 setup buildings
         if($round_number == 5){
@@ -264,7 +264,7 @@ class HSDBuilding extends APP_GameClass
             // remove settlement buildings (not owned)
             $sql = "UPDATE `buildings` SET `location` = '".BLD_LOC_DISCARD."' WHERE `stage` = '".STAGE_SETTLEMENT."' AND `location` = '".BLD_LOC_OFFER."'";
             $this->game->DbQuery( $sql );
-            $this->updateClientBuildings();
+            $this->updateClientBuildings(_('TOWN'));
         }
         //rd 9 setup buildings
         if($round_number == 9){
@@ -274,21 +274,21 @@ class HSDBuilding extends APP_GameClass
             // add city buildings
             $sql = "UPDATE buildings SET location = '".BLD_LOC_OFFER."' WHERE `stage` = '".STAGE_CITY."';";
             $this->game->DbQuery( $sql );
-            $this->updateClientBuildings();
+            $this->updateClientBuildings(_('CITY'));
         }
         // Final round (just income).
         if($round_number == 11){
             $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
             $this->game->DbQuery( $sql );
-            $this->updateClientBuildings();
+            $this->updateClientBuildings('Final');
         }
     }
 
     /** cause client to update building Stacks */
-    function updateClientBuildings(){
+    function updateClientBuildings($era){
         $buildings = $this->getAllBuildings();
-        $this->game->notifyAllPlayers( "updateBuildingStocks", clienttranslate( 'Updating main Building Stocks' ), array(
-            'buildings' => $buildings,));
+        $this->game->notifyAllPlayers( "updateBuildingStocks", clienttranslate( 'Setting up Buildings for ${era} Era' ), array(
+            'buildings' => $buildings, 'era'=>$era));
     }
 
     /***** BUYING Building *****/
@@ -324,19 +324,20 @@ class HSDBuilding extends APP_GameClass
         }
         
         $this->payForBuilding($p_id, $b_cost);
-        $message = '${player_name} builds a ${building_name}';
+        $message = '${player_name} builds ${building_name}';
         $building['p_id'] = $p_id;
         $values = array(  'player_id' => $p_id,
                         'player_name' => $this->game->getPlayerName($p_id),
                         'building' => $building,
                         'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)),);
         if (count($b_cost)>0) {
-            $message .= ' for ${resources}';
+            $message .= ' ${arrow} ${resources}';
             $values['resources'] = $b_cost;
+            $values['arrow'] = "arrow";
         }
         $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
-        $this->game->Log->buyBuilding($p_id, $b_id);
-        $sql = "UPDATE `buildings` SET `location`= ".BLD_LOC_PLAYER.", `player_id`=".$p_id." WHERE `building_key`=".$b_key;
+        $this->game->Log->buyBuilding($p_id, $b_key, $b_cost);
+        $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('last_building', $b_key);
         
@@ -370,6 +371,10 @@ class HSDBuilding extends APP_GameClass
             default:
                 return BUILD_BONUS_NONE;
         }
+    }
+
+    function getBuildingScoreFromKey($b_key){
+        return ($this->getBuildingScoreFromId($this->getBuildingIdFromKey($b_key)));
     }
 
     function getBuildingScoreFromId($b_id) {
@@ -447,7 +452,7 @@ class HSDBuilding extends APP_GameClass
                 case BLD_CHURCH:
                 case BLD_FACTORY:
                 case BLD_LAWYER:
-                    $income_b_id[$b_id]['vp'] = 2;
+                    $income_b_id[$b_id]['vp2'] = 1;
                     break;
                 case BLD_WORKSHOP:
                     $income_b_id[$b_id]['vp'] = 1;
@@ -514,10 +519,10 @@ class HSDBuilding extends APP_GameClass
                         break;
                     case BLD_MEATPACKING_PLANT:
                     case BLD_FORGE:
-                        if(array_key_exists('vp', $income_b_id[$b_id])){
-                            $income_b_id[$b_id]['vp']+=2;
+                        if(array_key_exists('vp2', $income_b_id[$b_id])){
+                            $income_b_id[$b_id]['vp2']+=1;
                         } else {
-                            $income_b_id[$b_id]['vp']=2;
+                            $income_b_id[$b_id]['vp2']=1;
                         }
                         break;
                 }

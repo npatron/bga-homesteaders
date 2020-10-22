@@ -19,9 +19,8 @@
 /********* You can start writing your CSS below this line: **********/
 
 @font-face {
-   font-family: Old Standard TT;
+   font-family: 'Old Standard TT';
    font-style: normal;
-   font-variant: small-caps;
    font-weight: 400;
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
@@ -37,22 +36,46 @@ div#board {
 }
 
 .useFont {
-   font-family: 'Old Standard TT';
+   font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
+}
+.biggerFont {
+   font: italic 30px/1 "Old Standard TT";
 }
 .logFont {
    font-family: 'Old Standard TT';
 }
+/* Cancelled notification messages */
+.log.cancel {
+   color: #c62828 !important;
+   text-decoration: line-through;
+ }
 
+/*=========================
+   Button css
+  =========================*/
+#btn_more_gold{
+   display: inline-flex;
+}
+#btn_less_gold{
+   display: inline-flex;
+}
+#btn_gold_cow{
+   display: inline-flex;
+}
+#btn_gold_copper{
+   display: inline-flex;
+}
 /*=========================
     Bid Slot Locations (on board)
   =========================*/
 div#pending_bids{
    position: absolute;
+   top: 1%;
+   left: 40%; 
+
    height: 50px;
    width: 200px;
-   top: 1%;
-   left: 40%;
 }
 .bid_slot {
    position: absolute;
@@ -554,20 +577,173 @@ div#done_trading {
     Player board
   =========================*/
 .score {
-   transform: scale(.8);
+   /* transform: scale(.8); */
    position: relative;
-   display: inline-block;
-   margin-left: 3px;
-   margin-top: -0px;
 }
 .score_text {
    position: relative;
-   display: inline-block;
-   left: 2px;
-   top: -7px;
+   margin: auto;
 }
 .score_group {
-   height: 35px;
+   display: grid;
+   grid-template-columns: repeat(5, 36px 10px);
+   grid-template-rows: 40px 40px;
+}
+.score_token {
+   background-image: url('img/drawn_tokens.png');
+   position: relative;
+   margin: auto;
+   background-size: 375px 150px;
+}
+
+.score_vp{
+   background-position: -212.5px 0px;
+   width: 56px;
+   height: 58px;
+   transform: scale(.5);
+   grid-column: 1 / 2;
+   grid-row: 1 / 2;
+   left: -5px;
+   top: -9px;
+}
+.player_vp {
+   grid-column: 2 / 3;
+   grid-row: 1 / 2;
+}
+.score_silver{
+   background-position: -107px 0px;
+   width: 51px;
+   height: 49.5px;
+   transform: scale(.6);
+   grid-column: 3 / 4;
+   grid-row: 1 / 2;
+   left: -3px;
+   top: -5px;
+}
+.player_silver {
+   grid-column: 4 / 5;
+   grid-row: 1 / 2;
+}
+
+.score_gold{
+   background-position: -20.5px 0px;
+   width: 47.5px;
+   height: 46px;
+   transform: scale(.6);
+   grid-column: 5 / 6;
+   grid-row: 1 / 2;
+   left: -3px;
+   top: -3px;
+}
+.player_gold {
+   grid-column: 6 / 7;
+   grid-row: 1 / 2;
+}
+
+.score_trade{
+   background-position: -158px 0px;
+   width: 48px;
+   height: 47px;
+   transform: scale(.6);
+   grid-column: 7 / 8;
+   grid-row: 1 / 2;
+   left: -2px;
+   top: -4px;
+}
+.player_trade {
+   grid-column: 8 / 9;
+   grid-row: 1 / 2;
+}
+
+.score_loan {
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -86% 50%;
+   height: 20px;
+   width: 20px;
+   transform: scale(1.7);
+   background-size: 75px 30px;
+   grid-column: 9 / 10;
+   grid-row: 1 / 2;
+   left: 12px;
+   top: 9px;
+}
+.player_loan {
+   grid-column: 10 / 11;
+   grid-row: 1 / 2;
+}
+
+.score_wood{
+   background-position: 0px 0px;
+   width: 20.5px;
+   height: 51px;
+   transform: scale(.7) rotate(45deg);
+   grid-column: 1 / 2;
+   grid-row: 2 / 3;
+   top: -4px;
+   left: 3px;
+}
+.player_wood {
+   grid-column: 2 / 3;
+   grid-row: 2 / 3;
+}
+
+.score_food{
+   background-position: -68.5px 0px;
+   width: 38.5px;
+   height: 41px;
+   transform: scale(.7);
+   grid-column: 3 / 4;
+   grid-row: 2 / 3;
+   left: 2px;
+}
+.player_food {
+   grid-column: 4 / 5;
+   grid-row: 2 / 3;
+}
+
+.score_steel{
+   background-position: -96.5px -111px;
+   width: 40px;
+   height: 38.5px;
+   transform: scale(.7);
+   grid-column: 5 / 6;
+   grid-row: 2 / 3;
+   left: 2px;
+   top: -1px;
+}
+.player_steel {
+   grid-column: 6 / 7;
+   grid-row: 2 / 3;
+}
+
+.score_cow{
+   background-position: -51.5px -50px;
+   width: 85.5px;
+   height: 61.5px;
+   transform: scale(.38, .45);
+   grid-column: 7 / 8;
+   grid-row: 2 / 3;
+   left: -21px;
+   top: -9px;
+}
+.player_cow {
+   grid-column: 8 / 9;
+   grid-row: 2 / 3;
+}
+
+.score_copper{
+   background-position: -136.5px -54px;
+   width: 76px;
+   height: 48px;
+   transform: scale(.42, .55);
+   grid-column: 9 / 10;
+   grid-row: 2 / 3;
+   left: -17px;
+   top: -5px;
+}
+.player_copper {
+   grid-column: 10 / 11;
+   grid-row: 2 / 3;
 }
 
 /*=========================
@@ -608,10 +784,24 @@ div#done_trading {
    height: 29px;
 }
 
-.log_token {
+.log_container {
+   display: inline-flex;
+   flex-direction: row-reverse;
+}
+.token_inline{
    background-image: url('img/drawn_tokens.png');
+   position: relative;
    display: inline-block;
 }
+.log_token {
+   background-image: url('img/drawn_tokens.png');
+   position: relative;
+   overflow: hidden;
+   flex-direction: row-reverse;
+}
+.log_token:not(:last-child) {
+   margin-left: -10px;
+ }
 
 .log_wood{
    background-size: 147.1px 58.8px;
@@ -619,6 +809,9 @@ div#done_trading {
    width: 8px;
    height: 20px;
 }
+.log_wood:not(:last-child) {
+   margin-left: -2px;
+ }
 .log_gold{
    background-size: 157.9px 63.2px;
    background-position: -8.6px 0px;
@@ -650,7 +843,7 @@ div#done_trading {
    height: 20px;
 }
 .log_vp2{
-   background-size: 129.3px 51.7px;
+   background-size: 127.3px 51.7px;
    background-position: -91px -0px;
    width: 19.3px;
    height: 20px;
@@ -667,12 +860,15 @@ div#done_trading {
    width: 20px;
    height: 20.8px;
 }
-/*.log_worker{
+.log_worker{
    background-size: 91.5px 36.6px;
    background-position: 0px -13.2px;
-   width: 13.2px;
+   width: 12.2px;
    height: 20px;
-}*/
+}
+.log_worker:not(:last-child) {
+   margin-left: -8px;
+ }
 .log_cow{
    background-size: 87.7px 35.1px;
    background-position: -12.0px -11.7px;
@@ -685,12 +881,12 @@ div#done_trading {
    width: 20px;
    height: 12.6px;
 }
-/*.log_track{
+.log_track{
    background-size: 194.8px 77.9px;
    background-position: -29.4px -58.4px;
    width: 19.5px;
    height: 20px;
-}*/
+}
 .log_steel{
    background-size: 187.5px 75px;
    background-position: -48.3px -55.3px;
@@ -699,13 +895,12 @@ div#done_trading {
 }
 .log_arrow{
    background-size: 454.5px 181.8px;
-   background-position: -165.5px -141.2px;
+   background-position: -165.5px -135.2px;
    width: 20px;
    height: 17.6px;
 }
 
-.log_track{
-   display: inline-block;
+.log_inline_track{
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 13%;
    height: 26px;
@@ -713,7 +908,7 @@ div#done_trading {
    background-size: 99px 45px;
    display: inline-block;
 }
-.log_loan {
+.log_inline_loan {
    display: inline-block;
    background-image: url('img/rail_debt_85x102.png');
    background-position: -87% 30%;
@@ -721,14 +916,6 @@ div#done_trading {
    height: 21px;
    width: 31px;
    background-size: 115px 63px; 
-}
-.log_worker {
-   display: inline-block;
-   background-image: url('img/tokens_50x50.png');
-   height: 29px;
-   width: 23px;
-   background-size: 175px 80px;
-   background-position: 74% 46%;
 }
 
 .token_track {

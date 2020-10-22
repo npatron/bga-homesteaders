@@ -11,11 +11,9 @@
 
 -->
 <div id ="top">
-    <span id="round_text" class="useFont">{ROUND_STRING}</span><span id="round_number" class="useFont">{ROUND_NUMBER}</span>
-    <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a><!--
---> <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
-    <div id='auction_string' class='whiteblock noshow'<!-- BEGIN auction_string --><span class="auction_string" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string --> 
-    <div id='future_auction_zone' class="noshow useFont"></div></div>
+    <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}</span>  </span>
+    <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a><!--
+--> <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
     <div id="payment_top"> </div> 
     <div id="trade_top"> </div>
     <div id='player_top'> </div>
@@ -25,7 +23,6 @@
 <!-- Auction Board -->
 <div id="board" class="shadow">
     <div id="pending_bids" class="token_zone"> </div>
-
     <!-- BEGIN bid_slot -->
     <div id="bid_slot_{A}_{B}" class="bid_slot"> </div>
     <!-- END bid_slot -->
@@ -59,11 +56,14 @@
 
 <!-- Commmon Building Section-->
 <div id='building_location'>
+    <div id='auction_string' class='whiteblock noshow'><!-- BEGIN auction_string --><span class="auction_string useFont" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string -->
+    <div id='future_auction_zone' class="noshow useFont"></div></div>
     <div id='hidden_bld'>
-        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
+        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a><!--
+-->     <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
 -->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a><!--
--->     <div id='past_building_zone' class="main_building_zone noshow"> </div><!--
-    --> <div id='future_building_zone' class="main_building_zone noshow"> </div>
+-->     <div id='past_building_zone' class="whiteblock main_building_zone noshow"> </div><!--
+    --> <div id='future_building_zone' class="whiteblock main_building_zone noshow"> </div>
     </div>
     <div class="building_stock"><span class="useFont">{BUILDING_STOCK}</span></div>
     <div id="main_building_zone" class="main_building_zone"> </div>
@@ -141,41 +141,22 @@ var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> <
 
 var jstpl_player_board = '\<div class="cp_board">\
     <div class="score_group">\
-    <div id="vpicon_p${id}"     class="token_vp icon score player_vp"></div><span id="vpcount_${id}" class="score_text">0</span>\
-    <div id="silvericon_p${id}" class="token_silver icon score player_silver"></div><span id="silvercount_${id}" class="score_text">0</span>\
-    <div id="tradeicon_p${id}"  class="token_trade icon score player_trade"></div><span id="tradecount_${id}" class="score_text">0</span>\
-    <div id="loanicon_p${id}"   class="token_loan icon score player_loan"></div><span id="loancount_${id}" class="score_text">0</span>\
-    <div id="woodicon_p${id}"   class="token_wood icon score player_wood"></div><span id="woodcount_${id}" class="score_text">0</span>\
-    </div><div class="score_group">\
-    <div id="steelicon_p${id}"  class="token_steel icon score player_steel"></div><span id="steelcount_${id}" class="score_text">0</span>\
-    <div id="goldicon_p${id}"   class="token_gold icon score player_gold"></div><span id="goldcount_${id}" class="score_text">0</span>\
-    <div id="coppericon_p${id}" class="token_copper icon score player_copper"></div><span id="coppercount_${id}" class="score_text">0</span>\
-    <div id="foodicon_p${id}"   class="token_food icon score player_food"></div><span id="foodcount_${id}" class="score_text">0</span>\
-    <div id="cowicon_p${id}"    class="token_cow icon score player_cow"></div><span id="cowcount_${id}" class="score_text">0</span>\
+    <div id="vpicon_p${id}"     class="score_token score_vp score"></div><span id="vpcount_${id}" class="player_vp score_text">0</span>\
+    <div id="silvericon_p${id}" class="score_token score_silver score"></div><span id="silvercount_${id}" class="player_silver score_text">0</span>\
+    <div id="goldicon_p${id}"   class="score_token score_gold score"></div><span id="goldcount_${id}" class="player_gold score_text">0</span>\
+    <div id="tradeicon_p${id}"  class="score_token score_trade score"></div><span id="tradecount_${id}" class="player_trade score_text">0</span>\
+    <div id="loanicon_p${id}"   class="score_loan score score"></div><span id="loancount_${id}" class="player_loan score_text">0</span>\
+    <div id="woodicon_p${id}"   class="score_token score_wood score"></div><span id="woodcount_${id}" class="player_wood score_text">0</span>\
+    <div id="foodicon_p${id}"   class="score_token score_food score"></div><span id="foodcount_${id}" class="player_food score_text">0</span>\
+    <div id="steelicon_p${id}"  class="score_token score_steel score"></div><span id="steelcount_${id}" class="player_steel score_text">0</span>\
+    <div id="cowicon_p${id}"    class="score_token score_cow score"></div><span id="cowcount_${id}" class="player_cow score_text">0</span>\
+    <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="player_copper score_text">0</span>\
 <div></div>';
 
-var jstpl_player_board_alt = '\<div class="cp_board">\
-    <div class="score_group">\
-    <div id="vpicon_p${id}"     class="log_token log_vp score player_vp"></div><span id="vpcount_${id}" class="score_text">0</span>\
-    <div id="silvericon_p${id}" class="log_token log_silver score player_silver"></div><span id="silvercount_${id}" class="score_text">0</span>\
-    <div id="tradeicon_p${id}"  class="log_token log_trade score player_trade"></div><span id="tradecount_${id}" class="score_text">0</span>\
-    <div id="loanicon_p${id}"   class="token_loan icon score player_loan"></div><span id="loancount_${id}" class="score_text">0</span>\
-    </div><div class="score_group">\
-    <div id="woodicon_p${id}"   class="log_token log_wood score player_wood"></div><span id="woodcount_${id}" class="score_text">0</span>\
-    <div id="steelicon_p${id}"  class="log_token log_steel score player_steel"></div><span id="steelcount_${id}" class="score_text">0</span>\
-    <div id="goldicon_p${id}"   class="log_token log_gold score player_gold"></div><span id="goldcount_${id}" class="score_text">0</span>\
-    <div id="coppericon_p${id}" class="log_token log_copper score player_copper"></div><span id="coppercount_${id}" class="score_text">0</span>\
-    <div id="foodicon_p${id}"   class="log_token log_food score player_food"></div><span id="foodcount_${id}" class="score_text">0</span>\
-    <div id="cowicon_p${id}"    class="log_token log_cow score player_cow"></div><span id="cowcount_${id}" class="score_text">0</span>\
-<div></div>';
-
-var jstpl_otherplayer_board = '\<div class="cp_board">\
-    <div id="scoreicon_p${id}" class="scoreicon icon"></div><span id="scoreCount_p${id}">0</span>\
-</div>';
-
-var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token" style="left:${offset}"></div>';
+var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
+var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
-var jptpl_track_log= '<div title = "${type}" class="log_${type}" ></div>';
+var jptpl_track_log= '<div title = "${type}" class="log_inline_${type}" ></div>';
 
 </script>  
 

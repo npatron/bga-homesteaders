@@ -30,6 +30,7 @@ if (!defined('STATE_END_GAME')) {// ensure this block is only invoked once, sinc
     define("STATE_TRAIN_STATION_BUILD",44);
     define("STATE_AUCTION_BONUS",      50);
     define("STATE_CHOOSE_BONUS",       51);
+    define("STATE_CONFIRM_AUCTION",    52);
     define("STATE_END_BUILD",          53);
     define("STATE_END_ROUND",          59);
     define("STATE_ENDGAME_ACTIONS",    60);
@@ -76,6 +77,8 @@ $machinestates = array(
         "transitions" => array( "" => STATE_PAY_WORKERS,  )
     ),*/
     
+    // currently enforcing auto-pay of workers just to speed things up, plan to add checkbox for auto-pay option
+    // could just auto-pay if they have enough silver, & less than 5 workers. not sure yet.
     STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),
@@ -157,6 +160,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must pay for auction'),
         "type" => "activeplayer",
         "args" => "argAuctionCost",
+        "action" => "stStartTurn",
         "possibleactions" => array( "trade", "takeLoan", "updateGold", "done" ),
         "transitions" => array( "build" => STATE_CHOOSE_BUILDING, 
                                 "auction_bonus" => STATE_AUCTION_BONUS)
@@ -168,10 +172,12 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may choose a building to build'),
         "type" => "activeplayer",
         "args" => "argAllowedBuildings",
-        "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
-        "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
-                                "auction_bonus" => STATE_AUCTION_BONUS,
-                                "end_build" => STATE_END_BUILD )
+        "action" => "stSetupTrade",
+        "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
+        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
+                                "building_bonus" => STATE_RESOLVE_BUILDING, 
+                                "auction_bonus"  => STATE_AUCTION_BONUS,
+                                "end_build"      => STATE_CONFIRM_AUCTION )
     ),
 
     STATE_RESOLVE_BUILDING =>  array(
@@ -193,10 +199,12 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may build another building'),
         "type" => "activeplayer",
         "args" => "argTrainStationBuildings",
-        "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild" ),
-        "transitions" => array( "building_bonus" => STATE_RESOLVE_BUILDING, 
-                                "auction_bonus" => STATE_AUCTION_BONUS,
-                                "end_build" => STATE_END_BUILD )
+        "action" => "stSetupTrade",
+        "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
+        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
+                                "building_bonus" => STATE_RESOLVE_BUILDING, 
+                                "auction_bonus"  => STATE_AUCTION_BONUS,
+                                "end_build"      => STATE_CONFIRM_AUCTION )
     ),
 
     STATE_AUCTION_BONUS => array(
@@ -205,7 +213,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stGetAuctionBonus",
         "transitions" => array( "bonusChoice" => STATE_CHOOSE_BONUS, 
-                                "endBuild" => STATE_END_BUILD )
+                                "endBuild" => STATE_CONFIRM_AUCTION )
     ),
 
     STATE_CHOOSE_BONUS => array(
@@ -214,9 +222,22 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may recieve a Bonus '),
         "type" => "activeplayer",
         "args" => "argBonusOption",
-        "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan' ),
-        "transitions" => array( "done" => STATE_END_BUILD,
+        "action" => "stSetupTrade",
+        "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan', "undo" ),
+        "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
+                                "done"      => STATE_CONFIRM_AUCTION,
                                 "railBonus" => STATE_RAIL_BONUS )
+    ),
+
+    STATE_CONFIRM_AUCTION => array(
+        "name" => "confirmActions",
+        "description" => clienttranslate('${actplayer} may confirm actions '),
+        "descriptionmyturn" => clienttranslate('${you} may confirm actions '),
+        "type" => "activeplayer",
+        "action" => "stSetupTrade",
+        "possibleactions" => array( "done", "undo" ),
+        "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
+                                "done"      => STATE_END_BUILD,)
     ),
 
     STATE_END_BUILD => array(
@@ -225,7 +246,8 @@ $machinestates = array(
         "type" => "game",
         "action" => "stEndBuildRound",
         "updateGameProgression" => true,
-        "transitions" => array( "endRound" => STATE_END_ROUND, 
+        "transitions" => array( "undoTurn"     => STATE_PAY_AUCTION,
+                                "endRound"     => STATE_END_ROUND, 
                                 "nextBuilding" => STATE_NEXT_BUILDING )
     ),
     

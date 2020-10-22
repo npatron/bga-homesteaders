@@ -52,6 +52,12 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
+  public function undoTransactions(){
+    self::setAjaxMode( );
+    $this->game->playerCancelTransactions();
+    self::ajaxResponse( );
+  }
+
   // pay workers
   public function payWorkers() {
     self::setAjaxMode( );
@@ -64,6 +70,18 @@ class action_homesteaders extends APP_GameAction
     self::setAjaxMode( );
     $gold = self::getArg( "gold", AT_posint, true);
     $this->game->playerPayAuction($gold);
+    self::ajaxResponse( );
+  }
+
+  public function cancelTurn() {
+    self::setAjaxMode( );
+    $this->game->playerCancelPhase();
+    self::ajaxResponse( );
+  }
+
+  public function confirmChoices() {
+    self::setAjaxMode( );
+    $this->game->playerConfirmChoices();
     self::ajaxResponse( );
   }
 
@@ -138,7 +156,7 @@ class action_homesteaders extends APP_GameAction
     $auction = self::getArg( 'auction', AT_bool, true);
     if ($auction){
       $rail = self::getArg( 'rail', AT_bool, true);
-      $this->game->playerFreeHireWorker( $rail );
+      $this->game->playerFreeHireWorkerAuction( $rail );
     } else {
       $this->game->playerFreeHireWorkerBuilding();
     }
@@ -153,13 +171,15 @@ class action_homesteaders extends APP_GameAction
 
   public function copperForVp (){
     self::setAjaxMode( );
-    $this->game->playerCopperForVp( );
+    $goldAsCopper = self::getArg( "useGold", AT_bool, true);
+    $this->game->playerCopperForVp($goldAsCopper );
     self::ajaxResponse( );
   }
 
   public function cowForVp (){
     self::setAjaxMode( );
-    $this->game->playerCowForVp( );
+    $goldAsCow = self::getArg( "useGold", AT_bool, true);
+    $this->game->playerCowForVp($goldAsCow );
     self::ajaxResponse( );
   }
 

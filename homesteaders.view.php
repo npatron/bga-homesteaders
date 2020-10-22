@@ -44,6 +44,7 @@
         $this->tpl['ROUND_NUMBER'] = $round_number;
         $this->tpl['FUTURE_AUCTION'] = _("Show Upcoming Auctions");
         $this->tpl['CONFIRM_TRADE'] = _("Confirm Trade");
+        $this->tpl['UNDO_TRADE'] = _("Undo Transctions");
         $this->tpl['BUILDING_STOCK'] = _("Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Show Discarded Buildings");
         $this->tpl['FUTURE_BUILDING'] = _("Show Upcoming Buildings");
@@ -59,7 +60,7 @@
         
         $auctions = $this->game->getGameStateValue('number_auctions');
         $color_arr = array(1=>'yellow', 2=>'red', 3=>'blue', 4=>'green', 5=>'purple',
-                      11=>'lightseargreen', 12=>'orange', 13=>'hotpink');
+                      11=>'lightseagreen', 12=>'orange', 13=>'hotpink');
         $this->page->begin_block( "homesteaders_homesteaders", "auction_string" );
         $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
         $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );
