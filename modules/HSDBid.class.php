@@ -16,20 +16,28 @@ class HSDBid extends APP_GameClass
     }
 
     function setupBidDB($players){
-        $sql = "INSERT INTO `bids` (player_id) VALUES ";
+        $sql = "INSERT INTO `bids` (player_id, bid_loc) VALUES ";
         $values = array();
         foreach( $players as $player_id => $player ) {
-            $values[] = "( $player_id )";
+            $values[] = "( $player_id, '0' )";
         }
-        if (count($players) == 2){ // add dummy bid token if not already there.
-            $values[] = "( ".DUMMY_PID." )";
+        if (count($players) == 2){ 
+            $values[] = "( ".DUMMY_BID.", '0' )";
+            $values[] = "( ".DUMMY_OPT.", '23' )";
         }
         $sql .= implode( ',', $values); 
         $this->game->DbQuery( $sql );
     }
 
-    function setBidForPlayer($p_id, $bid_loc){
-        $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '$bid_loc' WHERE `player_id`='$p_id'");
+    function clearBidForPlayer($p_id){
+        if ($this->game->getPlayersNumber() == 2){
+            $auc = $this->game->getGameStateValue('current_auction');
+            $dummy_bid = $this->game->getUniqueValueFromDB("SELECT `bid_loc` FROM `bids` WHERE `player_id`= ".DUMMY_BID);
+            if (ceil($dummy_bid /10) == $auc )
+                $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '".BID_PASS."' WHERE `player_id`=".DUMMY_BID);
+        }
+        $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '".BID_PASS."' WHERE `player_id`=$p_id");
+        
     }
 
     function notifyAllMoveBid($p_id, $bid_loc){
@@ -41,7 +49,7 @@ class HSDBid extends APP_GameClass
     }
 
     function clearBids(){
-        $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '0', `outbid`='0' " );
+        $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '0', `outbid`='0' WHERE `player_id`!=".DUMMY_OPT );
         $this->game->setGameStateValue('last_bidder', 0);
         $this->game->setGameStateValue('players_passed', 0);
     }
@@ -66,7 +74,7 @@ class HSDBid extends APP_GameClass
     function getWinnerOfAuction() 
     {
         $current_auction = $this->game->getGameStateValue( 'current_auction' );
-        $bids = $this->game->getCollectionFromDB("SELECT `player_id`, `bid_loc` from `bids`");
+        $bids = $this->game->getCollectionFromDB("SELECT `player_id`, `bid_loc` from `bids` WHERE `player_id`!=0");
         foreach($bids as $player_id => $bid){ 
             if ($current_auction == 1 && $bid['bid_loc'] >= BID_A1_B3 && $bid['bid_loc'] <= BID_A1_B21 ){
                 return $player_id;
@@ -117,7 +125,7 @@ class HSDBid extends APP_GameClass
     function outbidPlayer($p_id) {
         if (!$this->isPlayerOutbid($p_id)){
             $this->game->DbQuery( "UPDATE `bids` SET `outbid` = '1' WHERE `player_id` = '$p_id'");
-            if ($p_id == DUMMY_PID){ // don't add logs for dummy player 
+            if ($p_id == DUMMY_BID){ // don't add logs for dummy player 
                 $this->updateDummyBidWeight(false);
             } else { 
                 $outbid_byId = $this->game->getActivePlayerId();
@@ -190,26 +198,55 @@ class HSDBid extends APP_GameClass
     function confirmDummyBid($bid_location){
         $valid_bids = $this->getDummyBidOptions();
         if (in_array($bid_location, $valid_bids)){// valid bid
-            $this->makeBid($bid_location, DUMMY_PID);
+            $this->makeDummyBid($bid_location);
         } else {
             throw new BgaUserException( _("Invalid Bid Selection") );
         }
     }
 
+    function makeDummyBid($bid_loc){
+        $auc = ceil($bid_loc/10);
+        $amt = $this->bid_cost_array[$bid_loc%10];
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${token} Bids ${amount} for ${auction}'), array (
+                'player_id' => DUMMY_BID,
+                'token' => array('token'=> 'bid', 'player_id'=>DUMMY_BID),
+                'amount' => $amt,
+                'auction' => array('str'=>'AUCTION '.$auc, 'key'=> $auc),
+                'bid_location'=> $bid_loc) );
+        $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`='$bid_loc', `outbid`='0' WHERE `player_id`='".DUMMY_BID."'");
+    }
+
     function updateDummyBidWeight($down){
-        $val = $this->game->getGameStateValue ('dummy_bid_val');
+        $val =$this->game->getUniqueValuefromDB("SELECT `bid_loc` FROM `bids` WHERE `player_id`=".DUMMY_OPT);
         if ($down){ // on outbid
-            $val = max(1, $val -1); // 1 or -1; (1-> 3-silver)
+            $new_val = max(21, $val -1); // 21 or -1; (21-> 3-silver)
+            $string = "Lower";
         } else { // on pass
-            $val = min(6, $val +1); // 6 or +1; (6-> 9-silver)
+            $new_val = min(26, $val +1); // 26 or +1; (26-> 9-silver)
+            $string = "Increase";
         }
-        $this->game->setGameStateValue( 'dummy_bid_val', $val);
+        $cost = $this->bid_cost_array[$new_val%10];
+        $token_arr = array('token'=> 'bid', 'player_id'=>DUMMY_OPT);
+        if ($new_val == $val){
+            $this->game->notifyAllPlayers("moveBid", clienttranslate( '${token} cannot be '. $string.'ed past ${cost}'), array (
+                'player_id' => DUMMY_OPT,
+                'token' => $token_arr,
+                'bid_location'=> $val,
+                'cost' =>$cost ));    
+        } else {
+            $this->game->DBQuery("UPDATE `bids` SET `bid_loc`=$val WHERE `player_id`=".DUMMY_OPT);
+            $this->game->notifyAllPlayers("moveBid", clienttranslate( $string.' ${token} to ${cost}'), array (
+            'player_id' => DUMMY_OPT,
+            'token' => $token_arr,
+            'bid_location'=> $val,
+            'cost' =>$cost ));
+        }
     }
 
     function getDummyBidOptions(){
-        $dummy_1 = $this->game->getGameStateValue ('dummy_bid_val');
-        $dummy_2 = $dummy_1+10;
+        $dummy_3 = $this->game->GetUniqueValueFromDB("SELECT `bid_loc` FROM `bids` WHERE `player_id`=".DUMMY_OPT);
+        $dummy_1 = $dummy_3 - 20;
+        $dummy_2 = $dummy_3 - 10;
         return ([$dummy_1, $dummy_2]);
     }
-
 }

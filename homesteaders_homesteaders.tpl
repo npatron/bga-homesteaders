@@ -137,6 +137,7 @@ var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile res_${
 
 var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
 var jptpl_player_token='<div id="token_${type}_${color}" class="player_token_${color} player_token_${type}"> </div>';
+var jptpl_dummy_player_token='<div id="token_${type}_${color}_dummy" class="player_token_${color} player_token_${type}"> </div>';
 var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> </div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
@@ -151,8 +152,9 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div id="steelicon_p${id}"  class="score_token score_steel score"></div><span id="steelcount_${id}" class="player_steel score_text">0</span>\
     <div id="cowicon_p${id}"    class="score_token score_cow score"></div><span id="cowcount_${id}" class="player_cow score_text">0</span>\
     <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="player_copper score_text">0</span>\
-<div></div>';
+</div></div>';
 
+var jstpl_color_log = '<span class="logFont" style="font-weight:bold;color:${color};">${string}</span>';
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
 var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';

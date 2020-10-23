@@ -129,9 +129,7 @@ class HSDLog extends APP_GameClass
       $stats[] = [$player_id, 'auctions_won'];
       $stats[] = [$player_id, `win_auction_$piece_id`];
       $stats[] = [$player_id, 'spent_on_auctions', $args['cost']];
-    } else if ($action === 'noWinner') {
-      $stats[] = ['table', 'passed'];
-    }
+    } 
 
     if (!empty($stats)) {
       $this->incrementStats($stats);
@@ -294,6 +292,7 @@ class HSDLog extends APP_GameClass
       'actions' => $transactions['action'],
       'log_ids' => $transactions['log_id'],
       'player_id' => $p_id));
+    $this->insert($p_id, 0, "cancel");
   }
 
   public function cancelLogs($p_id, $logs)
@@ -301,11 +300,12 @@ class HSDLog extends APP_GameClass
     $ids = array();
     $js_update_arr = array();
     $move_arr = array();
-    foreach ($logs as $log) {
+    foreach ($logs as $log) { // todo: add move workers to log-undo
       $args = json_decode($log['action_arg'], true);
       switch ($log['action']) {
         case 'build':
             $b_key = $log['piece_id'];
+            $js_update_arr[] = array('action'=>'build', 'building'=>$this->game->Building->getBuildingFromKey($b_key));
             $this->game->DBQuery("UPDATE `buildings` SET `location`= '1', `player_id`='0' WHERE `building_key`='$b_key'");
             foreach ($args as $type => $amt) {
               if (in_array($type, $this->game->Resource->resource_map)) {
@@ -316,7 +316,6 @@ class HSDLog extends APP_GameClass
 
             $building_score = $this->game->Building->getBuildingScoreFromKey($b_key);
             $this->game->Score->dbIncScore($p_id, -$building_score);
-            $js_update_arr[] = array('action'=>'build', 'building'=>$this->game->Building->getBuildingFromKey($b_key));
         break;
         case 'gainWorker':
             $w_key = $log['piece_id'];

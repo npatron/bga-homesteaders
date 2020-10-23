@@ -167,9 +167,10 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
-            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `bid_loc`, `rail_adv` FROM `player` " ),
+            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),
             'buildings' => $this->Building->getAllBuildings(),
-            'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0),
+            'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
+            'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0 && $this->checkAction('trade',false)),
             'cancel_move_ids' => $this->Log->getCancelMoveIds(),
             'current_player' => $cur_p_id, 
             'first_player' => $this->getGameStateValue( 'first_player'),
@@ -545,7 +546,7 @@ class homesteaders extends Table
     }
 
     function argDummyValidBids() {
-        $dummy_bids = $this->Bids->getDummyBidOptions();
+        $dummy_bids = $this->Bid->getDummyBidOptions();
         return array('valid_bids'=>$dummy_bids);
     }
 
@@ -759,7 +760,7 @@ class homesteaders extends Table
     //
     function stEndBuildRound() {
         $this->Auction->discardAuctionTile();
-        $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
+        $this->Bid->clearBidForPlayer($this->getActivePlayerId());
         $auc_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
         if ($auc_no > $this->getGameStateValue( 'number_auctions' )){

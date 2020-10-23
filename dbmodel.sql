@@ -20,16 +20,17 @@
 
 -- This color name is used to create css classes
 ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
-ALTER TABLE `player` ADD `bid_loc`  INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3';
+--ALTER TABLE `player` ADD `bid_loc`  INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3';
+--ALTER TABLE `player` ADD `outbid`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid';
 ALTER TABLE `player` ADD `rail_adv` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
-ALTER TABLE `player` ADD `outbid`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid';
 
 CREATE TABLE IF NOT EXISTS `bids` (
   `player_id` INT(8) NOT NULL,
-  `bid_loc`   INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3';
-  `outbid`    INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid'; 
+  `bid_loc`   INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3',
+  `outbid`    INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid',
   PRIMARY KEY (`player_id`)
-)
+) ENGINE=InnoDB ;
+
 CREATE TABLE IF NOT EXISTS `workers` (
   `worker_key`    INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `player_id`     INT(8) UNSIGNED NOT NULL COMMENT 'Player controlling the worker',

@@ -411,8 +411,6 @@ class HSDBuilding extends APP_GameClass
 
     // INCOME
     function buildingIncomeForPlayer($p_id){
-        if ($this->game->getUniqueValueFromDB("SELECT `paid` FROM `player` WHERE `player_id`=${p_id}") == 1)
-            {return;}
         $riverPortWorkers = 0;
         $p_bld = $this->getAllPlayerBuildings($p_id);
         $sql = "SELECT * FROM `workers` WHERE `player_id` = '".$p_id."'";
