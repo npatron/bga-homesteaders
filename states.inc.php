@@ -156,8 +156,8 @@ $machinestates = array(
 
     STATE_PAY_AUCTION => array(
         "name" => "payAuction",
-        "description" => clienttranslate('${actplayer} must pay for auction'),
-        "descriptionmyturn" => clienttranslate('${you} must pay for auction'),
+        "description" => clienttranslate('${actplayer} must pay for ${auction}'),
+        "descriptionmyturn" => clienttranslate('${you} must pay for ${auction}'),
         "type" => "activeplayer",
         "args" => "argAuctionCost",
         "action" => "stStartTurn",

@@ -32,7 +32,7 @@ function (dojo, declare) {
       }
     const DUMMY_BID= 0;
     const DUMMY_OPT= -1;
-    
+
     const NO_BID   = 0;
     const OUTBID   = 10;
     const BID_PASS = 20;
@@ -205,6 +205,9 @@ function (dojo, declare) {
             this.goldAmount = 0;
             this.silverCost = 0;
             this.first_player = 0;
+            // for tracking current auction (for title update)
+            this.current_auction = 0;
+            this.number_auctions =0;
 
             this.hasBuilding = []; 
             this.last_selected = [];
@@ -330,13 +333,14 @@ function (dojo, declare) {
             }
         },
 
-        setupAuctionZones: function (auction_count) {
-            for (let i=1; i <=auction_count; i++){
+        setupAuctionZones: function (number_auctions) {
+            for (let i=1; i <=number_auctions; i++){
                 this.auction_ids[i] = `${TPL_AUC_ZONE}${i}`;
                 this.auction_zones[i]= new ebg.zone();
                 this.auction_zones[i].create(this, this.auction_ids[i], this.tile_width, this.tile_height);
                 this.auction_zones[i].setPattern('diagonal');
             }
+            this.number_auctions = number_auctions;
         },
 
         setupBuildings: function(buildings) {
@@ -858,6 +862,11 @@ function (dojo, declare) {
                     this.auction_zones[auction.location].placeInZone(`${TPL_AUC_TILE}${a_id}`);
                 }
             }
+            if (this.auction_zones[1].getItemNumber()==1){
+                this.current_auction=1;
+            } else if (this.auction_zones[2].getItemNumber()==1){
+                this.current_auction=2;
+            } else {this.current_auction=3;}
         },
 
         /**
@@ -942,10 +951,12 @@ function (dojo, declare) {
 
         cancelBuild: function(building){
             const b_divId = `${TPL_BLD_TILE}${building.b_key}`;
+            building.location=BLD_LOC_OFFER;
             this.createBuildingZoneIfMissing(building);
-            this.player_building_zone[p_id].removeFromZone(b_divId);
-            this.main_building_diag[building.b_id].item_margin.placeInZone(b_divId);
+            this.player_building_zone[building.p_id].removeFromZone(b_divId);
+            this.main_building_diag[building.b_id].placeInZone(b_divId);
             this.main_building_counts[building.b_id]++;
+            dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
             if (this.player_id == building.p_id){//remove from hasBuilding
                 this.hasBuilding.splice(building.b_id, 1); 
             }
@@ -1030,22 +1041,25 @@ function (dojo, declare) {
         },
 
         moveBid: function(p_id, bid_loc){
+            console.log('Moving BID:');
             const bid_divId = this.bid_token_divId[p_id];
             console.log("id:" + bid_divId + ", loc:"+ bid_loc );
             const parent_id = document.querySelector(`#${bid_divId}`).parentElement.id;
+            if (parent_id.startsWith('bid_slot_')){
+                const split_Id = parent_id.toString().split("_");
+                console.log('removing from zone '+ split_Id[2] + " -> "+split_Id[3]);
+                this.bid_zones[split_Id[2]][BID_VAL_ARR_BACK[split_Id[3]]].removeFromZone(bid_divId);
+                dojo.style( parent_id , 'height', '8.25%');
+            } else {
+                this.bid_zones[ZONE_PENDING].removeFromZone(bid_divId);
+            }
             if (bid_loc == OUTBID || bid_loc == NO_BID|| bid_loc == BID_PASS) {
                 this.bid_zones[ZONE_PENDING].placeInZone(bid_divId);
             } else { 
                 const bid_pair = this.getBidPairFromBidNo(bid_loc);
                 this.bid_zones[bid_pair.auction_no][bid_pair.bid_index].placeInZone(bid_divId);
             }
-            if (parent_id.startsWith('bid_slot_')){
-                const split_Id = parent_id.toString().split("_");
-                this.bid_zones[split_Id[2]][BID_VAL_ARR_BACK[split_Id[3]]].removeFromZone(bid_divId);
-                dojo.style( parent_id , 'height', this.bid_height+'px');
-            } else {
-                this.bid_zones[ZONE_PENDING].removeFromZone(bid_divId);
-            }
+            
         },
 
         getResourceTypeAsInt: function( type ){
@@ -1812,6 +1826,9 @@ function (dojo, declare) {
                     if (args.auction != null && typeof (args.auction) != 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
                         args.auction = this.addColor(args.auction.str, color);
+                    } else {
+                        let color = ASSET_COLORS[this.current_auction+10];
+                        args.auction = this.addColor("AUCTION "+this.current_auction, color);
                     }
                     
                     if (args.tradeAway != null){
@@ -1877,11 +1894,13 @@ function (dojo, declare) {
             if (notif.args.state == 'discard') {
                 this.auction_zones[notif.args.auction_no].removeAll();
                 const bid_token = dojo.query(`[id^="bid_slot_${notif.args.auction_no}"] [id^="token_bid"]`);
-                for(let i in bid_token){
+                for(let i in bid_token){// THIS NEEDS TO BE UPDATED TO REMOVE FROM CURRENT ZONE.
                     if (bid_token[i].id != null){
                         this.bid_zones[ZONE_PENDING].placeInZone(bid_token[i].id);
                     }
                 }
+                if (notif.args.auction_no < this.number_auctions){ this.current_auction++;   }
+                else                                             { this.current_auction = 1; }
             } else if (notif.args.state == 'show'){
                 for (let i in notif.args.auctions){
                     const auction = notif.args.auctions[i];

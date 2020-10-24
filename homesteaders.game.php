@@ -506,6 +506,7 @@ class homesteaders extends Table
     /** endBuildRound */
     public function playerConfirmChoices (){
         $this->checkAction('done');
+        $this->Bid->clearBidForPlayer($this->getActivePlayerId());
         $this->gamestate->nextState( 'done' );
     }
 
@@ -760,7 +761,6 @@ class homesteaders extends Table
     //
     function stEndBuildRound() {
         $this->Auction->discardAuctionTile();
-        $this->Bid->clearBidForPlayer($this->getActivePlayerId());
         $auc_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
         if ($auc_no > $this->getGameStateValue( 'number_auctions' )){

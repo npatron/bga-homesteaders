@@ -76,6 +76,7 @@ class HSDBid extends APP_GameClass
         $current_auction = $this->game->getGameStateValue( 'current_auction' );
         $bids = $this->game->getCollectionFromDB("SELECT `player_id`, `bid_loc` from `bids` WHERE `player_id`!=0");
         foreach($bids as $player_id => $bid){ 
+            if ($player_id == DUMMY_BID || $player_id == DUMMY_OPT) continue;
             if ($current_auction == 1 && $bid['bid_loc'] >= BID_A1_B3 && $bid['bid_loc'] <= BID_A1_B21 ){
                 return $player_id;
             } if ($current_auction == 2 && $bid['bid_loc'] >= BID_A2_B3 && $bid['bid_loc'] <= BID_A2_B21 ){
@@ -234,11 +235,11 @@ class HSDBid extends APP_GameClass
                 'bid_location'=> $val,
                 'cost' =>$cost ));    
         } else {
-            $this->game->DBQuery("UPDATE `bids` SET `bid_loc`=$val WHERE `player_id`=".DUMMY_OPT);
+            $this->game->DBQuery("UPDATE `bids` SET `bid_loc`=$new_val WHERE `player_id`=".DUMMY_OPT);
             $this->game->notifyAllPlayers("moveBid", clienttranslate( $string.' ${token} to ${cost}'), array (
             'player_id' => DUMMY_OPT,
             'token' => $token_arr,
-            'bid_location'=> $val,
+            'bid_location'=> $new_val,
             'cost' =>$cost ));
         }
     }

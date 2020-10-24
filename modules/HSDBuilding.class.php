@@ -102,7 +102,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getAllPlayerBuildings($p_id){
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."'";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 
@@ -463,7 +463,7 @@ class HSDBuilding extends APP_GameClass
                     $this->game->Resource->payLoanOrRecieveSilver($p_id, "Bank", 'building', $b_key);
                 break;
                 case BLD_RODEO:
-                    $rodeoIncome = min($player_workers, 5);
+                    $rodeoIncome = min(count($player_workers), 5);
                     $income_b_id[$b_id]['silver'] = $rodeoIncome;
                 break;
                 case BLD_FAIRGROUNDS:
