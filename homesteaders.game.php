@@ -119,7 +119,7 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building', 0 );
-        $this->setGameStateInitialValue( 'dummy_bid_val', 5 );
+        $this->setGameStateInitialValue( 'dummy_bid_val', 3 ); //3-> 5 silver
         
         $values = array();
         // set colors
@@ -134,6 +134,7 @@ class homesteaders extends Table
         // create building Tiles (in sql)
         $this->Building->createBuildings($players);
         $this->Auction->createAuctionTiles(count($players));
+        $this->Bid->setupBidDB($players);
 
         // setup resources table
         $sql = "INSERT INTO `resources` (player_id) VALUES ";
@@ -142,7 +143,7 @@ class homesteaders extends Table
 
         // create 1 worker for each player.
         $sql = "INSERT INTO `workers` (player_id) VALUES ";
-        $sql .= implode( ',', $values );        
+        $sql .= implode( ',', $values );   
         self::DbQuery( $sql );
 
         $this->activeNextPlayer();
@@ -166,9 +167,10 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
-            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `bid_loc`, `rail_adv` FROM `player` " ),
+            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),
             'buildings' => $this->Building->getAllBuildings(),
-            'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0),
+            'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
+            'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0 && $this->checkAction('trade',false)),
             'cancel_move_ids' => $this->Log->getCancelMoveIds(),
             'current_player' => $cur_p_id, 
             'first_player' => $this->getGameStateValue( 'first_player'),
@@ -194,8 +196,8 @@ class homesteaders extends Table
     */
     function getGameProgression()
     {
-        $game_progress = ($this->getGameStateValue('round_number')-1) * 9;
-        $game_progress += $this->getGameStateValue('current_auction');
+        $game_progress =  ($this->getGameStateValue('round_number')  -1 ) * 9;
+        $game_progress += ($this->getGameStateValue('current_auction')-1) * 3;
         return $game_progress;
     }
 
@@ -208,9 +210,8 @@ class homesteaders extends Table
         return($this->loadPlayersBasicInfos()[$player_id]['player_name']);
     }
 
-    function getPlayerColorName($player_id){
-        $colors = $this->getCollectionFromDb( "SELECT `player_id`, `color_name` FROM `player`" );
-        return($colors[$player_id]['color_name']);
+    function getPlayerColorName($p_id){
+        return $this->getUniqueValueFromDB( "SELECT `color_name` FROM `player` WHERE `player_id`=$p_id" );
     }
     
     
@@ -276,6 +277,12 @@ class homesteaders extends Table
     }
 
     /*** Player Bid Phase ***/
+    public function playerConfirmDummyBid($bid_location){
+        $this->checkAction('dummy');
+        $this->Bid->confirmDummyBid($bid_location);
+        $this->gamestate->nextState( "nextBid" );
+    }
+
     public function playerConfirmBid($bid_location){
         $this->checkAction( "confirmBid" );
         $this->Bid->confirmBid($bid_location);
@@ -315,7 +322,6 @@ class homesteaders extends Table
         $this->checkAction( "doNotBuild" );
         //goto next state;
         $this->gamestate->nextState( "auction_bonus" ); 
-        
     }
 
     public function playerPayWorkers($gold) {
@@ -500,6 +506,7 @@ class homesteaders extends Table
     /** endBuildRound */
     public function playerConfirmChoices (){
         $this->checkAction('done');
+        $this->Bid->clearBidForPlayer($this->getActivePlayerId());
         $this->gamestate->nextState( 'done' );
     }
 
@@ -508,7 +515,6 @@ class homesteaders extends Table
         $this->checkAction('payLoan');
         $cur_p_id = $this->getCurrentPlayerId();    
         $this->Resource->payOffLoan($cur_p_id, $gold);
-        $this->Log->payOffLoan($cur_p_id);
     }
 
     public function playerDoneEndgame() {
@@ -537,6 +543,11 @@ class homesteaders extends Table
     {
         $worker_counts = $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
         return array('worker_counts'=>$worker_counts);
+    }
+
+    function argDummyValidBids() {
+        $dummy_bids = $this->Bid->getDummyBidOptions();
+        return array('valid_bids'=>$dummy_bids);
     }
 
     function argValidBids() {
@@ -616,18 +627,18 @@ class homesteaders extends Table
         $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
         $resources = $this->getCollectionFromDB( $sql );
         $players = array();
-        foreach($resources as $player_id => $player){
+        foreach($resources as $p_id => $player){
             // TODO: make this toggleable.
             if ($player['gold'] == 0 && $player['trade'] == 0){//no decisions just pay.
                 $silver = $player['silver'];
                 $worker_cost = $player['workers'];
                 while ($silver < $worker_cost){// forced loan.
                     $silver +=2;
-                    $this->playerTakeLoan($player_id);
+                    $this->playerTakeLoan($p_id);
                 }
-                $this->Resource->updateAndNotifyPayment($player_id, 'silver', $player['workers'], array('worker'=>'worker'));
+                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker'=>'worker'));
             } else {
-                $players[] = $player_id;
+                $players[] = $p_id;
             }
         }
         if (count($players) == 0){
@@ -645,7 +656,11 @@ class homesteaders extends Table
             $this->Bid->clearBids( );
             $first_player = $this->getGameStateValue('first_player');
             $this->gamestate->changeActivePlayer( $first_player );
-            $this->gamestate->nextState( 'auction' );
+            if ($this->getPlayersNumber() == 2){
+                $this->gamestate->nextState( '2p_auction' );
+            } else {
+                $this->gamestate->nextState( 'auction' );
+            }
         }
     }
 
@@ -688,6 +703,15 @@ class homesteaders extends Table
         
         if ($auction_winner_id == 0) {
             $next_state = "auctionPassed";
+            $this->incStat(1, 'passed');
+            if ($current_auction == 1 && $this->getPlayersNumber() == 2){
+                $first_p_id = $this->getPlayerAfter($this->getGameStateValue('first_player'));
+                $this->setGameStateValue('first_player',$first_p_id);
+                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${first}'),array(
+                    'player_id'=>$first_p_id,
+                    'player_name'=>$this->getPlayerName($first_p_id),
+                    'first'=>'First Player'));
+            }
         } else {
             if ($current_auction == 1){ // winner of auction 1 gets first player marker.
                 $this->setGameStateValue('first_player', $auction_winner_id);
@@ -736,7 +760,6 @@ class homesteaders extends Table
     //
     function stEndBuildRound() {
         $this->Auction->discardAuctionTile();
-        $this->Bid->setBidForPlayer($this->getActivePlayerId(), BID_PASS);
         $auc_no = $this->incGameStateValue( 'current_auction', 1);
         $next_state = "nextBuilding";
         if ($auc_no > $this->getGameStateValue( 'number_auctions' )){
@@ -759,7 +782,8 @@ class homesteaders extends Table
     }
 
     function stUpdateScores(){
-        $this->Score->UpdateEndgameScores();
+        $this->Score->updateEndgameScores();
+        $this->gamestate->nextState('');
     }
     
 

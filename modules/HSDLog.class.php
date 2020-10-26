@@ -46,8 +46,8 @@ class HSDLog extends APP_GameClass
       $this->game->initStat('player', 'bonus_vp_34', 0, $player_id);
       $this->game->initStat('player', 'bonus_vp_35', 0, $player_id);
 
-      $this->game->initStat('player', 'buildings', 0, $player_id);
-      $this->game->initStat('player', 'residential', 0, $player_id);
+      $this->game->initStat('player', 'buildings', 1, $player_id);
+      $this->game->initStat('player', 'residential', 1, $player_id);
       $this->game->initStat('player', 'industrial', 0, $player_id);
       $this->game->initStat('player', 'commercial', 0, $player_id);
       $this->game->initStat('player', 'special', 0, $player_id);
@@ -129,9 +129,7 @@ class HSDLog extends APP_GameClass
       $stats[] = [$player_id, 'auctions_won'];
       $stats[] = [$player_id, `win_auction_$piece_id`];
       $stats[] = [$player_id, 'spent_on_auctions', $args['cost']];
-    } else if ($action === 'noWinner') {
-      $stats[] = ['table', 'passed'];
-    }
+    } 
 
     if (!empty($stats)) {
       $this->incrementStats($stats);
@@ -294,6 +292,7 @@ class HSDLog extends APP_GameClass
       'actions' => $transactions['action'],
       'log_ids' => $transactions['log_id'],
       'player_id' => $p_id));
+    $this->insert($p_id, 0, "cancel");
   }
 
   public function cancelLogs($p_id, $logs)
@@ -301,22 +300,24 @@ class HSDLog extends APP_GameClass
     $ids = array();
     $js_update_arr = array();
     $move_arr = array();
-    foreach ($logs as $log) {
+    foreach ($logs as $log) { // todo: add move workers to log-undo
       $args = json_decode($log['action_arg'], true);
       switch ($log['action']) {
         case 'build':
             $b_key = $log['piece_id'];
+            $building = $this->game->Building->getBuildingFromKey($b_key);
             $this->game->DBQuery("UPDATE `buildings` SET `location`= '1', `player_id`='0' WHERE `building_key`='$b_key'");
+            $cost = array();
             foreach ($args as $type => $amt) {
               if (in_array($type, $this->game->Resource->resource_map)) {
+                $cost[$type] = $amt;
                 $this->game->Resource->updateResource($p_id, $type, $amt);
               }
             }
             $this->game->setGameStateValue('last_building', 0);
-
+            $js_update_arr[] = array('action'=>'build', 'building'=>$building, 'cost'=>$cost);
             $building_score = $this->game->Building->getBuildingScoreFromKey($b_key);
             $this->game->Score->dbIncScore($p_id, -$building_score);
-            $js_update_arr[] = array('action'=>'build', 'building'=>$this->game->Building->getBuildingFromKey($b_key));
         break;
         case 'gainWorker':
             $w_key = $log['piece_id'];
@@ -388,7 +389,7 @@ class HSDLog extends APP_GameClass
     if (count($move_arr)>0){
       $move_id_group = "'".implode("','", array_unique($move_arr))."'";
       $this->game->DbQuery("UPDATE gamelog SET `cancel` = 1 WHERE `gamelog_move_id` IN ($move_id_group)");
-      $this->game->DbQuery("DELETE FROM gamelog WHERE cancel = 1");
+      //$this->game->DbQuery("DELETE FROM gamelog WHERE cancel = 1");
     }
     return array('log_id' => $move_arr, 'action' =>$js_update_arr);
   }

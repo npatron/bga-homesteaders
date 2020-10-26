@@ -36,11 +36,41 @@ class HSDScore extends APP_GameClass
         return $count;
     }
 
-    function UpdateEndgameScores(){
+    function updateEndgameScores(){
         $players = $this->game->loadPlayersBasicInfos();
+        $row1 = array( '' );
+        $row2 = array(_('VP from Tokens'));
+        $row3 = array(_('building VPs'));
+        $row4 = array(_('bonus building VPs'));
+        $row5 = array(_('VP from Gold'));
+        $row6 = array(_('VP from Livestock'));
+        $row7 = array(_('VP from Copper'));
+        $row8 = array(_('VP from Loans'));
+        $row9 = array(_('Total VPs'));
         foreach($players as $p_id=>$player){
             $p_score = $this->calculateEndgameScore($p_id);
+            $row1[] = array( 'str' => '${player_name}',
+                                 'args' => array( 'player_name' => $player['player_name'] ),
+                                 'type' => 'header');  
+            $row2[] = $p_score['vp'];
+            $row3[] = $p_score['bld'];
+            $row4[] = ($p_score[TYPE_RESIDENTIAL]+$p_score[TYPE_COMMERCIAL]+$p_score[TYPE_INDUSTRIAL]+$p_score[TYPE_SPECIAL]);
+            $row5[] = $p_score['gold'];
+            $row6[] = $p_score['cow'];
+            $row7[] = $p_score['copper'];
+            $row8[] = $p_score['loan'];
+            $row9[] = $p_score['total'];
         }
+        $table = array(
+            $row1, $row2, $row3, $row4,$row5, 
+            $row6, $row7, $row8, $row9,);
+        var_dump($table);
+        $this->game->notifyAllPlayers( "tableWindow", '', array(
+            "id" => 'finalScoring',
+            "title" => clienttranslate("Final Scoring"),
+            "table" => $table,
+            "closing" => clienttranslate( "Close" ),
+        ) ); 
     }
 
     function calculateEndgameScore($p_id){
@@ -50,11 +80,12 @@ class HSDScore extends APP_GameClass
         // VP tokens
         $vp_tokens = $this->getVPTokens($p_id);
         $this->game->setStat($vp_tokens, 'vp_chits', $p_id);
-        // Buildings
-        $bld_score = $this->dbGetScore($p_id);
-        $this->game->setStat($bld_score, 'building_vp', $p_id);
+        
         // Building VP's
         $bld_bonus_score =  $this->getPlayerVPsFromBuildings($p_id);
+        $bld_score =     $bld_bonus_score['static']; //$this->dbGetScore($p_id);
+        $this->game->setStat($bld_score, 'building_vp', $p_id);
+
         $bld_res_score = $bld_bonus_score[TYPE_RESIDENTIAL];
         $bld_com_score = $bld_bonus_score[TYPE_COMMERCIAL];
         $bld_ind_score = $bld_bonus_score[TYPE_INDUSTRIAL];
@@ -86,7 +117,7 @@ class HSDScore extends APP_GameClass
             'loan'  => $loans,
         );
         $total = 0;
-        foreach ($allScores[$p_id] as $type =>$val){
+        foreach ($allScores as $type =>$val){
             $total += $val;
         }
         $allScores['total'] = $total;
@@ -101,7 +132,7 @@ class HSDScore extends APP_GameClass
     }
 
     function getScoreFromLoans($p_id){
-        $loans =  $this->game->getUniqueValueFromDB("SELECT `vp` from `resources` WHERE `player_id` = '$p_id'");
+        $loans = $this->game->getUniqueValueFromDB("SELECT `loan` from `resources` WHERE `player_id` = '$p_id'");
         $score = 0;
         for($i=1; $i<= $loans; $i++)
             $score -=$i;
@@ -120,7 +151,7 @@ class HSDScore extends APP_GameClass
 
     function getPlayerVPsFromBuildings (Int $p_id)
     {
-        $p_buildings = $this->game->Buildings->getAllPlayerBuildings($p_id);
+        $p_buildings = $this->game->Building->getAllPlayerBuildings($p_id);
         $counts =array(TYPE_RESIDENTIAL=>0,
                      TYPE_COMMERCIAL=>0,
                      TYPE_INDUSTRIAL=>0,
@@ -136,52 +167,54 @@ class HSDScore extends APP_GameClass
         $this->game->setStat($counts[TYPE_COMMERCIAL], 'industrial', $p_id);
         $this->game->setStat($counts[TYPE_INDUSTRIAL], 'commercial', $p_id);
         $this->game->setStat($counts[TYPE_SPECIAL],    'special', $p_id);
-
-        $vps = array(TYPE_RESIDENTIAL=>0,
+        
+        $vps = array('static'=>0,
+                     TYPE_RESIDENTIAL=>0,
                      TYPE_COMMERCIAL=>0,
                      TYPE_INDUSTRIAL=>0,
                      TYPE_SPECIAL=>0,);
         foreach($p_buildings as $b_key => $building){
             $b_type = $p_buildings[$b_key]['b_type'];
             $b_id   = $p_buildings[$b_key]['b_id']; 
+            $vps['static']+= $p_buildings[$b_key]['b_vp'];
             switch($b_id){
                 case BLD_DUDE_RANCH:
                 case BLD_CIRCUS:
                     $vps[$b_type] += $counts['worker'];
-                    $this->game->setStat($counts['worker'], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts['worker'], "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_RAILWORKERS_HOUSE: // track worker
                     $vps[$b_type] += $counts['worker'] + $counts['track'];
-                    $this->game->setStat($counts['worker'] + $counts['track'], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts['worker'] + $counts['track'], "bonus_vp_${b_id}", $p_id);
                      break;
                 case BLD_DEPOT: 
                 case BLD_TERMINAL:
                     $vps[$b_type] += $counts['track'];
-                    $this->game->setStat($counts['track'], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts['track'], "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_STABLES: 
                 case BLD_FAIRGROUNDS:
                     $vps[$b_type] += $counts[TYPE_RESIDENTIAL];
-                    $this->game->setStat($counts[TYPE_RESIDENTIAL], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts[TYPE_RESIDENTIAL], "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_LAWYER:
                 case BLD_TOWN_HALL:
                     $vps[$b_type] += $counts[TYPE_COMMERCIAL];
-                    $this->game->setStat($counts[TYPE_COMMERCIAL], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts[TYPE_COMMERCIAL], "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_BOARDING_HOUSE:
                 case BLD_FACTORY:
                     $vps[$b_type] += $counts[TYPE_INDUSTRIAL];
-                    $this->game->setStat($counts[TYPE_INDUSTRIAL], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts[TYPE_INDUSTRIAL], "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_BANK:
                 case BLD_RESTARAUNT:
                     $vps[$b_type] += $counts[TYPE_SPECIAL];
-                    $this->game->setStat($counts[TYPE_SPECIAL], `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat($counts[TYPE_SPECIAL], "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_RAIL_YARD:
                     $vps[$b_type] += count($p_buildings);
-                    $this->game->setStat(count($p_buildings), `bonus_vp_${b_id}`, $p_id);
+                    $this->game->setStat(count($p_buildings), "bonus_vp_${b_id}", $p_id);
                 break;
                 case BLD_POST_OFFICE:
                     // figure this out later when doing expansion.

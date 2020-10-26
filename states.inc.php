@@ -97,15 +97,25 @@ $machinestates = array(
         "action" => "stBeginAuction",
         "updateGameProgression" => true,
         "transitions" => array( "auction" => STATE_PLAYER_BID, 
+                                "2p_auction" => STATE_2_PLAYER_DUMMY_BID,
                                 "endGame" => STATE_ENDGAME_ACTIONS,)
     ), 
+
+    STATE_2_PLAYER_DUMMY_BID => array(
+        "name" => "dummyPlayerBid",
+        "description" => clienttranslate('${actplayer} must place dummy bid on auction'),
+        "descriptionmyturn" => clienttranslate('${you} must place dummy bid on auction'),
+        "type" => "activeplayer",
+        "args" => "argDummyValidBids",
+        "possibleactions" => array( "selectBid", "confirmBid", "dummy"),
+        "transitions" => array( "nextBid" => STATE_PLAYER_BID,),
+    ),
 
     STATE_PLAYER_BID => array(
         "name" => "playerBid",
         "description" => clienttranslate('${actplayer} must bid on auction or pass'),
         "descriptionmyturn" => clienttranslate('${you} must bid on auction or pass'),
         "type" => "activeplayer",
-//        "action" => "stMakeBidOrPass",
         "args" => "argValidBids",
         "possibleactions" => array( "selectBid", "confirmBid", "pass" ),
         "transitions" => array( "nextBid" => STATE_NEXT_BID, 
@@ -146,8 +156,8 @@ $machinestates = array(
 
     STATE_PAY_AUCTION => array(
         "name" => "payAuction",
-        "description" => clienttranslate('${actplayer} must pay for auction'),
-        "descriptionmyturn" => clienttranslate('${you} must pay for auction'),
+        "description" => clienttranslate('${actplayer} must pay for ${auction}'),
+        "descriptionmyturn" => clienttranslate('${you} must pay for ${auction}'),
         "type" => "activeplayer",
         "args" => "argAuctionCost",
         "action" => "stStartTurn",
@@ -256,7 +266,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stEndGameActions",
         "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
-        "transitions" => array( "" => STATE_END_GAME)
+        "transitions" => array( "" => STATE_UPDATE_SCORES)
     ),
 
     STATE_UPDATE_SCORES => array(
@@ -264,7 +274,7 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stUpdateScores",
-        "transitions" => array( "nextAuction" => STATE_START_ROUND )
+        "transitions" => array( "" => 99 )
     ),
 
 
