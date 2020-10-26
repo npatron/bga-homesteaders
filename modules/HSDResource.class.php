@@ -263,6 +263,7 @@ class HSDresource extends APP_GameClass
           ) );
         $this->updateResource ($p_id, $type, -$amt);
         $this->updateResource ($p_id, 'loan', -1);
+        $this->game->Log->payOffLoan($p_id, $type, $amt);
     }
     
 

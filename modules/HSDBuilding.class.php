@@ -102,13 +102,13 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getAllPlayerBuildings($p_id){
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot, `b_vp` FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 
     /**** Utility ****/
     function getBuildingFromKey($b_key){ // TODO add b_vp for next run through.
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `building_key`='$b_key'";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `building_key`='$b_key'";
         return ($this->game->getObjectFromDB($sql));
     }
 

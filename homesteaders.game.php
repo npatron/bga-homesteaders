@@ -515,7 +515,6 @@ class homesteaders extends Table
         $this->checkAction('payLoan');
         $cur_p_id = $this->getCurrentPlayerId();    
         $this->Resource->payOffLoan($cur_p_id, $gold);
-        $this->Log->payOffLoan($cur_p_id);
     }
 
     public function playerDoneEndgame() {
@@ -783,7 +782,8 @@ class homesteaders extends Table
     }
 
     function stUpdateScores(){
-        $this->Score->UpdateEndgameScores();
+        $this->Score->updateEndgameScores();
+        $this->gamestate->nextState('');
     }
     
 

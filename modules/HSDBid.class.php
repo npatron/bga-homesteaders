@@ -37,7 +37,6 @@ class HSDBid extends APP_GameClass
                 $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '".BID_PASS."' WHERE `player_id`=".DUMMY_BID);
         }
         $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`= '".BID_PASS."' WHERE `player_id`=$p_id");
-        
     }
 
     function notifyAllMoveBid($p_id, $bid_loc){
