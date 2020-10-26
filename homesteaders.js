@@ -587,23 +587,31 @@ function (dojo, declare) {
             {
                 case 'setupRound':
                 case 'collectIncome':
-                case 'payWorkers':
                     break;
                 case 'dummyPlayerBid':
                     const dummy_bid_id = this.bid_token_divId[DUMMY_BID];
                     dojo.removeClass(dummy_bid_id, 'animated');
+                    this.clearSelectable('bid_slot');
                 break;
                 case 'playerBid':
                     const active_bid_id = this.bid_token_divId[this.getActivePlayerId()];
                     dojo.removeClass(active_bid_id, 'animated');
+                    this.clearSelectable('bid_slot');
                     break;
-                case 'allocateWorkers':
-                case 'payAuction':
-                case 'endBuildRound':
                 case 'trainStationBuild':
                 case 'chooseBuildingToBuild':
-                case 'bonusChoice':
+                    this.clearSelectable('building', true);
                     this.hideUndoTransactionsButtonIfPossible();
+                    this.disableTradeIfPossible();
+                    break;
+                case 'allocateWorkers':
+                    this.clearSelectable('worker', true); 
+                    this.clearSelectable('worker_slot', false);
+                case 'payAuction':
+                case 'bonusChoice':
+                case 'payWorkers':
+                    this.hideUndoTransactionsButtonIfPossible();
+                    this.disableTradeIfPossible();
                     break;
                 case 'endRound':
                 case 'dummy':
@@ -734,8 +742,8 @@ function (dojo, declare) {
                         }
                         this.addActionButton( 'btn_choose_building', _('Build'),     'chooseBuilding');
                         if (args.riverPort){
-                            this.addActionButton( 'btn_gold_cow',    tkn_gold +_(' As ') + tkn_cow,   'toggleGoldAsCow', null, false, 'red');
-                            this.addActionButton( 'btn_gold_copper', tkn_gold +_(' As ') + tkn_copper, 'toggleGoldAsCopper', null, false, 'red');
+                            this.addActionButton( 'btn_gold_cow',    tkn_gold +_(' As ') + tkn_cow,   'toggleGoldAsCow', null, false, (this.goldAsCow?'gray':'blue'));
+                            this.addActionButton( 'btn_gold_copper', tkn_gold +_(' As ') + tkn_copper, 'toggleGoldAsCopper', null, false, (this.goldAsCopper?'gray':'blue'));
                         }
                         this.addActionButton( 'btn_do_not_build', _('Do not Build'), 'doNotBuild', null, false, 'red');
                         this.addActionButton( 'btn_trade',       _('Trade'),        'tradeActionButton', null, false, 'gray');
@@ -766,15 +774,13 @@ function (dojo, declare) {
                             case AUCBONUS_COPPER_FOR_VP:
                                 this.addActionButton( 'btn_copper_vp', tkn_copper+" "+tkn_arrow+" "+tkn_vp4, 'copperFor4VP');
                                 if (args.riverPort){
-                                    this.goldAsCopper = false;
-                                    this.addActionButton( 'btn_gold_copper', tkn_gold +_(' As ') + tkn_copper, 'toggleGoldAsCopper', null, false, 'red');
+                                    this.addActionButton( 'btn_gold_copper', tkn_gold +_(' As ') + tkn_copper, 'toggleGoldAsCopper', null, false, (this.goldAsCopper?'blue':'red'));
                                 }
                                 break;
                             case AUCBONUS_COW_FOR_VP:
                                 this.addActionButton( 'btn_cow_vp', tkn_cow+" "+tkn_arrow+" "+tkn_vp4, 'cowFor4VP');
                                 if (args.riverPort){
-                                    this.goldAsCow = false;
-                                    this.addActionButton( 'btn_gold_cow',    tkn_gold +_(' As ') + tkn_cow,   'toggleGoldAsCow', null, false, 'red');
+                                    this.addActionButton( 'btn_gold_cow',    tkn_gold +_(' As ') + tkn_cow,   'toggleGoldAsCow', null, false, (this.goldAsCow?'blue':'red'));
                                 }
                                 break;
                             case AUCBONUS_6VP_AND_FOOD_VP:
@@ -1515,9 +1521,6 @@ function (dojo, declare) {
                 this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", 
                 {building_key: building_key, goldAsCow:this.goldAsCow, goldAsCopper:this.goldAsCopper, lock: true}, this, 
                         function( result ) { 
-                            this.disableTradeIfPossible();
-                            this.clearSelectable('building', true);
-                            this.hideUndoTransactionsButtonIfPossible();
                         }, function( is_error) { } );
             }
         },
