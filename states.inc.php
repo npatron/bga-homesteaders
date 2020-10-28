@@ -237,8 +237,8 @@ $machinestates = array(
         "action" => "stSetupTrade",
         "possibleactions" => array( "done", "undo" ),
         "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
-                                "done"      => STATE_END_BUILD,)
-    ),
+                                "done"      => STATE_END_BUILD,)//playerConfirmChoices
+    ), 
 
     STATE_END_BUILD => array(
         "name" => "endBuildRound",
@@ -266,7 +266,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stEndGameActions",
         "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
-        "transitions" => array( "" => STATE_UPDATE_SCORES)
+        "transitions" => array( "" => STATE_END_GAME)
     ),
 
     STATE_UPDATE_SCORES => array(
@@ -274,7 +274,7 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stUpdateScores",
-        "transitions" => array( "" => 99 )
+        "transitions" => array( "nextAuction" => STATE_START_ROUND )
     ),
 
 

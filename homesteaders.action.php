@@ -170,29 +170,11 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function woodForTrack (){
+  public function bonusTypeForType (){
     self::setAjaxMode( );
-    $this->game->playerWoodForTrack( );
-    self::ajaxResponse( );
-  }
-
-  public function copperForVp (){
-    self::setAjaxMode( );
-    $goldAsCopper = self::getArg( "useGold", AT_bool, true);
-    $this->game->playerCopperForVp($goldAsCopper );
-    self::ajaxResponse( );
-  }
-
-  public function cowForVp (){
-    self::setAjaxMode( );
-    $goldAsCow = self::getArg( "useGold", AT_bool, true);
-    $this->game->playerCowForVp($goldAsCow );
-    self::ajaxResponse( );
-  }
-
-  public function foodForVp (){
-    self::setAjaxMode( );
-    $this->game->playerFoodForVp( );
+    $tradeAway = self::getArg( "tradeAway", AT_int, true);
+    $tradeFor = self::getArg( "tradeFor", AT_int, true);
+    $this->game->playerTypeForType($tradeAway, $tradeFor);
     self::ajaxResponse( );
   }
 

@@ -19,34 +19,65 @@
 </div>
 
 <!-- Auction Board -->
+<div id="main_container" class="container">
+    <div id="board" class="shadow">
+        <div id="pending_bids" class="bid_token_zone"> </div>
+        <!-- BEGIN bid_slot -->
+        <div id="bid_slot_{A}_{B}" class="bid_slot"> </div>
+        <!-- END bid_slot -->
 
+        <!-- BEGIN auction_stacks -->
+        <div id="auction_tile_zone_{A}" class="auction_tiles_zone"> </div>
+        <!-- END auction_stacks -->
 
-<div id="board" class="shadow">
-    <div id="pending_bids" class="token_zone whitebox"> </div>
-    <!-- BEGIN bid_slot -->
-    <div id="bid_slot_{A}_{B}" class="bid_slot"> </div>
-    <!-- END bid_slot -->
+        <!-- BEGIN train_advancement -->
+        <div id="train_advancement_{I}" class="train_advance"> </div>
+        <!-- END train_advancement -->
 
-    <!-- BEGIN auction_stacks -->
-    <div id="auction_tile_zone_{A}" class="auction_tiles_zone"> </div>
-    <!-- END auction_stacks -->
-
-    <!-- BEGIN train_advancement -->
-    <div id="train_advancement_{I}" class="train_advance"> </div>
-    <!-- END train_advancement -->
-
-    <div id="train_bonus_1_trade" class="train_bonus"> </div>
-    <div id="train_bonus_2_track" class="train_bonus"> </div>
-    <div id="train_bonus_3_worker" class="train_bonus"> </div>
-    <div id="train_bonus_4_wood" class="train_bonus"> </div>
-    <div id="train_bonus_4_food" class="train_bonus"> </div>
-    <div id="train_bonus_4_steel" class="train_bonus"> </div>
-    <div id="train_bonus_4_gold" class="train_bonus"> </div>
-    <div id="train_bonus_4_copper" class="train_bonus"> </div>
-    <div id="train_bonus_4_cow" class="train_bonus"> </div>
-    <div id="train_bonus_5_vp" class="train_bonus"> </div>
+        <div id="train_bonus_1_trade" class="train_bonus"> </div>
+        <div id="train_bonus_2_track" class="train_bonus"> </div>
+        <div id="train_bonus_3_worker" class="train_bonus"> </div>
+        <div id="train_bonus_4_wood" class="train_bonus"> </div>
+        <div id="train_bonus_4_food" class="train_bonus"> </div>
+        <div id="train_bonus_4_steel" class="train_bonus"> </div>
+        <div id="train_bonus_4_gold" class="train_bonus"> </div>
+        <div id="train_bonus_4_copper" class="train_bonus"> </div>
+        <div id="train_bonus_4_cow" class="train_bonus"> </div>
+        <div id="train_bonus_5_vp" class="train_bonus"> </div>
+        <div id="passed_bids" class="bid_token_zone"> </div>
+    </div>
+    <div id='button_container'>
+        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
+            <span id='auc_future' class="useFont">{SHOW} </span><span class="useFont"> {FUTURE_AUCTION}</span>
+        </a>
+        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
+            <span id="bld_discard" class="useFont">{SHOW} </span><span class="useFont"> {BUILDING_DISCARD}</span>
+        </a>
+        <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
+            <span id="bld_future" class="useFont">{SHOW} </span><span class="useFont"> {FUTURE_BUILDING}</span>
+        </a>
+    </div>
+    <div id='building_location' class='tile_container'>
+        <div id='future_auction_container' class='whiteblock border_lightseagreen noshow'>
+            <!-- BEGIN auction_string -->
+            <span class="auction_string biggerFont" style="color: {COLOR};">Auction {A}  </span>
+            <!-- END auction_string -->
+            <div id='future_auction_zone' class="main_building_zone"></div>
+        </div>
+        <div id='past_building_container' class="whiteblock border_white noshow">
+            <span class="biggerFont">{BUILDING_DISCARD}</span>
+            <div id='past_building_zone' class="main_building_zone"> </div>
+        </div>
+        <div id='future_building_container' class="whiteblock border_gray noshow">
+            <span class="biggerFont">{FUTURE_BUILDING}</span> 
+            <div id='future_building_zone' class="main_building_zone"> </div>
+        </div>
+        <div id="main_building_container" class="whiteblock border_black">
+            <span class="biggerFont">{BUILDING_STOCK}</span>
+            <div id="main_building_zone" class="main_building_zone"> </div>
+        </div>
+    </div>
 </div>
-
 <!-- Token limbo -->
 
 <div id="limbo" style="display: block"> 
@@ -54,30 +85,14 @@
     <div id='first_player_tile' class='building_tile'> </div>
 </div>
 
-<!-- Commmon Building Section-->
-<div id='building_location'>
-    <div id="passed_bids" class="token_zone whitebox"> </div>
-    <div id='auction_string' class='whiteblock noshow'><!-- BEGIN auction_string --><span class="auction_string useFont" style="color: {COLOR};">Auction {A}  </span><!-- END auction_string -->
-    <div id='future_auction_zone' class="noshow useFont"></div></div>
-    <div id='hidden_bld'>
-        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray"><span id='future_auc' class="useFont">{FUTURE_AUCTION}</span></a><!--
--->     <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray"><span id="bld_discard" class="useFont">{BUILDING_DISCARD}</span></a><!--
--->     <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray"><span id="bld_future" class="useFont">{FUTURE_BUILDING}</span></a><!--
--->     <div id='past_building_zone' class="whiteblock main_building_zone noshow"> </div><!--
-    --> <div id='future_building_zone' class="whiteblock main_building_zone noshow"> </div>
-    </div>
-    <div class="building_stock"><span class="useFont">{BUILDING_STOCK}</span></div>
-    <div id="main_building_zone" class="main_building_zone"> </div>
-</div>
-
 <!--
     Player Buildings section
 -->
-<div id='player_zones'>
+<div id='player_zones' class="container">
     <div id ='First'> </div> <div id ='Second'> </div> <div id ='Third'> </div> <div id ='Fourth'> </div>
     <!-- BEGIN player_zone -->
-    <div id="player_zone_{COLOR}" class="whiteblock res_{COLOR}" style="margin-top:4px;">
-        <div id="player_name_{COLOR}" class="boardheader useFont" style="color: {COLOR};">{NAME}</div>
+    <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR}" style="margin-top:4px;">
+        <div id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</div>
         <div id="token_zone_{COLOR}" class="player_token_zone">
             <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
@@ -123,23 +138,16 @@
 
 <script type="text/javascript">
 
-// templates
-var vstpl_player_zone = '<div id="player_zone_${color}" class="whiteblock res_${color}" style="margin-top:4px;">\
-        <div id="player_name_${color}" class="boardheader" style="color: ${color};">${name}</div>\
-        <div id="token_zone_${color}" class="player_token_zone"> <div id="worker_zone_${color}" class="worker_zone"></div></div>\
-        <div id="building_zone_${color}" class="building_zone"> </div>\
-    </div>';
-
-var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone building_zone_diag" style="order: ${order}"></div>';
+var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone_diag" style="order: ${order}"></div>';
 var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
 var jstpl_building_slot='<div id="slot_${slot}_${key}" class="worker_slot slot_${slot}_${id} key_${key}"></div>'; 
 
-var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile res_${color}"> </div>';
+var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile border_${color}"> </div>';
 
-var jptpl_token='<div id="token_${type}_${id}" class="token token_${type}"> </div>';
+var jptpl_worker='<div id="token_worker_${id}" class="token_worker"> </div>';
 var jptpl_player_token='<div id="token_${type}_${color}" class="player_token_${color} player_token_${type}"> </div>';
 var jptpl_dummy_player_token='<div id="token_${type}_${color}_dummy" class="player_token_${color} player_token_${type}"> </div>';
-var jptpl_track='<div id="token_track_${id}" class="token_track res_${color}"> </div>';
+var jptpl_track='<div id="token_track_${id}" class="token_track border_${color}"> </div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
     <div class="score_group">\

@@ -354,7 +354,7 @@ class homesteaders extends Table
         $act_p_id = $this->getActivePlayerId();
         $options = $this->Resource->getRailAdvBonusOptions($act_p_id);
         if (!in_array ($selected_bonus, $options)){
-            throw new BgaUserException( "invalid bonus option selected: " );
+            throw new BgaUserException( _("invalid bonus option selected.") );
         } 
         $this->Resource->recieveRailBonus($act_p_id, $selected_bonus);
         $phase = $this->getGameStateValue( 'phase' );
@@ -406,57 +406,20 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
-    public function playerWoodForTrack (){
-        $this->checkAction( "auctionBonus" );
+    public function playerTypeForType ($tradeAway, $tradeFor){
+        $this->checkAction( "auctionBonus");
         $act_p_id = $this->getActivePlayerId();
-        if (!$this->Resource->canPlayerAfford($act_p_id, array('wood'=> 1))) {
-            throw new BgaUserException( _("You need a WOOD to take this action") );
+        $tradeAwayType = $this->Resource->resource_map[$tradeAway];
+        if (!$this->Resource->canPlayerAfford($act_p_id, array($tradeAwayType=> 1))) {
+            throw new BgaUserException( _("You need a ")."<div class='log_${tradeAwayType} token_inline'></div>"._(" to take this action") );
         }
-        //$this->Resource->updateAndNotifyPayment($act_p_id, 'wood', 1, 'Auction Bonus', 'auction', $this->getGameStateValue('current_auction'));
-        $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, array('wood'=>1), array('track'=>1), "AUCTION ".$auc, 'auction', $auc);
-        //$this->Resource->addTrack($act_p_id, 'Auction Bonus', 'auction', $auc = $this->getGameStateValue('current_auction'));
-        
-        $this->gamestate->nextState( 'done' );
-    }
-
-    public function playerCopperForVp ($goldAsCopper) {
-        $this->checkAction( "auctionBonus" );
-        $act_p_id = $this->getActivePlayerId();
-        $costType = ($goldAsCopper?'gold':'copper');
-        $cost = array($costType=> 1);
-        if (!$this->Resource->canPlayerAfford($act_p_id, $cost)){
-            throw new BgaUserException( _("You need a ".strtoupper($costType)." to take this action") );
+        $tradeForType = 'track'; // default is currently track.
+        if ($tradeFor == VP){ // determine if vp2 or vp4.
+            if ($tradeAway == FOOD) $tradeForType = 'vp2';
+            else $tradeForType = 'vp4';
         }
         $auc = $this->getGameStateValue('current_auction');
-        
-        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION ".$auc, 'auction', $auc);
-        
-        $this->gamestate->nextState( 'done' );
-    }
-
-    public function playerCowForVp ($goldAsCow) {
-        $this->checkAction( "auctionBonus" );
-        $act_p_id = $this->getActivePlayerId();
-        $cost = array(($goldAsCow?'gold':'cow')=>1);
-        if (!$this->Resource->canPlayerAfford($act_p_id,$cost)){
-            $costType = ($goldAsCow?'gold':'livestock');
-            throw new BgaUserException( _("You need a ".strtoupper($costType)." to take this action ") );
-        }
-        $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, $cost, array('vp4'=>1), "AUCTION ".$auc, 'auction', $auc);
-        
-        $this->gamestate->nextState( 'done' );
-    }
-
-    public function playerFoodForVp () {
-        $this->checkAction( "auctionBonus" );
-        $act_p_id = $this->getActivePlayerId();
-        if (!$this->Resource->canPlayerAfford($act_p_id, array('food'=> 1))){
-            throw new BgaUserException( _("You need a FOOD to take this action ") ); 
-        }
-        $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, array('food'=>1), array('vp2'=>1), "AUCTION ".$auc, 'auction', $auc);
+        $this->Resource->specialTrade($act_p_id, array($tradeAwayType=>1), array($tradeForType=>1), "AUCTION ".$auc, 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }

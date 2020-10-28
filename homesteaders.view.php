@@ -42,12 +42,13 @@
         $this->tpl['ROUND_STRING'] = _("Round: ");
         $round_number = $this->game->getGameStateValue('round_number');
         $this->tpl['ROUND_NUMBER'] = $round_number;
-        $this->tpl['FUTURE_AUCTION'] = _("Show Upcoming Auctions");
-        $this->tpl['CONFIRM_TRADE'] = _("Confirm Trade");
-        $this->tpl['UNDO_TRADE'] = _("Undo Transctions");
-        $this->tpl['BUILDING_STOCK'] = _("Building Stock");
-        $this->tpl['BUILDING_DISCARD'] = _("Show Discarded Buildings");
-        $this->tpl['FUTURE_BUILDING'] = _("Show Upcoming Buildings");
+        $this->tpl['SHOW']             = _("Show");
+        $this->tpl['FUTURE_AUCTION']   = _("Auctions");
+        $this->tpl['CONFIRM_TRADE']    = _("Confirm Trade");
+        $this->tpl['UNDO_TRADE']       = _("Undo Transctions");
+        $this->tpl['BUILDING_STOCK']   = _("Main Building Stock");
+        $this->tpl['BUILDING_DISCARD'] = _("Building Discard");
+        $this->tpl['FUTURE_BUILDING']  = _("Upcoming Buildings");
 
         $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
         foreach($players as $p_id=>$player){

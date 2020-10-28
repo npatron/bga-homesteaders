@@ -18,6 +18,9 @@
 
 /********* You can start writing your CSS below this line: **********/
 
+/*======*
+ * Font *
+ *======*/
 @font-face {
    font-family: 'Old Standard TT';
    font-style: normal;
@@ -25,22 +28,13 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-div#board {
-   background-image: url('img/auctionBoard.jpg');
-   position: relative;
-	width: 740px;
-	height: 545px;
-   background-size: 740px 545px;
-   background-repeat: no-repeat;
-   margin: auto;
-}
-
 .useFont {
    font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
 .biggerFont {
-   font: italic 30px/1 "Old Standard TT";
+   font: normal 30px/1 "Old Standard TT";
+   font-variant: small-caps;
 }
 .logFont {
    font-family: 'Old Standard TT';
@@ -51,9 +45,23 @@ div#board {
    text-decoration: line-through;
  }
 
-/*=========================
-   Button css
-  =========================*/
+/*===============*
+ * Auction Board *
+ *===============*/
+div#board {
+   background-image: url('img/auctionBoard.jpg');
+   position: relative;
+   width: 740px;
+   height: 545px;
+   background-size: 740px 545px;
+   background-repeat: no-repeat;
+   margin: auto;
+}
+
+
+/*============*
+ * Button css *
+ *============*/
 #btn_more_gold{
    display: inline-flex;
 }
@@ -66,9 +74,10 @@ div#board {
 #btn_gold_copper{
    display: inline-flex;
 }
-/*=========================
-    Bid Slot Locations (on board)
-  =========================*/
+/*====================*
+ * Bid Slot Locations *
+ *    (on board)      *
+ *====================*/
 div#pending_bids{
    top: 1%;
    left: 40%; 
@@ -78,6 +87,8 @@ div#pending_bids{
    grid-template-columns: repeat(4, 50px);
 }
 div#passed_bids{
+   bottom: 1%;
+   left: 40%;
    height: 50px;
    width: 200px;
 }
@@ -197,15 +208,9 @@ div#bid_slot_3_21{
    left: 87.1%;
  }
 
-/*************************
- * Auction Zones
-*************************/
-#future_auction_zone{
-   position: relative;
-   display: grid;
-   grid-template-columns: repeat(auto-fill, 155px);
-   grid-template-rows: repeat(auto-fill, 220px);
-}
+/*===============*
+ * Auction Zones *
+ *===============*/
 .auction_tiles_zone{
    position: absolute;
    top: 27%;
@@ -224,17 +229,14 @@ div#bid_slot_3_21{
 .building_location {
    display: grid;
 }
-/*************************
- * Train Advancement Token Zones
-*************************/
+/*===================*
+ * Train Advancement *
+ *===================*/
 .train_advance{
    position: absolute;
    top: 80%;
    height: 7.5%;
    width: 14%;
-   border-color:yellow;
-   border-style: solid;
-   border-width: 2px;
 }
 div#train_advancement_0{
    left: 6.4%;
@@ -312,9 +314,10 @@ div#train_bonus_5_vp{
    width: 5%;
 }
 
-/*************************
- * trade Board (and trade Selection Zones)
-*************************/
+/*=============================*
+ * Trade Board                 *
+ * (and trade Selection Zones) *
+ *=============================*/
 div#trade_board {
    background-image: url('img/trade.jpg');
    position: relative;
@@ -392,19 +395,14 @@ div#trade_bank_trade_silver{
    left: 79.5%;
    bottom: 0%;
 }
-div#done_trading {
-   background-image: url('img/refuse.png');
-   top: 1%;
-   left: 35%;
-   height: 16px;
-   width: 16px;
-   position: absolute;
-}
 .trade_size {
    height: 180px;
    width: 690px;
 }
 
+/*===============================*
+ * Payment Section (gold/silver) *
+ *===============================*/
 #payment_section {
    position: relative;
    box-shadow: -3px -3px 3px grey inset;
@@ -437,9 +435,9 @@ div#done_trading {
    width: 50px;
    height: 50px;
 }
-/***************************
- * Building Zones
- **************************/
+/*================*
+ * Building Zones *
+ *================*/
 #building_zone {
    width: auto;
    border-radius: 6px;
@@ -450,17 +448,20 @@ div#done_trading {
    grid-template-columns: repeat(auto-fill, 145px);
    grid-template-rows: repeat(auto-fill, 198px);
 }
-.building_zone_diag {
-   width: 155px;
-   height: 220px;
-}
+.building_zone_diag .building_tile:not(:first-child) {
+   margin-left: 10px;
+   margin-top: -186px;
+ }
 .main_building_zone {
    position: relative;
    display: grid;
-   grid-template-columns: repeat(auto-fill, 155px);
-   grid-template-rows: repeat(auto-fill, 220px);
+   grid-template-columns: repeat(auto-fill, minmax(144px, 164px));
+   grid-template-rows: repeat(auto-fill, minmax(200px, 220px));
 }
-
+#future_auction_zone {
+   grid-template-columns: repeat(auto-fill, 132px);
+   grid-template-rows: repeat(auto-fill, 202px);
+}
 #building_zone_red {
    border-color: red;
 }
@@ -474,9 +475,9 @@ div#done_trading {
    border-color: blue;
 }
 
-/*************************
- * State classes 
-*************************/
+/*===============*
+ * State classes *
+ *===============*/
 .selectable {
    border-style: dotted;
    border-color: blue;
@@ -491,13 +492,7 @@ div#done_trading {
    box-sizing: content-box;
    cursor:pointer;
 }
-.highlighted {
-   border-style: dotted;
-   border-color:black;
-   border-width: 3px;
-   box-sizing: content-box;
-   cursor:pointer;
-}
+
 .color_yellow {
    background-color: yellow;  
 }
@@ -513,42 +508,58 @@ div#done_trading {
 .color_purple {
    background-color: purple;
 }
-.res_yellow {
+
+.border_yellow {
    border-color:yellow;
    border-radius: 2px;
    border-style: solid;
 }
-.res_blue {
+.border_blue {
    border-color:blue;
    border-radius: 2px;
    border-style: solid;
 }
-.res_green {
+.border_green {
    border-color:green;
    border-radius: 2px;
    border-style: solid;
 }
-.res_red {
+.border_red {
    border-color: red;
    border-radius: 2px;
    border-style: solid;
 }
-.res_purple {
+.border_purple {
    border-color:purple;
    border-radius: 2px;
    border-style: solid;
 }
-.res_lightseagreen{
+.border_black {
+   border-color:black;
+   border-radius: 2px;
+   border-style: solid;
+}
+.border_gray {
+   border-color: gray;
+   border-radius: 2px;
+   border-style: solid;
+}
+.border_white {
+   border-color: white;
+   border-radius: 2px;
+   border-style: solid;
+}
+.border_lightseagreen{
    border-color:lightseagreen;
    border-radius: 2px;
    border-style: solid;
 }
-.res_orange{
+.border_orange{
    border-color:orange;
    border-radius: 2px;
    border-style: solid;
 }
-.res_hotpink{
+.border_hotpink{
    border-color:hotpink;
    border-radius: 2px;
    border-style: solid;
@@ -562,7 +573,9 @@ div#done_trading {
    box-sizing: border-box;
    padding:4px 4px 4px 4px;
 }
-
+/*======*
+ * hide *
+ *======*/
 .noshow {
    visibility:hidden;
    height:0px;
@@ -573,22 +586,22 @@ div#done_trading {
 .show {
    visibility:visible;
 }
-
+/*===============*
+ * Animate Token *
+ *===============*/
 .animated {
 	animation: anim_move 2s infinite;
 }
-
 @keyframes anim_move {
     0% {transform: rotate(-35deg) translateX(4px);} 
     50% {transform: rotate(35deg) translateX(4px);}
     100% {transform: rotate(-35deg) translateX(4px);}
 }
 
-/*=========================
-    Player board
-  =========================*/
+/*==============*
+ * Player board *
+ *==============*/
 .score {
-   /* transform: scale(.8); */
    position: relative;
 }
 .score_text {
@@ -606,7 +619,6 @@ div#done_trading {
    margin: auto;
    background-size: 375px 150px;
 }
-
 .score_vp{
    background-position: -212.5px 0px;
    width: 56px;
@@ -621,7 +633,6 @@ div#done_trading {
    grid-column: 2 / 3;
    grid-row: 1 / 2;
 }
-
 .score_loan {
    background-image: url('img/rail_debt_85x102.png');
    background-position: -86% 50%;
@@ -638,7 +649,6 @@ div#done_trading {
    grid-column: 4 / 5;
    grid-row: 1 / 2;
 }
-
 .score_wood{
    background-position: 0px 0px;
    width: 20.5px;
@@ -653,7 +663,6 @@ div#done_trading {
    grid-column: 6 / 7;
    grid-row: 1 / 2;
 }
-
 .score_food{
    background-position: -68.5px 0px;
    width: 38.5px;
@@ -667,7 +676,6 @@ div#done_trading {
    grid-column: 8 / 9;
    grid-row: 1 / 2;
 }
-
 .score_steel{
    background-position: -96.5px -111px;
    width: 40px;
@@ -682,7 +690,6 @@ div#done_trading {
    grid-column: 10 / 11;
    grid-row: 1 / 2;
 }
-
 .score_silver{
    background-position: -107px 0px;
    width: 51px;
@@ -697,7 +704,6 @@ div#done_trading {
    grid-column: 2 / 3;
    grid-row: 2 / 3;
 }
-
 .score_trade{
    background-position: -158px 0px;
    width: 48px;
@@ -712,7 +718,6 @@ div#done_trading {
    grid-column: 4 / 5;
    grid-row: 2 / 3;
 }
-
 .score_gold{
    background-position: -20.5px 0px;
    width: 47.5px;
@@ -727,7 +732,6 @@ div#done_trading {
    grid-column: 6 / 7;
    grid-row: 2 / 3;
 }
-
 .score_cow{
    background-position: -51.5px -50px;
    width: 85.5px;
@@ -742,7 +746,6 @@ div#done_trading {
    grid-column: 8 / 9;
    grid-row: 2 / 3;
 }
-
 .score_copper{
    background-position: -136.5px -54px;
    width: 76px;
@@ -758,27 +761,26 @@ div#done_trading {
    grid-row: 2 / 3;
 }
 
-/*=========================
-    Token images
-  =========================*/
+/*=============*
+ * Token Zones *
+ *=============*/
 .player_token_zone {
    position: relative;
    display: grid;
    grid-template-columns: repeat(auto-fill, 42.5px);
    grid-template-rows: repeat(auto-fill, 51px);
 }
-.token {
-   background-image: url('img/tokens_50x50.png');
-   width: 50px;
-   height: 50px;
-}
-.icon {
-   background-image: url('img/tokens_50x50.png');
-   height: 30px;
-   width: 30px;
-   background-size: 150px 90px;
+.bid_token_zone {
+   position: absolute;
+   display: grid;
+   grid-template-columns: repeat(auto-fill, 42.5px);
+   height: 51px;
+   width: 170px;
 }
 
+/*============*
+ * Log Images *
+ *============*/
 .log_bid {
    display: inline-block;
    background-image: url('img/fancy_tokens_80x83.png');
@@ -930,6 +932,9 @@ div#done_trading {
    background-size: 115px 63px; 
 }
 
+/*==============*
+ * Track Tokens *
+ *==============*/
 .token_track {
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 0%;
@@ -939,63 +944,60 @@ div#done_trading {
    grid-column: span 2;
    grid-row: span 2;
 }
-.token_loan {
-   background-image: url('img/rail_debt_85x102.png');
-   background-position: -100% 0%;
-   top: 4px;
-   height: 30px;
-   width: 25px;
-   background-size: 75px 30px;
-}
-.loan {
-   top: 0px;
-   height: 102px;
-   width: 85px;
-   background-size: 255px 102px;
-}
-
-
-.token_wood {
-   background-position: 0% 0%;
-}
-.token_steel {
-   background-position: 25% 0%;
-}
-.token_gold {
-   background-position: 50% 0%;
-}
-.token_copper {
-   background-position: 75% 0%;
-}
-.token_food {
-   background-position: 100% 0%;
-}
-.token_cow {
-   background-position: 0% 50%;
-}
-.token_silver {
-   background-position: 25% 50%;
-}
-.token_trade {
-   background-position: 50% 50%;
-}
-/*.token_worker {
-   background-image: url('img/drawn_tokens.png');
-   background-size: 160px 64px;
-   background-position: 0px -23px;
-   width: 23px;
-   height: 35px;
-}*/
+/*===============*
+ * Worker Tokens *
+ *===============*/
 .token_worker {
+   background-image: url(img/drawn_tokens.png);
    height: 35px;
-   width: 33px;
-   background-size: 175px 105px;
-   background-position: 76% 50%;
+   width: 26px;
+   background-position: -204px -188px;
+   background-size: 558.5px 223.4px;
+   z-index: 2;
+   filter: drop-shadow(0px 0px 1px #000000);
+   position: relative;
+}
+.token_worker:not(:first-child) {
+   left: 20px;
+   top: -35px;
+}
+
+/*===============*
+ * Player Tokens *
+ *===============*/
+.player_token_bid {
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-position-x: 100%;
+   background-size: 100px 260px;
+   width: 46px;
+   height: 52px;
    z-index: 1;
+   position: relative;
 }
-.token_vp {
-   background-position: 100% 50%;
+.bid_slot .player_token_bid:not(:first-child){
+   left: -25px;
 }
+.player_token_train {
+   background-image: url('img/fancy_tokens_80x83.png');
+   background-size: 100px 260px;
+   background-position-x: 0%;
+   width: 55px;
+   height: 52px;
+   position: relative;
+}
+.player_token_train:nth-child(2){
+   left: 50%;
+   top: -52px;
+}
+.player_token_train:nth-child(3){
+   left: -25%;
+   top: -42px;
+}
+.player_token_train:nth-child(4){
+   left: 50%;
+   top: -52px;
+}
+
 .bid_yellow {
    background-position: 100% 0%;
 }
@@ -1026,24 +1028,6 @@ div#done_trading {
 .train_purple {
    background-position-y: 91.5%;
 }
-
-
-.player_token_bid {
-   background-image: url('img/fancy_tokens_80x83.png');
-   background-position-x: 100%;
-   background-size: 100px 260px;
-   width: 46px;
-   height: 52px;
-   z-index: 1;
-}
-.player_token_train {
-   background-image: url('img/fancy_tokens_80x83.png');
-   background-size: 100px 260px;
-   background-position-x: 0%;
-   width: 55px;
-   height: 52px;
-}
-
 .player_token_yellow {
    background-position-y: 0%;
 }
@@ -1060,9 +1044,9 @@ div#done_trading {
    background-position-y: 100%;
 }
 
-/*=========================
-    Building Worker Slots
-  =========================*/
+/*=======================*
+ * Building Worker Slots *
+ *=======================*/
 .worker_slot{
    position: absolute;
    height: 35px;
@@ -1142,7 +1126,6 @@ div#done_trading {
    bottom: 10px;
    left: 39px;
 }
-
 .slot_1_24 {
    bottom: 13px;
    left: 38px;
@@ -1160,10 +1143,9 @@ div#done_trading {
    left: 64px;
 }
 
-
-/*=========================
-    Auction Tile images
-  =========================*/
+/*=====================*
+ * Auction Tile images *
+ *=====================*/
 .auction_tile {
    width: 144px;
    height: 196px;
@@ -1264,10 +1246,9 @@ div#auction_tile_30 {
    background-position: 100% 100%;
 }
 
-
-/*=========================
-    Building card images
-  =========================*/
+/*======================*
+ * Building card images *
+ *======================*/
 .building_tile {
    width: 144px;
    height: 196px;
