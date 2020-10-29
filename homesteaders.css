@@ -582,10 +582,7 @@ div#trade_bank_trade_silver{
  *======*/
 .noshow {
    visibility:hidden;
-   height:0px;
-   width:0px;
-   margin: -5px;
-   padding: 0px;
+   display: none;
 }
 .show {
    visibility:visible;
