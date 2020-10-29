@@ -59,10 +59,9 @@
              ) );
         } 
         
-        // for 2p or 4p all 3 bid slots, for 3p only 2.
-        //$auc_bid_slots = ($players_nbr==3? 2:3);
         $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
-        for ($a=1; $a <= 3; $a++){
+        // for 2p or 4p all 3 bid slots, for 3p only 2.
+        for ($a=1; $a <= ($players_nbr==3? 2:3); $a++){
           for ($bid=1; $bid < 10; $bid++){          
             $this->page->insert_block( "bid_slot", array('A'=> $a, 'B'=> $this->game->Bid->bid_cost_array[$bid]) );
           }
@@ -71,10 +70,13 @@
         $color_arr = array(1=>'lightseagreen', 2=>'orange', 3=>'hotpink');
         $this->page->begin_block( "homesteaders_homesteaders", "auction_string" );
         $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );
-        $auction = $this->game->getGameStateValue('number_auctions');
-        for ($a=1; $a <= $auction; $a++){
-          $this->page->insert_block( "auction_stacks", array('A'=> $a) );
-          $this->page->insert_block( "auction_string", array('A'=> $a, 'COLOR'=> $color_arr[$a]) );
+        $this->page->begin_block( "homesteaders_homesteaders", "future_auction_zones" );
+        $auctions = $this->game->getGameStateValue('number_auctions');
+        for ($a=1; $a <= $auctions; $a++){
+          $this->page->insert_block( "auction_stacks", array('A'=> $a));
+          $string_offset = ($a==1? 2:($a-1)*($auctions==3 ? 33.3333: 50));
+          $this->page->insert_block( "auction_string", array('AUCTION'=>_("Auction"), 'A'=> $a, 'COLOR'=> $color_arr[$a], 'OFFSET'=> $string_offset));
+          $this->page->insert_block( "future_auction_zones", array('A'=> $a, 'PCT'=> ($auctions==3 ? 32.3333: 49) ));
         }
         
         $this->page->begin_block( "homesteaders_homesteaders", "train_advancement");

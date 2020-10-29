@@ -58,7 +58,6 @@ div#board {
    margin: auto;
 }
 
-
 /*============*
  * Button css *
  *============*/
@@ -73,6 +72,9 @@ div#board {
 }
 #btn_gold_copper{
    display: inline-flex;
+}
+#confirm_trade_btn{
+   height: fit-content;
 }
 /*====================*
  * Bid Slot Locations *
@@ -314,6 +316,10 @@ div#train_bonus_5_vp{
    width: 5%;
 }
 
+#top {
+   display: flex
+}
+
 /*=============================*
  * Trade Board                 *
  * (and trade Selection Zones) *
@@ -328,7 +334,6 @@ div#trade_board {
    margin: auto;
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
-   display:inline-flex;
 }
 .trade_option {
    height: 19%;
@@ -411,7 +416,7 @@ div#trade_bank_trade_silver{
    width: 140px;
    margin-left: auto;
    margin-right: auto;
-   display: inline-flex;
+   display: flex;
  }
 #gold_cost_token {
    margin: auto;
@@ -455,24 +460,23 @@ div#trade_bank_trade_silver{
 .main_building_zone {
    position: relative;
    display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(144px, 164px));
-   grid-template-rows: repeat(auto-fill, minmax(200px, 220px));
+   grid-template-columns: repeat(auto-fill, minmax(144px, auto));
+   grid-template-rows: repeat(auto-fill, minmax(200px, auto));
 }
-#future_auction_zone {
+#future_auction_container {
    grid-template-columns: repeat(auto-fill, 132px);
    grid-template-rows: repeat(auto-fill, 202px);
 }
-#building_zone_red {
-   border-color: red;
+.future_auction_zone {
+   display: inline-grid;
 }
-#building_zone_yellow {
-   border-color: yellow;
+.auction_string {
+   position: absolute;
 }
-#building_zone_green {
-   border-color: green;
-}
-#building_zone_blue {
-   border-color: blue;
+
+#player_zones {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(600px, auto));
 }
 
 /*===============*
@@ -580,7 +584,7 @@ div#trade_bank_trade_silver{
    visibility:hidden;
    height:0px;
    width:0px;
-   margin: 0px;
+   margin: -5px;
    padding: 0px;
 }
 .show {
@@ -625,13 +629,13 @@ div#trade_bank_trade_silver{
    height: 58px;
    transform: scale(.5);
    grid-column: 1 / 2;
-   grid-row: 1 / 2;
+   grid-row: 2 / 3;
    left: -8px;
    top: -9px;
 }
 .player_vp {
    grid-column: 2 / 3;
-   grid-row: 1 / 2;
+   grid-row: 2 / 3;
 }
 .score_loan {
    background-image: url('img/rail_debt_85x102.png');
@@ -641,13 +645,13 @@ div#trade_bank_trade_silver{
    transform: scale(1.7);
    background-size: 75px 30px;
    grid-column: 3 / 4;
-   grid-row: 1 / 2;
+   grid-row: 2 / 3;
    left: 12px;
    top: 9px;
 }
 .player_loan {
    grid-column: 4 / 5;
-   grid-row: 1 / 2;
+   grid-row: 2 / 3;
 }
 .score_wood{
    background-position: 0px 0px;
@@ -696,13 +700,13 @@ div#trade_bank_trade_silver{
    height: 49.5px;
    transform: scale(.6);
    grid-column: 1 / 2;
-   grid-row: 2 / 3;
+   grid-row: 1 / 2;
    left: -6px;
    top: -5px;
 }
 .player_silver {
    grid-column: 2 / 3;
-   grid-row: 2 / 3;
+   grid-row: 1 / 2;
 }
 .score_trade{
    background-position: -158px 0px;
@@ -710,13 +714,13 @@ div#trade_bank_trade_silver{
    height: 47px;
    transform: scale(.6);
    grid-column: 3 / 4;
-   grid-row: 2 / 3;
+   grid-row: 1 / 2;
    left: -3px;
    top: -4px;
 }
 .player_trade {
    grid-column: 4 / 5;
-   grid-row: 2 / 3;
+   grid-row: 1 / 2;
 }
 .score_gold{
    background-position: -20.5px 0px;

@@ -167,11 +167,13 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
+            
             'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),
             'buildings' => $this->Building->getAllBuildings(),
             'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
             'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0 && $this->checkAction('trade',false)),
             'cancel_move_ids' => $this->Log->getCancelMoveIds(),
+            'current_auctions' => $this->Auction->getCurrentRoundAuctions(),
             'current_player' => $cur_p_id, 
             'first_player' => $this->getGameStateValue( 'first_player'),
             'number_auctions' => $this->getGameStateValue( 'number_auctions' ),
@@ -675,6 +677,7 @@ class homesteaders extends Table
                     'player_name'=>$this->getPlayerName($first_p_id),
                     'first'=>'First Player'));
             }
+            $this->Bid->clearBidForPlayer($auction_winner_id);// for dummy bid case.
         } else {
             if ($current_auction == 1){ // winner of auction 1 gets first player marker.
                 $this->setGameStateValue('first_player', $auction_winner_id);

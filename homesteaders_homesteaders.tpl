@@ -11,7 +11,7 @@
 
 -->
 <div id ="top">
-    <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}</span>  </span>
+    <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
     <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a><!--
 --> <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
 </div>
@@ -60,9 +60,13 @@
     <div id='building_location' class='tile_container'>
         <div id='future_auction_container' class='whiteblock border_lightseagreen noshow'>
             <!-- BEGIN auction_string -->
-            <span class="auction_string biggerFont" style="color: {COLOR};">Auction {A}  </span>
+            <span class="auction_string biggerFont" style="color: {COLOR}; left: {OFFSET}%;"> {AUCTION} {A}</span>
             <!-- END auction_string -->
-            <div id='future_auction_zone' class="main_building_zone"></div>
+            <br><br>
+            <!-- BEGIN future_auction_zones -->
+            <div id="future_auction_{A}" class="main_building_zone future_auction_zone" style="width: {PCT}%;"> </div>
+            <!-- END future_auction_zones -->
+            </div>
         </div>
         <div id='past_building_container' class="whiteblock border_white noshow">
             <span class="biggerFont">{BUILDING_DISCARD}</span>
@@ -79,16 +83,11 @@
     </div>
 </div>
 <!-- Token limbo -->
-
-<div id="limbo" style="display: block"> 
-    
+<div id="limbo"> 
     <div id='first_player_tile' class='building_tile'> </div>
 </div>
-
-<!--
-    Player Buildings section
--->
-<div id='player_zones' class="container">
+<!-- Player Buildings section -->
+<div id='player_zones' class="players_container">
     <div id ='First'> </div> <div id ='Second'> </div> <div id ='Third'> </div> <div id ='Fourth'> </div>
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR}" style="margin-top:4px;">
@@ -106,7 +105,6 @@
     <div id="trade_bottom">
         <div id="trade_board" class="">
             <!-- Trade Helper Board -->
-            <!--<div id="done_trading" class=""> </div>-->
             <div id="trade_buy_wood" class="trade_option"> </div>
             <div id="trade_buy_food" class="trade_option"> </div>
             <div id="trade_buy_steel" class="trade_option"> </div>
@@ -151,13 +149,13 @@ var jptpl_track='<div id="token_track_${id}" class="token_track border_${color}"
 
 var jstpl_player_board = '\<div class="cp_board">\
     <div class="score_group">\
-    <div id="vpicon_p${id}"     class="score_token score_vp score"></div><span id="vpcount_${id}" class="player_vp score_text">0</span>\
-    <div id="loanicon_p${id}"   class="score_loan score score"></div><span id="loancount_${id}" class="player_loan score_text">0</span>\
+    <div id="silvericon_p${id}" class="score_token score_silver score"></div><span id="silvercount_${id}" class="player_silver score_text">0</span>\
+    <div id="tradeicon_p${id}"  class="score_token score_trade score"></div><span id="tradecount_${id}" class="player_trade score_text">0</span>\
     <div id="woodicon_p${id}"   class="score_token score_wood score"></div><span id="woodcount_${id}" class="player_wood score_text">0</span>\
     <div id="foodicon_p${id}"   class="score_token score_food score"></div><span id="foodcount_${id}" class="player_food score_text">0</span>\
     <div id="steelicon_p${id}"  class="score_token score_steel score"></div><span id="steelcount_${id}" class="player_steel score_text">0</span>\
-    <div id="silvericon_p${id}" class="score_token score_silver score"></div><span id="silvercount_${id}" class="player_silver score_text">0</span>\
-    <div id="tradeicon_p${id}"  class="score_token score_trade score"></div><span id="tradecount_${id}" class="player_trade score_text">0</span>\
+    <div id="vpicon_p${id}"     class="score_token score_vp score"></div><span id="vpcount_${id}" class="player_vp score_text">0</span>\
+    <div id="loanicon_p${id}"   class="score_loan score score"></div><span id="loancount_${id}" class="player_loan score_text">0</span>\
     <div id="goldicon_p${id}"   class="score_token score_gold score"></div><span id="goldcount_${id}" class="player_gold score_text">0</span>\
     <div id="cowicon_p${id}"    class="score_token score_cow score"></div><span id="cowcount_${id}" class="player_cow score_text">0</span>\
     <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="player_copper score_text">0</span>\
