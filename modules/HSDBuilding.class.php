@@ -13,96 +13,49 @@ class HSDBuilding extends APP_GameClass
 
     /** SETUP BUILDINGS on game start, IN DB */
     function createBuildings($players){
-        $vp = array (0, 0, 0, 0, 0, 2, //0-5
-                        0, 2, 0, 0, 0, //6-10
-                        0, 0, 0, 2, 0, //11-15
-                        0, 0,10, 2, 0, //16-20
-                        0, 3, 2, 1, 6, //21-25
-                        4, 4, 6, 3,10, //26-30
-                        6, 8, 3, 8, 6, //31-35
-                        0, 3, 1, 2, 3, 3, 8,);//36-42 (expansion)
         $this->game->DbQuery("DELETE FROM `buildings`");
-        $sql = "INSERT INTO `buildings` (building_id, building_type, `stage`, `location`, player_id, worker_slot) VALUES ";
+        $sql = "INSERT INTO `buildings` (building_id, building_type, stage, cost, `location`, player_id, worker_slot) VALUES ";
         $values=array();
-        // homestead (assigned to each player by player_id)
-        foreach( $players as $player_id => $player ) {
-            $player_color = $this->game->getPlayerColorName($player_id);
-            if ($player_color === 'yellow'){
-                $values[] = "('".BLD_HOMESTEAD_YELLOW."', '".TYPE_RESIDENTIAL."', '0', '".BLD_LOC_PLAYER."', '".$player_id."', '2')";
-            } else if ($player_color === 'red'){
-                $values[] = "('".BLD_HOMESTEAD_RED   ."', '".TYPE_RESIDENTIAL."', '0', '".BLD_LOC_PLAYER."', '".$player_id."', '2')";
-            } else if ($player_color === 'green'){
-                $values[] = "('".BLD_HOMESTEAD_GREEN ."', '".TYPE_RESIDENTIAL."', '0', '".BLD_LOC_PLAYER."', '".$player_id."', '2')";
-            } else if ($player_color === 'blue'){
-                $values[] = "('".BLD_HOMESTEAD_BLUE  ."', '".TYPE_RESIDENTIAL."', '0', '".BLD_LOC_PLAYER."', '".$player_id."', '2')";
-            } else if ($player_color === 'purple'){//if We add purple homestead update the id below.
-                $values[] = "('".BLD_HOMESTEAD_BLUE  ."', '".TYPE_RESIDENTIAL."', '0', '".BLD_LOC_PLAYER."', '".$player_id."', '2')";
-            }
-        }
-        $sql .= implode( ',', $values ); 
-        $this->game->DbQuery( $sql );
-
-        $sql = "INSERT INTO buildings (building_id, building_type, stage, cost, worker_slot, b_vp) VALUES ";
-        $values=array();
-        // some building have 2 copies in 2 player, and 3 copies in 3-4 player
-        $count_3x = 3;
-        // some buildings have 2 copies in 3-4 player
-        $count_2x = 2; 
-        if (count($players) == 2){
-            $count_3x = 2;
-            $count_2x = 1; 
-        }
-        for($i = 0; $i < $count_3x; $i++) 
-        {
-            $values[] = "('".BLD_FARM   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT."','".WOOD."', '2', '".$vp[BLD_FARM]   ."')";
-            $values[] = "('".BLD_MARKET ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT."','".WOOD."', '1', '".$vp[BLD_MARKET] ."')";
-            $values[] = "('".BLD_FOUNDRY."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT."','".NONE."', '1', '".$vp[BLD_FOUNDRY]."')";
-        }
-        
-        for($i = 0; $i < $count_2x ; $i++) 
-        {
-            $values[] = "('".BLD_RANCH        ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL.FOOD."', '1', '".$vp[BLD_RANCH]   ."')";
-            $values[] = "('".BLD_GENERAL_STORE."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".STEEL          ."', '0', '".$vp[BLD_GENERAL_STORE]   ."')";
-            $values[] = "('".BLD_GOLD_MINE    ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.STEEL     ."', '1', '".$vp[BLD_GOLD_MINE]   ."')";
-            $values[] = "('".BLD_COPPER_MINE  ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD.STEEL."', '1', '".$vp[BLD_COPPER_MINE]   ."')";
-            $values[] = "('".BLD_RIVER_PORT   ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT_TOWN."','".WOOD           ."', '3', '".$vp[BLD_RIVER_PORT]   ."')";
-            $values[] = "('".BLD_WORKSHOP     ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".STEEL          ."', '0', '".$vp[BLD_WORKSHOP]   ."')";
-            $values[] = "('".BLD_DEPOT        ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".WOOD.STEEL     ."', '0', '".$vp[BLD_DEPOT]   ."')";
-            $values[] = "('".BLD_FORGE        ."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".STEEL.STEEL    ."', '1', '".$vp[BLD_FORGE]   ."')";
-            $values[] = "('".BLD_DUDE_RANCH   ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.FOOD      ."', '0', '".$vp[BLD_DUDE_RANCH]   ."')";
-            $values[] = "('".BLD_RESTARAUNT   ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".WOOD.COW       ."', '0', '".$vp[BLD_RESTARAUNT]   ."')";
-            $values[] = "('".BLD_TERMINAL     ."','".TYPE_COMMERCIAL ."','".STAGE_CITY           ."','".STEEL.STEEL    ."', '0', '".$vp[BLD_TERMINAL]   ."')";
-            $values[] = "('".BLD_TRAIN_STATION."','".TYPE_INDUSTRIAL ."','".STAGE_CITY           ."','".WOOD.COPPER    ."', '0', '".$vp[BLD_TRAIN_STATION]   ."')";
-        }
-        //all other buildings
-        $values[] = "('".BLD_GRAIN_MILL       ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT     ."','".WOOD.STEEL             ."', '0', '".$vp[BLD_GRAIN_MILL]       ."')";
-        $values[] = "('".BLD_STEEL_MILL       ."','".TYPE_INDUSTRIAL ."','".STAGE_SETTLEMENT     ."','".WOOD.WOOD.GOLD         ."', '0', '".$vp[BLD_STEEL_MILL]       ."')";
-        $values[] = "('".BLD_BOARDING_HOUSE   ."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".WOOD.WOOD              ."', '0', '".$vp[BLD_BOARDING_HOUSE]   ."')";
-        $values[] = "('".BLD_RAILWORKERS_HOUSE."','".TYPE_RESIDENTIAL."','".STAGE_SETTLEMENT_TOWN."','".STEEL.STEEL            ."', '0', '".$vp[BLD_RAILWORKERS_HOUSE]."')";
-        $values[] = "('".BLD_TRADING_POST     ."','".TYPE_COMMERCIAL ."','".STAGE_SETTLEMENT_TOWN."','".GOLD                   ."', '0', '".$vp[BLD_TRADING_POST]     ."')";
-        $values[] = "('".BLD_CHURCH           ."','".TYPE_RESIDENTIAL."','".STAGE_TOWN           ."','".WOOD.STEEL.GOLD.COPPER ."', '0', '".$vp[BLD_CHURCH]           ."')";
-        $values[] = "('".BLD_BANK             ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".STEEL.COPPER           ."', '0', '".$vp[BLD_BANK]             ."')";
-        $values[] = "('".BLD_STABLES          ."','".TYPE_COMMERCIAL ."','".STAGE_TOWN           ."','".COW                    ."', '0', '".$vp[BLD_STABLES]          ."')";
-        $values[] = "('".BLD_MEATPACKING_PLANT."','".TYPE_INDUSTRIAL ."','".STAGE_TOWN           ."','".WOOD.COW               ."', '2', '".$vp[BLD_MEATPACKING_PLANT]."')";
-        $values[] = "('".BLD_FACTORY          ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".STEEL.STEEL.COPPER     ."', '0', '".$vp[BLD_FACTORY]          ."')";
-        $values[] = "('".BLD_RODEO            ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".FOOD.COW               ."', '0', '".$vp[BLD_RODEO]            ."')";
-        $values[] = "('".BLD_LAWYER           ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.GOLD.COW          ."', '0', '".$vp[BLD_LAWYER]           ."')";
-        $values[] = "('".BLD_FAIRGROUNDS      ."','".TYPE_SPECIAL    ."','".STAGE_TOWN           ."','".WOOD.WOOD.COPPER.COW   ."', '0', '".$vp[BLD_FAIRGROUNDS]      ."')";
-        $values[] = "('".BLD_TOWN_HALL        ."','".TYPE_RESIDENTIAL."','".STAGE_CITY           ."','".WOOD.WOOD.COPPER       ."', '0', '".$vp[BLD_TOWN_HALL]        ."')";
-        $values[] = "('".BLD_CIRCUS           ."','".TYPE_SPECIAL    ."','".STAGE_CITY           ."','".FOOD.FOOD.COW          ."', '0', '".$vp[BLD_CIRCUS]           ."')";
-        $values[] = "('".BLD_RAIL_YARD        ."','".TYPE_SPECIAL    ."','".STAGE_CITY           ."','".STEEL.STEEL.GOLD.COPPER."', '0', '".$vp[BLD_RAIL_YARD]        ."')";
+        foreach( $players as $p_id => $player ) // homestead (assigned to each player by player_id)
+            $values[] = $this->getHomesteadAsValue($p_id);
+        for($b_id = BLD_GRAIN_MILL; $b_id <= BLD_RAIL_YARD; $b_id++) 
+            $values[] = $this->buildingAsValue($b_id);
         $sql .= implode( ',', $values ); 
         $this->game->DbQuery( $sql );
     }
 
+    function getHomesteadAsValue($p_id){
+        $player_color = $this->game->getPlayerColorName($p_id);
+        $b_id = BLD_HOMESTEAD_BLUE;
+        if ($player_color === 'yellow') {
+            $b_id = BLD_HOMESTEAD_YELLOW;
+        } else if ($player_color === 'red') {
+            $b_id = BLD_HOMESTEAD_RED;
+        } else if ($player_color === 'green') {
+            $b_id = BLD_HOMESTEAD_GREEN;
+        } 
+        return "('$b_id', 0, 0, 0, 2, '$p_id', 2)";
+    }
+
+    function buildingAsValue($b_id){
+        $bld =$this->building[$b_id];
+        $value = "('$b_id', '".$bld['type']."', '".$bld['stage']."', '".$bld['cost']."', 0, 0, '".$bld['slot']."')";
+        $endValue = $value;
+        $iStart = ($this->game->getPlayersNumber()==2? 2:1);
+        for ($i = $iStart; $i< $bld['amt']; $i++){
+            $endValue .= ", "+ $value;
+        }
+        return $endValue;
+    }
+
     /**  getAllDatas method */
-    function getAllBuildings(){ // TODO add b_vp for next run through.
+    function getAllBuildings(){
         $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` ";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 
     function getAllPlayerBuildings($p_id){
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot, `b_vp` FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 

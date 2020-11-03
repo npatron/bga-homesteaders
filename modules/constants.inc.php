@@ -33,8 +33,8 @@
   define("BLD_CHURCH",            18);
   define("BLD_WORKSHOP",          19);
   define("BLD_DEPOT",             20);
-  define("BLD_STABLES",           21);
   define("BLD_BANK",              22);
+  define("BLD_STABLES",           21);
   define("BLD_MEATPACKING_PLANT", 23);
   define("BLD_FORGE",             24);
   define("BLD_FACTORY",           25);
@@ -88,6 +88,19 @@
   define("VP",       10);
   define("SILVER",   11);
   define("LOAN",     12);
+  define("VP2",      13);
+  define("VP4",      14);
+  define("VP6",      15);
+
+  define("VP_B_NONE",        0);
+  define("VP_B_RESIDENTIAL", 1);
+  define("VP_B_INDUSTRIAL",  2);
+  define("VP_B_COMMERCIAL",  3);
+  define("VP_B_SPECIAL",     4);
+  define("VP_B_WORKER",      5);
+  define("VP_B_TRACK",       6);
+  define("VP_B_BUILDING",    7);
+  define("VP_B_WRK_TRK",     8);
 
   define("BUILD_BONUS_NONE",           0);
   define("BUILD_BONUS_PAY_LOAN",       1);
