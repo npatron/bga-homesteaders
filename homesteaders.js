@@ -230,16 +230,17 @@ function (dojo, declare) {
                 const player = gamedatas.players[p_id];
                 this.setupPlayerAssets(player);
             }
-            if (!$isSpectator)
+            if (!$isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
+                this.setupPlayerResources(gamedatas.player_resources);
+            }
             console.log("#players: "+this.playerCount);
             if (this.playerCount == 2){
                 this.player_color[DUMMY_BID] = this.getAvailableColor();
-                this.player_color[DUMMY_OPT] =this.player_color[0];
+                this.player_color[DUMMY_OPT] = this.player_color[0];
             }
             this.omitImages();
-
-            this.setupPlayerResources(gamedatas.player_resources);
+            
             // Auctions: 
             this.number_auctions = gamedatas.number_auctions;
             //this.setupAuctionZones(gamedatas.number_auctions);
@@ -250,6 +251,7 @@ function (dojo, declare) {
 
             dojo.place(FIRST_PLAYER_ID, this.player_building_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
+            this.addTooltip( FIRST_PLAYER_ID, _('First Player'), '' ); 
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones();
             this.setupBidTokens(gamedatas.bids);
@@ -322,7 +324,6 @@ function (dojo, declare) {
 
         setupPlayerResources: function (resources){
             for (const [key, value] of Object.entries(resources)) {
-                //console.log(`${key}: ${value}`);
                 if (key == "p_id") continue;
                 this.resourceCounters[key] = new ebg.counter();
                 this.resourceCounters[key].create(`${key}count_${resources.p_id}`);
@@ -463,7 +464,7 @@ function (dojo, declare) {
             dojo.connect($(UNDO_TRADE_BTN_ID), 'onclick', this, 'undoTransactionsButton');
             if (!this.isCurrentPlayerActive() || !can_undo_trades){
                 dojo.addClass(UNDO_TRADE_BTN_ID,'noshow');
-            }
+            } 
         },
 
         setupBonusButtons: function(){
@@ -537,6 +538,7 @@ function (dojo, declare) {
                         args.args.auctions);  
                     break;
                 case 'payWorkers':
+                    this.setupBidsForNewRound();
                     this.goldAmount = 0;
                     break;
                 case 'allocateWorkers':                    
@@ -592,6 +594,8 @@ function (dojo, declare) {
                 case 'allocateWorkers':
                     this.clearSelectable('worker', true); 
                     this.clearSelectable('worker_slot', false);
+                    this.hideUndoTransactionsButtonIfPossible();
+                    this.disableTradeIfPossible();
                 case 'payAuction':
                 case 'bonusChoice':
                 case 'payWorkers':
@@ -698,7 +702,7 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_choose_bonus', _('Choose Bonus'), 'doneSelectingBonus');
                     break;
                     case 'payAuction':
-                        dojo.place(PAYMENT_SECTION_ID, 'top');
+                        this.showPaymentSection();
                         this.silverCost = Number(args.auction_cost);
                         this.goldAmount = 0;
                         this.silverCounter.setValue(Math.max(0 , this.silverCost));
@@ -971,9 +975,9 @@ function (dojo, declare) {
         },
 
         hideUndoTransactionsButtonIfPossible: function(){
-            if (!this.isCurrentPlayerActive()){
-                dojo.addClass(UNDO_TRADE_BTN_ID,'noshow');
-            }
+            dojo.addClass(UNDO_TRADE_BTN_ID,'noshow');
+            dojo.addClass('top','noshow');
+            console.log("noshow top");
         },
         
         disableTradeIfPossible: function() {
@@ -983,16 +987,16 @@ function (dojo, declare) {
                 if (!dojo.hasClass(CONFIRM_TRADE_BTN_ID, 'noshow') ){
                     dojo.addClass( CONFIRM_TRADE_BTN_ID, 'noshow');
                 }
-                this.moveObject(TRADE_BOARD_ID, 'trade_bottom');
-                dojo.removeClass(`active_top`, `trade_size`);
+                dojo.addClass('trade_bottom', 'trade_size');
+                this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_bottom', true, 'trade_top', 'noshow');
             }
         },
 
         enableTradeIfPossible: function() {
             if (!dojo.query(`#${TRADE_BOARD_ID} .selectable`).length >0){
                 // make space for it, and move trade board to top.
-                dojo.addClass(`active_top`, `trade_size`);
-                this.moveObject(TRADE_BOARD_ID, 'active_top');
+                dojo.removeClass(`trade_top`, `noshow`);
+                this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_top', false, 'trade_bottom', 'trade_size');
                 this.last_selected['trade']='';
                 //make the trade options selectable
                 dojo.query(`div#${TRADE_BOARD_ID} .trade_option:not([id^="trade_market"]):not([id^="trade_bank"])`).addClass('selectable');
@@ -1092,7 +1096,7 @@ function (dojo, declare) {
         },
 
         showPaymentSection: function(){
-            dojo.place(PAYMENT_SECTION_ID, 'top', 'last');
+            dojo.place(PAYMENT_SECTION_ID, 'top', 'first');
         },
 
         lowerGold: function(){
@@ -1331,6 +1335,14 @@ function (dojo, declare) {
             }
         },
 
+        setupBidsForNewRound: function ()
+        {
+            for(let p_id in this.player_color){
+                if (p_id == DUMMY_OPT) continue;
+                this.moveBid(p_id, NO_BID);
+            }
+        },
+
         /***** PLAYER BID PHASE *****/
         onClickOnBidSlot: function ( evt ) 
         {
@@ -1550,14 +1562,33 @@ function (dojo, declare) {
             } 
         },
         
-        moveObject: function(mobile_obj,target_obj, duration=500, delay=0){
+        moveObjectAndUpdateClass: function(mobile_obj, target_obj, addClass, update, className){
+            var animation_id = this.slideToObject( mobile_obj, target_obj, 500, 0);
+            dojo.connect(animation_id, 'onEnd', dojo.hitch(this, 'callback_hide', {target_obj:target_obj, mobile_obj:mobile_obj, addClass:addClass, update:update, className:className}));
+            animation_id.play();
+        },
+
+        callback_hide: function (params) {
+            dojo.place (params.mobile_obj, params.target_obj);
+            $(params.mobile_obj).style.removeProperty('top');
+            $(params.mobile_obj).style.removeProperty('left');
+            $(params.mobile_obj).style.removeProperty('position');
+            if (params.addClass){
+                dojo.addClass(params.update, params.className);
+            } else {
+                dojo.removeClass(params.update, params.className);
+            }
+        },
+
+        moveObject: function(mobile_obj, target_obj, position=null, duration=500, delay=0){
+            if (position == null) position = "last";
             var animation_id = this.slideToObject( mobile_obj, target_obj, duration, delay );
-            dojo.connect(animation_id, 'onEnd', dojo.hitch(this, 'callback_function', {target_obj:target_obj, mobile_obj:mobile_obj}));
+            dojo.connect(animation_id, 'onEnd', dojo.hitch(this, 'callback_function', {target_obj:target_obj, mobile_obj:mobile_obj, position:position}));
             animation_id.play();
         },
 
         callback_function: function(params) {
-            dojo.place (params.mobile_obj, params.target_obj);
+            dojo.place (params.mobile_obj, params.target_obj, params.position);
             $(params.mobile_obj).style.removeProperty('top');
             $(params.mobile_obj).style.removeProperty('left');
             $(params.mobile_obj).style.removeProperty('position');

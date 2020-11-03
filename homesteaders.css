@@ -55,26 +55,41 @@ div#board {
    height: 545px;
    background-size: 740px 545px;
    background-repeat: no-repeat;
-   margin: auto;
+   grid-column: span 3;
+}
+.container {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(246.6666px, auto));
 }
 
 /*============*
  * Button css *
  *============*/
-#btn_more_gold{
-   display: inline-flex;
-}
-#btn_less_gold{
-   display: inline-flex;
-}
-#btn_gold_cow{
-   display: inline-flex;
-}
-#btn_gold_copper{
-   display: inline-flex;
-}
 #confirm_trade_btn{
-   height: fit-content;
+   min-height: fit-content;
+   grid-column: -2/-1;
+}
+#undo_trades_btn{
+   min-height: fit-content;
+   min-width: fit-content;
+}
+a#tgl_future_auc{
+   min-height: fit-content;
+   min-width: fit-content;
+}
+a#tgl_past_bld{
+   min-height: fit-content;
+   min-width: fit-content;
+   grid-row: span 2;
+}
+a#tgl_future_bld{
+   min-height: fit-content;
+   min-width: fit-content;
+   grid-row: span 2;
+}
+#round_text {
+   margin-top: auto;
+   margin-bottom: auto;
 }
 /*====================*
  * Bid Slot Locations *
@@ -315,9 +330,39 @@ div#train_bonus_5_vp{
    left: 84%;
    width: 5%;
 }
-
 #top {
-   display: flex
+   display: flex;
+}
+
+@media all and (min-width:1251px){
+   #top{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 230px);
+   }
+   #confirm_trade_btn{
+      height: fit-content;
+      min-width: fit-content;
+      grid-row: -2/-1;
+   }
+   #undo_trades_btn{
+      height: fit-content;
+      min-width: fit-content;
+   }
+   a#tgl_future_auc{
+      height: fit-content;
+      min-width: fit-content;
+   }
+   a#tgl_past_bld{
+      height: fit-content;
+      min-width: fit-content;
+      grid-row: span 2;
+   }
+   a#tgl_future_bld{
+      height: fit-content;
+      min-width: fit-content;
+      grid-row: span 2;
+   }
+
 }
 
 /*=============================*
@@ -401,8 +446,9 @@ div#trade_bank_trade_silver{
    bottom: 0%;
 }
 .trade_size {
-   height: 180px;
+   grid-column: span 3;
    width: 690px;
+   height: 180px;
 }
 
 /*===============================*
@@ -414,9 +460,8 @@ div#trade_bank_trade_silver{
    border-radius: 6px;
    height: 50px;
    width: 140px;
-   margin-left: auto;
-   margin-right: auto;
    display: flex;
+   grid-row: span 2;
  }
 #gold_cost_token {
    margin: auto;
@@ -583,6 +628,7 @@ div#trade_bank_trade_silver{
 .noshow {
    visibility:hidden;
    display: none;
+   grid-area: none;
 }
 .show {
    visibility:visible;
@@ -797,6 +843,7 @@ div#trade_bank_trade_silver{
    background-position-x: 0%;
    width: 55px;
    height: 29px;
+   transform: scaleX(-1);
 }
 
 .log_container {
@@ -985,6 +1032,7 @@ div#trade_bank_trade_silver{
    width: 55px;
    height: 52px;
    position: relative;
+   transform: scaleX(-1);
 }
 .player_token_train:nth-child(2){
    left: 50%;

@@ -10,16 +10,22 @@
 -------
 
 -->
-<div id ="top">
-    <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
-    <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a><!--
---> <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
-</div>
-<div id ="active_top">
-</div>
-
-<!-- Auction Board -->
 <div id="main_container" class="container">
+    <div id ="top">
+        <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
+        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
+        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
+            <span id='auc_future' class="useFont">{SHOW} </span><span class="useFont"> {FUTURE_AUCTION}</span>
+        </a>
+        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
+            <span id="bld_discard" class="useFont">{SHOW} </span><br><span class="useFont"> {BUILDING_DISCARD}</span>
+        </a>
+        <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
+            <span id="bld_future" class="useFont">{SHOW} </span><br><span class="useFont"> {FUTURE_BUILDING}</span>
+        </a>
+        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
+    </div>
+    <!-- Auction Board -->
     <div id="board" class="shadow">
         <div id="pending_bids" class="bid_token_zone"> </div>
         <!-- BEGIN bid_slot -->
@@ -46,42 +52,34 @@
         <div id="train_bonus_5_vp" class="train_bonus"> </div>
         <div id="passed_bids" class="bid_token_zone"> </div>
     </div>
-    <div id='button_container'>
-        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
-            <span id='auc_future' class="useFont">{SHOW} </span><span class="useFont"> {FUTURE_AUCTION}</span>
-        </a>
-        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_discard" class="useFont">{SHOW} </span><span class="useFont"> {BUILDING_DISCARD}</span>
-        </a>
-        <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_future" class="useFont">{SHOW} </span><span class="useFont"> {FUTURE_BUILDING}</span>
-        </a>
-    </div>
-    <div id='building_location' class='tile_container'>
-        <div id='future_auction_container' class='whiteblock border_lightseagreen noshow'>
-            <!-- BEGIN auction_string -->
-            <span class="auction_string biggerFont" style="color: {COLOR}; left: {OFFSET}%;"> {AUCTION} {A}</span>
-            <!-- END auction_string -->
-            <br><br>
-            <!-- BEGIN future_auction_zones -->
-            <div id="future_auction_{A}" class="main_building_zone future_auction_zone" style="width: {PCT}%;"> </div>
-            <!-- END future_auction_zones -->
-            </div>
-        </div>
-        <div id='past_building_container' class="whiteblock border_white noshow">
-            <span class="biggerFont">{BUILDING_DISCARD}</span>
-            <div id='past_building_zone' class="main_building_zone"> </div>
-        </div>
-        <div id='future_building_container' class="whiteblock border_gray noshow">
-            <span class="biggerFont">{FUTURE_BUILDING}</span> 
-            <div id='future_building_zone' class="main_building_zone"> </div>
-        </div>
-        <div id="main_building_container" class="whiteblock border_black">
-            <span class="biggerFont">{BUILDING_STOCK}</span>
-            <div id="main_building_zone" class="main_building_zone"> </div>
-        </div>
+    <div id="trade_top" class="noshow">
     </div>
 </div>
+<div id='building_location' class='tile_container'>
+    <div id='future_auction_container' class='whiteblock border_lightseagreen noshow'>
+        <!-- BEGIN auction_string -->
+        <span class="auction_string biggerFont" style="color: {COLOR}; left: {OFFSET}%;"> {AUCTION} {A}</span>
+        <!-- END auction_string -->
+        <br><br>
+        <!-- BEGIN future_auction_zones -->
+        <div id="future_auction_{A}" class="main_building_zone future_auction_zone" style="width: {PCT}%;"> </div>
+        <!-- END future_auction_zones -->
+        </div>
+    </div>
+    <div id='past_building_container' class="whiteblock border_white noshow">
+        <span class="biggerFont">{BUILDING_DISCARD}</span>
+        <div id='past_building_zone' class="main_building_zone"> </div>
+    </div>
+    <div id='future_building_container' class="whiteblock border_gray noshow">
+        <span class="biggerFont">{FUTURE_BUILDING}</span> 
+        <div id='future_building_zone' class="main_building_zone"> </div>
+    </div>
+    <div id="main_building_container" class="whiteblock border_black">
+        <span class="biggerFont">{BUILDING_STOCK}</span>
+        <div id="main_building_zone" class="main_building_zone"> </div>
+    </div>
+</div>
+
 <!-- Token limbo -->
 <div id="limbo"> 
     <div id='first_player_tile' class='building_tile'> </div>
