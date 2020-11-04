@@ -56,6 +56,7 @@ div#board {
    background-size: 740px 545px;
    background-repeat: no-repeat;
    grid-column: span 3;
+   order: 3;
 }
 .container {
    display: grid;
@@ -65,31 +66,41 @@ div#board {
 /*============*
  * Button css *
  *============*/
+ #top {
+   display: grid;
+   order: 1;
+   grid-column: 1/-1;
+   grid-template-columns: repeat(auto-fill, 205px);
+   grid-template-rows: repeat(auto-fill, 5px);
+}
 #confirm_trade_btn{
-   min-height: fit-content;
-   grid-column: -2/-1;
+   height: fit-content;
+   grid-row: span 7;
 }
 #undo_trades_btn{
-   min-height: fit-content;
+   height: fit-content;
    min-width: fit-content;
+   grid-row: span 7;
 }
 a#tgl_future_auc{
-   min-height: fit-content;
+   height: fit-content;
    min-width: fit-content;
+   grid-row: span 7;
 }
 a#tgl_past_bld{
-   min-height: fit-content;
+   height: fit-content;
    min-width: fit-content;
-   grid-row: span 2;
+   grid-row: span 11;
 }
 a#tgl_future_bld{
-   min-height: fit-content;
+   height: fit-content;
    min-width: fit-content;
-   grid-row: span 2;
+   grid-row: span 11;
 }
 #round_text {
    margin-top: auto;
    margin-bottom: auto;
+   grid-row: span 5;
 }
 /*====================*
  * Bid Slot Locations *
@@ -330,19 +341,23 @@ div#train_bonus_5_vp{
    left: 84%;
    width: 5%;
 }
-#top {
-   display: flex;
+
+#trade_top {
+   order: 2;
 }
 
-@media all and (min-width:1251px){
+@media all and (min-width:1200px){
+   .container {
+      grid-template-columns: 205px 270px repeat(auto-fill, minmax(205px, auto));
+   }
    #top{
       display: grid;
-      grid-template-columns: repeat(auto-fill, 230px);
+      grid-column: span 1;
+      grid-template-columns: repeat(auto-fill, 205px);
    }
    #confirm_trade_btn{
       height: fit-content;
       min-width: fit-content;
-      grid-row: -2/-1;
    }
    #undo_trades_btn{
       height: fit-content;
@@ -355,12 +370,16 @@ div#train_bonus_5_vp{
    a#tgl_past_bld{
       height: fit-content;
       min-width: fit-content;
-      grid-row: span 2;
    }
    a#tgl_future_bld{
       height: fit-content;
       min-width: fit-content;
-      grid-row: span 2;
+   }
+   #board {
+      order: 2;
+   }
+   #trade_top {
+      order: 3;
    }
 
 }
@@ -461,7 +480,7 @@ div#trade_bank_trade_silver{
    height: 50px;
    width: 140px;
    display: flex;
-   grid-row: span 2;
+   grid-row: span 16;
  }
 #gold_cost_token {
    margin: auto;
