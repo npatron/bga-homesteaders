@@ -14,12 +14,12 @@ class HSDBuilding extends APP_GameClass
     /** SETUP BUILDINGS on game start, IN DB */
     function createBuildings($players){
         $this->game->DbQuery("DELETE FROM `buildings`");
-        $sql = "INSERT INTO `buildings` (building_id, building_type, stage, cost, `location`, player_id, worker_slot) VALUES ";
+        $sql = "INSERT INTO `buildings` (building_id, building_type, stage, `location`, player_id, worker_slot) VALUES ";
         $values=array();
         foreach( $players as $p_id => $player ) // homestead (assigned to each player by player_id)
             $values[] = $this->getHomesteadAsValue($p_id);
         for($b_id = BLD_GRAIN_MILL; $b_id <= BLD_RAIL_YARD; $b_id++) 
-            $values[] = $this->buildingAsValue($b_id);
+            $values[] = $this->getBuildingAsValue($b_id);
         $sql .= implode( ',', $values ); 
         $this->game->DbQuery( $sql );
     }
@@ -34,12 +34,15 @@ class HSDBuilding extends APP_GameClass
         } else if ($player_color === 'green') {
             $b_id = BLD_HOMESTEAD_GREEN;
         } 
-        return "('$b_id', 0, 0, 0, 2, '$p_id', 2)";
+        return "('$b_id', 0, 0, 2, '$p_id', 2)";
     }
 
-    function buildingAsValue($b_id){
-        $bld =$this->building[$b_id];
-        $value = "('$b_id', '".$bld['type']."', '".$bld['stage']."', '".$bld['cost']."', 0, 0, '".$bld['slot']."')";
+    function getBuildingAsValue($b_id){
+        $bld = $this->building_info[$b_id];
+        $slot = (array_key_exists('slot',$bld)?$bld['slot']:0); // either 'slot', or 0 if 'slot' not defined.
+        $stage = $bld['stage'];
+        $type = $bld['type'];
+        $value = "('$b_id', '$type', '$stage', 0, 0, '$slot')";
         $endValue = $value;
         $iStart = ($this->game->getPlayersNumber()==2? 2:1);
         for ($i = $iStart; $i< $bld['amt']; $i++){
@@ -82,113 +85,25 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
-        $sql = "SELECT `cost` FROM `buildings` WHERE `building_key`='".$b_key."'";
-        $cost = $this->game->getUniqueValueFromDb( $sql );
-        $b_cost = array();
-        if ($cost == "0") 
-            return $b_cost;
-        //for each digit in $cost, increment the assiciated array key.
-        for ($i =0; $i < strlen($cost); $i++){
-            $type_str = '';
-            switch($cost[$i]){
-                case WOOD: $type_str = 'wood';
-                break;
-                case STEEL: $type_str = 'steel';
-                break;
-                case GOLD: $type_str = 'gold';
-                break;
-                case COPPER:
-                    if ($goldAsCopper) $type_str = 'gold';
-                    else $type_str = 'copper';
-                break;
-                case FOOD: $type_str = 'food';
-                break;
-                case COW:   
-                    if ($goldAsCow) $type_str = 'gold';
-                    else $type_str = 'cow';
-                break;
-            }
-            $b_cost = $this->game->Resource->updateKeyOrCreate($b_cost, $type_str,  1);
+        $b_id = $this->getBuildingIdFromKey($b_key);
+        $cost = $this->building_info[$b_id]['cost'];
+        if ($goldAsCopper && array_key_exists('copper',$cost)){
+            $this->game->Resource->updateKeyOrCreate($cost, 'gold',$cost['copper']);
+            unset($cost['copper']);
         }
-        return $b_cost;
+        if ($goldAsCow && array_key_exists('cow', $cost)){
+            $this->game->Resource->updateKeyOrCreate($cost, 'gold',$cost['cow']);
+            unset($cost['cow']);
+        }
+        return $cost;
     }
 
     function getBuildingNameFromKey($b_key){
-        $b_id = $this->getBuildingIdFromKey($b_key);
-        return ($this->getBuildingNameFromId($b_id));
+        return ($this->getBuildingNameFromId($this->getBuildingIdFromKey($b_key)));
     }
 
     function getBuildingNameFromId($b_id){
-        switch($b_id)
-        {
-            case BLD_HOMESTEAD_YELLOW:
-            case BLD_HOMESTEAD_RED:
-            case BLD_HOMESTEAD_GREEN:
-            case BLD_HOMESTEAD_BLUE:
-                return clienttranslate( 'Homestead' );
-            case BLD_GRAIN_MILL:
-                return clienttranslate( 'Grain Mill' );
-            case BLD_FARM:
-                return clienttranslate( 'Farm' );
-            case BLD_MARKET:
-                return clienttranslate( 'Market' );
-            case BLD_FOUNDRY:
-                return clienttranslate( 'Foundry' );
-            case BLD_STEEL_MILL:
-                return clienttranslate( 'Steel Mill' );
-            case BLD_BOARDING_HOUSE:
-                return clienttranslate( 'Boarding House' );
-            case BLD_RAILWORKERS_HOUSE:
-                return clienttranslate( 'Railworkers House' );
-            case BLD_RANCH:
-                return clienttranslate( 'Ranch' );
-            case BLD_TRADING_POST:
-                return clienttranslate( 'Trading Post' );
-            case BLD_GENERAL_STORE:
-                return clienttranslate( 'General Store' );
-            case BLD_GOLD_MINE:
-                return clienttranslate( 'Gold Mine' );
-            case BLD_COPPER_MINE:
-                return clienttranslate( 'Copper Mine' );
-            case BLD_RIVER_PORT:
-                return clienttranslate( 'River Port' );
-            case BLD_CHURCH:
-                return clienttranslate( 'Church' );
-            case BLD_WORKSHOP:
-                return clienttranslate( 'Workshop' );
-            case BLD_DEPOT:
-                return clienttranslate( 'Depot' );
-            case BLD_STABLES:
-                return clienttranslate( 'Stables' );
-            case BLD_BANK:
-                return clienttranslate( 'Bank' );
-            case BLD_MEATPACKING_PLANT:
-                return clienttranslate( 'Meatpacking Plant' );
-            case BLD_FORGE:
-                return clienttranslate( 'Forge' );
-            case BLD_FACTORY:
-                return clienttranslate( 'Factory' );
-            case BLD_RODEO:
-                return clienttranslate( 'Rodeo' );
-            case BLD_LAWYER:
-                return clienttranslate( 'Lawyer' );
-            case BLD_FAIRGROUNDS:
-                return clienttranslate( 'Fairgrounds' );
-            case BLD_DUDE_RANCH:
-                return clienttranslate( 'Dude Ranch' );
-            case BLD_TOWN_HALL:
-                return clienttranslate( 'Town Hall' );
-            case BLD_TERMINAL:
-                return clienttranslate( 'Terminal' );
-            case BLD_RESTARAUNT:
-                return clienttranslate( 'Restataunt' );
-            case BLD_TRAIN_STATION:
-                return clienttranslate( 'Train Station' );
-            case BLD_CIRCUS:
-                return clienttranslate( 'Circus' );
-            case BLD_RAIL_YARD:
-                return clienttranslate( 'Rail Yard' );
-        }
+        return $this->building_info[$b_id]['name'];
     }
 
     function doesPlayerOwnBuilding($p_id, $b_id) {
@@ -199,7 +114,6 @@ class HSDBuilding extends APP_GameClass
         }
         return false;
     }
-
 
     function updateBuildingsForRound($round_number){
         //rd 1 setup buildings
@@ -246,7 +160,7 @@ class HSDBuilding extends APP_GameClass
 
     /***** BUYING Building *****/
     /**
-     * returns an array of buildings that can be built.
+     * Returns an array of buildings that can be built. (based upon auction allowed)
      */
     function getAllowedBuildings( $build_type_options) {// into an array of constants
         if (count($build_type_options) ==0){ return array(); }
@@ -308,22 +222,7 @@ class HSDBuilding extends APP_GameClass
 
     function getOnBuildBonusForBuildingKey($b_key){
         $b_id = $this->getBuildingIdFromKey($b_key);
-        switch ($b_id){
-            case BLD_BOARDING_HOUSE:
-                return BUILD_BONUS_PAY_LOAN;
-            case BLD_RANCH:
-                return BUILD_BONUS_TRADE;
-            case BLD_WORKSHOP:
-                return BUILD_BONUS_WORKER;
-            case BLD_DEPOT:
-            case BLD_FORGE:
-            case BLD_RAIL_YARD:
-                return BUILD_BONUS_RAIL_ADVANCE;
-            case BLD_TRAIN_STATION:
-                return BUILD_BONUS_TRACK_AND_BUILD;
-            default:
-                return BUILD_BONUS_NONE;
-        }
+        return (array_key_exists('on_b', $this->building_info[$b_id])? $this->building_info[$b_id]['on_b']:0);
     }
 
     function getBuildingScoreFromKey($b_key){
@@ -331,151 +230,43 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingScoreFromId($b_id) {
-        switch($b_id){
-            case BLD_FORGE:
-                return 1;
-            case BLD_GRAIN_MILL: 
-            case BLD_MARKET:
-            case BLD_GENERAL_STORE:
-            case BLD_WORKSHOP:
-            case BLD_MEATPACKING_PLANT:
-                return 2;
-            case BLD_BANK:
-            case BLD_DUDE_RANCH:
-            case BLD_TRAIN_STATION:
-                return 3;
-            case BLD_RODEO:
-            case BLD_LAWYER:
-                return 4;
-            case BLD_FACTORY:
-            case BLD_FAIRGROUNDS:
-            case BLD_TERMINAL:
-            case BLD_RAIL_YARD:
-                return 6;
-            case BLD_RESTARAUNT:
-            case BLD_CIRCUS:
-                return 8;
-            case BLD_CHURCH:
-            case BLD_TOWN_HALL:
-                return 10;
-        }
-        return 0;
+        return (array_key_exists('vp', $this->building_info[$b_id])? $this->building_info[$b_id]['vp']:0);
     }
 
     // INCOME
     function buildingIncomeForPlayer($p_id){
         $riverPortWorkers = 0;
         $p_bld = $this->getAllPlayerBuildings($p_id);
-        $sql = "SELECT * FROM `workers` WHERE `player_id` = '".$p_id."'";
-        $player_workers = $this->game->getCollectionFromDB( $sql );
+        $player_workers = $this->game->getCollectionFromDB( "SELECT * FROM `workers` WHERE `player_id` = '$p_id'");
         $income_b_id = array();
         foreach( $p_bld as $b_key => $building ) {
-            $b_name = $this->getBuildingNameFromKey($b_key);
             $b_id = $building['b_id'];
-            $income_b_id[$b_id] = array ('name' => $b_name, 'key' =>$b_key);
-            switch($b_id) {
-                case BLD_HOMESTEAD_YELLOW:
-                case BLD_HOMESTEAD_RED:
-                case BLD_HOMESTEAD_GREEN:
-                case BLD_HOMESTEAD_BLUE:
-                case BLD_HOMESTEAD_PURPLE:
-                case BLD_BOARDING_HOUSE:
-                case BLD_DEPOT:
-                    $income_b_id[$b_id]['silver'] = 2;
-                    break;
-                case BLD_GRAIN_MILL:
-                    $income_b_id[$b_id]['food'] = 1;
-                    break;
-                case BLD_MARKET:
-                case BLD_GENERAL_STORE:
-                    $income_b_id[$b_id]['trade'] = 1;
-                    break;
-                case BLD_STEEL_MILL:
-                    $income_b_id[$b_id]['steel'] = 1;
-                    break;
-                case BLD_RAILWORKERS_HOUSE:
-                    $income_b_id[$b_id]['silver'] = 1;
-                    $income_b_id[$b_id]['trade'] = 1;
-                    break;
-                case BLD_TRADING_POST:
-                    $income_b_id[$b_id]['trade'] = 2;
-                    break;
-                case BLD_CHURCH:
-                case BLD_FACTORY:
-                case BLD_LAWYER:
-                    $income_b_id[$b_id]['vp2'] = 1;
-                    break;
-                case BLD_WORKSHOP:
-                    $income_b_id[$b_id]['vp'] = 1;
-                break;
-                case BLD_STABLES:
-                    $income_b_id[$b_id]['trade'] = 1;
-                    $income_b_id[$b_id]['vp'] = 1;
-                break;
-                case BLD_BANK:
-                    $this->game->Resource->payLoanOrRecieveSilver($p_id, "Bank", 'building', $b_key);
-                break;
-                case BLD_RODEO:
-                    $rodeoIncome = min(count($player_workers), 5);
-                    $income_b_id[$b_id]['silver'] = $rodeoIncome;
-                break;
-                case BLD_FAIRGROUNDS:
-                    $income_b_id[$b_id]['gold'] = 1;
-                break;
-            }
+            $b_info = $this->building_info[$b_id];
+            $income_b_id[$b_id] = array ('name' => $b_info['name'], 'key' =>$b_key);
+            if ($b_id == BLD_BANK){
+                $this->game->Resource->payLoanOrRecieveSilver($p_id, $b_info['name'], 'building', $b_key);
+            } else if ($b_id == BLD_RODEO){
+                $rodeoIncome = min(count($player_workers), 5);
+                $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], 'silver', $rodeoIncome);
+            } else foreach ((array_key_exists('inc', $b_info)?$b_info['inc']:array()) as $type => $amt)
+                $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
         }
         foreach($player_workers as $worker_key => $worker ) {
             if ($worker['building_key'] != 0){
                 $b_key = $worker['building_key'];
                 $b_id = $this->getBuildingIdFromKey($b_key);
-                switch($b_id){
-                    case BLD_HOMESTEAD_YELLOW:
-                    case BLD_HOMESTEAD_RED:
-                    case BLD_HOMESTEAD_GREEN:
-                    case BLD_HOMESTEAD_BLUE:
-                    case BLD_HOMESTEAD_PURPLE:
-                        if ($worker['building_slot'] == 1){
-                            $income_b_id[$b_id]['wood']=1;
-                        } else {
-                            $income_b_id[$b_id]['vp']=1;
-                        }
-                        break;
-                    case BLD_FARM:
-                        if ($worker['building_slot'] == 1){
-                            $income_b_id[$b_id]['trade']=1;
-                            $income_b_id[$b_id]['silver']=2;
-                        } else {
-                            $income_b_id[$b_id]['food']=1;
-                        }
-                        break;
-                    case BLD_MARKET:
-                        $income_b_id[$b_id]['silver']=2;
-                        break;
-                    case BLD_FOUNDRY:
-                        $income_b_id[$b_id]['steel']=1;
-                        break;
-                    case BLD_RANCH:
-                        $income_b_id[$b_id]['cow']=1;
-                        break;
-                    case BLD_GOLD_MINE:
-                        $income_b_id[$b_id]['gold']=1;
-                        break;
-                    case BLD_COPPER_MINE:
-                        $income_b_id[$b_id]['copper']=1;
-                        break;
-                    case BLD_RIVER_PORT:
-                        if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
-                            $income_b_id[$b_id]['gold']=1;
-                        } 
-                        break;
-                    case BLD_MEATPACKING_PLANT:
-                    case BLD_FORGE:
-                        if(array_key_exists('vp2', $income_b_id[$b_id])){
-                            $income_b_id[$b_id]['vp2']+=1;
-                        } else {
-                            $income_b_id[$b_id]['vp2']=1;
-                        }
-                        break;
+                $b_info = $this->building_info[$b_id];
+                $slot = "s".$worker['building_slot'];
+                if ($slot == "s3"){ // only BLD_RIVER_PORT.
+                    if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
+                        $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id],'gold', 1);
+                    }
+                } else {
+                    if (!array_key_exists($slot, $b_info)) 
+                        throw new BgaVisibleSystemException ($b_id." has no value at ".$slot);
+                    else foreach ($b_info[$slot] as $type => $amt){
+                        $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
+                    }
                 }
             }
         }

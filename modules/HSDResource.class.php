@@ -5,23 +5,7 @@
  */
 class HSDresource extends APP_GameClass
 {
-    public $resource_map = array(
-        WOOD=>  'wood', 
-        STEEL=> 'steel',
-        GOLD=>  'gold',
-        COPPER=>'copper',
-        FOOD=>  'food',
-        COW=>   'cow',
-        TRADE=> 'trade',
-        VP=>    'vp',
-        SILVER=>'silver',
-        LOAN=>  'loan',);
-    public $special_resource_map = array(
-        'vp2' => array('vp'=>2),
-        'vp4' => array('vp'=>4),
-        'vp6' => array('vp'=>6),
-        'vp8' => array('vp'=>8),
-    );
+    
     public $game;
     public function __construct($game)
     {

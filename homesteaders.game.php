@@ -411,7 +411,7 @@ class homesteaders extends Table
     public function playerTypeForType ($tradeAway, $tradeFor){
         $this->checkAction( "auctionBonus");
         $act_p_id = $this->getActivePlayerId();
-        $tradeAwayType = $this->Resource->resource_map[$tradeAway];
+        $tradeAwayType = $this->resource_map[$tradeAway];
         if (!$this->Resource->canPlayerAfford($act_p_id, array($tradeAwayType=> 1))) {
             throw new BgaUserException( _("You need a ")."<div class='log_${tradeAwayType} token_inline'></div>"._(" to take this action") );
         }
@@ -456,7 +456,7 @@ class homesteaders extends Table
         
     public function playerCancelTransactions()
     {
-        self::checkAction('trade');
+        $this->checkAction('trade');
 
         $p_id = $this->getCurrentPlayerId();
         $transactions = $this->Log->getLastTransactions($p_id);
@@ -539,7 +539,7 @@ class homesteaders extends Table
     }
 
     function argTrainStationBuildings() {
-        $build_type_options = $this->Auction->parseBuildTypeOptions('15');// all
+        $build_type_options = array(TYPE_RESIDENTIAL,TYPE_COMMERCIAL,TYPE_INDUSTRIAL,TYPE_SPECIAL);// all
         $buildings = $this->Building->getAllowedBuildings($build_type_options);
         $ownsRiverPort = $this->Building->doesPlayerOwnBuilding($this->getActivePlayerId(), BLD_RIVER_PORT);    
         return(array("allowed_buildings"=> $buildings,
