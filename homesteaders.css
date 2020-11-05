@@ -74,27 +74,28 @@ div#board {
    grid-template-rows: repeat(auto-fill, 5px);
 }
 #confirm_trade_btn{
-   height: fit-content;
+   height: 17px;
+   width: 180px;
    grid-row: span 7;
 }
 #undo_trades_btn{
-   height: fit-content;
-   min-width: fit-content;
+   height: 17px;
+   width: 180px;
    grid-row: span 7;
 }
 a#tgl_future_auc{
-   height: fit-content;
-   min-width: fit-content;
+   height: 17px;
+   width: 180px;
    grid-row: span 7;
 }
 a#tgl_past_bld{
-   height: fit-content;
-   min-width: fit-content;
+   height: 35px;
+   width: 180px;
    grid-row: span 11;
 }
 a#tgl_future_bld{
-   height: fit-content;
-   min-width: fit-content;
+   height: 35px;
+   width: 180px;
    grid-row: span 11;
 }
 #round_text {
@@ -344,6 +345,7 @@ div#train_bonus_5_vp{
 
 #trade_top {
    order: 2;
+   grid-column: span 2;
 }
 
 @media all and (min-width:1200px){
@@ -354,26 +356,6 @@ div#train_bonus_5_vp{
       display: grid;
       grid-column: span 1;
       grid-template-columns: repeat(auto-fill, 205px);
-   }
-   #confirm_trade_btn{
-      height: 17px;
-      width: 180px;
-   }
-   #undo_trades_btn{
-      height: 17px;
-      width: 180px;
-   }
-   a#tgl_future_auc{
-      height: 17px;
-      width: 180px;
-   }
-   a#tgl_past_bld{
-      height: 35px;
-      width: 180px;
-   }
-   a#tgl_future_bld{
-      height: 35px;
-      width: 180px;
    }
    #board {
       order: 2;
@@ -481,6 +463,7 @@ div#trade_bank_trade_silver{
    width: 140px;
    display: flex;
    grid-row: span 16;
+   margin: auto;
  }
 #gold_cost_token {
    margin: auto;
@@ -1123,7 +1106,7 @@ div#trade_bank_trade_silver{
 }
 .slot_1_1 {
    bottom: 10px;
-   left: 14px;
+   left: 9px;
 }
 .slot_2_1 {
    bottom: 8px;
@@ -1135,7 +1118,7 @@ div#trade_bank_trade_silver{
 }
 .slot_2_2 {
    bottom: 9px;
-   left: 71px;
+   left: 70px;
 }
 .slot_1_3 {
    bottom: 10px;
