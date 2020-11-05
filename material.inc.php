@@ -43,7 +43,8 @@ $this->resource_info = array(
   'silver' => array(
     'name'   => clienttranslate("Silver"),
     'db_int' => SILVER,
-    'tt'     => clienttranslate("Silver: Used for paying workers and auctions"),
+    'tt'     => "<div class='score_token score_silver tt'> </div>".
+            clienttranslate("Silver: Used for paying workers and auctions"),
   ),
   'workers' => array(
     'name'   => clienttranslate("Worker"),
@@ -58,47 +59,56 @@ $this->resource_info = array(
   'wood' => array(
     'name'   => clienttranslate("Wood"),
     'db_int' => WOOD,
-    'tt'     => clienttranslate("Wood: Required to build some buildings"),
+    'tt'     => "<div class='score_token score_wood tt'> </div>".
+            clienttranslate("Wood: Required to build some buildings"),
   ),
   'food' => array(
     'name'   => clienttranslate("Food"),
     'db_int' => FOOD,
-    'tt'     => clienttranslate("Food: Required to build some buildings, or to hire new workers"),
+    'tt'     => "<div class='score_token score_food tt'> </div>".
+            clienttranslate("Food: Required to build some buildings, or to hire new workers"),
   ),
   'steel' => array(
     'name'   => clienttranslate("Steel"),
     'db_int' => STEEL,
-    'tt'     => clienttranslate("Steel: Required to build some buildings"),
+    'tt'     => "<div class='score_token score_steel tt'> </div>".
+            clienttranslate("Steel: Required to build some buildings"),
   ),
   'gold' => array(
     'name'   => clienttranslate("Gold"),
     'db_int' => GOLD,
-    'tt'     => clienttranslate("Gold: Required to build some buildings.  Also can be used to pay costs(as 5 silver). Worth 2VP at end of game"),
+    'tt'     => "<div class='score_token score_gold tt'> </div>".
+            clienttranslate("Gold: Required to build some buildings.  Also can be used to pay costs(as 5 silver). Worth 2VP at end of game"),
   ),
   'copper' => array(
     'name'   => clienttranslate("Copper"),
     'db_int' => COPPER,
-    'tt'     => clienttranslate("Copper: Required to build some buildings.  Worth 2VP at end of game"),
+    'tt'     => "<div class='score_token score_copper tt'> </div>".
+            clienttranslate("Copper: Required to build some buildings.  Worth 2VP at end of game"),
   ),
   'cow' => array(
     'name'   => clienttranslate("Livestock"),
     'db_int' => COW,
-    'tt'     => clienttranslate("Copper: Required to build some buildings.  Worth 2VP at end of game"),
+    'tt'     => '<div class="score_token score_cow tt"> </div>'.
+      clienttranslate("Livestock: Required to build some buildings.  Worth 2VP at end of game"),
   ),
   'loan' => array(
     'name'   => clienttranslate("Debt"),
     'db_int' => LOAN,
-    'tt'     => clienttranslate("Debt: Costs 5 Silver (or 1 Gold) to pay off.  Worth negative VP at end of game"),
+    'tt'     => "<div class='score_loan tt'> </div>"
+      .clienttranslate("Debt: Costs 5 Silver (or 1 Gold) to pay off.  Worth negative VP at end of game"),
   ),
   'trade' => array(
     'name'   => clienttranslate("Trade Token"),
     'db_int' => TRADE,
-    'tt'     => clienttranslate("Trade: Required for any trade. Also for hiring new workers"),
+    'tt'     => "<div class='score_token score_trade tt'> </div>".
+      clienttranslate("Trade: Required for any trade. Also for hiring new workers"),
   ),
   'vp' => array(
     'name'   => clienttranslate("VP Token"),
     'db_int' => VP,
-    'tt'     => clienttranslate("VP token: Worth 1-VP at end of game"),
+    'tt'     => "<div class='score_token score_vp tt'> </div>".
+      clienttranslate("VP-Token: Worth 1-VP at end of game"),
   ),
 );
 

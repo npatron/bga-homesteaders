@@ -46,8 +46,8 @@ class HSDresource extends APP_GameClass
         if (in_array($type, $this->resource_map)){
             $this->updateResource($p_id, $type, $amt);
         } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
-            $actual_type = array_keys($this->special_resource_map[$type])[0];
-            $amount = $amt * $this->special_resource_map[$type][$actual_type];
+            $actual_type = array_keys($this->game->special_resource_map[$type])[0];
+            $amount = $amt * $this->game->special_resource_map[$type][$actual_type];
             $this->updateResource($p_id, $actual_type, $amount);
         }
     }
@@ -73,8 +73,8 @@ class HSDresource extends APP_GameClass
                 if (in_array($type, $this->resource_map)){
                     $this->updateResource($p_id, $type, $amt);
                 } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
-                    $actual_type = array_keys($this->special_resource_map[$type])[0];
-                    $amount = $amt * $this->special_resource_map[$type][$actual_type];
+                    $actual_type = array_keys($this->game->special_resource_map[$type])[0];
+                    $amount = $amt * $this->game->special_resource_map[$type][$actual_type];
                     $this->updateResource($p_id, $actual_type, $amount);
                 }
             }

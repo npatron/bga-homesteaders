@@ -232,7 +232,7 @@ function (dojo, declare) {
             }
             if (!$isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
-                this.setupPlayerResources(gamedatas.player_resources);
+                this.setupPlayerResources(gamedatas.player_resources, gamedatas.resource_info);
             }
             console.log("#players: "+this.playerCount);
             if (this.playerCount == 2){
@@ -244,9 +244,9 @@ function (dojo, declare) {
             // Auctions: 
             this.number_auctions = gamedatas.number_auctions;
             //this.setupAuctionZones(gamedatas.number_auctions);
-            this.setupAuctionTiles(gamedatas.auctions);
+            this.setupAuctionTiles(gamedatas.auctions, gamedatas.auction_info);
             this.showCurrentAuctions(gamedatas.current_auctions);
-            this.setupBuildings(gamedatas.buildings);
+            this.setupBuildings(gamedatas.buildings, gamedatas.building_info);
             this.setupTracks(gamedatas.tracks);
 
             dojo.place(FIRST_PLAYER_ID, this.player_building_zone_id[gamedatas.first_player]);
@@ -322,23 +322,27 @@ function (dojo, declare) {
             this.dontPreloadImage( 'exp_building_144x196.png' );
         },
 
-        setupPlayerResources: function (resources){
+        setupPlayerResources: function (resources, info){
             for (const [key, value] of Object.entries(resources)) {
                 if (key == "p_id") continue;
+                let resourceId = `${key}count_${resources.p_id}`;
                 this.resourceCounters[key] = new ebg.counter();
-                this.resourceCounters[key].create(`${key}count_${resources.p_id}`);
+                this.resourceCounters[key].create(resourceId);
                 this.resourceCounters[key].setValue(value);
+                this.addTooltipHtml( resourceId, info[key]['tt'], "" );
             }
         },
 
-        setupBuildings: function(buildings) {
+        setupBuildings: function(buildings, info) {
             for (let b_key in buildings){
                 const building = buildings[b_key];   
                 if (building.location == BLD_LOC_PLAYER){
                     this.addBuildingToPlayer(building);
                 } else {
                     this.addBuildingToOffer(building);
-                } 
+                }
+                const b_divId = `${TPL_BLD_TILE}_${building.b_key}`;
+                this.addTooltip( b_divId, info[key]['tt'], "" );
             }
         },
 
@@ -822,7 +826,7 @@ function (dojo, declare) {
             }
         },
 
-        setupAuctionTiles: function (auctions){
+        setupAuctionTiles: function (auctions, info){
             for (let a_id in auctions){
                 const auction = auctions[a_id];
                 if (auction.location !=AUCLOC_DISCARD) {
@@ -830,6 +834,7 @@ function (dojo, declare) {
                     dojo.place(this.format_block( 'jstpl_auction_tile', {auc: a_id, color:color}), `future_auction_${auction.location}`);
                     dojo.style(`${TPL_AUC_TILE}_${a_id}`, 'order', a_id);
                 }
+                this.addTooltip(`${TPL_AUC_TILE}_${a_id}`, info.[a_id]['tt'],"");
             }
         },
 

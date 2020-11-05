@@ -12,7 +12,6 @@ class HSDAuction extends APP_GameClass
     }
 
     function createAuctionTiles($playerCount){
-
         $sql = "INSERT INTO `auctions` ( `auction_id`, `position`, `location` ) VALUES ";
         $values=array();
         //first auction is in order, 
@@ -30,10 +29,10 @@ class HSDAuction extends APP_GameClass
             $values[] = "('".($i+11)."','".$settlement_position[$i]."','".AUC_LOC_2."')";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+15)."','".$town_position[$i]       ."','".AUC_LOC_2.")";
+            $values[] = "('".($i+15)."','".$town_position[$i]       ."','".AUC_LOC_2."')";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "('".($i+19)."','".$city_position[$i]       ."','".AUC_LOC_2.")";
+            $values[] = "('".($i+19)."','".$city_position[$i]       ."','".AUC_LOC_2."')";
         }
 
         if ($playerCount>3){
@@ -41,13 +40,13 @@ class HSDAuction extends APP_GameClass
             shuffle($town_position);
             shuffle($city_position);
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+21)."','".$settlement_position[$i]."','".AUC_LOC_3.")";
+                $values[] = "('".($i+21)."','".$settlement_position[$i]."','".AUC_LOC_3."')";
             }
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+25)."','".$town_position[$i]      ."','".AUC_LOC_3."' )";
+                $values[] = "('".($i+25)."','".$town_position[$i]      ."','".AUC_LOC_3."')";
             }
             for ($i = 0; $i <2; $i++){
-                $values[] = "('".($i+29)."','".$city_position[$i]      ."','".AUC_LOC_3."' )";
+                $values[] = "('".($i+29)."','".$city_position[$i]      ."','".AUC_LOC_3."')";
             }   
         }
         $sql .= implode( ',', $values ); 
@@ -88,7 +87,7 @@ class HSDAuction extends APP_GameClass
     }
 
     function doesCurrentAuctionHaveBuildPhase(){
-        return (array_key_exists('build', $this->auction_info[$this->getCurrentAuctionId()]));
+        return (array_key_exists('build', $this->game->auction_info[$this->getCurrentAuctionId()]));
     }
 
     /**
@@ -96,8 +95,8 @@ class HSDAuction extends APP_GameClass
      */
     function getCurrentAuctionBonus(){
         $a_id = $this->getCurrentAuctionId();
-        // return $this->auction_info[$a_id]['bonus'] if exists, otherwise return AUC_BONUS_NONE;
-        return (array_key_exists('bonus', $this->auction_info[$a_id])?$this->auction_info[$a_id]['bonus']:AUC_BONUS_NONE);
+        // if exists, otherwise return AUC_BONUS_NONE;
+        return (array_key_exists('bonus', $this->game->auction_info[$a_id])?$this->game->auction_info[$a_id]['bonus']:AUC_BONUS_NONE);
     }
 
     function setupCurrentAuctionBonus(){
@@ -121,7 +120,7 @@ class HSDAuction extends APP_GameClass
      */
     function getCurrentAuctionBuildTypeOptions(){
         $a_id = $this->getCurrentAuctionId(); 
-        // return $this->auction_info[$a_id]['build'] if exists, otherwise return array();
-        return (array_key_exists('build', $this->auction_info[$a_id])?$this->auction_info[$a_id]['build']:array());
+        // if exists, otherwise return array();
+        return (array_key_exists('build', $this->game->auction_info[$a_id])?$this->game->auction_info[$a_id]['build']:array());
     }
 }

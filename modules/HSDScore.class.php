@@ -54,7 +54,7 @@ class HSDScore extends APP_GameClass
                                  'type' => 'header');  
             $row2[] = $p_score['vp'];
             $row3[] = $p_score['bld'];
-            $row4[] = ($p_score[TYPE_RESIDENTIAL]+$p_score[TYPE_COMMERCIAL]+$p_score[TYPE_INDUSTRIAL]+$p_score[TYPE_SPECIAL]);
+            $row4[] = $p_score['bonus'];
             $row5[] = $p_score['gold'];
             $row6[] = $p_score['cow'];
             $row7[] = $p_score['copper'];
@@ -86,10 +86,7 @@ class HSDScore extends APP_GameClass
         $bld_score =     $bld_bonus_score['static']; //$this->dbGetScore($p_id);
         $this->game->setStat($bld_score, 'building_vp', $p_id);
 
-        $bld_res_score = $bld_bonus_score[TYPE_RESIDENTIAL];
-        $bld_com_score = $bld_bonus_score[TYPE_COMMERCIAL];
-        $bld_ind_score = $bld_bonus_score[TYPE_INDUSTRIAL];
-        $bld_sp_score =  $bld_bonus_score[TYPE_SPECIAL];
+        $bonus = $bld_bonus_score['bonus'];
         
         $vp_res = $this->getPlayerVPFromResources($p_id);
         // 2VP per gold
@@ -105,12 +102,9 @@ class HSDScore extends APP_GameClass
         $loans = $this->getScoreFromLoans($p_id);
         $this->game->setStat($loans, 'vp_loan', $p_id);
         $allScores = array(
-            'vp'   => $vp_tokens,
-            'bld'  => $bld_score,
-            TYPE_RESIDENTIAL=> $bld_res_score,
-            TYPE_COMMERCIAL => $bld_com_score,
-            TYPE_INDUSTRIAL => $bld_ind_score,
-            TYPE_SPECIAL    => $bld_sp_score,
+            'vp'    => $vp_tokens,
+            'bld'   => $bld_score,
+            'bonus' => $bonus,
             'gold'  => $gold,
             'cow'   => $cow,
             'copper'=> $copper,
@@ -174,10 +168,10 @@ class HSDScore extends APP_GameClass
                      'bonus'=>0,);
         foreach($p_buildings as $b_key => $building){
             $b_id   = $p_buildings[$b_key]['b_id']; 
-            $b_static_vp = (array_key_exists('vp',$this->building_info[$b_id])?$this->building_info[$b_id]['vp']:0);
+            $b_static_vp = (array_key_exists('vp',$this->game->building_info[$b_id])?$this->game->building_info[$b_id]['vp']:0);
             $vps['static']+= $b_static_vp;
-            if (array_key_exists('vp_b',$this->building_info[$b_id])){
-                $vp_b = $this->building_info[$b_id]['vp_b'];
+            if (array_key_exists('vp_b',$this->game->building_info[$b_id])){
+                $vp_b = $this->game->building_info[$b_id]['vp_b'];
                 $vps['bonus'] += $counts[$vp_b];
                 $this->game->setStat($counts[$vp_b], "bonus_vp_${b_id}", $p_id);
             }

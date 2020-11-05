@@ -793,6 +793,10 @@ div#trade_bank_trade_silver{
    grid-column: 8 / 9;
    grid-row: 2 / 3;
 }
+.tt{
+   transform: scale(1);
+   display: inline-block;
+}
 .score_copper{
    background-position: -136.5px -54px;
    width: 76px;

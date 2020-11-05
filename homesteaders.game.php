@@ -167,22 +167,23 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
-            
+            'auction_info' => $this->auction_info,
             'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),
             'buildings' => $this->Building->getAllBuildings(),
+            'building_info' => $this->building_info,
             'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
             'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0 && $this->checkAction('trade',false)),
             'cancel_move_ids' => $this->Log->getCancelMoveIds(),
-            'current_auctions' => $this->Auction->getCurrentRoundAuctions(),
-            'current_player' => $cur_p_id, 
+            'current_auctions' => $this->Auction->getCurrentRoundAuctions(), 
             'first_player' => $this->getGameStateValue( 'first_player'),
             'number_auctions' => $this->getGameStateValue( 'number_auctions' ),
             'player_order' => $this->getNextPlayerTable(),
             'player_resources' => $this->getObjectFromDb( "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '$cur_p_id'" ),
             'resources' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `workers`, `track` FROM `resources` " ),
+            'resource_info' => $this->resource_info,
             'round_number' => $this->getGameStateValue( 'round_number' ),
             'tracks' => $this->getCollectionFromDb("SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` "),
-            'workers' => $this->getCollectionFromDb( "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot, `selected` FROM `workers`" ),
+            'workers' => $this->getCollectionFromDb( "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot FROM `workers`" ),
         );
     }
 

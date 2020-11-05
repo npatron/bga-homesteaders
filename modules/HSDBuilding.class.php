@@ -38,7 +38,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingAsValue($b_id){
-        $bld = $this->building_info[$b_id];
+        $bld = $this->game->building_info[$b_id];
         $slot = (array_key_exists('slot',$bld)?$bld['slot']:0); // either 'slot', or 0 if 'slot' not defined.
         $stage = $bld['stage'];
         $type = $bld['type'];
@@ -86,7 +86,7 @@ class HSDBuilding extends APP_GameClass
 
     function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
         $b_id = $this->getBuildingIdFromKey($b_key);
-        $cost = $this->building_info[$b_id]['cost'];
+        $cost = $this->game->building_info[$b_id]['cost'];
         if ($goldAsCopper && array_key_exists('copper',$cost)){
             $this->game->Resource->updateKeyOrCreate($cost, 'gold',$cost['copper']);
             unset($cost['copper']);
@@ -103,7 +103,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingNameFromId($b_id){
-        return $this->building_info[$b_id]['name'];
+        return $this->game->building_info[$b_id]['name'];
     }
 
     function doesPlayerOwnBuilding($p_id, $b_id) {
@@ -222,7 +222,7 @@ class HSDBuilding extends APP_GameClass
 
     function getOnBuildBonusForBuildingKey($b_key){
         $b_id = $this->getBuildingIdFromKey($b_key);
-        return (array_key_exists('on_b', $this->building_info[$b_id])? $this->building_info[$b_id]['on_b']:0);
+        return (array_key_exists('on_b', $this->game->building_info[$b_id])? $this->game->building_info[$b_id]['on_b']:0);
     }
 
     function getBuildingScoreFromKey($b_key){
@@ -230,7 +230,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingScoreFromId($b_id) {
-        return (array_key_exists('vp', $this->building_info[$b_id])? $this->building_info[$b_id]['vp']:0);
+        return (array_key_exists('vp', $this->game->building_info[$b_id])? $this->game->building_info[$b_id]['vp']:0);
     }
 
     // INCOME
@@ -241,7 +241,7 @@ class HSDBuilding extends APP_GameClass
         $income_b_id = array();
         foreach( $p_bld as $b_key => $building ) {
             $b_id = $building['b_id'];
-            $b_info = $this->building_info[$b_id];
+            $b_info = $this->game->building_info[$b_id];
             $income_b_id[$b_id] = array ('name' => $b_info['name'], 'key' =>$b_key);
             if ($b_id == BLD_BANK){
                 $this->game->Resource->payLoanOrRecieveSilver($p_id, $b_info['name'], 'building', $b_key);
@@ -255,7 +255,7 @@ class HSDBuilding extends APP_GameClass
             if ($worker['building_key'] != 0){
                 $b_key = $worker['building_key'];
                 $b_id = $this->getBuildingIdFromKey($b_key);
-                $b_info = $this->building_info[$b_id];
+                $b_info = $this->game->building_info[$b_id];
                 $slot = "s".$worker['building_slot'];
                 if ($slot == "s3"){ // only BLD_RIVER_PORT.
                     if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
