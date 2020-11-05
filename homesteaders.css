@@ -356,24 +356,24 @@ div#train_bonus_5_vp{
       grid-template-columns: repeat(auto-fill, 205px);
    }
    #confirm_trade_btn{
-      height: fit-content;
-      min-width: fit-content;
+      height: 17px;
+      width: 180px;
    }
    #undo_trades_btn{
-      height: fit-content;
-      min-width: fit-content;
+      height: 17px;
+      width: 180px;
    }
    a#tgl_future_auc{
-      height: fit-content;
-      min-width: fit-content;
+      height: 17px;
+      width: 180px;
    }
    a#tgl_past_bld{
-      height: fit-content;
-      min-width: fit-content;
+      height: 35px;
+      width: 180px;
    }
    a#tgl_future_bld{
-      height: fit-content;
-      min-width: fit-content;
+      height: 35px;
+      width: 180px;
    }
    #board {
       order: 2;
