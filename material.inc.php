@@ -116,7 +116,7 @@ $this->resource_info = array(
 $this->building_info = array(
   BLD_HOMESTEAD_YELLOW => array(
     'name' => clienttranslate("Yellow Homestead"),
-    'tt'   => clienttranslate("Yellow Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or a VP Token"),
+    'tt'   => clienttranslate("Yellow Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -129,7 +129,7 @@ $this->building_info = array(
    ),
    BLD_HOMESTEAD_RED => array(
     'name' => clienttranslate("Red Homestead"),
-    'tt'   => clienttranslate("Red Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or a VP Token"),
+    'tt'   => clienttranslate("Red Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -142,7 +142,7 @@ $this->building_info = array(
    ),
    BLD_HOMESTEAD_GREEN => array(
     'name' => clienttranslate("Green Homestead"),
-    'tt'   => clienttranslate("Green Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or a VP Token"),
+    'tt'   => clienttranslate("Green Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -155,7 +155,7 @@ $this->building_info = array(
    ),
    BLD_HOMESTEAD_BLUE => array(
     'name' => clienttranslate("Blue Homestead"),
-    'tt'   => clienttranslate("Blue Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or a VP Token"),
+    'tt'   => clienttranslate("Blue Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -503,135 +503,152 @@ $this->building_info = array(
    ),
 );
 
+$this->R_html = '<span aria="Residential" class="font_res">'._("Residential").'</span>';
+$this->C_html = '<span aria="Commercial" class="font_com">'._("Commercial").'</span>';
+$this->I_html = '<span aria="Industrial" class="font_ind">'._("Industrial").'</span>';
+$this->S_html = '<span aria="Special" class="font_spe">'._("Special").'</span>';
+$this->A_html = '<span class="font_res">'._("A").'</span><span class="font_com">'._("N").'</span><span class="font_ind">'._("Y").'</span>';
+$this->pre_auc1 = '<span class="font_a1">';
+$this->pre_auc2 = '<span class="font_a2">';
+$this->pre_auc3 = '<span class="font_a3">';
+$this->end_span = '</span>';
+$this->wrk_html = '<span aria="worker" title="worker" class="log_worker token_inline"></span>';
+$this->wood_html= '<span aria="wood" title="wood" class="log_wood token_inline"></span>';
+$this->food_html= '<span aria="food" title="food" class="log_food token_inline"></span>';
+$this->copper_html= '<span aria="copper" title="copper" class="log_copper token_inline"></span>';
+$this->cow_html= '<span aria="cow" title="cow" class="log_cow token_inline"></span>';
+$this->vp2_html= '<span aria="vp2" title="vp2" class="log_vp2 token_inline"></span>';
+$this->vp4_html= '<span aria="vp4" title="vp4" class="log_vp4 token_inline"></span>';
+$this->vp6_html= '<span aria="vp6" title="vp6" class="log_vp6 token_inline"></span>';
 $this->auction_info = array( 
   1 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("Round 1: May Build Residential or Commercial Building"),
+    'tt'    => $this->pre_auc1._("Round 1").$this->end_span._(" Build: ").$this->R_html." ".$this->C_html,
   ),
   2 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("Round 2: May Build Industrial Building "),
+    'tt'    => $this->pre_auc1._("Round 2").$this->end_span._(" Build: ").$this->I_html,
   ),
   3 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("Round 3: May Build Commercial Building"),
+    'tt'    => $this->pre_auc1._("Round 3").$this->end_span._(" Build: ").$this->C_html,
   ),
   4 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("Round 4: May Build Residential or Industrial Building"),
+    'tt'    => $this->pre_auc1._("Round 4").$this->end_span._(" Build: ").$this->R_html." ".$this->I_html,
   ),
   5 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("Round 5: May Build Commercial Building. May Hire Worker (Free)"),
+    'tt'    => $this->pre_auc1._("Round 5").$this->end_span._(" Build: ").$this->C_html._(". May Hire ").$this->wrk_html._(" (Free)"),
     'bonus' => AUC_BONUS_WORKER,
   ),
   6 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => clienttranslate("Round 6: May Build Residential Building"),
+    'tt'    => $this->pre_auc1._("Round 6").$this->end_span._(" Build: ").$this->R_html._(". May Hire ").$this->wrk_html._(" (Free)"),
     'bonus' => AUC_BONUS_WORKER,
   ),
   7 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("Round 7: May Build Industrial Building"),
+    'tt'    => $this->pre_auc1._("Round 7").$this->end_span._(" Build: ").$this->I_html._(". May Hire ").$this->wrk_html._(" (Free)"),
     'bonus' => AUC_BONUS_WORKER,
   ),
   8 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("Round 8: May Build Any Building"),
+    'tt'    => $this->pre_auc1._("Round 8").$this->end_span._(" Build: ").$this->A_html,
   ),
   9 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("Round 9: May Build Any Building. May trade 1-Copper for 4-VP"),
+    'tt'    => $this->pre_auc1._("Round 9").$this->end_span._(" Build: ").$this->A_html._(". May trade ").$this->copper_html._(" for ").$this->vp4_html,
     'bonus' => AUC_BONUS_COPPER_FOR_VP,
   ),
   10 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("Round 10: May Build Any Building. May trade 1-Livestock for 4-VP"),
+    'tt'    => $this->pre_auc1._("Round 10").$this->end_span._(" Build: ").$this->A_html._(". May trade ").$this->cow_html._(" for ").$this->vp4_html,
     'bonus' => AUC_BONUS_COW_FOR_VP,
   ),
   11 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => clienttranslate("SETTLEMENT: May Build Residential Building"),
+    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" Build: ").$this->R_html,
   ),
   12 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("SETTLEMENT: May Build Industrial Building"),
+    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" Build: ").$this->I_html,
   ),
   13 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("SETTLEMENT: May Build Any Building"),
+    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" Build: ").$this->A_html,
   ),
   14 => array(
-    'tt'    => clienttranslate("SETTLEMENT: May Hire Worker (Free) & Advance the Railroad Track"),
+    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" No Build.  May Hire ").$this->wrk_html._(" (Free) & Advance the Railroad Track"),
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   15 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("TOWN: May Build Residential or Commercial Building"),
+    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->R_html.' '.$this->C_html,
   ),
   16 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("TOWN: May Build Industrial or Commercial Building"),
+    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->I_html.' '.$this->C_html,
   ),
   17 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("TOWN: May Build Industrial or Special Building"),
+    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->I_html.' '.$this->S_html,
   ),
   18 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("TOWN: May Build Residential or Special Building. May also trade Wood for a Track"),
+    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->R_html.' '.$this->S_html._(". May trade ").$this->wood_html._(" for a Track"),
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   19 => array(
     'build' => array(TYPE_COMMERCIAL, TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("CITY: May Build Commercial or Industrial Building. May also trade Food for 2-VP"),
+    'tt'    => $this->pre_auc2._("City").$this->end_span._(" Build: ").$this->C_html.' '.$this->I_html._(". May trade ").$this->food_html._(" for ").$this->vp2_html,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   20 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("CITY: May Build Residential or Special Building. May also trade Food for 2-VP"),
+    'tt'    => $this->pre_auc2._("City").$this->end_span._(" Build: ").$this->R_html.' '.$this->S_html._(". May trade ").$this->food_html._(" for ").$this->vp2_html,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   21 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => clienttranslate("SETTLEMENT: May Build Residential Building"),
+    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" Build: ").$this->R_html,
   ),
   22 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("SETTLEMENT: May Build Commercial Building"),
+    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" Build: ").$this->C_html,
   ),
   23 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("SETTLEMENT: May Build Industrial Building"),
+    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" Build: ").$this->I_html,
   ),
   24 => array(
-    'tt'    => clienttranslate("SETTLEMENT: No Build. May Hire Worker (Free) & Advance the Railroad Track"),
+    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" No Build. May Hire ").$this->wrk_html._(" (Free) & Advance the Railroad Track"),
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   25 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => clienttranslate("TOWN: May Build Residential Building"),
+    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->R_html,
   ),
   26 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("TOWN: May Build Commercial Building"),
+    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->C_html,
   ),
   27 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => clienttranslate("TOWN: May Build Industrial Building. May also trade Wood for a Track"),
+    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->I_html._(". May trade ").$this->wood_html._(" for a Track"),
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   28 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => clienttranslate("TOWN: May Build Any Building"),
+    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->A_html,
   ),
   29 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => clienttranslate("CITY: May Build Residential or Commercial Building. May also trade Food for 2-VP"),
+    'tt'    => $this->pre_auc3._("City").$this->end_span._(" Build: ").$this->R_html.' '.$this->C_html._(". May trade ").$this->food_html._(" for ").$this->vp2_html,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   30 => array(
-    'tt'    => clienttranslate("CITY: No Build. Gain 6-VP. May also trade Food for 2-VP"),
+    'tt'    => $this->pre_auc3._("City").$this->end_span._(" No Build:  Gain ").$this->vp6_html._(" May trade ").$this->food_html._(" for ").$this->vp2_html,    
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
   ),
   

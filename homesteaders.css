@@ -45,6 +45,50 @@
    text-decoration: line-through;
  }
 
+.font_res {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: lightgreen;
+}
+.font_com {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: darksalmon;
+}
+.font_ind {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: royalblue;
+}
+.font_spe {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: gold;
+}
+.font_a1 {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: lightseagreen;
+}
+.font_a2 {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: orange;
+}
+.font_a3 {
+   font: normal 20px/1 "Old Standard TT";
+   font-variant: small-caps;
+   font-weight: bold;
+   color: hotpink;
+}
+
+
 /*===============*
  * Auction Board *
  *===============*/
