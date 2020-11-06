@@ -324,11 +324,15 @@ function (dojo, declare) {
             for (const [key, value] of Object.entries(resources)) {
                 if (key == "p_id") continue;
                 let resourceId = `${key}count_${resources.p_id}`;
+                let iconId = `${key}icon_p${resources.p_id}`;
                 this.resourceCounters[key] = new ebg.counter();
                 this.resourceCounters[key].create(resourceId);
                 this.resourceCounters[key].setValue(value);
-                this.addTooltipHtml( resourceId, info[key]['tt'], "" );
+                this.addTooltipHtml( resourceId, info[key]['tt'] );
+                this.addTooltipHtml( iconId, info[key]['tt'] );
             }
+            this.addTooltipHtmlToClass("token_track", info['track']['tt']);
+            this.addTooltipHtmlToClass("token_worker", info['workers']['tt']);
         },
 
         setupBuildings: function(buildings, info) {
@@ -358,7 +362,7 @@ function (dojo, declare) {
                 this.building_worker_zones[key] = [];
                 this.building_worker_zones[key][1] = new ebg.zone();
                 this.building_worker_zones[key][1].create(this, `slot_1_${key}`, this.worker_width, this.worker_height );
-                this.addTooltipHtml(  `slot_1_${key}`, b_info['s1_tt'], "" );
+                this.addTooltipHtml(  `slot_1_${key}`, b_info['s1_tt'] );
                 dojo.connect($(`slot_1_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
             } else if (building.w_slot == 2){
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), divId);
@@ -368,8 +372,8 @@ function (dojo, declare) {
                 this.building_worker_zones[key][1].create(this, `slot_1_${key}`, this.worker_width, this.worker_height );
                 this.building_worker_zones[key][2] = new ebg.zone();
                 this.building_worker_zones[key][2].create(this, `slot_2_${key}`, this.worker_width, this.worker_height );
-                this.addTooltipHtml(  `slot_1_${key}`, b_info['s1_tt'], "" );
-                this.addTooltipHtml(  `slot_2_${key}`, b_info['s2_tt'], "" );
+                this.addTooltipHtml(  `slot_1_${key}`, b_info['s1_tt'] );
+                this.addTooltipHtml(  `slot_2_${key}`, b_info['s2_tt'] );
                 dojo.connect($(`slot_1_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
                 dojo.connect($(`slot_2_${key}`), 'onclick', this, 'onClickOnWorkerSlot');  
             } else if (building.w_slot == 3){
@@ -379,7 +383,7 @@ function (dojo, declare) {
                 this.building_worker_zones[key][3] = new ebg.zone();
                 this.building_worker_zones[key][3].create(this, `slot_3_${key}`, this.worker_width, this.worker_height );
                 this.building_worker_zones[key][3].setPattern('horizontalfit');
-                this.addTooltipHtml( `slot_3_${key}`, b_info['s3_tt'], "" );
+                this.addTooltipHtml( `slot_3_${key}`, b_info['s3_tt'] );
                 dojo.style(`slot_3_${key}`, 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(`slot_3_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
             }
@@ -825,7 +829,7 @@ function (dojo, declare) {
                     dojo.place(this.format_block( 'jstpl_auction_tile', {auc: a_id, color:color}), `future_auction_${auction.location}`);
                     dojo.style(`${TPL_AUC_TILE}_${a_id}`, 'order', a_id);
                 }
-                this.addTooltipHtml(`${TPL_AUC_TILE}_${a_id}`, info[a_id]['tt'],"");
+                this.addTooltipHtml(`${TPL_AUC_TILE}_${a_id}`, info[a_id]['tt']);
             }
         },
 
@@ -879,7 +883,7 @@ function (dojo, declare) {
                 }
             } else { // create it as well;
                 dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), this.player_building_zone_id[building.p_id]);
-                this.addTooltipHtml( b_divId, b_info['tt'], "" );
+                this.addTooltipHtml( b_divId, b_info['tt'] );
                 this.addBuildingWorkerSlots(building, b_info);
             }
             if (building.p_id == this.player_id){
@@ -901,7 +905,7 @@ function (dojo, declare) {
             if ($(b_divId) == null){ //if missing make the building 
                 dojo.place(this.format_block( 'jstpl_buildings', {key: building.b_key, id: building.b_id}), zone_id);
                 dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
-                this.addTooltipHtml( b_divId, b_info['tt'], "" );
+                this.addTooltipHtml( b_divId, b_info['tt'] );
                 this.addBuildingWorkerSlots(building, b_info);
                 this.main_building_counts[building.b_id]++;
             }

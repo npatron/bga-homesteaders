@@ -850,6 +850,11 @@ div#trade_bank_trade_silver{
 }
 .tt{
    transform: scale(1);
+   display: block;
+   float: center;
+}
+.tt_loan{
+   transform: scale(2.5);
    display: inline-block;
 }
 .score_copper{
@@ -991,16 +996,16 @@ div#trade_bank_trade_silver{
    margin-left: -8px;
  }
 .log_cow{
-   background-size: 87.7px 35.1px;
-   background-position: -12.0px -11.7px;
-   width: 20px;
-   height: 14.4px;
+   background-size: 122px 48.8px;
+   background-position: -16.75px -16.26px;
+   width: 27.8px;
+   height: 20px;
 }
 .log_copper{
-   background-size: 98.7px 39.5px;
-   background-position: -35.9px -14.2px;
-   width: 20px;
-   height: 12.6px;
+   background-size: 156.25px 62.5px;
+   background-position: -56.9px -22.5px;
+   width: 31.6px;
+   height: 20px;
 }
 .log_track{
    background-size: 194.8px 77.9px;
