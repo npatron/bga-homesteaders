@@ -5,23 +5,7 @@
  */
 class HSDresource extends APP_GameClass
 {
-    public $resource_map = array(
-        WOOD=>  'wood', 
-        STEEL=> 'steel',
-        GOLD=>  'gold',
-        COPPER=>'copper',
-        FOOD=>  'food',
-        COW=>   'cow',
-        TRADE=> 'trade',
-        VP=>    'vp',
-        SILVER=>'silver',
-        LOAN=>  'loan',);
-    public $special_resource_map = array(
-        'vp2' => array('vp'=>2),
-        'vp4' => array('vp'=>4),
-        'vp6' => array('vp'=>6),
-        'vp8' => array('vp'=>8),
-    );
+    
     public $game;
     public function __construct($game)
     {
@@ -59,11 +43,11 @@ class HSDresource extends APP_GameClass
             'reason_string' => $reason_string,);
         $values = $this->updateArrForNotify($values, $origin, $key);
         $this->game->notifyAllPlayers( "playerIncome", clienttranslate( '${reason_string} earned ${player_name} ${type}' ), $values );
-        if (in_array($type, $this->resource_map)){
+        if (in_array($type, $this->game->resource_map)){
             $this->updateResource($p_id, $type, $amt);
         } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
-            $actual_type = array_keys($this->special_resource_map[$type])[0];
-            $amount = $amt * $this->special_resource_map[$type][$actual_type];
+            $actual_type = array_keys($this->game->special_resource_map[$type])[0];
+            $amount = $amt * $this->game->special_resource_map[$type][$actual_type];
             $this->updateResource($p_id, $actual_type, $amount);
         }
     }
@@ -86,11 +70,11 @@ class HSDresource extends APP_GameClass
             $values = $this->updateArrForNotify($values, $origin, $key);
             $this->game->notifyAllPlayers( 'playerIncomeGroup', clienttranslate( '${reason_string} earned ${player_name} ${resources}' ), $values);
             foreach( $income_arr as $type => $amt ){
-                if (in_array($type, $this->resource_map)){
+                if (in_array($type, $this->game->resource_map)){
                     $this->updateResource($p_id, $type, $amt);
                 } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
-                    $actual_type = array_keys($this->special_resource_map[$type])[0];
-                    $amount = $amt * $this->special_resource_map[$type][$actual_type];
+                    $actual_type = array_keys($this->game->special_resource_map[$type])[0];
+                    $amount = $amt * $this->game->special_resource_map[$type][$actual_type];
                     $this->updateResource($p_id, $actual_type, $amount);
                 }
             }

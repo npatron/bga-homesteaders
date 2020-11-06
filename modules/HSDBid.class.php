@@ -21,7 +21,7 @@ class HSDBid extends APP_GameClass
         foreach( $players as $player_id => $player ) {
             $values[] = "( $player_id, '0' )";
         }
-        if (count($players) == 2){ 
+        if (count($players) == 2){
             $values[] = "( ".DUMMY_BID.", '0' )";
             $values[] = "( ".DUMMY_OPT.", '23' )";
         }

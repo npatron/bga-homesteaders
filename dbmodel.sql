@@ -20,8 +20,6 @@
 
 -- This color name is used to create css classes
 ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
---ALTER TABLE `player` ADD `bid_loc`  INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3';
---ALTER TABLE `player` ADD `outbid`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid';
 ALTER TABLE `player` ADD `rail_adv` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
 
 CREATE TABLE IF NOT EXISTS `bids` (
@@ -36,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `workers` (
   `player_id`     INT(8) UNSIGNED NOT NULL COMMENT 'Player controlling the worker',
   `building_key`  INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Building working at',
   `building_slot` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Which slot in buiding',
-  `selected`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'selected:1 or not:0',
+--  `selected`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'selected:1 or not:0',
   PRIMARY KEY (`worker_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 ;
 
@@ -52,11 +50,10 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
   `building_type` INT(1) UNSIGNED NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
-  `cost`          VARCHAR(16)     NOT NULL DEFAULT '0' COMMENT 'cost: list of costs (0-non, 1-wood, 2-steel,3-gold,4-copper,5-food,6-cow,7-debt)',
+--  `cost`          VARCHAR(16)     NOT NULL DEFAULT '0' COMMENT 'cost: list of costs (0-non, 1-wood, 2-steel,3-gold,4-copper,5-food,6-cow,7-debt)',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
   `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
-  `b_vp`          INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'points (non variable points)',
   PRIMARY KEY (`building_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
@@ -66,8 +63,8 @@ CREATE TABLE IF NOT EXISTS `auctions` (
   `position`         INT(2) UNSIGNED NOT NULL COMMENT 'position of Auction in Deck (1-10)',
   `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3',
 --  `state`            INT(1) UNSIGNED NOT NULL COMMENT 'state: 0-face-Down, 1-face-Up',
-  `build_type`       INT(2) UNSIGNED DEFAULT 0 NOT NULL COMMENT '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE',
-  `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL,
+--  `build_type`       INT(2) UNSIGNED DEFAULT 0 NOT NULL COMMENT '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE', -- use $this->auction_info instead
+--  `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL, -- use $this->auction_info instead
   PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB ;
 
@@ -88,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `resources` (
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB;
 
---- for logging purposes, can remove once I have it working.
+-- used for undo.
 CREATE TABLE IF NOT EXISTS `log` (
   `log_id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `round`     INT(11) NOT NULL,

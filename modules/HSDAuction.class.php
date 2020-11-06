@@ -12,67 +12,62 @@ class HSDAuction extends APP_GameClass
     }
 
     function createAuctionTiles($playerCount){
-
-        $sql = "INSERT INTO `auctions` ( `auction_id`, `position`, `location`, `build_type`, `bonus` ) VALUES ";
-        // 0-NONE, 1-RES, 2-COM, 4-IND, 8-SPE
-        $build = array( 3, 4, 2, 5, 2, 1, 4,15,15,15,
-                        1, 4,15, 0, 3, 6,12, 9, 6, 9,
-                        1, 2, 4, 0, 1, 2, 4,15, 3, 0);
-        // auction tile bonus 0-no, 1-wrk, 2-wrk_rail, 3-wood->track
-                    //  4-copper->vp, 5-cow->vp, 6-food->vp  
-        $bonus = array( 0, 0, 0, 0, 1, 1, 1, 0, 4, 5,
-                        0, 0, 0, 2, 0, 0, 0, 3, 7, 7,
-                        0, 0, 0, 2, 0, 0, 3, 0, 7, 6); 
+        $sql = "INSERT INTO `auctions` ( `auction_id`, `position`, `location` ) VALUES ";
         $values=array();
         //first auction is in order, 
         for ($i = 1; $i <11; $i++){
-            $values[] = "('$i','$i','".AUC_LOC_1."', '".$build[$i-1]."', '".$bonus[$i-1]."')";
+            $values[] = "('$i','$i','".AUC_LOC_1."')";
         }
-
-        //second auction has 1-4 , 5-8, and 9-10 shuffled
-        $position1 = array('1','2','3','4');
-        $position2 = array('5','6','7','8');
-        $position3 = array('9','10');
-        shuffle($position1);
-        shuffle($position2);
-        shuffle($position3);
+        //second & third auctions have 1-4, 5-8, and 9-10 positions shuffled.
+        $settlement_position = array('1','2','3','4');
+        $town_position = array('5','6','7','8');
+        $city_position = array('9','10');
+        shuffle($settlement_position);
+        shuffle($town_position);
+        shuffle($city_position);
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+11)."','".$position1[$i]."','".AUC_LOC_2."', '".$build[$i+10]."', '".$bonus[$i+10]."')";
+            $values[] = "('".($i+11)."','".$settlement_position[$i]."','".AUC_LOC_2."')";
         }
         for ($i = 0; $i <4; $i++){
-            $values[] = "('".($i+15)."','".$position2[$i]."','".AUC_LOC_2."', '".$build[$i+14]."', '".$bonus[$i+14]."')";
+            $values[] = "('".($i+15)."','".$town_position[$i]       ."','".AUC_LOC_2."')";
         }
         for ($i = 0; $i <2; $i++){
-            $values[] = "('".($i+19)."','".$position3[$i]."','".AUC_LOC_2."', '".$build[$i+18]."', '".$bonus[$i+18]."')";
+            $values[] = "('".($i+19)."','".$city_position[$i]       ."','".AUC_LOC_2."')";
         }
 
         if ($playerCount>3){
-            shuffle($position1);
-            shuffle($position2);
-            shuffle($position3);
+            shuffle($settlement_position);
+            shuffle($town_position);
+            shuffle($city_position);
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+21)."','".$position1[$i]."','".AUC_LOC_3."', '".$build[$i+20]."', '".$bonus[$i+20]."')";
+                $values[] = "('".($i+21)."','".$settlement_position[$i]."','".AUC_LOC_3."')";
             }
             for ($i = 0; $i <4; $i++){
-                $values[] = "('".($i+25)."','".$position2[$i]."','".AUC_LOC_3."', '".$build[$i+24]."', '".$bonus[$i+24]."')";
+                $values[] = "('".($i+25)."','".$town_position[$i]      ."','".AUC_LOC_3."')";
             }
             for ($i = 0; $i <2; $i++){
-                $values[] = "('".($i+29)."','".$position3[$i]."','".AUC_LOC_3."', '".$build[$i+28]."', '".$bonus[$i+28]."')";
+                $values[] = "('".($i+29)."','".$city_position[$i]      ."','".AUC_LOC_3."')";
             }   
         }
         $sql .= implode( ',', $values ); 
-        self::DbQuery( $sql );
+        $this->game->DbQuery( $sql );
     }
 
     function getAllAuctionsFromDB(){
-        $sql = "SELECT `auction_id` a_id, `location`, `build_type`, `bonus` FROM `auctions`"; 
+        $sql = "SELECT `auction_id` a_id, `location` FROM `auctions`"; 
         return ($this->game->getCollectionFromDb( $sql ));
     }
 
     function getCurrentRoundAuctions($round_number= null){
         $round_number = ($round_number? :$this->game->getGameStateValue('round_number'));
-        $sql = "SELECT `auction_id` a_id, `location`,  `build_type`, `bonus` FROM `auctions` WHERE `location` IN (1,2,3) AND `position`='".$round_number."'"; 
+        $sql = "SELECT `auction_id` a_id, `location` FROM `auctions` WHERE `location` IN (1,2,3) AND `position`='$round_number'"; 
         return ($this->game->getCollectionFromDb( $sql ));
+    }
+
+    function getCurrentAuctionId(){
+        $round_number = $this->game->getGameStateValue('round_number');
+        $current_auction = $this->game->getGameStateValue('current_auction');
+        return $this->game->getUniqueValueFromDB( "SELECT `auction_id` FROM `auctions` WHERE `location`='$current_auction'AND `position`='$round_number'");
     }
 
     function updateClientAuctions($round_number){
@@ -87,24 +82,21 @@ class HSDAuction extends APP_GameClass
         $round_number = $this->game->getGameStateValue( 'round_number' );
         $this->game->notifyAllPlayers( "updateAuction", _( 'discard ${auction}' ), 
                 array('auction'=> array('str'=>'AUCTION '.$auction_no, 'key'=>$auction_no), 'auction_no'=>$auction_no, 'state'=>'discard') );
-        $sql = "UPDATE `auctions` SET `location`='".AUC_LOC_DISCARD."' WHERE `location` = '".$auction_no."' AND position = '".$round_number."'";
+        $sql = "UPDATE `auctions` SET `location`='".AUC_LOC_DISCARD."' WHERE `location` = '$auction_no' AND position = '$round_number'";
         $this->game->DbQuery( $sql);
     }
 
     function doesCurrentAuctionHaveBuildPhase(){
-        $round_number = $this->game->getGameStateValue( 'round_number' );
-        $auction_no = $this->game->getGameStateValue( 'current_auction' );
-        $sql = "SELECT `build_type` FROM `auctions`  WHERE `location` = '".$auction_no."' AND `position` = '".$round_number."'";
-        $type = $this->game->getUniqueValueFromDB( $sql );
-        return ($type != 0);
+        return (array_key_exists('build', $this->game->auction_info[$this->getCurrentAuctionId()]));
     }
 
+    /**
+     * returns an array of valid build types for current auction Tile.
+     */
     function getCurrentAuctionBonus(){
-        $round_number = $this->game->getGameStateValue( 'round_number' );
-        $current_auction = $this->game->getGameStateValue( 'current_auction' );
-        $sql = "SELECT `bonus` FROM `auctions`  WHERE `location` = '".$current_auction."' AND `position` = '".$round_number."'";
-        $bonus = $this->game->getUniqueValueFromDB( $sql );
-        return ($bonus);
+        $a_id = $this->getCurrentAuctionId();
+        // if exists, otherwise return AUC_BONUS_NONE;
+        return (array_key_exists('bonus', $this->game->auction_info[$a_id])?$this->game->auction_info[$a_id]['bonus']:AUC_BONUS_NONE);
     }
 
     function setupCurrentAuctionBonus(){
@@ -124,40 +116,11 @@ class HSDAuction extends APP_GameClass
     }
 
     /**
-     * returns an array of valid build types derived from DB value for current round & auction.
+     * returns an array of valid build types for current auction Tile.
      */
     function getCurrentAuctionBuildTypeOptions(){
-        $round_number = $this->game->getGameStateValue('round_number');
-        $current_auction = $this->game->getGameStateValue('current_auction');
-        $sql = "SELECT `build_type` FROM `auctions` WHERE `location`='".$current_auction."'AND `position`='".$round_number."'";
-        $build_type = $this->game->getUniqueValueFromDB( $sql );// the sql value for the building.
-        return $this->parseBuildTypeOptions($build_type);
+        $a_id = $this->getCurrentAuctionId(); 
+        // if exists, otherwise return array();
+        return (array_key_exists('build', $this->game->auction_info[$a_id])?$this->game->auction_info[$a_id]['build']:array());
     }
-    
-    /** returns an array of valid build types from 
-     * a bitwise map of build types (how it's stored in sql)
-     * '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE'
-     * ex: 5 would be IND(4) + RES(1)
-     * ex: 1 would be RES(1)
-     */
-    function parseBuildTypeOptions($build_type) {
-        $build_type_options = array();
-        if ($build_type %2 == 1){
-            $build_type_options[] = TYPE_RESIDENTIAL;
-            $build_type -=1;
-        }
-        if ($build_type %4 == 2){
-            $build_type_options[] = TYPE_COMMERCIAL;
-            $build_type -=2;
-        }
-        if ($build_type %8 == 4){
-            $build_type_options[] = TYPE_INDUSTRIAL;
-            $build_type -=4;
-        }
-        if ($build_type == 8){
-            $build_type_options[] = TYPE_SPECIAL;
-        }
-        return $build_type_options;
-    }
-
 }
