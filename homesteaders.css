@@ -87,6 +87,15 @@
    font-weight: bold;
    color: hotpink;
 }
+.alignleft {
+   float: left;
+}
+.aligncenter {
+   float: center;
+}
+.alignright {
+   float: right;
+}
 
 
 /*===============*
@@ -976,7 +985,7 @@ div#trade_bank_trade_silver{
    width: 12.2px;
    height: 20px;
 }
-.log_worker:not(:last-child) {
+.log_container .log_worker:not(:last-child) {
    margin-left: -8px;
  }
 .log_cow{

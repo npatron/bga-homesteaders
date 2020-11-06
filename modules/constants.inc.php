@@ -154,3 +154,49 @@
   define ("PHASE_BLD_BONUS" , 2);
   define ("PHASE_AUC_BONUS" , 3);
 
+  // for tooltips
+  define('WORKER_HTML', '<span aria="worker" title="worker" class="log_worker token_inline"></span>');
+  define('SILVER_HTML', '<span aria="silver" title="silver" class="log_silver token_inline"></span>');
+  define('TRADE_HTML',  '<span aria="trade" title="trade" class="log_trade token_inline"></span>');
+  define('WOOD_HTML',   '<span aria="wood" title="wood" class="log_wood token_inline"></span>');
+  define('FOOD_HTML',   '<span aria="food" title="food" class="log_food token_inline"></span>');
+  define('STEEL_HTML',  '<span aria="steel" title="steel" class="log_steel token_inline"></span>');
+  define('VP_HTML',     '<span aria="vp" title="vp" class="log_vp token_inline"></span>');
+  define('LOAN_HTML',   '<span aria="debt" title="debt" class="log_inline_loan"></span>');
+  define('TRACK_HTML',  '<span aria="track" title="track" class="log_inline_track"></span>');
+  define('GOLD_HTML',   '<span aria="gold" title="gold" class="log_gold token_inline"></span>');
+  define('COW_HTML',    '<span aria="cow" title="cow" class="log_cow token_inline"></span>');
+  define('COPPER_HTML', '<span aria="copper" title="copper" class="log_copper token_inline"></span>');
+  define('ARROW_HTML',  '<span aria="arrow" title="arrow" class="log_arrow token_inline"></span>');
+
+  define('VP0_HTML' , '0-VP');
+  define('VP2_HTML' , '<span aria="vp2" title="vp2" class="log_vp2 token_inline"></span>');
+  define('VP3_HTML' , '3-VP');
+  define('VP4_HTML' , '<span aria="vp4" title="vp4" class="log_vp4 token_inline"></span>');
+  define('VP6_HTML' , '<span aria="vp6" title="vp6" class="log_vp6 token_inline"></span>');
+  define('VP8_HTML' , '8-VP');
+  define('VP10_HTML' , '10-VP');
+
+  define('RES_SPAN'  , '<span class="font_res">');
+  define('COM_SPAN'  , '<span class="font_com">');
+  define('IND_SPAN'  , '<span class="font_ind">');
+  define('SPE_SPAN'  , '<span class="font_spe">');
+  define('AUC1_SPAN' , '<span class="font_a1">');
+  define('AUC2_SPAN' , '<span class="font_a2">');
+  define('AUC3_SPAN' , '<span class="font_a3">');
+  define('END_SPAN',   '</span>');
+  define('CENTER_DIV', '<div style="text-align: center;">');
+  define('END_DIV', '</div>');
+  define('LEFT_P', '<p class="alignleft">');
+  define('RIGHT_P', '<p class="alignright">');
+  define('END_P', "</p>");
+  define('COST', "<br><p>"._("Cost: "));
+
+  define('ALLOW_TRADE', "<hr><p><small>"._("Allow Trade:")."<br></small></p>");
+  define('INCOME', "<hr><p><small>"._("Income:")."<br></small></p>");
+  define('R_HTML', '<span aria="Residential" class="font_res">'._("Residential").'</span>');
+  define('C_HTML', '<span aria="Commercial" class="font_com">'._("Commercial").'</span>');
+  define('I_HTML', '<span aria="Industrial" class="font_ind">'._("Industrial").'</span>');
+  define('S_HTML', '<span aria="Special" class="font_spe">'._("Special").'</span>');
+  define('A_HTML', '<span class="font_res">'._("A").'</span><span class="font_com">'._("N").'</span><span class="font_ind">'._("Y").'</span>');
+

@@ -247,9 +247,11 @@ class HSDBuilding extends APP_GameClass
                 $this->game->Resource->payLoanOrRecieveSilver($p_id, $b_info['name'], 'building', $b_key);
             } else if ($b_id == BLD_RODEO){
                 $rodeoIncome = min(count($player_workers), 5);
-                $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], 'silver', $rodeoIncome);
-            } else foreach ((array_key_exists('inc', $b_info)?$b_info['inc']:array()) as $type => $amt)
-                $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
+                $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], 'silver', $rodeoIncome);
+            } else {
+                foreach ((array_key_exists('inc', $b_info)?$b_info['inc']:array()) as $type => $amt)
+                    $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
+            }
         }
         foreach($player_workers as $worker_key => $worker ) {
             if ($worker['building_key'] != 0){
@@ -259,13 +261,13 @@ class HSDBuilding extends APP_GameClass
                 $slot = "s".$worker['building_slot'];
                 if ($slot == "s3"){ // only BLD_RIVER_PORT.
                     if ($riverPortWorkers++ ==1){// only triggers on 2nd worker assigned to this building
-                        $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id],'gold', 1);
+                        $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id],'gold', 1);
                     }
                 } else {
                     if (!array_key_exists($slot, $b_info)) 
                         throw new BgaVisibleSystemException ($b_id." has no value at ".$slot);
                     else foreach ($b_info[$slot] as $type => $amt){
-                        $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
+                        $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
                     }
                 }
             }

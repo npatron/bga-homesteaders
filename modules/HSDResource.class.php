@@ -43,7 +43,7 @@ class HSDresource extends APP_GameClass
             'reason_string' => $reason_string,);
         $values = $this->updateArrForNotify($values, $origin, $key);
         $this->game->notifyAllPlayers( "playerIncome", clienttranslate( '${reason_string} earned ${player_name} ${type}' ), $values );
-        if (in_array($type, $this->resource_map)){
+        if (in_array($type, $this->game->resource_map)){
             $this->updateResource($p_id, $type, $amt);
         } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
             $actual_type = array_keys($this->game->special_resource_map[$type])[0];
@@ -70,7 +70,7 @@ class HSDresource extends APP_GameClass
             $values = $this->updateArrForNotify($values, $origin, $key);
             $this->game->notifyAllPlayers( 'playerIncomeGroup', clienttranslate( '${reason_string} earned ${player_name} ${resources}' ), $values);
             foreach( $income_arr as $type => $amt ){
-                if (in_array($type, $this->resource_map)){
+                if (in_array($type, $this->game->resource_map)){
                     $this->updateResource($p_id, $type, $amt);
                 } else { // handle 'vp2' 'vp4', 'vp8' and other special tokens I want to display in log.
                     $actual_type = array_keys($this->game->special_resource_map[$type])[0];

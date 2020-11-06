@@ -54,7 +54,7 @@ $this->resource_info = array(
   'track' => array(
     'name'   => clienttranslate("Railroad Track"),
     'db_int' => TRACK,
-    'tt'     => clienttranslate("Track: Produces 1 Silver each round"),
+    'tt'     => clienttranslate("Track: Produces 1 Silver each Round"),
   ),
   'wood' => array(
     'name'   => clienttranslate("Wood"),
@@ -115,60 +115,74 @@ $this->resource_info = array(
 // DEFINE THE BUILDING STATIC VALUES. (indexed by building_id)
 $this->building_info = array(
   BLD_HOMESTEAD_YELLOW => array(
-    'name' => clienttranslate("Yellow Homestead"),
-    'tt'   => clienttranslate("Yellow Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
+    'name' => _("Homestead"),
+    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              "<hr>".CENTER_DIV.INCOME._("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<br>"._("Can Produce:  ").WOOD_HTML.
+              "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
     'slot' => 2,
     's1'   => array('wood'=>1),
-    's1_tt'=> clienttranslate("Produces a Wood"),
+    's1_tt'=> _("Produces ").WOOD_HTML,
     's2'   => array('vp'=>1),
-    's2_tt'=> clienttranslate("Produces a VP Token"),
+    's2_tt'=> _("Produces ").VP_HTML,
     'amt'  => 0,
    ),
    BLD_HOMESTEAD_RED => array(
-    'name' => clienttranslate("Red Homestead"),
-    'tt'   => clienttranslate("Red Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
+    'name' => _("Homestead"),
+    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              "<hr>".CENTER_DIV.INCOME._("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<br>"._("Can Produce:  ").WOOD_HTML.
+              "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
     'slot' => 2,
     's1'   => array('wood'=>1),
-    's1_tt'=> clienttranslate("Produces a Wood"),
+    's1_tt'=> _("Produces ").WOOD_HTML,
     's2'   => array('vp'=>1),
-    's2_tt'=> clienttranslate("Produces a VP Token"),
+    's2_tt'=> _("Produces ").VP_HTML,
     'amt'  => 0,
    ),
    BLD_HOMESTEAD_GREEN => array(
-    'name' => clienttranslate("Green Homestead"),
-    'tt'   => clienttranslate("Green Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
+    'name' => _("Homestead"),
+    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              "<hr>".CENTER_DIV.INCOME._("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<br>"._("Can Produce:  ").WOOD_HTML.
+              "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
     'slot' => 2,
     's1'   => array('wood'=>1),
-    's1_tt'=> clienttranslate("Produces a Wood"),
+    's1_tt'=> _("Produces ").WOOD_HTML,
     's2'   => array('vp'=>1),
-    's2_tt'=> clienttranslate("Produces a VP Token"),
+    's2_tt'=> _("Produces ").VP_HTML,
     'amt'  => 0,
    ),
    BLD_HOMESTEAD_BLUE => array(
-    'name' => clienttranslate("Blue Homestead"),
-    'tt'   => clienttranslate("Blue Homestead(R): Produces 2 Silver each round. Can be worked to produce Wood, and/or 1-VP Token"),
+    'name' => _("Homestead"),
+    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+            "<hr>".CENTER_DIV.INCOME._("Produce:  ").SILVER_HTML.SILVER_HTML.
+            "<br>"._("Can Produce:  ").WOOD_HTML.
+            "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
     'slot' => 2,
     's1'   => array('wood'=>1),
-    's1_tt'=> clienttranslate("Produces a Wood"),
+    's1_tt'=> _("Produces ").WOOD_HTML,
     's2'   => array('vp'=>1),
-    's2_tt'=> clienttranslate("Produces a VP Token"),
-    'amt'  => 0,
+    's2_tt'=> _("Produces ").VP_HTML,'amt'  => 0,
    ),
    BLD_GRAIN_MILL => array(
-    'name' => clienttranslate("Grain Mill"),
-    'tt'   => clienttranslate("Grain Mill(R): Produces 1 Food each round"),
+    'name' => _("Grain Mill"),
+    'tt'   => RES_SPAN._("Grain Mill").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
+              COST. WOOD_HTML ." ". STEEL_HTML. END_P.
+              "<hr>".CENTER_DIV.INCOME.
+              _(" Produce ").FOOD_HTML._(" each Round").END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1,'steel'=>1),
@@ -177,21 +191,29 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_FARM => array(
-    'name' => clienttranslate("Farm"),
-    'tt'   => clienttranslate("Farm(R): Can produce Food, and/or a Trade Token and 2 Silver"),
+    'name' => _("Farm"),
+    'tt'   => RES_SPAN._("Farm").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST.WOOD_HTML.END_P."<hr>".
+              CENTER_DIV.INCOME._("Can Produce: ").TRADE_HTML.SILVER_HTML.SILVER_HTML."<br>".
+              _("Can Produce: ").FOOD_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
     'slot' => 2,
     's1'   => array('silver'=>2,'trade'=>1),
-    's1_tt'=> clienttranslate("Produces a Trade Token and 2 Silver"),
+    's1_tt'=> _("Produces ").TRADE_HTML.SILVER_HTML.SILVER_HTML,
     's2'   => array('food'=>1),
-    's2_tt'=> clienttranslate("Produces a Food"),
+    's2_tt'=> _("Produces ").FOOD_HTML,
     'amt'  => 3,
    ),
    BLD_MARKET => array(
-    'name' => clienttranslate("Market"),
-    'tt'   => clienttranslate("Market(C): Produces a Trade Token each round and can produce 2-Silver"),
+    'name' => _("Market"),
+    'tt'   => COM_SPAN._("Market").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
+              COST.WOOD_HTML.END_P."<hr>".
+              CENTER_DIV.ALLOW_TRADE. TRADE_HTML. WOOD_HTML." ".ARROW_HTML." ".FOOD_HTML.
+              "<br>".TRADE_HTML.FOOD_HTML." ".ARROW_HTML." ".STEEL_HTML.
+              INCOME._(" Produces ").TRADE_HTML._(" each Round.").
+              "<br>"._("Can produce ").SILVER_HTML.SILVER_HTML.END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
@@ -199,23 +221,27 @@ $this->building_info = array(
     'inc'  => array('trade'=>1),
     'slot' => 1,
     's1'   => array('silver'=>2),
-    's1_tt'=> clienttranslate("Produces 2 Silver"),
+    's1_tt'=> _("Produces ").SILVER_HTML.SILVER_HTML,
     'amt'  => 3,
    ),
    BLD_FOUNDRY => array(
-    'name' => clienttranslate("Foundry"),
-    'tt'   => clienttranslate("Foundry(I): Can produce Steel"),
+    'name' => _("Foundry"),
+    'tt'   => IND_SPAN._("Foundry").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST.END_P."<hr>".
+              CENTER_DIV.INCOME._(" Can produce: ").STEEL_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array(),
     'slot' => 1,
     's1'   => array('steel'=>1),
-    's1_tt'=> clienttranslate("Produces a Steel"),
+    's1_tt'=> _("Produces ").STEEL_HTML,
     'amt'  => 3,
    ),
    BLD_STEEL_MILL => array(
-    'name' => clienttranslate("Steel Mill"),
-    'tt'   => clienttranslate("Steel Mill(I): Produces 1 Steel each round"),
+    'name' => _("Steel Mill"),
+    'tt'   => RES_SPAN._("Steel Mill").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. WOOD_HTML." ". WOOD_HTML." ". GOLD_HTML. END_P."<hr>".
+              CENTER_DIV.INCOME._(" Produces ").STEEL_HTML._(" each Round").END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>2,'gold'=>1),
@@ -223,8 +249,12 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_BOARDING_HOUSE => array(
-    'name' => clienttranslate("Boarding House"),
-    'tt'   => clienttranslate("Boarding House(R): Produces 2 Silver each round. Pay off 1 Debt on Build. Worth 1-VP per Industrial at end of game"),
+    'name' => _("Boarding House"),
+    'tt'   => IND_SPAN._("Boarding House").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. WOOD_HTML." ". WOOD_HTML. END_P."<hr>".
+              CENTER_DIV._(" When Built: Pay off ").LOAN_HTML.
+              "<br>"._(" End: ").VP_HTML." ".ARROW_HTML." ".I_HTML.
+              INCOME._(" Produces ").SILVER_HTML.SILVER_HTML._(" each Round.").END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>2),
@@ -234,8 +264,12 @@ $this->building_info = array(
     'on_b' => BUILD_BONUS_PAY_LOAN,
    ),
    BLD_RAILWORKERS_HOUSE => array(
-    'name' => clienttranslate("Railworkers House"),
-    'tt'   => clienttranslate("Railworkers House(R): Produces 1-Trade Token and 1-Silver each round. Worth 1-VP per Worker and Track at end of game"),
+    'name' => _("Railworkers House"),
+    'tt'   => RES_SPAN._("Railworkers House").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. STEEL_HTML." ". STEEL_HTML. END_P."<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".TRACK_HTML.
+              "<br>"._(" End: ").VP_HTML." ".ARROW_HTML."  ".WORKER_HTML.
+              INCOME._(" Produces ").TRADE_HTML.SILVER_HTML._(" each Round.").END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>2),
@@ -244,20 +278,25 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_RANCH => array(
-    'name' => clienttranslate("Ranch"),
-    'tt'   => clienttranslate("Ranch(R): Can produce Livestock"),
+    'name' => _("Ranch"),
+    'tt'   => RES_SPAN.("Ranch").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST.WOOD_HTML." ". STEEL_HTML." ". FOOD_HTML. END_P."<hr>".
+              CENTER_DIV._(" When Built: gain").TRADE_HTML.
+              INCOME._(" Can produce ").COW_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1,'steel'=>1,'food'=>1),
     'slot' => 1,
     's1'   => array('cow'=>1),
-    's1_tt'=> clienttranslate("Produces a ")."{cow}",
+    's1_tt'=> clienttranslate("Produces ").COW_HTML,
     'amt'  => 2,
     'on_b' => BUILD_BONUS_TRADE,
    ),
    BLD_TRADING_POST => array(
-    'name' => clienttranslate("Trading Post"),
-    'tt'   => clienttranslate("Trading Post(C): Produces 2-Trade Tokens each round"),
+    'name' => _("Trading Post"),
+    'tt'   => COM_SPAN.("Trading Post").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. GOLD_HTML. END_P."<hr>".
+              CENTER_DIV.INCOME._(" Produces ").TRADE_HTML.TRADE_HTML._(" each Round").END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('gold'=>1),
@@ -265,8 +304,12 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_GENERAL_STORE => array(
-    'name' => clienttranslate("General Store"),
-    'tt'   => clienttranslate("General Store(C): Produces 1 Trade Token each round. Whenever you sell, get an additional Silver"),
+    'name' => _("General Store"),
+    'tt'   => COM_SPAN.("General Store").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
+              COST. STEEL_HTML. END_P."<hr>".
+              CENTER_DIV._(" Whenever you Sell, ")."<br>".
+              _(" get an additional ").SILVER_HTML.
+              INCOME._(" Produces ").TRADE_HTML._(" each Round.").END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>1),
@@ -275,41 +318,51 @@ $this->building_info = array(
     'amt'  => 2,
    ),
    BLD_GOLD_MINE => array(
-    'name' => clienttranslate("Gold Mine"),
-    'tt'   => clienttranslate("Gold Mine(I): Can produce Gold"),
+    'name' => _("Gold Mine"),
+    'tt'   => IND_SPAN._("Gold Mine").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. WOOD_HTML." ". STEEL_HTML. END_P."<hr>".
+              CENTER_DIV.INCOME._(" Can produce ").GOLD_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1,'steel'=>1),
     'slot' => 1,
     's1'   => array('gold'=>1),
-    's1_tt'=> clienttranslate("Produces a Gold"),
+    's1_tt'=> _("Produces ").GOLD_HTML,
     'amt'  => 2,
    ),
    BLD_COPPER_MINE => array(
-    'name' => clienttranslate("Copper Mine"),
-    'tt'   => clienttranslate("Copper Mine(I): Can produce Livestock"),
+    'name' => _("Copper Mine"),
+    'tt'   => IND_SPAN._("Copper Mine").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+            COST. WOOD_HTML." ". WOOD_HTML. STEEL_HTML. END_P. "<hr>".
+            CENTER_DIV.INCOME._(" Can produce ").COPPER_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>2,'steel'=>1),
     'slot' => 1,
     's1'   => array('copper'=>1),
-    's1_tt'=> clienttranslate("Produces a Copper"),
+    's1_tt'=> _("Produces ").COPPER_HTML,
     'amt'  => 2,
    ),
    BLD_RIVER_PORT => array(
-    'name' => clienttranslate("River Port"),
-    'tt'   => clienttranslate("River Port(I): Can produce Gold. You may pay for Copper or Livestock in Building or Auction costs using Gold instead"),
+    'name' => _("River Port"),
+    'tt'   => IND_SPAN._("River Port").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+            COST. WOOD_HTML. END_P. "<hr>".
+            CENTER_DIV._(" You may pay for ").COPPER_HTML._(" or ").COW_HTML.
+            "<br>"._(" in building costs or auction")."<br>"._("costs using ").GOLD_HTML._(" instead").
+            INCOME._(" Can produce ").GOLD_HTML._(" (requires 2-").WORKER_HTML.")".END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1),
     'slot' => 3,
     's3'   => array('gold'=>1),
-    's3_tt'=> clienttranslate("When worked by 2 workers, Produces a Gold"),
+    's3_tt'=> _("When worked by ").WORKER_HTML.WORKER_HTML._(", Produces ").GOLD_HTML,
     'amt'  => 2,
    ),
    BLD_CHURCH => array(
-    'name' => clienttranslate("Church"),
-    'tt'   => clienttranslate("Church(R): Produces 2-VP each round"),
+    'name' => _("Church"),
+    'tt'   => RES_SPAN._("Church").END_SPAN.":".RIGHT_P.VP10_HTML.END_P.
+              COST. WOOD_HTML." ". STEEL_HTML." ". GOLD_HTML." ". COPPER_HTML." ". END_P. "<hr>".
+              CENTER_DIV.INCOME._(" Produces ").VP2_HTML._(" each Round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('wood'=>1,'steel'=>1,'gold'=>1,'copper'=>1),
@@ -318,8 +371,10 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_WORKSHOP => array(
-    'name' => clienttranslate("Workshop"),
-    'tt'   => clienttranslate("Workshop(R): Produces VP each round"),
+    'name' => _("Workshop"),
+    'tt'   => RES_SPAN._("Workshop").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
+              COST. STEEL_HTML. END_P. "<hr>".
+              CENTER_DIV.INCOME._(" Produces ").VP_HTML._(" each Round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('steel'=>1),
@@ -329,8 +384,12 @@ $this->building_info = array(
     'on_b' => BUILD_BONUS_WORKER,
    ),
    BLD_DEPOT => array(
-    'name' => clienttranslate("Depot"),
-    'tt'   => clienttranslate("Depot(C): Produces 2 Silver each Round. When built, gain 1 Railroad Advancement (and Bonus). Worth 1-VP per Track at end of game"),
+    'name' => _("Depot"),
+    'tt'   => COM_SPAN._("Depot").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. WOOD_HTML. STEEL_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".TRACK_HTML.
+              "<br>"._(" When Built: gain 1 Railroad Advancement (and Bonus).").
+              INCOME._(" Produces ").SILVER_HTML.SILVER_HTML._(" each Round.").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('wood'=>1,'steel'=>1),
@@ -340,8 +399,12 @@ $this->building_info = array(
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
    ),
    BLD_BANK => array(
-    'name' => clienttranslate("Bank"),
-    'tt'   => clienttranslate("Bank(C): Pays off 1 Debt each Round. Allows trading Trade for Silver. Worth 1-VP per Special at end of game"),
+    'name' => _("Bank"),
+    'tt'   => COM_SPAN._("Bank").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
+              COST. STEEL_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV.ALLOW_TRADE.TRADE_HTML." ".ARROW_HTML." ".SILVER_HTML."<br>".
+              _(" End: ").END_SPAN." ".ARROW_HTML." ".S_HTML.END_DIV.
+              INCOME._(" Pays off ").LOAN_HTML._(" each Round."),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('steel'=>1,'copper'=>1),
@@ -351,8 +414,11 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_STABLES => array(
-    'name' => clienttranslate("Stables"),
-    'tt'   => clienttranslate("Stables(C): Produces 1-VP and 1-Trade Token each round. Worth 1-VP per Residential at end of game"),
+    'name' => _("Stables"),
+    'tt'   => COM_SPAN._("Stables").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+              COST. COW_HTML. END_P. "<hr>".          
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".R_HTML.
+              INCOME._(" Produces ").TRADE_HTML.VP_HTML._(" each Round.").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('cow'=>1),
@@ -361,35 +427,45 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_MEATPACKING_PLANT => array(
-    'name' => clienttranslate("Meatpacking Plant"),
-    'tt'   => clienttranslate("Meatpacking Plant(I): Can produce 2-VP with up to 2 workers each round."),
+    'name' => _("Meatpacking Plant"),
+    'tt'   => IND_SPAN._("Meatpacking Plant").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
+              COST. WOOD_HTML. COW_HTML. END_P. "<hr>".
+              CENTER_DIV.INCOME._(" Can Produce: ").VP2_HTML."<br>".
+              _(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('wood'=>1,'cow'=>1),
     'vp'   => 2,
     'slot' => 2,
     's1'   => array('vp2'=>1),
-    's1_tt'=> clienttranslate("Produces 2-VP"),
+    's1_tt'=> _("Produces ").VP2_HTML,
     's2'   => array('vp2'=>1),
-    's2_tt'=> clienttranslate("Produces 2-VP"),
+    's2_tt'=> _("Produces ").VP2_HTML,
     'amt'  => 1,
    ),
    BLD_FORGE => array(
-    'name' => clienttranslate("Forge"),
-    'tt'   => clienttranslate("Forge(I): Can produce 2-VP each round. When built, gain a Railroad Advancement (and Bonus). When any other bulding is built, gain 1-VP"),
+    'name' => _("Forge"),
+    'tt'   => IND_SPAN._("Forge").END_SPAN.":".RIGHT_P.VP_HTML.END_P.
+              COST. STEEL_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built: gain a Railroad Advancement (and Bonus).")."<br>".
+              _(" When You Build another building, gain ").VP_HTML.
+              INCOME._(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('steel'=>1),
     'vp'   => 1,
     'slot' => 1,
     's1'   => array('vp2'=>1),
-    's1_tt'=> clienttranslate("Produces 2-VP"),
+    's1_tt'=> _("Produces ").VP2_HTML,
     'amt'  => 2,
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
    ),
    BLD_FACTORY => array(
-    'name' => clienttranslate("Factory"),
-    'tt'   => clienttranslate("Factory(S): Produces 2-VP each round. Worth 1-VP per Industrial at end of game"),
+    'name' => _("Factory"),
+    'tt'   => SPE_SPAN._("Factory").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".I_HTML.
+              INCOME._(" Income: ").VP2_HTML._(" each Round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('steel'=>2, 'copper'=>1),
@@ -399,8 +475,11 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_RODEO => array(
-    'name' => clienttranslate("Rodeo"),
-    'tt'   => clienttranslate("Rodeo(S): Produces 1-Silver per worker (max 5) each round. "),
+    'name' => _("Rodeo"),
+    'tt'   => SPE_SPAN._("Rodeo").END_SPAN.":".RIGHT_P.VP4_HTML.END_P.
+              COST. FOOD_HTML. COW_HTML. END_P. "<hr>".
+              CENTER_DIV.INCOME._(" Produces ").SILVER_HTML." ".ARROW_HTML." ".WORKER_HTML.
+              "<br>"._(" (max 5) each Round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('food'=>1, 'cow'=>1),
@@ -409,8 +488,12 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_LAWYER => array(
-    'name' => clienttranslate("Lawyer"),
-    'tt'   => clienttranslate("Lawyer(S): Produces 2VP each round. Can outbid others with the same Bid amount. Worth 1-VP per Commercial at end of game"),
+    'name' => _("Lawyer"),
+    'tt'   => SPE_SPAN._("Lawyer").END_SPAN.":".RIGHT_P.VP4_HTML.END_P.
+              COST. WOOD_HTML. GOLD_HTML. COW_HTML. END_P. "<hr>".
+              CENTER_DIV._(" You May overbid others with the same Bid.").
+              "<br>"._(" End:").VP_HTML." ".ARROW_HTML." ".C_HTML.
+              INCOME._(" Produces ").VP2_HTML._(" each Round.").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('wood'=>1, 'gold'=>1, 'cow'=>1),
@@ -420,8 +503,11 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_FAIRGROUNDS => array(
-    'name' => clienttranslate("Fairgrounds"),
-    'tt'   => clienttranslate("Fairgrounds(S): Produces a Gold each round. Worth 1-VP for each Residential at end of game"),
+    'name' => _("Fairgrounds"),
+    'tt'   => SPE_SPAN._("Fairgrounds").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. WOOD_HTML. WOOD_HTML. COPPER_HTML. COW_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".R_HTML.
+              INCOME._(" Produces a ").GOLD_HTML._(" each Round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('wood'=>2,'copper'=>1,'cow'=>1),
@@ -431,8 +517,10 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_DUDE_RANCH => array(
-    'name' => clienttranslate("Dude Ranch"),
-    'tt'   => clienttranslate("Dude Ranch(R): Worth 1-VP for each Worker at end of game"),
+    'name' => _("Dude Ranch"),
+    'tt'   => RES_SPAN._("Dude Ranch").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
+              COST. WOOD_HTML. FOOD_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".WORKER_HTML.INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('wood'=>1,'food'=>1),
@@ -441,8 +529,10 @@ $this->building_info = array(
     'amt'  => 2,
    ),
    BLD_TOWN_HALL => array(
-    'name' => clienttranslate("Town Hall"),
-    'tt'   => clienttranslate("Town Hall(R): Worth 1-VP for each Commercial at end of game"),
+    'name' => _("Town Hall"),
+    'tt'   => RES_SPAN._("Town Hall").END_SPAN.":".RIGHT_P.VP10_HTML.END_P.
+              COST. WOOD_HTML. WOOD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".C_HTML.INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('wood'=>2,'copper'=>1),
@@ -451,8 +541,10 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_TERMINAL => array(
-    'name' => clienttranslate("Terminal"),
-    'tt'   => clienttranslate("Terminal(C): Worth 1-VP for each Track at end of game"),
+    'name' => _("Terminal"),
+    'tt'   => COM_SPAN._("Terminal").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End ").VP_HTML." ".ARROW_HTML." ".TRACK_HTML.INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('steel'=>2),
@@ -461,8 +553,10 @@ $this->building_info = array(
     'amt'  => 2,
    ),
    BLD_RESTARAUNT => array(
-    'name' => clienttranslate("Restaraunt"),
-    'tt'   => clienttranslate("Restaraunt(C): Worth 1-VP for each Special at end of game"),
+    'name' => _("Restaraunt"),
+    'tt'   => COM_SPAN._("Restaraunt").END_SPAN.":".RIGHT_P.VP8_HTML.END_P.
+              COST. WOOD_HTML. COW_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".S_HTML.INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('wood'=>1,'cow'=>1),
@@ -471,8 +565,11 @@ $this->building_info = array(
     'amt'  => 2,
    ),
    BLD_TRAIN_STATION => array(
-    'name' => clienttranslate("Train Station"),
-    'tt'   => clienttranslate("Train Station(I): When Built, you gain 1 Track and may Build Any other building"),
+    'name' => _("Train Station"),
+    'tt'   => IND_SPAN._("Train Station").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
+              COST. WOOD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built, gain ").TRACK_HTML.
+              "<br>"._(" and you may Build another")."<br>"._("Building of ").A_HTML._("type").INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('wood'=>1,'copper'=>1),
@@ -481,8 +578,10 @@ $this->building_info = array(
     'amt'  => 2,
    ),
    BLD_CIRCUS => array(
-    'name' => clienttranslate("Circus"),
-    'tt'   => clienttranslate("Circus(S): Worth 1-VP for each worker at end of game"),
+    'name' => _("Circus"),
+    'tt'   => SPE_SPAN._("Circus").END_SPAN.":".RIGHT_P.VP8_HTML.END_P.
+              COST. FOOD_HTML. FOOD_HTML. COW_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".WORKER_HTML.INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
     'cost' => array('food'=>2,'cow'=>1),
@@ -491,8 +590,10 @@ $this->building_info = array(
     'amt'  => 1,
    ),
    BLD_RAIL_YARD => array(
-    'name' => clienttranslate("Rail Yard"),
-    'tt'   => clienttranslate("Rail Yard(S): Worth 1-VP for each Building at game end"),
+    'name' => _("Rail Yard"),
+    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML._(" Building").INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
     'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
@@ -503,152 +604,135 @@ $this->building_info = array(
    ),
 );
 
-$this->R_html = '<span aria="Residential" class="font_res">'._("Residential").'</span>';
-$this->C_html = '<span aria="Commercial" class="font_com">'._("Commercial").'</span>';
-$this->I_html = '<span aria="Industrial" class="font_ind">'._("Industrial").'</span>';
-$this->S_html = '<span aria="Special" class="font_spe">'._("Special").'</span>';
-$this->A_html = '<span class="font_res">'._("A").'</span><span class="font_com">'._("N").'</span><span class="font_ind">'._("Y").'</span>';
-$this->pre_auc1 = '<span class="font_a1">';
-$this->pre_auc2 = '<span class="font_a2">';
-$this->pre_auc3 = '<span class="font_a3">';
-$this->end_span = '</span>';
-$this->wrk_html = '<span aria="worker" title="worker" class="log_worker token_inline"></span>';
-$this->wood_html= '<span aria="wood" title="wood" class="log_wood token_inline"></span>';
-$this->food_html= '<span aria="food" title="food" class="log_food token_inline"></span>';
-$this->copper_html= '<span aria="copper" title="copper" class="log_copper token_inline"></span>';
-$this->cow_html= '<span aria="cow" title="cow" class="log_cow token_inline"></span>';
-$this->vp2_html= '<span aria="vp2" title="vp2" class="log_vp2 token_inline"></span>';
-$this->vp4_html= '<span aria="vp4" title="vp4" class="log_vp4 token_inline"></span>';
-$this->vp6_html= '<span aria="vp6" title="vp6" class="log_vp6 token_inline"></span>';
 $this->auction_info = array( 
   1 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc1._("Round 1").$this->end_span._(" Build: ").$this->R_html." ".$this->C_html,
+    'tt'    => AUC1_SPAN._("Round 1").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" OR ").C_HTML,
   ),
   2 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc1._("Round 2").$this->end_span._(" Build: ").$this->I_html,
+    'tt'    => AUC1_SPAN._("Round 2").END_SPAN."<br>"._(" Build: ").I_HTML,
   ),
   3 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc1._("Round 3").$this->end_span._(" Build: ").$this->C_html,
+    'tt'    => AUC1_SPAN._("Round 3").END_SPAN."<br>"._(" Build: ").C_HTML,
   ),
   4 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc1._("Round 4").$this->end_span._(" Build: ").$this->R_html." ".$this->I_html,
+    'tt'    => AUC1_SPAN._("Round 4").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" OR ").I_HTML,
   ),
   5 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc1._("Round 5").$this->end_span._(" Build: ").$this->C_html._(". May Hire ").$this->wrk_html._(" (Free)"),
+    'tt'    => AUC1_SPAN._("Round 5").END_SPAN."<br>"._(" Build: ").C_HTML."<br>"._(" May Hire ").WORKER_HTML._(" (Free)"),
     'bonus' => AUC_BONUS_WORKER,
   ),
   6 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => $this->pre_auc1._("Round 6").$this->end_span._(" Build: ").$this->R_html._(". May Hire ").$this->wrk_html._(" (Free)"),
+    'tt'    => AUC1_SPAN._("Round 6").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" May Hire ").WORKER_HTML._(" (Free)"),
     'bonus' => AUC_BONUS_WORKER,
   ),
   7 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc1._("Round 7").$this->end_span._(" Build: ").$this->I_html._(". May Hire ").$this->wrk_html._(" (Free)"),
+    'tt'    => AUC1_SPAN._("Round 7").END_SPAN."<br>"._(" Build: ").I_HTML."<br>"._(" May Hire ").WORKER_HTML._(" (Free)"),
     'bonus' => AUC_BONUS_WORKER,
   ),
   8 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc1._("Round 8").$this->end_span._(" Build: ").$this->A_html,
+    'tt'    => AUC1_SPAN._("Round 8").END_SPAN."<br>"._(" Build: ").A_HTML,
   ),
   9 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc1._("Round 9").$this->end_span._(" Build: ").$this->A_html._(". May trade ").$this->copper_html._(" for ").$this->vp4_html,
+    'tt'    => AUC1_SPAN._("Round 9").END_SPAN."<br>"._(" Build: ").A_HTML."<br>"._(" May trade ").COPPER_HTML._(" for ").VP4_HTML,
     'bonus' => AUC_BONUS_COPPER_FOR_VP,
   ),
   10 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc1._("Round 10").$this->end_span._(" Build: ").$this->A_html._(". May trade ").$this->cow_html._(" for ").$this->vp4_html,
+    'tt'    => AUC1_SPAN._("Round 10").END_SPAN."<br>"._(" Build: ").A_HTML."<br>"._(" May trade ").COW_HTML._(" for ").VP4_HTML,
     'bonus' => AUC_BONUS_COW_FOR_VP,
   ),
   11 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" Build: ").$this->R_html,
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<br>"._(" Build: ").R_HTML,
   ),
   12 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" Build: ").$this->I_html,
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<br>"._(" Build: ").I_HTML,
   ),
   13 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" Build: ").$this->A_html,
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<br>"._(" Build: ").A_HTML,
   ),
   14 => array(
-    'tt'    => $this->pre_auc2._("Settlement").$this->end_span._(" No Build.  May Hire ").$this->wrk_html._(" (Free) & Advance the Railroad Track"),
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<br>"._(" No Build")."<br>"._("May Hire ").WORKER_HTML._(" (Free) &")."<br>"._("Advance the Railroad Track"),
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   15 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->R_html.' '.$this->C_html,
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" OR ").C_HTML,
   ),
   16 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->I_html.' '.$this->C_html,
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<br>"._(" Build: ").I_HTML."<br>"._(" OR ").C_HTML,
   ),
   17 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->I_html.' '.$this->S_html,
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<br>"._(" Build: ").I_HTML."<br>"._(" OR ").S_HTML,
   ),
   18 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc2._("Town").$this->end_span._(" Build: ").$this->R_html.' '.$this->S_html._(". May trade ").$this->wood_html._(" for a Track"),
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" OR ").S_HTML."<br>"._(" May trade ").WOOD_HTML._(" for a Track"),
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   19 => array(
     'build' => array(TYPE_COMMERCIAL, TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc2._("City").$this->end_span._(" Build: ").$this->C_html.' '.$this->I_html._(". May trade ").$this->food_html._(" for ").$this->vp2_html,
+    'tt'    => AUC2_SPAN._("City").END_SPAN."<br>"._(" Build: ").C_HTML."<br>"._(" OR ").I_HTML."<br>"._(" May trade ").FOOD_HTML._(" for ").VP2_HTML,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   20 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc2._("City").$this->end_span._(" Build: ").$this->R_html.' '.$this->S_html._(". May trade ").$this->food_html._(" for ").$this->vp2_html,
+    'tt'    => AUC2_SPAN._("City").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" OR ").S_HTML."<br>"._(" May trade ").FOOD_HTML._(" for ").VP2_HTML,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   21 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" Build: ").$this->R_html,
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>"._(" Build: ").R_HTML,
   ),
   22 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" Build: ").$this->C_html,
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>"._(" Build: ").C_HTML,
   ),
   23 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" Build: ").$this->I_html,
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>"._(" Build: ").I_HTML,
   ),
   24 => array(
-    'tt'    => $this->pre_auc3._("Settlement").$this->end_span._(" No Build. May Hire ").$this->wrk_html._(" (Free) & Advance the Railroad Track"),
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>"._(" No Build.<br> May Hire ").WORKER_HTML._(" (Free) & Advance the Railroad Track"),
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   25 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->R_html,
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<br>"._(" Build: ").R_HTML,
   ),
   26 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->C_html,
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<br>"._(" Build: ").C_HTML,
   ),
   27 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->I_html._(". May trade ").$this->wood_html._(" for a Track"),
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<br>"._(" Build: ").I_HTML."<br>"._("May trade ").WOOD_HTML._(" for a Track"),
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   28 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => $this->pre_auc3._("Town").$this->end_span._(" Build: ").$this->A_html,
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<br>"._(" Build: ").A_HTML,
   ),
   29 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => $this->pre_auc3._("City").$this->end_span._(" Build: ").$this->R_html.' '.$this->C_html._(". May trade ").$this->food_html._(" for ").$this->vp2_html,
+    'tt'    => AUC3_SPAN._("City").END_SPAN."<br>"._(" Build: ").R_HTML."<br>"._(" OR ").C_HTML."<br>"._("May trade ").FOOD_HTML._(" for ").VP2_HTML,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   30 => array(
-    'tt'    => $this->pre_auc3._("City").$this->end_span._(" No Build:  Gain ").$this->vp6_html._(" May trade ").$this->food_html._(" for ").$this->vp2_html,    
+    'tt'    => AUC3_SPAN._("City").END_SPAN."<br>"._(" No Build:  Gain ").VP6_HTML."<br>"._("May trade ").FOOD_HTML._(" for ").VP2_HTML,    
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
   ),
   
