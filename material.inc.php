@@ -55,7 +55,7 @@ $this->resource_info = array(
   'track' => array(
     'name'   => clienttranslate("Railroad Track"),
     'db_int' => TRACK,
-    'tt'     => TRACK_HTML._("(Track) Produces ").SILVER_HTML._(" each Round"),
+    'tt'     => FULL_TRACK_HTML._("(Track) Produces ").SILVER_HTML._(" each round"),
   ),
   'wood' => array(
     'name'   => clienttranslate("Wood"),
@@ -98,10 +98,9 @@ $this->resource_info = array(
   'loan' => array(
     'name'   => clienttranslate("Debt"),
     'db_int' => LOAN,
-    'tt'     => "<div class='score_loan tt_loan'></div>"
-              ._("Debt: Costs 5 Silver (or 1 Gold) to pay off.")."<br".
-              _("End: Worth -").VP_HTML.(" at end of game")."<br".
-              _("End: Worth -").VP_HTML.(" at end of game"),
+    'tt'     => FULL_LOAN_HTML."<hr>".
+              _("Debt: Costs 5 Silver (or 1 Gold) to pay off.")."<br".
+              _("End: Worth -").VP_HTML,
   ),
   'trade' => array(
     'name'   => clienttranslate("Trade Token"),
@@ -187,7 +186,7 @@ $this->building_info = array(
     'tt'   => RES_SPAN._("Grain Mill").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
               COST. WOOD_HTML ." ". STEEL_HTML. END_P.
               "<hr>".CENTER_DIV.INCOME.
-              _(" Produce ").FOOD_HTML._(" each Round").END_DIV,
+              _(" Produce ").FOOD_HTML._(" each round").END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1,'steel'=>1),
@@ -214,10 +213,10 @@ $this->building_info = array(
    BLD_MARKET => array(
     'name' => _("Market"),
     'tt'   => COM_SPAN._("Market").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
-              COST.WOOD_HTML.END_P."<hr>".
+              COST.WOOD_HTML.END_P.
               CENTER_DIV.ALLOW_TRADE. TRADE_HTML. WOOD_HTML." ".ARROW_HTML." ".FOOD_HTML.
               "<br>".TRADE_HTML.FOOD_HTML." ".ARROW_HTML." ".STEEL_HTML.
-              INCOME._(" Produces ").TRADE_HTML._(" each Round.").
+              INCOME._(" Produces ").TRADE_HTML._(" each round.").
               "<br>"._("Can produce ").SILVER_HTML.SILVER_HTML.END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT,
@@ -246,7 +245,7 @@ $this->building_info = array(
     'name' => _("Steel Mill"),
     'tt'   => RES_SPAN._("Steel Mill").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST. WOOD_HTML." ". WOOD_HTML." ". GOLD_HTML. END_P."<hr>".
-              CENTER_DIV.INCOME._(" Produces ").STEEL_HTML._(" each Round").END_DIV,
+              CENTER_DIV.INCOME._(" Produces ").STEEL_HTML._(" each round").END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>2,'gold'=>1),
@@ -257,9 +256,9 @@ $this->building_info = array(
     'name' => _("Boarding House"),
     'tt'   => IND_SPAN._("Boarding House").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST. WOOD_HTML." ". WOOD_HTML. END_P."<hr>".
-              CENTER_DIV._(" When Built: Pay off ").LOAN_HTML.
+              CENTER_DIV._(" When Built: Pay off ").FULL_LOAN_HTML.
               "<br>"._(" End: ").VP_HTML." ".ARROW_HTML." ".I_HTML.
-              INCOME._(" Produces ").SILVER_HTML.SILVER_HTML._(" each Round.").END_DIV,
+              INCOME._(" Produces ").SILVER_HTML.SILVER_HTML._(" each round.").END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>2),
@@ -274,7 +273,7 @@ $this->building_info = array(
               COST. STEEL_HTML." ". STEEL_HTML. END_P."<hr>".
               CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".TRACK_HTML.
               "<br>"._(" End: ").VP_HTML." ".ARROW_HTML."  ".WORKER_HTML.
-              INCOME._(" Produces ").TRADE_HTML.SILVER_HTML._(" each Round.").END_DIV,
+              INCOME._(" Produces ").TRADE_HTML.SILVER_HTML._(" each round.").END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>2),
@@ -301,7 +300,7 @@ $this->building_info = array(
     'name' => _("Trading Post"),
     'tt'   => COM_SPAN.("Trading Post").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST. GOLD_HTML. END_P."<hr>".
-              CENTER_DIV.INCOME._(" Produces ").TRADE_HTML.TRADE_HTML._(" each Round").END_DIV,
+              CENTER_DIV.INCOME._(" Produces ").TRADE_HTML.TRADE_HTML._(" each round").END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('gold'=>1),
@@ -314,7 +313,7 @@ $this->building_info = array(
               COST. STEEL_HTML. END_P."<hr>".
               CENTER_DIV._(" Whenever you Sell, ")."<br>".
               _(" get an additional ").SILVER_HTML.
-              INCOME._(" Produces ").TRADE_HTML._(" each Round.").END_DIV,
+              INCOME._(" Produces ").TRADE_HTML._(" each round.").END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>1),
@@ -354,7 +353,7 @@ $this->building_info = array(
             COST. WOOD_HTML. END_P. "<hr>".
             CENTER_DIV._(" You may pay for ").COPPER_HTML._(" or ").COW_HTML.
             "<br>"._(" in building costs or auction")."<br>"._("costs using ").GOLD_HTML._(" instead").
-            INCOME._(" Can produce ").GOLD_HTML._(" (requires 2-").WORKER_HTML.")".END_DIV,
+            INCOME._(" Can produce ").GOLD_HTML._(" (requires ").WORKER_HTML.WORKER_HTML.")".END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1),
@@ -367,7 +366,7 @@ $this->building_info = array(
     'name' => _("Church"),
     'tt'   => RES_SPAN._("Church").END_SPAN.":".RIGHT_P.VP10_HTML.END_P.
               COST. WOOD_HTML." ". STEEL_HTML." ". GOLD_HTML." ". COPPER_HTML." ". END_P. "<hr>".
-              CENTER_DIV.INCOME._(" Produces ").VP2_HTML._(" each Round").END_DIV,
+              CENTER_DIV.INCOME._(" Produces ").VP2_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('wood'=>1,'steel'=>1,'gold'=>1,'copper'=>1),
@@ -379,7 +378,7 @@ $this->building_info = array(
     'name' => _("Workshop"),
     'tt'   => RES_SPAN._("Workshop").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
               COST. STEEL_HTML. END_P. "<hr>".
-              CENTER_DIV.INCOME._(" Produces ").VP_HTML._(" each Round").END_DIV,
+              CENTER_DIV.INCOME._(" Produces ").VP_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('steel'=>1),
@@ -392,9 +391,10 @@ $this->building_info = array(
     'name' => _("Depot"),
     'tt'   => COM_SPAN._("Depot").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST. WOOD_HTML. STEEL_HTML. END_P. "<hr>".
-              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".TRACK_HTML.
-              "<br>"._(" When Built: gain 1 Railroad Advancement (and Bonus).").
-              INCOME._(" Produces ").SILVER_HTML.SILVER_HTML._(" each Round.").END_DIV,
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML." ".TRACK_HTML."<br>".
+              INCOME._(" Produces ").SILVER_HTML.SILVER_HTML._(" each round.").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('wood'=>1,'steel'=>1),
@@ -408,8 +408,8 @@ $this->building_info = array(
     'tt'   => COM_SPAN._("Bank").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
               COST. STEEL_HTML. COPPER_HTML. END_P. "<hr>".
               CENTER_DIV.ALLOW_TRADE.TRADE_HTML." ".ARROW_HTML." ".SILVER_HTML."<br>".
-              _(" End: ").END_SPAN." ".ARROW_HTML." ".S_HTML.END_DIV.
-              INCOME._(" Pays off ").LOAN_HTML._(" each Round."),
+              _(" End: ").END_SPAN.VP_HTML." ".ARROW_HTML." ".S_HTML.END_DIV.
+              INCOME._(" Pays off ").LOAN_HTML._(" each round."),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('steel'=>1,'copper'=>1),
@@ -423,7 +423,7 @@ $this->building_info = array(
     'tt'   => COM_SPAN._("Stables").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST. COW_HTML. END_P. "<hr>".          
               CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".R_HTML.
-              INCOME._(" Produces ").TRADE_HTML.VP_HTML._(" each Round.").END_DIV,
+              INCOME._(" Produces ").TRADE_HTML.VP_HTML._(" each round.").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('cow'=>1),
@@ -450,10 +450,11 @@ $this->building_info = array(
    ),
    BLD_FORGE => array(
     'name' => _("Forge"),
-    'tt'   => IND_SPAN._("Forge").END_SPAN.":".RIGHT_P.VP_HTML.END_P.
-              COST. STEEL_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built: gain a Railroad Advancement (and Bonus).")."<br>".
-              _(" When You Build another building, gain ").VP_HTML.
+    'tt'   => IND_SPAN._("Forge").END_SPAN.":".
+              COST. STEEL_HTML. END_P. RIGHT_P.VP_HTML.END_P."<hr>".
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track")."<br>".("(and get bonus).")."<br>".
+              _(" When you build ")."<br>"._("a building, gain ").VP_HTML.
               INCOME._(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
@@ -470,7 +471,7 @@ $this->building_info = array(
     'tt'   => SPE_SPAN._("Factory").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
               COST. STEEL_HTML. STEEL_HTML. COPPER_HTML. END_P. "<hr>".
               CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".I_HTML.
-              INCOME._(" Income: ").VP2_HTML._(" each Round").END_DIV,
+              INCOME._(" Income: ").VP2_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('steel'=>2, 'copper'=>1),
@@ -484,7 +485,7 @@ $this->building_info = array(
     'tt'   => SPE_SPAN._("Rodeo").END_SPAN.":".RIGHT_P.VP4_HTML.END_P.
               COST. FOOD_HTML. COW_HTML. END_P. "<hr>".
               CENTER_DIV.INCOME._(" Produces ").SILVER_HTML." ".ARROW_HTML." ".WORKER_HTML.
-              "<br>"._(" (max 5) each Round").END_DIV,
+              "<br>"._(" (max 5) each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('food'=>1, 'cow'=>1),
@@ -498,7 +499,7 @@ $this->building_info = array(
               COST. WOOD_HTML. GOLD_HTML. COW_HTML. END_P. "<hr>".
               CENTER_DIV._(" You May overbid others with the same Bid.").
               "<br>"._(" End:").VP_HTML." ".ARROW_HTML." ".C_HTML.
-              INCOME._(" Produces ").VP2_HTML._(" each Round.").END_DIV,
+              INCOME._(" Produces ").VP2_HTML._(" each round.").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('wood'=>1, 'gold'=>1, 'cow'=>1),
@@ -512,7 +513,7 @@ $this->building_info = array(
     'tt'   => SPE_SPAN._("Fairgrounds").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
               COST. WOOD_HTML. WOOD_HTML. COPPER_HTML. COW_HTML. END_P. "<hr>".
               CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML." ".R_HTML.
-              INCOME._(" Produces a ").GOLD_HTML._(" each Round").END_DIV,
+              INCOME._(" Produces a ").GOLD_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('wood'=>2,'copper'=>1,'cow'=>1),
@@ -573,8 +574,8 @@ $this->building_info = array(
     'name' => _("Train Station"),
     'tt'   => IND_SPAN._("Train Station").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
               COST. WOOD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built, gain ").TRACK_HTML.
-              "<br>"._(" and you may Build another")."<br>"._("Building of ").A_HTML._("type").INCOME.END_DIV,
+              CENTER_DIV._(" When Built: gain ").FULL_TRACK_HTML.END_DIV.
+              CENTER_DIV._(" & you may build another")."<br>"._("building of ").A_HTML._("type").INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('wood'=>1,'copper'=>1),
@@ -598,7 +599,9 @@ $this->building_info = array(
     'name' => _("Rail Yard"),
     'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
               COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" End: ").VP_HTML." ".ARROW_HTML._(" Building").INCOME.END_DIV,
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").INCOME.END_DIV,
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
     'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
@@ -612,186 +615,186 @@ $this->building_info = array(
 $this->auction_info = array( 
   1 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC1_SPAN._("Round 1").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 1").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
-              _(" OR ").C_HTML."<hr>",
+              _(" OR ").C_HTML."<hr>".END_DIV,
   ),
   2 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC1_SPAN._("Round 2").END_SPAN."<hr>".
-              _(" Build: ").I_HTML."<hr>",
+    'tt'    => AUC1_SPAN._("Round 2").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   3 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC1_SPAN._("Round 3").END_SPAN."<hr>".
-              _(" Build: ").C_HTML."<hr>",
+    'tt'    => AUC1_SPAN._("Round 3").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   4 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
-    'tt'    => AUC1_SPAN._("Round 4").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 4").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
-              _(" OR ").I_HTML."<hr>",
+              _(" OR ").I_HTML."<hr>".END_DIV,
   ),
   5 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC1_SPAN._("Round 5").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 5").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").C_HTML."<hr>".
-              _(" May Hire ").WORKER_HTML._(" (Free)"),
+              _(" May Hire ").WORKER_HTML._(" (Free)").END_DIV,
     'bonus' => AUC_BONUS_WORKER,
   ),
   6 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC1_SPAN._("Round 6").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 6").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<hr>".
-              _(" May Hire ").WORKER_HTML._(" (Free)"),
+              _(" May Hire ").WORKER_HTML._(" (Free)").END_DIV,
     'bonus' => AUC_BONUS_WORKER,
   ),
   7 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC1_SPAN._("Round 7").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 7").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").I_HTML."<hr>".
-              _(" May Hire ").WORKER_HTML._(" (Free)"),
+              _(" May Hire ").WORKER_HTML._(" (Free)").END_DIV,
     'bonus' => AUC_BONUS_WORKER,
   ),
   8 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC1_SPAN._("Round 8").END_SPAN."<hr>".
-              _(" Build: ").A_HTML,
+    'tt'    => AUC1_SPAN._("Round 8").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").A_HTML.END_DIV,
   ),
   9 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC1_SPAN._("Round 9").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 9").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").A_HTML."<hr>".
-              _(" May trade ").COPPER_HTML._(" for ").VP4_HTML,
+              _(" May trade ").COPPER_HTML._(" for ").VP4_HTML.END_DIV,
     'bonus' => AUC_BONUS_COPPER_FOR_VP,
   ),
   10 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC1_SPAN._("Round 10").END_SPAN."<hr>".
+    'tt'    => AUC1_SPAN._("Round 10").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").A_HTML."<hr>".
-              _(" May trade ").COW_HTML._(" for ").VP4_HTML,
+              _(" May trade ").COW_HTML._(" for ").VP4_HTML.END_DIV,
     'bonus' => AUC_BONUS_COW_FOR_VP,
   ),
   11 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".
-              _(" Build: ").R_HTML."<hr>",
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   12 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".
-              _(" Build: ").I_HTML."<hr>",
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   13 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".
-              _(" Build: ").A_HTML."<hr>",
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").A_HTML."<hr>".END_DIV,
   ),
   14 => array(
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".
+    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: None")."<hr>".
-              _("May Hire ").WORKER_HTML._(" (Free) &")."<br>"
-              ._("Advance the Railroad Track"),
+              _("May Hire ").WORKER_HTML._(" (Free) &")."<br>".
+              _("Advance the Railroad Track").END_DIV,
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   15 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
-              _(" OR ").C_HTML."<hr>",
+              _(" OR ").C_HTML."<hr>".END_DIV,
   ),
   16 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>"
-              ._(" Build: ").I_HTML."<br>"
-              ._(" OR ").C_HTML."<hr>",
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").I_HTML."<br>".
+              _(" OR ").C_HTML."<hr>".END_DIV,
   ),
   17 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".
-              _(" Build: ").I_HTML."<br>"
-              ._(" OR ").S_HTML."<hr>",
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
+              _(" Build: ").I_HTML."<br>".
+              _(" OR ").S_HTML."<hr>".END_DIV,
   ),
   18 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".
+    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
-              _(" OR ").S_HTML."<br>".
-              _(" May trade ").WOOD_HTML._(" for a Track"),
+              _(" OR ").S_HTML."<hr>".
+              _(" May trade ").WOOD_HTML._(" for a Track").END_DIV,
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   19 => array(
     'build' => array(TYPE_COMMERCIAL, TYPE_INDUSTRIAL),
-    'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".
+    'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").C_HTML."<br>".
               _(" OR ").I_HTML."<hr>".
-              _(" May trade ").FOOD_HTML._(" for ").VP2_HTML,
+              _(" May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   20 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".
+    'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
               _(" OR ").S_HTML."<hr>".
-              _(" May trade ").FOOD_HTML._(" for ").VP2_HTML,
+              _(" May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   21 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".
-              _(" Build: ").R_HTML."<hr>",
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".CENTER_DIV.
+              _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   22 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".
-              _(" Build: ").C_HTML."<hr>",
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".CENTER_DIV.
+              _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   23 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".
-              _(" Build: ").I_HTML."<hr>",
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".CENTER_DIV.
+              _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   24 => array(
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: None.")."<hr>".
               _("May Hire ").WORKER_HTML._(" (Free) &")."<br>".
-              _("Advance the Railroad Track"),
+              _("Advance the Railroad Track").END_DIV,
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   25 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".
-               _(" Build: ").R_HTML."<hr>",
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
+               _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   26 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".
-               _(" Build: ").C_HTML."<hr>",
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
+               _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   27 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
                _(" Build: ").I_HTML."<hr>".
-               _("May trade ").WOOD_HTML._(" for a Track"),
+               _("May trade ").WOOD_HTML._(" for a Track").END_DIV,
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   28 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".
-               _(" Build: ").A_HTML,
+    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
+               _(" Build: ").A_HTML.END_DIV,
   ),
   29 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".
+    'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
               _(" OR ").C_HTML."<hr>".
-              _("May trade ").FOOD_HTML._(" for ").VP2_HTML,
+              _("May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   30 => array(
-    'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".
+    'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
             _("Build: None")."<hr>"._("Gain ").VP6_HTML."<br>".
-            _("May trade ").FOOD_HTML._(" for ").VP2_HTML,    
+            _("May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
   ),
   

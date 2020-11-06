@@ -854,7 +854,18 @@ div#trade_bank_trade_silver{
    float: center;
 }
 .tt_loan{
-   transform: scale(2.5);
+   background-image: url('img/rail_debt_85x102.png');
+   height: 45px;
+   width: 33px;
+   background-size: 99px 45px;
+   background-position-x: 66px;
+   display: inline-block;
+}
+.tt_track{
+   background-image: url('img/rail_debt_85x102.png');
+   height: 45px;
+   width: 33px;
+   background-size: 99px 45px;
    display: inline-block;
 }
 .score_copper{
@@ -940,7 +951,7 @@ div#trade_bank_trade_silver{
  }
 .log_gold{
    background-size: 157.9px 63.2px;
-   background-position: -8.9px 0px;
+   background-position: -8.4px 0px;
    width: 20px;
    height: 19.4px;
 }
@@ -970,7 +981,7 @@ div#trade_bank_trade_silver{
 }
 .log_vp2{
    background-size: 127.3px 51.7px;
-   background-position: -93px -0px;
+   background-position: -92px -0px;
    width: 19.3px;
    height: 20px;
 }
