@@ -848,11 +848,6 @@ div#trade_bank_trade_silver{
    grid-column: 8 / 9;
    grid-row: 2 / 3;
 }
-.tt{
-   transform: scale(1);
-   display: block;
-   float: center;
-}
 .tt_loan{
    background-image: url('img/rail_debt_85x102.png');
    height: 45px;
@@ -881,6 +876,11 @@ div#trade_bank_trade_silver{
 .player_copper {
    grid-column: 10 / 11;
    grid-row: 2 / 3;
+}
+.tt{
+   transform: scale(1);
+   display: block;
+   float: center;
 }
 
 /*=============*
@@ -1082,7 +1082,7 @@ div#trade_bank_trade_silver{
 }
 .token_worker:not(:first-child) {
    left: 20px;
-   top: -35px;
+   top: -42px;
 }
 
 /*===============*

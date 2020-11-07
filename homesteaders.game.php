@@ -394,19 +394,23 @@ class homesteaders extends Table
     }
 
     /**** Auction Bonus actions ******/
-    public function playerFreeHireWorkerAuction ( $rail ) 
+    public function playerFreeHireWorkerAuction ( ) 
     {
         $this->checkAction( "auctionBonus" );
         $act_p_id = $this->getActivePlayerId();
-        $this->Resource->addWorker($act_p_id, 'auction bonus');
-        $next_state = 'done';    
-        if ($rail){
+        $auction_bonus = $this->getGameStateValue( 'auction_bonus');
+        if ($auction_bonus == AUC_BONUS_WORKER) {
+            $this->Resource->addWorker($act_p_id, 'auction bonus');
+            $this->gamestate->nextState( 'done' );
+        } else if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV){
+            $this->Resource->addWorker($act_p_id, 'auction bonus');
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
             $auc_no = $this->getGameStateValue( 'current_auction');
             $this->Resource->getRailAdv( $act_p_id, "AUCTION ".$auc_no, 'auction', $auc_no );
-            $next_state = 'railBonus';
+            $this->gamestate->nextState( 'railBonus' );
+        } else {
+            throw new BgaVisibleSystemException ( "free Hire Worker called, but auction bonus is ".$auction_bonus );
         }
-        $this->gamestate->nextState( $next_state );
     }
 
     public function playerTypeForType ($tradeAway, $tradeFor){

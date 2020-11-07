@@ -180,7 +180,7 @@ function (dojo, declare) {
             // storage for buildings
             this.main_building_counts = []; // counts of each building_id in main zone. for use by update Buildings methods.
             
-            this.building_worker_zones = [];
+            this.building_worker_ids = [];
             this.resourceCounters = []; // This player's resource counters
 
             this.token_dimension = 50;
@@ -359,19 +359,16 @@ function (dojo, declare) {
             const divId = `${TPL_BLD_TILE}_${key}`;
             if (building.w_slot == 1){
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), divId);
-                this.building_worker_zones[key] = [];
-                this.building_worker_zones[key][1] = new ebg.zone();
-                this.building_worker_zones[key][1].create(this, `slot_1_${key}`, this.worker_width, this.worker_height );
+                this.building_worker_ids[key] = [];
+                this.building_worker_ids[key][1] = `slot_1_${key}`;
                 this.addTooltipHtml(  `slot_1_${key}`, b_info['s1_tt'] );
                 dojo.connect($(`slot_1_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
             } else if (building.w_slot == 2){
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), divId);
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 2, key: key, id: id}), divId);
-                this.building_worker_zones[key] = [];
-                this.building_worker_zones[key][1] = new ebg.zone();
-                this.building_worker_zones[key][1].create(this, `slot_1_${key}`, this.worker_width, this.worker_height );
-                this.building_worker_zones[key][2] = new ebg.zone();
-                this.building_worker_zones[key][2].create(this, `slot_2_${key}`, this.worker_width, this.worker_height );
+                this.building_worker_ids[key] = [];
+                this.building_worker_ids[key][1] = `slot_1_${key}`;
+                this.building_worker_ids[key][2] = `slot_2_${key}`;
                 this.addTooltipHtml(  `slot_1_${key}`, b_info['s1_tt'] );
                 this.addTooltipHtml(  `slot_2_${key}`, b_info['s2_tt'] );
                 dojo.connect($(`slot_1_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
@@ -379,10 +376,8 @@ function (dojo, declare) {
             } else if (building.w_slot == 3){
                 // currently
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 3, key: key, id: id}), divId);
-                this.building_worker_zones[key] = [];
-                this.building_worker_zones[key][3] = new ebg.zone();
-                this.building_worker_zones[key][3].create(this, `slot_3_${key}`, this.worker_width, this.worker_height );
-                this.building_worker_zones[key][3].setPattern('horizontalfit');
+                this.building_worker_ids[key] = [];
+                this.building_worker_ids[key][3] = `slot_3_${key}`;
                 this.addTooltipHtml( `slot_3_${key}`, b_info['s3_tt'] );
                 dojo.style(`slot_3_${key}`, 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(`slot_3_${key}`), 'onclick', this, 'onClickOnWorkerSlot');
@@ -396,7 +391,7 @@ function (dojo, declare) {
                         this.token_divId[worker.p_id] );
                 const worker_divId = `token_worker_${w_key}`;
                 if (worker.b_key != 0 ){ 
-                    this.building_worker_zones[worker.b_key][worker.b_slot].placeInZone(worker_divId);
+                    dojo.place(worker_divId, this.building_worker_ids[worker.b_key][worker.b_slot])
                 } else {
                     this.token_zone[worker.p_id].placeInZone(worker_divId);
                 }
@@ -744,10 +739,8 @@ function (dojo, declare) {
                          
                         switch (option){
                             case AUCBONUS_WORKER:
-                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker , 'workerForFree');
-                            break;
                             case AUCBONUS_WORKER_RAIL_ADV:
-                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker, 'workerForFreeAndRail');
+                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker , 'workerForFree');
                             break;
                             case AUCBONUS_WOOD_FOR_TRACK:
                                 this.addActionButton( 'btn_wood_track', `${tkn_wood} ${tkn_arrow} ${tkn_track}`, 'woodForTrack');
@@ -929,6 +922,7 @@ function (dojo, declare) {
             const b_divId = `${TPL_BLD_TILE}_${building.b_key}`;
             building.location=BLD_LOC_OFFER;
             this.createBuildingZoneIfMissing(building);
+            this.moveObject(b_divId, `building_stack_${building_b_id}`);
             this.main_building_counts[building.b_id]++;
             dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
             if (this.player_id == building.p_id){//remove from hasBuilding
@@ -1547,7 +1541,7 @@ function (dojo, declare) {
 
         workerForFreeBuilding: function (){
             if (this.checkAction( 'buildBonus' )){
-            this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, auction:false}, this, 
+            this.ajaxcall( "/homesteaders/homesteaders/freeHireWorkerBuilding.html", {lock: true}, this, 
             function( result ) { }, 
             function( is_error) { } );}
         },
@@ -1597,19 +1591,15 @@ function (dojo, declare) {
 
         /***** Auction Bonus *****/
         /** called (directly) when auction bonus is only worker for Free */
-        workerForFree: function(rail=false) {
+        /** called when auction bonus is worker for free and rail advancement. */
+        workerForFree: function() {
             if (this.checkAction( 'auctionBonus' )){
-                this.ajaxcall( "/homesteaders/homesteaders/freeHireWorker.html", {lock: true, rail: rail, auction:true }, this, 
+                this.ajaxcall( "/homesteaders/homesteaders/freeHireWorkerAuction.html", {lock: true }, this, 
                 function( result ) { 
                     this.disableTradeIfPossible();
                     this.hideUndoTransactionsButtonIfPossible(); 
                 }, function( is_error) { } );
             }
-        },
-
-        /** called when auction bonus is worker for free and rail advancement. */
-        workerForFreeAndRail: function() {
-            this.workerForFree(true);
         },
 
         bonusTypeForType: function(tradeAway, tradeFor) {
@@ -1905,16 +1895,10 @@ function (dojo, declare) {
             console.log ( notif );
             const worker_divId = 'token_worker_'+Number(notif.args.worker_key);
             const parent_id =  $(worker_divId).parentElement.id;
-            this.building_worker_zones[Number(notif.args.building_key)][Number(notif.args.building_slot)].placeInZone(worker_divId);
-            if (parent_id.startsWith("slot_")){
-                const split_Id = parent_id.toString().split("_");  
-                this.building_worker_zones[Number(split_Id[2])][Number(split_Id[1])].removeFromZone(worker_divId);
-                dojo.style( parent_id , 'height', this.worker_height.toString()+'px');
-            } else {
+            this.moveObject(worker_divId, this.building_worker_ids[Number(notif.args.building_key)][Number(notif.args.building_slot)]);
+            if (!parent_id.startsWith("slot_")){
                 this.token_zone[notif.args.player_id].removeFromZone(worker_divId);
             } 
-            if (notif.args.building_slot == 3){
-            }
         },
 
         notif_railAdv: function( notif ){

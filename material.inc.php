@@ -98,7 +98,7 @@ $this->resource_info = array(
   'loan' => array(
     'name'   => clienttranslate("Debt"),
     'db_int' => LOAN,
-    'tt'     => FULL_LOAN_HTML."<hr>".
+    'tt'     => '<span aria="debt" title="debt" class="tt_loan tt"></span> <hr>'.
               _("Debt: Costs 5 Silver (or 1 Gold) to pay off.")."<br".
               _("End: Worth -").VP_HTML,
   ),
@@ -659,7 +659,7 @@ $this->auction_info = array(
   8 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
     'tt'    => AUC1_SPAN._("Round 8").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").A_HTML.END_DIV,
+              _(" Build: ").A_HTML.END_DIV."<hr>",
   ),
   9 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),

@@ -158,15 +158,15 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function freeHireWorker (){
+  public function freeHireWorkerAuction (){
     self::setAjaxMode( );
-    $auction = self::getArg( 'auction', AT_bool, true);
-    if ($auction){
-      $rail = self::getArg( 'rail', AT_bool, true);
-      $this->game->playerFreeHireWorkerAuction( $rail );
-    } else {
-      $this->game->playerFreeHireWorkerBuilding();
-    }
+    $this->game->playerFreeHireWorkerAuction();
+    self::ajaxResponse( );
+  }
+
+  public function freeHireWorkerBuilding (){
+    self::setAjaxMode( );
+    $this->game->playerFreeHireWorkerBuilding();
     self::ajaxResponse( );
   }
 

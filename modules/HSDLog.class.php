@@ -309,7 +309,7 @@ class HSDLog extends APP_GameClass
             $this->game->DBQuery("UPDATE `buildings` SET `location`= '1', `player_id`='0' WHERE `building_key`='$b_key'");
             $cost = array();
             foreach ($args as $type => $amt) {
-              if (in_array($type, $this->game->Resource->resource_map)) {
+              if (in_array($type, $this->game->resource_map)) {
                 $cost[$type] = $amt;
                 $this->game->Resource->updateResource($p_id, $type, $amt);
               }
