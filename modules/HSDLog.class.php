@@ -275,7 +275,7 @@ class HSDLog extends APP_GameClass
     $this->game->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels Transactions'), array(
       'player_name' => $this->game->getActivePlayerName(),
       'actions' => $transactions['action'],
-      'log_ids' => $transactions['log_id'],
+      'move_ids' => $transactions['move_ids'],
       'player_id' => $p_id));
   }
 
@@ -290,7 +290,7 @@ class HSDLog extends APP_GameClass
     $this->game->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels actions'), array(
       'player_name' => $this->game->getActivePlayerName(),
       'actions' => $transactions['action'],
-      'log_ids' => $transactions['log_id'],
+      'move_ids' => $transactions['move_ids'],
       'player_id' => $p_id));
     $this->insert($p_id, 0, "cancel");
   }
@@ -375,7 +375,7 @@ class HSDLog extends APP_GameClass
       }
 
       $ids[] = intval($log['log_id']);
-      if ($log['action'] != 'startTurn') {
+      if ($log['action'] != 'startTurn' && $log['action'] != 'allowTrades') {
         $move_arr[] = intval($log['move_id']);
       }
     }
@@ -389,9 +389,8 @@ class HSDLog extends APP_GameClass
     if (count($move_arr)>0){
       $move_id_group = "'".implode("','", array_unique($move_arr))."'";
       $this->game->DbQuery("UPDATE gamelog SET `cancel` = 1 WHERE `gamelog_move_id` IN ($move_id_group)");
-      //$this->game->DbQuery("DELETE FROM gamelog WHERE cancel = 1");
     }
-    return array('log_id' => $move_arr, 'action' =>$js_update_arr);
+    return array('move_ids' => $move_arr, 'action' =>$js_update_arr);
   }
 
   /*

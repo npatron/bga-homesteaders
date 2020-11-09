@@ -327,8 +327,20 @@ class homesteaders extends Table
         $this->gamestate->nextState( "auction_bonus" ); 
     }
 
-    public function playerPayWorkers($gold) {
+    public function playerPay($gold) {
+        $state = $this->gamestate->state();
+        if ($state['name'] === 'payWorkers'){
+            $this->payWorkers($gold);
+        } else if ($state['name'] === 'payAuction') {
+            $this->payAuction($gold);
+        } else {
+            throw new BgaVisibleSystemException ( "playe pay called, from wrong state: ".$state['name'] );
+        }
+    }
+
+    public function payWorkers($gold) {
         $this->checkAction( "done" );
+
         $cur_p_id = $this->getCurrentPlayerId();
         $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
         $cost = max($workers - (5*$gold), 0);
@@ -336,7 +348,7 @@ class homesteaders extends Table
         $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
     }
 
-    public function playerPayAuction($gold) {
+    public function payAuction($gold) {
         $this->checkAction( "done" );
         if ($gold <0){ throw new BgaUserException ( _("cannot have negative gold value"));}
         $act_p_id = $this->getActivePlayerId();

@@ -44,6 +44,11 @@
    color: #c62828 !important;
    text-decoration: line-through;
  }
+.no {
+   text-decoration: line-through;
+   text-decoration-color: black;
+   text-decoration-thickness: 1.5px;
+}
 
 .font_res {
    font: normal 20px/1 "Old Standard TT";
@@ -125,6 +130,9 @@ div#board {
    grid-column: 1/-1;
    grid-template-columns: repeat(auto-fill, 205px);
    grid-template-rows: repeat(auto-fill, 5px);
+}
+#btn_pay_done{
+   width: 115px;
 }
 #confirm_trade_btn{
    height: 17px;
@@ -411,10 +419,10 @@ div#train_bonus_5_vp{
       grid-template-columns: repeat(auto-fill, 205px);
    }
    #board {
-      order: 2;
+      order: 3;
    }
    #trade_top {
-      order: 3;
+      order: 2;
    }
 
 }
@@ -695,9 +703,21 @@ div#trade_bank_trade_silver{
 	animation: anim_move 2s infinite;
 }
 @keyframes anim_move {
-    0% {transform: rotate(-35deg) translateX(4px);} 
-    50% {transform: rotate(35deg) translateX(4px);}
-    100% {transform: rotate(-35deg) translateX(4px);}
+    0% { 
+      -webkit-transform: rotate(-35deg) translateX(4px);
+      -moz-transform: rotate(-35deg) translateX(4px);
+      transform: rotate(-35deg) translateX(4px);
+   } 
+    50% {
+      -webkit-transform: rotate(35deg) translateX(4px);
+      -moz-transform: rotate(35deg) translateX(4px);
+       transform: rotate(35deg) translateX(4px);
+      }
+    100% {
+      -webkit-transform: rotate(-35deg) translateX(4px);
+      -moz-transform: rotate(-35deg) translateX(4px);
+      transform: rotate(-35deg) translateX(4px);
+   }
 }
 
 /*==============*
@@ -725,6 +745,8 @@ div#trade_bank_trade_silver{
    background-position: -212.5px 0px;
    width: 56px;
    height: 58px;
+   -webkit-transform: scale(.5);
+   -moz-transform: scale(.5);
    transform: scale(.5);
    grid-column: 1 / 2;
    grid-row: 2 / 3;
@@ -740,6 +762,8 @@ div#trade_bank_trade_silver{
    background-position: -86% 50%;
    height: 20px;
    width: 20px;
+   -webkit-transform: scale(1.7);
+   -moz-transform: scale(1.7);
    transform: scale(1.7);
    background-size: 75px 30px;
    grid-column: 3 / 4;
@@ -755,6 +779,8 @@ div#trade_bank_trade_silver{
    background-position: 0px 0px;
    width: 20.5px;
    height: 51px;
+   -webkit-transform: scale(.7) rotate(45deg);
+   -moz-transform: scale(.7) rotate(45deg);
    transform: scale(.7) rotate(45deg);
    grid-column: 5 / 6;
    grid-row: 1 / 2;
@@ -769,6 +795,8 @@ div#trade_bank_trade_silver{
    background-position: -68.5px 0px;
    width: 38.5px;
    height: 41px;
+   -webkit-transform: scale(.7);
+   -moz-transform: scale(.7);
    transform: scale(.7);
    grid-column: 7 / 8;
    grid-row: 1 / 2;
@@ -782,6 +810,8 @@ div#trade_bank_trade_silver{
    background-position: -96.5px -111px;
    width: 40px;
    height: 38.5px;
+   -webkit-transform: scale(.7);
+   -moz-transform: scale(.7);
    transform: scale(.7);
    grid-column: 9 / 10;
    grid-row: 1 / 2;
@@ -796,6 +826,8 @@ div#trade_bank_trade_silver{
    background-position: -107px 0px;
    width: 51px;
    height: 49.5px;
+   -webkit-transform: scale(.6);
+   -moz-transform: scale(.6);
    transform: scale(.6);
    grid-column: 1 / 2;
    grid-row: 1 / 2;
@@ -810,6 +842,8 @@ div#trade_bank_trade_silver{
    background-position: -158px 0px;
    width: 48px;
    height: 47px;
+   -webkit-transform: scale(.6);
+   -moz-transform: scale(.6);
    transform: scale(.6);
    grid-column: 3 / 4;
    grid-row: 1 / 2;
@@ -824,6 +858,8 @@ div#trade_bank_trade_silver{
    background-position: -20.5px 0px;
    width: 47.5px;
    height: 46px;
+   -webkit-transform: scale(.6);
+   -moz-transform: scale(.6);
    transform: scale(.6);
    grid-column: 5 / 6;
    grid-row: 2 / 3;
@@ -838,6 +874,8 @@ div#trade_bank_trade_silver{
    background-position: -51.5px -50px;
    width: 85.5px;
    height: 61.5px;
+   -webkit-transform: scale(.38, .45);
+   -moz-transform: scale(.38, .45);
    transform: scale(.38, .45);
    grid-column: 7 / 8;
    grid-row: 2 / 3;
@@ -867,6 +905,8 @@ div#trade_bank_trade_silver{
    background-position: -136.5px -54px;
    width: 76px;
    height: 48px;
+   -webkit-transform: scaleX(.42, .55);
+   -moz-transform: scaleX(.42, .55);   
    transform: scale(.42, .55);
    grid-column: 9 / 10;
    grid-row: 2 / 3;
@@ -878,6 +918,8 @@ div#trade_bank_trade_silver{
    grid-row: 2 / 3;
 }
 .tt{
+   -webkit-transform: scaleX(1);
+   -moz-transform: scaleX(1);   
    transform: scale(1);
    display: block;
    float: center;
@@ -918,6 +960,8 @@ div#trade_bank_trade_silver{
    background-position-x: 0%;
    width: 55px;
    height: 29px;
+   -webkit-transform: scaleX(-1);
+   -moz-transform: scaleX(-1);   
    transform: scaleX(-1);
 }
 
@@ -951,7 +995,7 @@ div#trade_bank_trade_silver{
  }
 .log_gold{
    background-size: 157.9px 63.2px;
-   background-position: -8.4px 0px;
+   background-position: -8.8px 0px;
    width: 20px;
    height: 19.4px;
 }
@@ -1107,6 +1151,8 @@ div#trade_bank_trade_silver{
    width: 55px;
    height: 52px;
    position: relative;
+   -webkit-transform: scaleX(-1);
+   -moz-transform: scaleX(-1);   
    transform: scaleX(-1);
 }
 .player_token_train:nth-child(2){

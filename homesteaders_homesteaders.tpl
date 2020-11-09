@@ -52,7 +52,7 @@
         <div id="train_bonus_5_vp" class="train_bonus"> </div>
         <div id="passed_bids" class="bid_token_zone"> </div>
     </div>
-    <div id="trade_top" class="noshow">
+    <div id="trade_top" class="trade_size noshow">
     </div>
 </div>
 <div id='building_location' class='tile_container'>
@@ -122,14 +122,6 @@
             <div id="trade_bank_trade_silver" class="trade_option"> </div>
         </div>
     </div>
-    <div id="payment_bottom"> 
-        <div id="payment_section" class ="boardheader whiteblock">
-            <div id ="gold_cost_token"> </div>
-            <span id="gold_cost" class="payment_text">0</span>
-            <div id= "silver_cost_token"> </div>
-            <span id="silver_cost" class="payment_text">0</span>
-        </div>
-    </div>
 </div>
 
 <script type="text/javascript">
@@ -159,6 +151,10 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="player_copper score_text">0</span>\
 </div></div>';
 
+var jstpl_pay_button = '<span id="pay_gold" class="noshow useFont">0</span> \
+ <span id="pay_gold_tkn" class="noshow log_gold token_inline"></span> \
+ <span id="pay_silver" class="useFont">0</span> \
+<span id="pay_silver_tkn" class="log_silver token_inline"></span>';
 var jstpl_color_log = '<span class="logFont" style="font-weight:bold;color:${color};">${string}</span>';
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
 var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';

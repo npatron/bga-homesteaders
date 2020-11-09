@@ -87,12 +87,12 @@ class HSDBuilding extends APP_GameClass
     function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
         $b_id = $this->getBuildingIdFromKey($b_key);
         $cost = $this->game->building_info[$b_id]['cost'];
-        if ($goldAsCopper && array_key_exists('copper',$cost)){
-            $this->game->Resource->updateKeyOrCreate($cost, 'gold',$cost['copper']);
+        if ($goldAsCopper && array_key_exists('copper', $cost)){
+            $cost = $this->game->Resource->updateKeyOrCreate($cost, 'gold', $cost['copper']);
             unset($cost['copper']);
         }
         if ($goldAsCow && array_key_exists('cow', $cost)){
-            $this->game->Resource->updateKeyOrCreate($cost, 'gold',$cost['cow']);
+            $cost = $this->game->Resource->updateKeyOrCreate($cost, 'gold', $cost['cow']);
             unset($cost['cow']);
         }
         return $cost;
@@ -185,7 +185,6 @@ class HSDBuilding extends APP_GameClass
         if (!$afford){
             throw new BgaUserException( _("You cannot afford to build ".$b_name));
         }
-        
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
             throw new BgaUserException( _("You have already built a ".$b_name));
         }

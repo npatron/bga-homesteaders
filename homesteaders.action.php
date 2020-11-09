@@ -59,17 +59,10 @@ class action_homesteaders extends APP_GameAction
   }
 
   // pay workers
-  public function payWorkers() {
+  public function donePay() {
     self::setAjaxMode( );
     $gold = self::getArg( "gold", AT_posint, true);
-    $this->game->playerPayWorkers($gold);
-    self::ajaxResponse( );
-  }
-
-  public function payAuction() {
-    self::setAjaxMode( );
-    $gold = self::getArg( "gold", AT_posint, true);
-    $this->game->playerPayAuction($gold);
+    $this->game->playerPay($gold);
     self::ajaxResponse( );
   }
 
