@@ -46,7 +46,7 @@ class HSDBuilding extends APP_GameClass
         $endValue = $value;
         $iStart = ($this->game->getPlayersNumber()==2? 2:1);
         for ($i = $iStart; $i< $bld['amt']; $i++){
-            $endValue .= ", "+ $value;
+            $endValue .= ", ". $value;
         }
         return $endValue;
     }

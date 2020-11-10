@@ -116,8 +116,19 @@ class HSDLog extends APP_GameClass
     $player_id = $player_id == -1 ? $this->game->getActivePlayerId() : $player_id;
     $moveId = $this->game->getUniqueValueFromDB("SELECT `global_value` FROM `global` WHERE `global_id` = 3");
     $round = $this->game->getGameStateValue("round_number");
-
-    if ($action === 'bid') {
+    if ($action === 'build') {
+      $stats[] = ['table', 'buildings'];
+      $stats[] = [$player_id, 'buildings'];
+      $building_type = $this->game->Building->getBuildingTypeFromId($piece_id);
+      if ($building_type == TYPE_RESIDENTIAL)
+        $stats[] = [$player_id, 'residential'];
+      else if ($building_type == TYPE_COMMERCIAL)
+        $stats[] = [$player_id, 'industrial'];
+      else if ($building_type == TYPE_INDUSTRIAL)
+        $stats[] = [$player_id, 'commercial'];
+      else if ($building_type == TYPE_SPECIAL)
+        $stats[] = [$player_id, 'special'];
+    } else if ($action === 'bid') {
       $stats[] = [$player_id, 'bids'];
     } else if ($action === 'loan') {
       $stats[] = [$player_id, 'loans'];
@@ -127,10 +138,9 @@ class HSDLog extends APP_GameClass
       $stats[] = [$args['outbid_by'], 'outbids'];
     } else if ($action === 'winAuction') {
       $stats[] = [$player_id, 'auctions_won'];
-      $stats[] = [$player_id, `win_auction_$piece_id`];
+      $stats[] = [$player_id, "win_auction_$piece_id"];
       $stats[] = [$player_id, 'spent_on_auctions', $args['cost']];
     } 
-
     if (!empty($stats)) {
       $this->incrementStats($stats);
       $args['stats'] = $stats;
@@ -141,15 +151,7 @@ class HSDLog extends APP_GameClass
     $this->game->DbQuery("INSERT INTO log (`round`, `move_id`, `player_id`, `piece_id`, `action`, `action_arg`) VALUES ('$round', '$moveId', '$player_id', '$piece_id', '$action', '$actionArgs')");
   }
 
-  /*
-   * startTurn: logged to track save points
-   * should only be called at beginning of payAuction 
-   */
-  public function startTurn()
-  {
-    $p_id = $this->game->getActivePlayerId();
-    $this->insert($p_id, 0, 'startTurn');
-  }
+  
 
   /*
    * allowTrades: logged whenever a player start a turn in which trading is an option, 
@@ -236,9 +238,14 @@ class HSDLog extends APP_GameClass
     $this->insert($outbid_p_id, 0, 'outbid', array('outbid_by' => $outbidding_p_id));
   }
 
+  /*
+   * winAuction: logged to track stats, and marks undo/save point
+   * should only be called at beginning of payAuction 
+   */
   public function winAuction($p_id, $auc_no, $bid_cost)
   {
     $this->insert($p_id, $auc_no, 'winAuction', array('cost' => $bid_cost));
+    $this->insert($p_id, 0, 'allowTrades');
   }
 
   /************************* 
@@ -247,9 +254,9 @@ class HSDLog extends APP_GameClass
 
   /*
    * getLastActions : get works and actions of player (used to cancel previous action)
-   * for undo trades set afterAction = 'allowTrades', for undo afterAction = 'startTurn'
+   * for undo trades set afterAction = 'allowTrades', for undo afterAction = 'winAuction'
    */
-  public function getLastActions($p_id = null, $actions = ['build', 'trade', 'loan', 'gainTrack', 'gainWorker', 'railAdv', 'updateResource'], $afterAction = 'startTurn')
+  public function getLastActions($p_id = null, $actions = ['build', 'trade', 'loan', 'gainTrack', 'gainWorker', 'railAdv', 'updateResource'], $afterAction = 'winAuction')
   {
     $p_id = $p_id ?? $this->game->getActivePlayerId();
     $actionsNames = "'" . implode("','", $actions) . "'";

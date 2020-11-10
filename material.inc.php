@@ -665,14 +665,14 @@ $this->auction_info = array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
     'tt'    => AUC1_SPAN._("Round 9").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").A_HTML."<hr>".
-              _(" May trade ").COPPER_HTML._(" for ").VP4_HTML.END_DIV,
+              _(" May pay ").COPPER_HTML._(" for ").VP4_HTML.END_DIV,
     'bonus' => AUC_BONUS_COPPER_FOR_VP,
   ),
   10 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
     'tt'    => AUC1_SPAN._("Round 10").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").A_HTML."<hr>".
-              _(" May trade ").COW_HTML._(" for ").VP4_HTML.END_DIV,
+              _(" May pay ").COW_HTML._(" for ").VP4_HTML.END_DIV,
     'bonus' => AUC_BONUS_COW_FOR_VP,
   ),
   11 => array(
@@ -720,7 +720,7 @@ $this->auction_info = array(
     'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
               _(" OR ").S_HTML."<hr>".
-              _(" May trade ").WOOD_HTML._(" for a Track").END_DIV,
+              _(" May pay ").WOOD_HTML._(" for a Track").END_DIV,
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   19 => array(
@@ -728,7 +728,7 @@ $this->auction_info = array(
     'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").C_HTML."<br>".
               _(" OR ").I_HTML."<hr>".
-              _(" May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
+              _(" May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   20 => array(
@@ -736,22 +736,22 @@ $this->auction_info = array(
     'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
               _(" OR ").S_HTML."<hr>".
-              _(" May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
+              _(" May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   21 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".CENTER_DIV.
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   22 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".CENTER_DIV.
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   23 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<br>".CENTER_DIV.
+    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   24 => array(
@@ -775,26 +775,26 @@ $this->auction_info = array(
     'build' => array(TYPE_INDUSTRIAL),
     'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
                _(" Build: ").I_HTML."<hr>".
-               _("May trade ").WOOD_HTML._(" for a Track").END_DIV,
+               _("May pay ").WOOD_HTML._(" for a Track").END_DIV,
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   28 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
     'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-               _(" Build: ").A_HTML.END_DIV,
+               _(" Build: ").A_HTML."<hr>".END_DIV,
   ),
   29 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
     'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
               _(" Build: ").R_HTML."<br>".
               _(" OR ").C_HTML."<hr>".
-              _("May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
+              _("May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   30 => array(
     'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
             _("Build: None")."<hr>"._("Gain ").VP6_HTML."<br>".
-            _("May trade ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
+            _("May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
   ),
   

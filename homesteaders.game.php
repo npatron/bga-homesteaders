@@ -670,10 +670,11 @@ class homesteaders extends Table
         $this->Log->allowTrades($this->getActivePlayerId());
     }
 
-    function stStartTurn()
+    function stWinAuction()
     {
-        $this->Log->startTurn($this->getActivePlayerId());
-        $this->Log->allowTrades($this->getActivePlayerId());
+        $current_auction = $this->getGameStateValue('current_auction');
+        $bid_cost = $this->Bid->getBidCost($this->getActivePlayerId());
+        $this->Log->winAuction($this->getActivePlayerId(), $current_auction, $bid_cost);
     }
 
     function stBuildingPhase()

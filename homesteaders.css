@@ -561,10 +561,14 @@ div#trade_bank_trade_silver{
    grid-template-columns: repeat(auto-fill, 145px);
    grid-template-rows: repeat(auto-fill, 198px);
 }
-.building_zone_diag .building_tile:not(:first-child) {
+.building_zone_diag .building_tile:nth-child(2) {
    margin-left: 10px;
    margin-top: -186px;
  }
+ .building_zone_diag .building_tile:nth-child(3) {
+   margin-left: 20px;
+   margin-top: -186px;
+}
 .main_building_zone {
    position: relative;
    display: grid;
@@ -1140,6 +1144,7 @@ div#trade_bank_trade_silver{
    height: 52px;
    z-index: 1;
    position: relative;
+   filter: drop-shadow(0px 0px 1px #000000);
 }
 .bid_slot .player_token_bid:not(:first-child){
    left: -25px;
@@ -1154,18 +1159,42 @@ div#trade_bank_trade_silver{
    -webkit-transform: scaleX(-1);
    -moz-transform: scaleX(-1);   
    transform: scaleX(-1);
+   filter: drop-shadow(0px 0px 1px #000000);
 }
+/* 2-trains */
 .player_token_train:nth-child(2){
    left: 50%;
    top: -52px;
 }
-.player_token_train:nth-child(3){
-   left: -25%;
-   top: -42px;
+/* 3-trains */
+.player_token_train:nth-child(1):nth-last-child(3){
+   left: -8%;
+   top: 7%;
 }
-.player_token_train:nth-child(4){
-   left: 50%;
-   top: -52px;
+.player_token_train:nth-child(2):nth-last-child(2){
+   left: 22%;
+   top: -143%;
+}
+.player_token_train:nth-child(3):nth-last-child(1){
+   left: 55%;
+   top: -245%;
+}
+/* 4-trains */
+.player_token_train:nth-child(1):nth-last-child(4){
+   left: -8%;
+    top: 14%;
+}
+.player_token_train:nth-child(2):nth-last-child(3){
+   left: 18%;
+   top: -143%;
+}
+.player_token_train:nth-child(3):nth-last-child(2){
+   left: 43%;
+   top: -245%;
+}
+.player_token_train:nth-child(4):nth-last-child(1){
+   left: 67%;
+   top: -396%;
 }
 
 .bid_yellow {
@@ -1257,7 +1286,7 @@ div#trade_bank_trade_silver{
 }
 .slot_1_6 {
    bottom: 45px;
-   left: 16px;
+   left: 22px;
 }
 .slot_2_6 {
    bottom: 8px;
