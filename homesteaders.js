@@ -240,14 +240,17 @@ function (dojo, declare) {
                 this.player_color[DUMMY_OPT] = this.player_color[0];
             }
             this.omitImages();
-            
+            this.res_info = gamedatas.resource_info;
+            this.building_info = gamedatas.building_info;
+
             // Auctions: 
             this.number_auctions = gamedatas.number_auctions;
             this.setupAuctionTiles(gamedatas.auctions, gamedatas.auction_info);
             this.showCurrentAuctions(gamedatas.current_auctions);
             this.setupBuildings(gamedatas.buildings, gamedatas.building_info);
-            this.building_info = gamedatas.building_info;
+            
             this.setupTracks(gamedatas.tracks);
+            
 
             dojo.place(FIRST_PLAYER_ID, this.player_building_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
@@ -346,7 +349,7 @@ function (dojo, declare) {
                 const track = tracks[i];
                 dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: this.player_color[track.p_id]}), this.token_divId[track.p_id]);
             }
-            this.addTooltipHtmlToClass("token_track", info['track']['tt']);
+            this.addTooltipHtmlToClass("token_track", this.res_info['track']['tt']);
         },
 
         addBuildingWorkerSlots: function(building, b_info){
@@ -398,7 +401,7 @@ function (dojo, declare) {
                     dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 }
             }
-            this.addTooltipHtmlToClass("token_worker", info['workers']['tt']);
+            this.addTooltipHtmlToClass("token_worker", this.res_info['workers']['tt']);
         },
         
 
