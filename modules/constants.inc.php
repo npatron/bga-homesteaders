@@ -171,13 +171,13 @@
   define('COPPER_HTML', '<span aria="copper" title="copper" class="log_copper token_inline"></span>');
   define('ARROW_HTML',  '<span aria="arrow" title="arrow" class="log_arrow token_inline"></span>');
 
-  define('VP0_HTML' , 'VP:0');
+  define('VP0_HTML' , '<span aria="vp0" title="vp0" class="log_vp0 token_inline"></span>');
   define('VP2_HTML' , '<span aria="vp2" title="vp2" class="log_vp2 token_inline"></span>');
-  define('VP3_HTML' , 'VP:3');
+  define('VP3_HTML' , '<span aria="vp4" title="vp3" class="log_vp3 token_inline"></span>');
   define('VP4_HTML' , '<span aria="vp4" title="vp4" class="log_vp4 token_inline"></span>');
   define('VP6_HTML' , '<span aria="vp6" title="vp6" class="log_vp6 token_inline"></span>');
-  define('VP8_HTML' , 'VP:8');
-  define('VP10_HTML' , 'VP:10');
+  define('VP8_HTML' , '<span aria="vp8" title="vp8" class="log_vp8 token_inline"></span>');
+  define('VP10_HTML' , '<span aria="vp10" title="vp10" class="log_vp10 token_inline"></span>');
 
   define('RES_SPAN'  , '<span class="font_res">');
   define('COM_SPAN'  , '<span class="font_com">');

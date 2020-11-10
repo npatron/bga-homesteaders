@@ -196,6 +196,7 @@ function (dojo, declare) {
             // for tracking current auction (for title update)
             this.current_auction = 1;
             this.number_auctions = 0;
+            this.isTop = false;
 
             this.b_connect_handler = [];
             this.hasBuilding = []; 
@@ -327,8 +328,6 @@ function (dojo, declare) {
                 this.addTooltipHtml( resourceId, info[key]['tt'] );
                 this.addTooltipHtml( iconId, info[key]['tt'] );
             }
-            this.addTooltipHtmlToClass("token_track", info['track']['tt']);
-            this.addTooltipHtmlToClass("token_worker", info['workers']['tt']);
         },
 
         setupBuildings: function(buildings, info) {
@@ -347,6 +346,7 @@ function (dojo, declare) {
                 const track = tracks[i];
                 dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: this.player_color[track.p_id]}), this.token_divId[track.p_id]);
             }
+            this.addTooltipHtmlToClass("token_track", info['track']['tt']);
         },
 
         addBuildingWorkerSlots: function(building, b_info){
@@ -398,6 +398,7 @@ function (dojo, declare) {
                     dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 }
             }
+            this.addTooltipHtmlToClass("token_worker", info['workers']['tt']);
         },
         
 
@@ -1739,8 +1740,7 @@ function (dojo, declare) {
                 ['loanPaid', 500],
                 ['clearAllBids', 250],
                 ['cancel', 500],
-                ['bldScore', 100],
-                ['resScore', 100],
+                ['score', 2000],
               ];
 
             notifs.forEach(notif => {
@@ -2164,28 +2164,35 @@ function (dojo, declare) {
             }
         },
 
-        notif_bldScore: function( notif ){
+        notif_score: function( notif ){
             console.log ('notif_score');
-            this.scoreCtrl[notif.args.player_id].setValue(0);
-            for(let b_key in notif.args.buildings){
-                const building = notif.args.buildings[b_key];
+            console.log (notif.args);
+            if (this.isTop == false){
+                this.isTop = true;
+                this.moveObject('player_zones', 'main_container', 'before');
+            }
+            const p_id = notif.args.player_id;
+            this.scoreCtrl[p_id].setValue(0);
+            for(let b_key in notif.args.building){
+                const building = notif.args.building[b_key];
+                console.log (b_key, building);
+                var bld_score = 0;
                 if (Number(building.static) >0){
-                    this.displayScoring( `${TPL_BLD_TILE}${b_key}`, this.player_color[notif.args.player_id], building.static, 250 );
-                    this.scoreCtrl[notif.args.player_id].incValue(building.static);
+                    bld_score += Number(building.static);
                 } 
                 if (building.bonus != null && Number(building.bonus) >0){
-                    this.displayScoring( `${TPL_BLD_TILE}${b_key}`, this.player_color[notif.args.player_id], building.bonus, 250 );
-                    this.scoreCtrl[notif.args.player_id].incValue(building.bonus);
+                    bld_score += Number(building.bonus);
                 }
+                this.displayScoring( `${TPL_BLD_TILE}_${b_key}`, this.player_color[notif.args.player_id], bld_score, 2000 );
+                this.scoreCtrl[p_id].incValue(bld_score);
             } 
-            
-        },
-
-        notif_resScore: function( notif ){
-            for(let type in notif.args.resources){
-                const player_zone_divId = `player_board_${notif.args.player_id}`;
-                this.displayScoring( player_zone_divId, this.player_color[notif.args.player_id], notif.args.resources[type], 250 );
-                this.scoreCtrl[notif.args.player_id].incValue(notif.args.resources[type]);
+            const player_zone_divId = `player_board_${p_id}`;
+            dojo.place(`<div id="score_grid_${p_id}" class="score_grid"></div>`, player_zone_divId);
+            for(let type in notif.args.resource){
+                const amt = notif.args.resource[type];
+                console.log (type, amt);
+                this.scoreCtrl[p_id].incValue(amt);
+                this.displayScoring( `score_grid_${p_id}`, this.player_color[p_id], amt, 2000 );
             }
         },
 

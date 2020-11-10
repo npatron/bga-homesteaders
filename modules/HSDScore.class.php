@@ -39,14 +39,14 @@ class HSDScore extends APP_GameClass
     function updateEndgameScores(){
         $players = $this->game->loadPlayersBasicInfos();
         $row1 = array( '' );
-        $row2 = array(_('VP from Tokens'));
-        $row3 = array(_('building VPs'));
-        $row4 = array(_('bonus building VPs'));
-        $row5 = array(_('VP from Gold'));
-        $row6 = array(_('VP from Livestock'));
-        $row7 = array(_('VP from Copper'));
-        $row8 = array(_('VP from Loans'));
-        $row9 = array(_('Total VPs'));
+        $row2 = array(VP_HTML._('Tokens'));
+        $row3 = array(_('building ').VP_HTML);
+        $row4 = array(_('bonus building ').VP_HTML);
+        $row5 = array(VP_HTML._(' from ').GOLD_HTML);
+        $row6 = array(VP_HTML._(' from ').COW_HTML);
+        $row7 = array(VP_HTML._(' from ').COPPER_HTML);
+        $row8 = array(VP_HTML._(' from ').LOAN_HTML);
+        $row9 = array(_('Total ').VP_HTML);
         foreach($players as $p_id=>$player){
             $p_score = $this->calculateEndgameScore($p_id);
             $row1[] = array( 'str' => '${player_name}',
@@ -81,7 +81,8 @@ class HSDScore extends APP_GameClass
         $this->game->setStat($vp_tokens, 'vp_chits', $p_id);
         
         // Building VP's
-        $bld_bonus_score =  $this->getPlayerVPsFromBuildings($p_id);
+        $bld_vp_arr = $this->getPlayerVPsFromBuildings($p_id);
+        $bld_bonus_score = $bld_vp_arr['vp'];
         $bld_score =     $bld_bonus_score['static']; //$this->dbGetScore($p_id);
         $this->game->setStat($bld_score, 'building_vp', $p_id);
         $bonus = $bld_bonus_score['bonus'];
@@ -99,7 +100,7 @@ class HSDScore extends APP_GameClass
         // 1 + 2 + 3 + 4 + 5 etc for loans
         $loans = $this->getScoreFromLoans($p_id);
         $this->game->setStat($loans, 'vp_loan', $p_id);
-        $this->game->NotifyAllPlayers('bldScore', 'updating ${player_name}s scores', array(
+        $this->game->NotifyAllPlayers('score', 'updating ${player_name}s  scores', array(
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
             'resource'=> array(
@@ -108,6 +109,7 @@ class HSDScore extends APP_GameClass
                 'cow'=>$cow,
                 'copper'=>$copper,
                 'vp_loan'=>$loans,),
+            'building'=>$bld_vp_arr['vp_b'],
         ));
         $allScores = array(
             'vp'    => $vp_tokens,
@@ -184,12 +186,10 @@ class HSDScore extends APP_GameClass
                 $vps['bonus'] += $counts[$vp_index];
                 $this->game->setStat($counts[$vp_index], "bonus_vp_${b_id}", $p_id);
                 $vps_b[$b_key] = array('bonus'=>$counts[$vp_index], 'static'=>$b_static_vp);
-            } else throw new BgaVisibleSystemException ($b_id.'vp missing');
+            } else {
+                $vps_b[$b_key] = array('static'=>$b_static_vp);
+            }
         }
-        $this->game->NotifyAllPlayers('bldScore', 'updating ${player_name}s scores', array(
-            'player_id' => $p_id,
-            'player_name' => $this->game->getPlayerName($p_id),
-            'buildings'=>$vps_b));
-        return $vps;
+        return array('vp'=>$vps, 'vp_b'=>$vps_b);
     }
 }
