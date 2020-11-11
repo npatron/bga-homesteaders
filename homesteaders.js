@@ -566,12 +566,12 @@ function (dojo, declare) {
                 case 'dummyPlayerBid':
                     const dummy_bid_id = this.bid_token_divId[DUMMY_BID];
                     dojo.removeClass(dummy_bid_id, 'animated');
-                    this.clearSelectable('bid_slot');
+                    this.clearSelectable('bid', true);
                 break;
                 case 'playerBid':
                     const active_bid_id = this.bid_token_divId[this.getActivePlayerId()];
                     dojo.removeClass(active_bid_id, 'animated');
-                    this.clearSelectable('bid_slot');
+                    this.clearSelectable('bid', true);
                     break;
                 case 'trainStationBuild':
                 case 'chooseBuildingToBuild':
@@ -590,6 +590,8 @@ function (dojo, declare) {
                     this.hideUndoTransactionsButtonIfPossible();
                     this.disableTradeIfPossible();
                     break;
+                case 'getRailBonus':
+                    this.clearSelectable('bonus', true);
                 case 'endRound':
                 case 'dummy':
                     break;
