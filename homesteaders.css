@@ -513,41 +513,6 @@ div#trade_bank_trade_silver{
    height: 180px;
 }
 
-/*===============================*
- * Payment Section (gold/silver) *
- *===============================*/
-#payment_section {
-   position: relative;
-   box-shadow: -3px -3px 3px grey inset;
-   border-radius: 6px;
-   height: 50px;
-   width: 140px;
-   display: flex;
-   grid-row: span 16;
-   margin: auto;
- }
-#gold_cost_token {
-   margin: auto;
-   background-image: url(img/drawn_tokens.png);
-   background-size: 375px 150px;
-   background-position: -20.5px 0px;
-   width: 48px;
-   height: 46px;
-}
-.payment_text {
-   margin-top: auto;
-   margin-bottom: auto;
-   margin-left: 2px;
-   margin-right: 6px;
-}
-#silver_cost_token {
-   margin: auto;
-   background-image: url(img/drawn_tokens.png);
-   background-size: 375px 150px;
-   background-position: -107px 0px;
-   width: 50px;
-   height: 50px;
-}
 /*================*
  * Building Zones *
  *================*/
@@ -739,14 +704,22 @@ div#trade_bank_trade_silver{
    grid-template-columns: repeat(2, 35px 12px) repeat(3, 39px 6px);
    grid-template-rows: 40px 40px;
 }
+.score_grid{
+   height: 30px;
+   display: grid;
+   grid-template-columns: repeat(2, 35px 12px) repeat(3, 35px 12px);
+}
+.scorenumber {
+   position: relative;
+}
 .score_token {
    background-image: url('img/drawn_tokens.png');
    position: relative;
    margin: auto;
-   background-size: 375px 150px;
+   background-size: 375px 200px;
 }
 .score_vp{
-   background-position: -212.5px 0px;
+   background-position: -206px 0px;
    width: 56px;
    height: 58px;
    -webkit-transform: scale(.5);
@@ -908,7 +881,7 @@ div#trade_bank_trade_silver{
 .score_copper{
    background-position: -136.5px -54px;
    width: 76px;
-   height: 48px;
+   height: 47px;
    -webkit-transform: scaleX(.42, .55);
    -moz-transform: scaleX(.42, .55);   
    transform: scale(.42, .55);
@@ -989,7 +962,7 @@ div#trade_bank_trade_silver{
  }
 
 .log_wood{
-   background-size: 147.1px 58.8px;
+   background-size: 147.1px 78.4px;
    background-position: 0px 0px;
    width: 8px;
    height: 20px;
@@ -998,55 +971,79 @@ div#trade_bank_trade_silver{
    margin-left: -2px;
  }
 .log_gold{
-   background-size: 157.9px 63.2px;
+   background-size: 157.9px 84.2px;
    background-position: -8.8px 0px;
    width: 20px;
    height: 19.4px;
 }
 .log_food{
-   background-size: 182.9px 73.2px;
+   background-size: 182.9px 97.6px;
    background-position: -33.4px 0px;
    width: 18.8px;
    height: 20px;
 }
 .log_silver{
-   background-size: 147.1px 58.8px;
+   background-size: 147.1px 78.4px;
    background-position: -42px 0px;
    width: 20px;
    height: 19.6px;
 }
 .log_trade{
-   background-size: 156.3px 62.5px;
+   background-size: 156.3px 83.3px;
    background-position: -65.8px 0px;
    width: 20px;
    height: 19.6px;
 }
+.log_vp0 {
+   background-size: 133.9px 71.4px;
+   background-position: 0px -48.5px;
+   width: 20px;
+   height: 21px;
+}
 .log_vp{
-   background-size: 129.3px 51.7px;
-   background-position: -73.3px 0px;
-   width: 19.3px;
-   height: 20px;
+   background-size: 133.9px 71.4px;
+   background-position: -74px 0px;
+   width: 19.5px;
+   height: 20.7px;
 }
 .log_vp2{
-   background-size: 127.3px 51.7px;
-   background-position: -92px -0px;
-   width: 19.3px;
+   background-size: 131.6px 70.2px;
+   background-position: -92.8px -0px;
+   width: 19.1px;
+   height: 20.7px;
+}
+.log_vp3{
+   background-size: 128.2px 68.4px;
+   background-position: -109.1px -0px;
+   width: 19.1px;
    height: 20px;
 }
 .log_vp4{
-   background-size: 126.1px 50.4px;
-   background-position: -71.4px -19.5px;
+   background-size: 126.1px 67.2px;
+   background-position: -71.2px -19.5px;
    width: 20px;
    height: 19.7px;
 }
 .log_vp6{
-   background-size: 84.3px 33.7px;
-   background-position: -60.3px -13.1px;
+   background-size: 84.3px 44.9px;
+   background-position: -60.5px -13.1px;
    width: 20px;
    height: 20.8px;
 }
+.log_vp8{
+   background-size: 133.9px 71.4px;
+   background-position: -56.8px -35.9px;
+   width: 19.3px;
+   height: 20px;
+}
+.log_vp10{
+   background-size: 133.9px 71.4px;
+   background-position: -77.5px -41.6px;
+   width: 19.3px;
+   height: 20px;
+}
 .log_worker{
-   background-size: 91.5px 36.6px;
+   background-size: 91.5px 48.8px;
    background-position: 0px -13.2px;
    width: 12.2px;
    height: 20px;
@@ -1055,31 +1052,31 @@ div#trade_bank_trade_silver{
    margin-left: -8px;
  }
 .log_cow{
-   background-size: 122px 48.8px;
+   background-size: 122px 65px;
    background-position: -16.75px -16.26px;
    width: 27.8px;
    height: 20px;
 }
 .log_copper{
-   background-size: 156.25px 62.5px;
+   background-size: 156.25px 83.3px;
    background-position: -56.9px -22.5px;
    width: 31.6px;
    height: 20px;
 }
 .log_track{
-   background-size: 194.8px 77.9px;
+   background-size: 194.8px 103.9px;
    background-position: -29.4px -58.4px;
    width: 19.5px;
    height: 20px;
 }
 .log_steel{
-   background-size: 187.5px 75px;
+   background-size: 187.5px 100px;
    background-position: -48.3px -55.3px;
    width: 20px;
    height: 19.3px;
 }
 .log_arrow{
-   background-size: 454.5px 181.8px;
+   background-size: 454.5px 242.4px;
    background-position: -165.5px -135.2px;
    width: 20px;
    height: 17.6px;
@@ -1123,14 +1120,14 @@ div#trade_bank_trade_silver{
    height: 35px;
    width: 26px;
    background-position: -204px -188px;
-   background-size: 558.5px 223.4px;
+   background-size: 558.5px 297.9px;
    z-index: 2;
    filter: drop-shadow(0px 0px 1px #000000);
    position: relative;
 }
 .token_worker:not(:first-child) {
    left: 20px;
-   top: -42px;
+   top: -35px;
 }
 
 /*===============*
@@ -1256,11 +1253,11 @@ div#trade_bank_trade_silver{
    bottom: 10px;
    left: 9px;
 }
-.slot_2_1 {
+.slot_1_2 {
    bottom: 8px;
    left: 64px;
 }
-.slot_1_2 {
+.slot_2_1 {
    bottom: 9px;
    left: 14px;
 }
@@ -1268,76 +1265,76 @@ div#trade_bank_trade_silver{
    bottom: 9px;
    left: 70px;
 }
-.slot_1_3 {
+.slot_3_1 {
    bottom: 10px;
    left: 14px;
 }
-.slot_2_3 {
+.slot_3_2 {
    bottom: 10px;
    left: 65px;
 }
-.slot_1_4 {
+.slot_4_1 {
    bottom: 9px;
    left: 14px;
 }
-.slot_2_4 {
+.slot_4_2 {
    bottom: 8px;
    left: 64px;
 }
-.slot_1_6 {
+.slot_6_1 {
    bottom: 45px;
    left: 22px;
 }
-.slot_2_6 {
-   bottom: 8px;
-   left: 30px;
+.slot_6_2 {
+   bottom: 11px;
+   left: 37px;
 }
-.slot_1_7 {
+.slot_7_1 {
    bottom: 11px;
    left: 51px;
 }
-.slot_1_8 {
+.slot_8_1 {
    bottom: 15px;
    left: 39px;
 }
-.slot_1_12 {
+.slot_12_1 {
    bottom: 14px;
    left: 26px;
 }
-.slot_1_15 {
+.slot_15_1 {
    bottom: 14px;
    left: 39px;
 }
-.slot_1_16 {
+.slot_16_1 {
    bottom: 9px;
    left: 28px;
 }
-.slot_3_17 {
-   bottom: 9px;
+.slot_17_3 {
+   bottom: 13px;
    left: 28px;
    width: 70px;
 }
-.slot_1_23 {
+.slot_23_1 {
    bottom: 48px;
    left: 39px;
 }
-.slot_2_23 {
+.slot_23_2 {
    bottom: 10px;
    left: 39px;
 }
-.slot_1_24 {
+.slot_24_1 {
    bottom: 13px;
    left: 38px;
 }
-.slot_1_26 {
+.slot_26_1 {
    bottom: 8px;
    left: 28px;
 }
-.slot_1_36 {
+.slot_36_1 {
    bottom: 8px;
    left: 5px;
 }
-.slot_2_36 {
+.slot_36_2 {
    bottom: 8px;
    left: 64px;
 }
