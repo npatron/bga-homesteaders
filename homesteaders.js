@@ -545,6 +545,9 @@ function (dojo, declare) {
                     dojo.addClass(active_bid_id, 'animated');
                     break;
                 case 'getRailBonus':
+                    const active_train = this.train_token_divId[this.getActivePlayerId()];
+                    dojo.addClass(active_train, 'animated');
+                    break;
                 case 'payAuction':
                 case 'chooseBuildingToBuild':
                 case 'auctionBonus':
@@ -596,9 +599,13 @@ function (dojo, declare) {
                     break;
                 case 'getRailBonus':
                     this.clearSelectable('bonus', true);
+                    const active_train = this.train_token_divId[this.getActivePlayerId()];
+                    dojo.removeClass(active_train, 'animated');
+                    break;
                 case 'endRound':
                 case 'dummy':
                     break;
+                
             }               
         }, 
 
