@@ -168,7 +168,7 @@ class homesteaders extends Table
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
             'auction_info' => $this->auction_info,
-            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),
+            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),// add useSilver
             'buildings' => $this->Building->getAllBuildings(),
             'building_info' => $this->building_info,
             'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),

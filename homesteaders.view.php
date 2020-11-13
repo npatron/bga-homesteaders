@@ -49,6 +49,7 @@
         $this->tpl['BUILDING_STOCK']   = _("Main Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Building Discard");
         $this->tpl['FUTURE_BUILDING']  = _("Upcoming Buildings");
+        $this->tpl['USE_SILVER']       = _("Pay Workers with");
 
         $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
         foreach($players as $p_id=>$player){

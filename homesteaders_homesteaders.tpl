@@ -24,6 +24,14 @@
             <span id="bld_future" class="useFont">{SHOW} </span><br><span class="useFont"> {FUTURE_BUILDING}</span>
         </a>
         <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
+        <form action="#" id='useSilver_form'>
+            <div class="switch">
+                <input id="useSilver" type="toggle" class="switch-input" />
+                <label for="useSilver" id="useSilver_chk" class="switch-label" name="useSilver"></label>
+            </div>
+            <span> {USE_SILVER} <span aria="silver" title="silver" class="log_silver token_inline"></span></span>
+        </form>
+        
     </div>
     <!-- Auction Board -->
     <div id="board" class="shadow">

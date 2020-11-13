@@ -92,16 +92,19 @@
    font-weight: bold;
    color: hotpink;
 }
-.alignleft {
-   float: left;
-}
-.aligncenter {
+.alignleft {float: left;}
+.aligncenter {float: center;}
+.alignright {float: right;}
+.income {
    float: center;
+   font: normal 15px/1 "Old Standard TT";
+   font-variant: small-caps;
 }
-.alignright {
-   float: right;
+#useSilver_form {
+   grid-row: span 4;
+   margin: auto;
+   height: 20px;
 }
-
 
 /*===============*
  * Auction Board *
@@ -164,6 +167,59 @@ a#tgl_future_bld{
    margin-bottom: auto;
    grid-row: span 5;
 }
+#useSilver {
+   grid-row: span 4;
+}
+
+.switch {
+   position: relative;
+   display: inline-block;
+ }
+ .switch-input {
+   display: none;
+ }
+ .switch-label {
+   display: block;
+   width: 48px;
+   height: 24px;
+   text-indent: -150%;
+   clip: rect(0 0 0 0);
+   color: transparent;
+   user-select: none;
+ }
+ .switch-label::before,
+ .switch-label::after {
+   content: "";
+   display: block;
+   position: absolute;
+   cursor: pointer;
+ }
+ .switch-label::before {
+   width: 100%;
+   height: 100%;
+   background-color: #dedede;
+   border-radius: 9999em;
+   -webkit-transition: background-color 0.25s ease;
+   transition: background-color 0.25s ease;
+ }
+ .switch-label::after {
+   top: 0;
+   left: 0;
+   width: 24px;
+   height: 24px;
+   border-radius: 50%;
+   background-color: #fff;
+   box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+   -webkit-transition: left 0.25s ease;
+   transition: left 0.25s ease;
+ }
+ .switch-input:checked + .switch-label::before {
+   background-color: #89c12d;
+ }
+ .switch-input:checked + .switch-label::after {
+   left: 24px;
+ }
+ 
 /*====================*
  * Bid Slot Locations *
  *    (on board)      *
@@ -411,7 +467,7 @@ div#train_bonus_5_vp{
 
 @media all and (min-width:1200px){
    .container {
-      grid-template-columns: 205px 270px repeat(auto-fill, minmax(205px, auto));
+      grid-template-columns: 205px 485px 205px 50px;
    }
    #top{
       display: grid;
@@ -424,7 +480,11 @@ div#train_bonus_5_vp{
    #trade_top {
       order: 2;
    }
-
+}
+@media all and (min-width:1890px){
+   .container {
+      grid-template-columns: 205px 485px 205px 50px 485px 205px;
+   }
 }
 
 /*=============================*
@@ -869,14 +929,16 @@ div#trade_bank_trade_silver{
    width: 33px;
    background-size: 99px 45px;
    background-position-x: 66px;
-   display: inline-block;
+   display: block;
+   float: center;
 }
 .tt_track{
    background-image: url('img/rail_debt_85x102.png');
    height: 45px;
    width: 33px;
    background-size: 99px 45px;
-   display: inline-block;
+   display: block;
+   float: center;
 }
 .score_copper{
    background-position: -136.5px -54px;
@@ -895,8 +957,8 @@ div#trade_bank_trade_silver{
    grid-row: 2 / 3;
 }
 .tt{
-   -webkit-transform: scaleX(1);
-   -moz-transform: scaleX(1);   
+   -webkit-transform: scale(1);
+   -moz-transform: scale(1); 
    transform: scale(1);
    display: block;
    float: center;
@@ -937,9 +999,6 @@ div#trade_bank_trade_silver{
    background-position-x: 0%;
    width: 55px;
    height: 29px;
-   -webkit-transform: scaleX(-1);
-   -moz-transform: scaleX(-1);   
-   transform: scaleX(-1);
 }
 
 .log_container {
@@ -1153,9 +1212,6 @@ div#trade_bank_trade_silver{
    width: 55px;
    height: 52px;
    position: relative;
-   -webkit-transform: scaleX(-1);
-   -moz-transform: scaleX(-1);   
-   transform: scaleX(-1);
    filter: drop-shadow(0px 0px 1px #000000);
 }
 /* 2-trains */
