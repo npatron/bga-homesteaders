@@ -401,7 +401,7 @@ function (dojo, declare) {
                     dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 }
             }
-            this.addTooltipHtmlToClass("token_worker", this.res_info['workers']['tt']);
+            //this.addTooltipHtmlToClass("token_worker", this.res_info['workers']['tt']);
         },
         
 
