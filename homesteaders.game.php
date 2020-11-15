@@ -794,11 +794,39 @@ class homesteaders extends Table
     	
         if ($state['type'] === "activeplayer") {
             switch ($statename) {
+                case 'dummyPlayerBid':
+                    $this->Bid->zombieDummyPass();
+                    $this->gamestate->nextState("nextBid");
+                break;
+                case 'playerBid':
+                    $this->Bid->zombiePass($act_p_id);
+                    $this->gamestate->nextState("nextBid");
+                break;
+                case 'getRailBonus':
+                    $phase = $this->getGameStateValue( 'phase' );
+                    switch($phase){
+                        case PHASE_BID_PASS:
+                            $next_state = "nextBid";
+                        break;
+                        case PHASE_BLD_BONUS:
+                            $next_state = "auctionBonus";
+                        break;
+                        case PHASE_AUC_BONUS:
+                            $next_state = "endAuction";
+                        break;
+                    }
+                    $this->gamestate->nextState( $next_state);
+                break;
+                case 'payAuction':
+                case 'chooseBuildingToBuild':
+                case 'resolveBuilding':
+                case 'trainStationBuild':
+                case 'bonusChoice':
+                case 'confirmActions':
                 default:
                     $this->gamestate->nextState( "zombiePass" );
                 	break;
             }
-
             return;
         }
 

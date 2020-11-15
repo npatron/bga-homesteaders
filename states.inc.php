@@ -163,7 +163,8 @@ $machinestates = array(
         "action" => "stWinAuction",
         "possibleactions" => array( "trade", "takeLoan", "updateGold", "done" ),
         "transitions" => array( "build" => STATE_CHOOSE_BUILDING, 
-                                "auction_bonus" => STATE_AUCTION_BONUS)
+                                "auction_bonus" => STATE_AUCTION_BONUS,
+                                "zombiePass"=> STATE_END_BUILD)
     ),
 
     STATE_CHOOSE_BUILDING => array(
@@ -174,10 +175,11 @@ $machinestates = array(
         "args" => "argAllowedBuildings",
         "action" => "stSetupTrade",
         "possibleactions" => array( "trade", "buildBuilding", "takeLoan", "doNotBuild", "undo" ),
-        "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
+        "transitions" => array( "undoTurn"       => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
-                                "end_build"      => STATE_CONFIRM_AUCTION )
+                                "end_build"      => STATE_CONFIRM_AUCTION,
+                                "zombiePass"     => STATE_END_BUILD )
     ),
 
     STATE_RESOLVE_BUILDING =>  array(
@@ -190,7 +192,8 @@ $machinestates = array(
         "possibleactions" => array("buildBonus"),
         "transitions" => array( "auction_bonus" => STATE_AUCTION_BONUS, 
                                 "rail_bonus" => STATE_RAIL_BONUS,
-                                "train_station_build"=> STATE_TRAIN_STATION_BUILD,)
+                                "train_station_build"=> STATE_TRAIN_STATION_BUILD,
+                                "zombiePass"     => STATE_END_BUILD)
     ),
 
     STATE_TRAIN_STATION_BUILD => array(
@@ -204,7 +207,8 @@ $machinestates = array(
         "transitions" => array( "undoTurn"           => STATE_PAY_AUCTION,
                                 "building_bonus" => STATE_RESOLVE_BUILDING, 
                                 "auction_bonus"  => STATE_AUCTION_BONUS,
-                                "end_build"      => STATE_CONFIRM_AUCTION )
+                                "end_build"      => STATE_CONFIRM_AUCTION,
+                                "zombiePass"     => STATE_END_BUILD )
     ),
 
     STATE_AUCTION_BONUS => array(
@@ -226,7 +230,8 @@ $machinestates = array(
         "possibleactions" => array( "auctionBonus", 'trade', 'takeLoan', "undo" ),
         "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
                                 "done"      => STATE_CONFIRM_AUCTION,
-                                "railBonus" => STATE_RAIL_BONUS )
+                                "railBonus" => STATE_RAIL_BONUS,
+                                "zombiePass"=> STATE_END_BUILD )
     ),
 
     STATE_CONFIRM_AUCTION => array(
@@ -237,7 +242,8 @@ $machinestates = array(
         "action" => "stSetupTrade",
         "possibleactions" => array( "done", "undo" ),
         "transitions" => array( "undoTurn"  => STATE_PAY_AUCTION,
-                                "done"      => STATE_END_BUILD,)//playerConfirmChoices
+                                "done"      => STATE_END_BUILD,
+                                "zombiePass"=> STATE_END_BUILD)
     ), 
 
     STATE_END_BUILD => array(

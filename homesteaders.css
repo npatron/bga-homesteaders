@@ -937,9 +937,6 @@ div#trade_bank_trade_silver{
    background-position-x: 0%;
    width: 55px;
    height: 29px;
-   -webkit-transform: scaleX(-1);
-   -moz-transform: scaleX(-1);   
-   transform: scaleX(-1);
 }
 
 .log_container {
@@ -1153,9 +1150,6 @@ div#trade_bank_trade_silver{
    width: 55px;
    height: 52px;
    position: relative;
-   -webkit-transform: scaleX(-1);
-   -moz-transform: scaleX(-1);   
-   transform: scaleX(-1);
    filter: drop-shadow(0px 0px 1px #000000);
 }
 /* 2-trains */
