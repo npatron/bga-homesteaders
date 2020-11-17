@@ -20,7 +20,8 @@
 
 -- This color name is used to create css classes
 ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
-ALTER TABLE `player` ADD `rail_adv` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
+ALTER TABLE `player` ADD `rail_adv`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
+ALTER TABLE `player` ADD `use_silver` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'pay workers with silver 0-true, 1-false';
 
 CREATE TABLE IF NOT EXISTS `bids` (
   `player_id` INT(8) NOT NULL,

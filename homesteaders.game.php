@@ -168,7 +168,7 @@ class homesteaders extends Table
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
             'auction_info' => $this->auction_info,
-            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),
+            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv`, `use_silver` FROM `player` " ),
             'buildings' => $this->Building->getAllBuildings(),
             'building_info' => $this->building_info,
             'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
@@ -238,6 +238,19 @@ class homesteaders extends Table
     {
         $this->checkAction( 'trade' );
         $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
+    }
+
+    public function playerToggleCheckbox( $enabled ){
+        $cur_p_id = $this->getCurrentPlayerId();
+        $val = ($enabled?1:0);
+        $this->DbQuery( "UPDATE `player` SET use_silver = '$val' WHERE player_id = '$cur_p_id'" );
+        $this->notifyPlayer($cur_p_id, 'autoPay', clienttranslate('${You} set ${text} ${worker} ${arrow} ${onOff}'), array(
+            'player_id'=>$cur_p_id,
+            'text' =>    'auto-pay',
+            'worker'=>   'worker',
+            'arrow'=>    'arrow',
+            'onOff'=> ($enabled?_("on"):_("off")),
+        ));
     }
 
     /***  place workers phase ***/
@@ -594,24 +607,18 @@ class homesteaders extends Table
     }
 
     function stPlaceWorkers() {
-        $this->Log->allowTradesAllPlayers();
+        $this->Log->allowTradesAllPlayers(); // this will also add extra player time.
         $this->gamestate->setAllPlayersMultiactive( );
-        
     }
-
-    // removed this state (as it was not necessary)
-    /*function stCollectIncome() {
-        $this->gamestate->nextState( '' );
-    }*/
 
     function stPayWorkers() 
     {
-        $sql = "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` ";
-        $resources = $this->getCollectionFromDB( $sql );
-        $players = array();
+        $resources = $this->getCollectionFromDB( "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` " );
+        $autoPayPlayers = $this->getCollectionFromDB( "SELECT `player_id`, `use_silver` FROM `player`");
+        $pendingPlayers = array();
         foreach($resources as $p_id => $player){
-            // TODO: make this toggleable.
-            if ($player['gold'] == 0 && $player['trade'] == 0){//no decisions just pay.
+            if (($player['gold'] == 0 && $player['trade'] == 0) || $autoPayPlayers[$p_id]['use_silver'] === '1'
+                 /* player setting for auto-pay selected */){
                 $silver = $player['silver'];
                 $worker_cost = $player['workers'];
                 while ($silver < $worker_cost){// forced loan.
@@ -619,14 +626,15 @@ class homesteaders extends Table
                     $this->playerTakeLoan($p_id);
                 }
                 $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker'=>'worker'));
-            } else {
-                $players[] = $p_id;
+            } else { // ask this player to choose payment.
+                $pendingPlayers[] = $p_id;
+                $this->giveExtraTime($p_id);
             }
         }
-        if (count($players) == 0){
+        if (count($pendingPlayers) == 0){
             $this->gamestate->nextState('auction');
         } else {
-            $this->gamestate->setPlayersMultiactive($players, 'auction');
+            $this->gamestate->setPlayersMultiactive($pendingPlayers, 'auction');
         }
     }
     
@@ -658,13 +666,16 @@ class homesteaders extends Table
             $next_state = "endAuction";
         } else if ($this->Bid->canPlayerBid($act_p_id)) {// if this player can bid.
             $next_state = "playerBid";
+            $this->giveExtraTime( $act_p_id );
         } else { // if not, let next player bid
             $next_state = "skipPlayer";
         }
         $this->gamestate->nextState( $next_state );
     }
 
-    // for states where no backend actions are req, but want to set start turn for trades.
+    /**
+     * for states where no backend actions are req, but want to add savepoint to log for undo transactions.
+     */
     function stSetupTrade()
     {
         $this->Log->allowTrades($this->getActivePlayerId());
@@ -761,7 +772,8 @@ class homesteaders extends Table
     }
 
     function stEndGameActions(){
-        $this->Log->allowTradesAllPlayers();
+        $this->Log->allowTradesAllPlayers(); 
+        // ^ gives all players reflection time.
         $this->gamestate->setAllPlayersMultiactive( );
     }
 

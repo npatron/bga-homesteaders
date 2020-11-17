@@ -140,9 +140,9 @@ $this->building_info = array(
   BLD_HOMESTEAD_YELLOW => array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-              "<br>"._("Can Produce:  ").WOOD_HTML.
-              "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
+              "<hr>".INCOME.CENTER_DIV_("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
+              "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -156,9 +156,9 @@ $this->building_info = array(
    BLD_HOMESTEAD_RED => array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-              "<br>"._("Can Produce:  ").WOOD_HTML.
-              "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
+              "<hr>".INCOME.CENTER_DIV_("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
+              "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -173,8 +173,8 @@ $this->building_info = array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-              "<br>"._("Can Produce:  ").WOOD_HTML.
-              "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
+              "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
+              "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -188,9 +188,9 @@ $this->building_info = array(
    BLD_HOMESTEAD_BLUE => array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-            "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-            "<br>"._("Can Produce:  ").WOOD_HTML.
-            "<br>"._("Can Produce:  ").VP_HTML.END_DIV,
+            "<hr>".INCOME.CENTER_DIV_("Produce:  ").SILVER_HTML.SILVER_HTML.
+            "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
+            "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> 0,
     'inc'  => array('silver'=>2),
@@ -217,8 +217,8 @@ $this->building_info = array(
     'name' => _("Farm"),
     'tt'   => RES_SPAN._("Farm").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST.WOOD_HTML.END_P."<hr>".
-              INCOME.CENTER_DIV._("Can Produce: ").TRADE_HTML.SILVER_HTML.SILVER_HTML."<br>".
-              _("Can Produce: ").FOOD_HTML.END_DIV,
+              INCOME.CENTER_DIV.WORKER_HTML._(" Can Produce: ").TRADE_HTML.SILVER_HTML.SILVER_HTML."<br>".
+              WORKER_HTML._(" Can Produce: ").FOOD_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
@@ -235,8 +235,8 @@ $this->building_info = array(
               COST.WOOD_HTML.END_P.
               CENTER_DIV.ALLOW_TRADE. TRADE_HTML. WOOD_HTML." ".ARROW_HTML." ".FOOD_HTML.
               "<br>".TRADE_HTML.FOOD_HTML." ".ARROW_HTML." ".STEEL_HTML.END_DIV.
-              INCOME.CENTER_DIV._(" Produces ").TRADE_HTML._(" each round").
-              "<br>"._("Can produce ").SILVER_HTML.SILVER_HTML.END_DIV,
+              INCOME.CENTER_DIV._(" Produces ").TRADE_HTML._(" each round.").
+              "<br>".WORKER_HTML._(" Can produce ").SILVER_HTML.SILVER_HTML.END_DIV,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
@@ -251,7 +251,7 @@ $this->building_info = array(
     'name' => _("Foundry"),
     'tt'   => IND_SPAN._("Foundry").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST.END_P."<hr>".
-              INCOME.CENTER_DIV._(" Can produce: ").STEEL_HTML.END_DIV,
+              INCOME.CENTER_DIV.WORKER_HTML._(" Can produce: ").STEEL_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array(),
@@ -304,8 +304,8 @@ $this->building_info = array(
     'name' => _("Ranch"),
     'tt'   => RES_SPAN.("Ranch").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST.WOOD_HTML." ". STEEL_HTML." ". FOOD_HTML. END_P."<hr>".
-              CENTER_DIV._(" When Built: gain").TRADE_HTML.END_DIV.
-              INCOME.CENTER_DIV._(" Can produce ").COW_HTML.END_DIV,
+              CENTER_DIV._(" When Built: gain").TRADE_HTML.END_DIV
+              INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").COW_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1,'steel'=>1,'food'=>1),
@@ -344,7 +344,7 @@ $this->building_info = array(
     'name' => _("Gold Mine"),
     'tt'   => IND_SPAN._("Gold Mine").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST. WOOD_HTML." ". STEEL_HTML. END_P."<hr>".
-              INCOME.CENTER_DIV._(" Can produce ").GOLD_HTML.END_DIV,
+              INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").GOLD_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1,'steel'=>1),
@@ -357,7 +357,7 @@ $this->building_info = array(
     'name' => _("Copper Mine"),
     'tt'   => IND_SPAN._("Copper Mine").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
             COST. WOOD_HTML." ". WOOD_HTML. STEEL_HTML. END_P. "<hr>".
-            INCOME.CENTER_DIV._(" Can produce ").COPPER_HTML.END_DIV,
+            INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").COPPER_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>2,'steel'=>1),
@@ -372,7 +372,7 @@ $this->building_info = array(
             COST. WOOD_HTML. END_P. "<hr>".
             CENTER_DIV._(" You may pay for ").COPPER_HTML._(" or ").COW_HTML.
             "<br>"._(" in building costs or auction")."<br>"._("costs using ").GOLD_HTML._(" instead").END_DIV.
-            INCOME.CENTER_DIV._(" Can produce ").GOLD_HTML._(" (requires ").WORKER_HTML.WORKER_HTML.")".END_DIV,
+            INCOME.CENTER_DIV.WORKER_HTML.WORKER_HTML._(" Can produce ").GOLD_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>1),
@@ -454,7 +454,9 @@ $this->building_info = array(
     'name' => _("Meatpacking Plant"),
     'tt'   => IND_SPAN._("Meatpacking Plant").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
               COST. WOOD_HTML. COW_HTML. END_P. "<hr>".
-              INCOME.CENTER_DIV._(" Can Produce: ").VP2_HTML."<br>".
+              CENTER_DIV.INCOME.WORKER_HTML._(" Can Produce: ").VP2_HTML."<br>".
+              WORKER_HTML._(" Can Produce: ").VP2_HTML.END_DIV,
+              CENTER_DIV.INCOME._(" Can Produce: ").VP2_HTML."<br>".
               _(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
@@ -473,8 +475,9 @@ $this->building_info = array(
               COST. STEEL_HTML. END_P. RIGHT_P.VP_HTML.END_P."<hr>".
               CENTER_DIV._(" When Built: Advance")."<br>".
               _(" on Railroad track")."<br>".("(and get bonus).")."<br>".
-              _(" When you build ")."<br>"._("a building, gain ").VP_HTML.END_DIV.
-              INCOME.CENTER_DIV._(" Can Produce: ").VP2_HTML.END_DIV,
+              _(" get ").VP_HTML._(" whenever you build")."<br>".
+              _("a building, (after this one)").
+              INCOME.CENTER_DIV.WORKER_HTML._(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('steel'=>1),

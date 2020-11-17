@@ -28,10 +28,11 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.useFont {
+.font {
    font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
+.bold {font-weight: bold;}
 .biggerFont {
    font: normal 30px/1 "Old Standard TT";
    font-variant: small-caps;
@@ -50,58 +51,29 @@
    text-decoration-thickness: 1.5px;
 }
 
-.font_res {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: lightgreen;
-}
-.font_com {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: darksalmon;
-}
-.font_ind {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: royalblue;
-}
-.font_spe {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: gold;
-}
-.font_a1 {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: lightseagreen;
-}
-.font_a2 {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: orange;
-}
-.font_a3 {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: hotpink;
-}
-.alignleft {
-   float: left;
-}
-.aligncenter {
+.res {color: lightgreen;}
+.com {color: darksalmon;}
+.ind {color: royalblue;}
+.spe {color: gold;}
+.a1 {color: lightseagreen;}
+.a2 {color: orange;}
+.a3 {color: hotpink;}
+.a4 {color: purple;}
+.alignleft {float: left;}
+.aligncenter {float: center;}
+.alignright {float: right;}
+.income {
    float: center;
+   font: normal 15px/1 "Old Standard TT";
+   font-variant: small-caps;
 }
-.alignright {
-   float: right;
+#useSilver_form {
+   height: 30px;
+   grid-row: span 7;
+   margin-left: 15px;
+   margin-top: auto;
+   margin-bottom: auto;
 }
-
 
 /*===============*
  * Auction Board *
@@ -164,6 +136,11 @@ a#tgl_future_bld{
    margin-bottom: auto;
    grid-row: span 5;
 }
+#useSilver {
+   grid-row: span 4;
+}
+
+
 /*====================*
  * Bid Slot Locations *
  *    (on board)      *
@@ -411,7 +388,7 @@ div#train_bonus_5_vp{
 
 @media all and (min-width:1200px){
    .container {
-      grid-template-columns: 205px 270px repeat(auto-fill, minmax(205px, auto));
+      grid-template-columns: 205px 485px 205px 50px;
    }
    #top{
       display: grid;
@@ -424,7 +401,11 @@ div#train_bonus_5_vp{
    #trade_top {
       order: 2;
    }
-
+}
+@media all and (min-width:1890px){
+   .container {
+      grid-template-columns: 205px 485px 205px 50px 485px 205px;
+   }
 }
 
 /*=============================*
@@ -573,23 +554,6 @@ div#trade_bank_trade_silver{
    box-sizing: content-box;
    cursor:pointer;
 }
-
-.color_yellow {
-   background-color: yellow;  
-}
-.color_blue {
-   background-color: blue; 
-}
-.color_green {
-   background-color: green; 
-}
-.color_red {
-   background-color: red; 
-}
-.color_purple {
-   background-color: purple;
-}
-
 .border_yellow {
    border-color:yellow;
    border-radius: 2px;
@@ -630,18 +594,23 @@ div#trade_bank_trade_silver{
    border-radius: 2px;
    border-style: solid;
 }
-.border_lightseagreen{
+.border_a1{
    border-color:lightseagreen;
    border-radius: 2px;
    border-style: solid;
 }
-.border_orange{
+.border_a2{
    border-color:orange;
    border-radius: 2px;
    border-style: solid;
 }
-.border_hotpink{
+.border_a3{
    border-color:hotpink;
+   border-radius: 2px;
+   border-style: solid;
+}
+.border_a4{
+   border-color:purple;
    border-radius: 2px;
    border-style: solid;
 }
@@ -869,14 +838,16 @@ div#trade_bank_trade_silver{
    width: 33px;
    background-size: 99px 45px;
    background-position-x: 66px;
-   display: inline-block;
+   display: block;
+   float: center;
 }
 .tt_track{
    background-image: url('img/rail_debt_85x102.png');
    height: 45px;
    width: 33px;
    background-size: 99px 45px;
-   display: inline-block;
+   display: block;
+   float: center;
 }
 .score_copper{
    background-position: -136.5px -54px;
@@ -895,8 +866,8 @@ div#trade_bank_trade_silver{
    grid-row: 2 / 3;
 }
 .tt{
-   -webkit-transform: scaleX(1);
-   -moz-transform: scaleX(1);   
+   -webkit-transform: scale(1);
+   -moz-transform: scale(1); 
    transform: scale(1);
    display: block;
    float: center;
@@ -1140,9 +1111,9 @@ div#trade_bank_trade_silver{
    position: relative;
    filter: drop-shadow(0px 0px 1px #000000);
 }
-.bid_slot .player_token_bid:not(:first-child){
+/*.bid_slot .player_token_bid:not(:first-child){
    left: -25px;
-}
+}*/
 .player_token_train {
    background-image: url('img/fancy_tokens_80x83.png');
    background-size: 100px 260px;

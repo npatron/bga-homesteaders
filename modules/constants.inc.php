@@ -179,13 +179,13 @@
   define('VP8_HTML' , '<span aria="vp8" title="vp8" class="log_vp8 token_inline"></span>');
   define('VP10_HTML' , '<span aria="vp10" title="vp10" class="log_vp10 token_inline"></span>');
 
-  define('RES_SPAN'  , '<span class="font_res">');
-  define('COM_SPAN'  , '<span class="font_com">');
-  define('IND_SPAN'  , '<span class="font_ind">');
-  define('SPE_SPAN'  , '<span class="font_spe">');
-  define('AUC1_SPAN' , '<span class="font_a1">');
-  define('AUC2_SPAN' , '<span class="font_a2">');
-  define('AUC3_SPAN' , '<span class="font_a3">');
+  define('RES_SPAN'  , '<span class="font bold res">');
+  define('COM_SPAN'  , '<span class="font bold com">');
+  define('IND_SPAN'  , '<span class="font bold ind">');
+  define('SPE_SPAN'  , '<span class="font bold spe">');
+  define('AUC1_SPAN' , '<span class="font bold a1">');
+  define('AUC2_SPAN' , '<span class="font bold a2">');
+  define('AUC3_SPAN' , '<span class="font bold a3">');
   define('END_SPAN',   '</span>');
   define('CENTER_DIV', '<div style="text-align: center;" class="useFont">');
   define('LEFT_DIV', '<div style="text-align: left;" class="useFont">');
@@ -197,9 +197,10 @@
 
   define('ALLOW_TRADE', '<hr><div class="income">'._("allow trade:").'<br></div>');
   define('INCOME', '<hr><span class="income">'._("income:").'<br></span>');
-  define('R_HTML', '<span aria="Residential" class="font_res">'._("Residential").'</span>');
-  define('C_HTML', '<span aria="Commercial" class="font_com">'._("Commercial").'</span>');
-  define('I_HTML', '<span aria="Industrial" class="font_ind">'._("Industrial").'</span>');
-  define('S_HTML', '<span aria="Special" class="font_spe">'._("Special").'</span>');
-  define('A_HTML', '<span class="font_res">'._("A").'</span><span class="font_com">'._("N").'</span><span class="font_ind">'._("Y").'</span>');
+  define('R_HTML', '<span aria="Residential" class="font bold res">'._("Residential").'</span>');
+  define('C_HTML', '<span aria="Commercial" class="font bold com">'._("Commercial").'</span>');
+  define('I_HTML', '<span aria="Industrial" class="font bold ind">'._("Industrial").'</span>');
+  define('S_HTML', '<span aria="Special" class="font bold spe">'._("Special").'</span>');
+  define('A_HTML', '<span class="font bold res">'._("A").'</span><span class="font bold com">'._("N").'</span><span class="font bold ind">'._("Y").'</span>');
+
 

@@ -38,7 +38,7 @@
         $players_nbr = count( $players );
 
         /*********** Place your code below:  ************/
-
+        
         $this->tpl['ROUND_STRING'] = _("Round: ");
         $round_number = $this->game->getGameStateValue('round_number');
         $this->tpl['ROUND_NUMBER'] = $round_number;
@@ -49,6 +49,8 @@
         $this->tpl['BUILDING_STOCK']   = _("Main Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Building Discard");
         $this->tpl['FUTURE_BUILDING']  = _("Upcoming Buildings");
+        $this->tpl['PAY']              = _("auto-pay");
+        $this->tpl['WITH']             = _("with");
 
         $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
         foreach($players as $p_id=>$player){
@@ -67,7 +69,6 @@
           }
         }
 
-        $color_arr = array(1=>'lightseagreen', 2=>'orange', 3=>'hotpink');
         $this->page->begin_block( "homesteaders_homesteaders", "auction_string" );
         $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );
         $this->page->begin_block( "homesteaders_homesteaders", "future_auction_zones" );
@@ -75,7 +76,7 @@
         for ($a=1; $a <= $auctions; $a++){
           $this->page->insert_block( "auction_stacks", array('A'=> $a));
           $string_offset = ($a==1? 2:($a-1)*($auctions==3 ? 33.3333: 50));
-          $this->page->insert_block( "auction_string", array('AUCTION'=>_("Auction"), 'A'=> $a, 'COLOR'=> $color_arr[$a], 'OFFSET'=> $string_offset));
+          $this->page->insert_block( "auction_string", array('AUCTION'=>_("Auction"), 'A'=> $a, 'COLOR'=> 'a'.$a, 'OFFSET'=> $string_offset));
           $this->page->insert_block( "future_auction_zones", array('A'=> $a, 'PCT'=> ($auctions==3 ? 32.3333: 49) ));
         }
         
