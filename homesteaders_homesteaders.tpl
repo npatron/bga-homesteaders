@@ -12,25 +12,29 @@
 -->
 <div id="main_container" class="container">
     <div id ="top">
-        <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
-        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
+        <span id="round_text" class="font">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
+        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
         <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
-            <span id='auc_future' class="useFont">{SHOW} </span><span class="useFont"> {FUTURE_AUCTION}</span>
+            <span id='auc_future' class="font bold">{SHOW} </span><span class="font bold"> {FUTURE_AUCTION}</span>
         </a>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_discard" class="useFont">{SHOW} </span><br><span class="useFont"> {BUILDING_DISCARD}</span>
+            <span id="bld_discard" class="font bold">{SHOW} </span><br><span class="font bold"> {BUILDING_DISCARD}</span>
         </a>
         <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_future" class="useFont">{SHOW} </span><br><span class="useFont"> {FUTURE_BUILDING}</span>
+            <span id="bld_future" class="font bold">{SHOW} </span><br><span class="font bold"> {FUTURE_BUILDING}</span>
         </a>
-        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
-        <form action="#" id='useSilver_form'>
-            <div class="switch">
-                <input id="useSilver" type="toggle" class="switch-input" />
-                <label for="useSilver" id="useSilver_chk" class="switch-label" name="useSilver"></label>
-            </div>
-            <span> {USE_SILVER} <span aria="silver" title="silver" class="log_silver token_inline"></span></span>
-        </form>
+        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
+        <!-- begin useSilver -->
+        <div id='useSilver_form'> 
+            <tr>
+                <input type="checkbox" id="checkbox1"/>
+                <label for="checkbox1" name="checkbox1_lbl" class="font bold">
+                    {PAY} <span aria="worker" title="worker" class="log_worker token_inline"></span>
+                    {WITH} <span aria="silver" title="silver" class="log_silver token_inline"></span>
+                </label>
+            </tr>
+        </div> 
+        <!-- end useSilver -->
         
     </div>
     <!-- Auction Board -->
@@ -64,9 +68,9 @@
     </div>
 </div>
 <div id='building_location' class='tile_container'>
-    <div id='future_auction_container' class='whiteblock border_lightseagreen noshow'>
+    <div id='future_auction_container' class='whiteblock border_a1 noshow'>
         <!-- BEGIN auction_string -->
-        <span class="auction_string biggerFont" style="color: {COLOR}; left: {OFFSET}%;"> {AUCTION} {A}</span>
+        <span class="auction_string biggerFont {COLOR}" style="left: {OFFSET}%;"> {AUCTION} {A}</span>
         <!-- END auction_string -->
         <br><br>
         <!-- BEGIN future_auction_zones -->
@@ -163,7 +167,8 @@ var jstpl_pay_button = '<span id="pay_gold" class="noshow useFont">0</span> \
  <span id="pay_gold_tkn" class="noshow log_gold token_inline"></span> \
  <span id="pay_silver" class="useFont">0</span> \
 <span id="pay_silver_tkn" class="log_silver token_inline"></span>';
-var jstpl_color_log = '<span class="logFont" style="font-weight:bold;color:${color};">${string}</span>';
+var jstpl_color_log = '<span class="font bold ${color}">${string}</span>';
+var jstpl_color_number_log = '<span class="font bold ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
 var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';

@@ -20,6 +20,7 @@ define([
     "ebg/core/gamegui",
     "ebg/counter",
     "ebg/zone",
+    "dijit/form/CheckBox"
 ],
 function (dojo, declare) {
     function override_addMoveToLog(logId, moveId) {
@@ -138,8 +139,8 @@ function (dojo, declare) {
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
     const BID_VAL_ARR_BACK = {3:0, 4:1, 5:2, 6:3, 7:4, 9:5, 12:6, 16:7, 21:8};
-    const ASSET_COLORS = {0:'lightgreen', 1:'darksalmon', 2:'royalblue', 3:'gold',
-                          10:'purple' ,11:'lightseagreen',12:'orange',13:'hotpink'};
+    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe',
+                          10:'a4' ,11:'a1',12:'a2',13:'a3'};
     const VP_TOKENS = ['vp2','vp4','vp6','vp8'];
 
     // map of tpl id's  used to place the player_zones in turn order.
@@ -221,8 +222,8 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
-            dojo.destroy('debug_output');
-            $isSpectator = true;
+            //dojo.destroy('debug_output');
+            this.isSpectator = true;
             this.playerCount = 0;
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
@@ -230,9 +231,13 @@ function (dojo, declare) {
                 const player = gamedatas.players[p_id];
                 this.setupPlayerAssets(player);
             }
-            if (!$isSpectator){
+            if (!this.isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
                 this.setupPlayerResources(gamedatas.player_resources, gamedatas.resource_info);
+                this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
+            } else {
+                // when displaying for a spectator remove the player config checkbox.
+                this.dojo.destroy('useSilver_form');
             }
             console.log("#players: "+this.playerCount);
             if (this.playerCount == 2){
@@ -283,7 +288,7 @@ function (dojo, declare) {
             if( this.player_id == p_id){
                 const player_board_div = 'player_board_'+p_id;
                 dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
-                $isSpectator = false;
+                this.isSpectator = false;
             } 
             this.player_color[p_id] = current_player_color;
             this.token_divId[p_id] = 'token_zone_' + current_player_color;
@@ -292,7 +297,24 @@ function (dojo, declare) {
 
             this.player_building_zone_id[p_id] = TPL_BLD_ZONE + this.player_color[p_id];
         },
+        
+        setupUseSilverCheckbox: function(checked){
+            $('checkbox1').checked = (checked == 1);
+            dojo.connect($('checkbox1'), 'change', this, 'toggleCheckbox');
+        },
 
+        toggleCheckbox: function(event) {
+            console.log('toggle checkbox', event.target.checked);
+            this.ajaxcall( "/homesteaders/homesteaders/toggleCheckbox.html", {lock: true, checked:(event.target.checked)}, this, 
+            function( result ) { }, 
+            function( is_error) { } );
+        },
+
+        /**
+         * should only be called when not spectator, 
+         * This will orient the player zones by player order (with this.player_id first)
+         * @param {array} order_table 
+         */
         orientPlayerZones: function (order_table){
             let next_pId = this.player_id;    
             for (let i = 0; i < this.playerCount; i++){
@@ -302,6 +324,10 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * this is used to get color for dummy tokens 
+         * Currently it should always be purple, but if purple is allowed as player color this will matter.
+         */
         getAvailableColor: function(){
             let player_color_option = ['purple', 'blue', 'yellow', 'green', 'red'];
             for(let i in player_color_option){
@@ -313,13 +339,22 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * temporary solution to speed up loading, may want to remove for release.
+         */
         omitImages: function() {
-            this.dontPreloadImage( 'game_display0.png' );
-            this.dontPreloadImage( 'game_display1.png' );
-            this.dontPreloadImage( 'game_display2.png' );
+            //this.dontPreloadImage( 'game_display0.png' );
+            //this.dontPreloadImage( 'game_display1.png' );
+            //this.dontPreloadImage( 'game_display2.png' );
             this.dontPreloadImage( 'exp_building_144x196.png' );
         },
 
+        /**
+         * should only be called when not spectator, 
+         * It will put the player resources in the player Score area.
+         * @param {*} resources 
+         * @param {*} info 
+         */
         setupPlayerResources: function (resources, info){
             for (const [key, value] of Object.entries(resources)) {
                 if (key == "p_id") continue;
@@ -333,6 +368,13 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * Setup the Building Tiles, 
+         * both in player areas as well as in the offer areas 
+         * (main,discard,future)
+         * @param {*} buildings 
+         * @param {*} info 
+         */
         setupBuildings: function(buildings, info) {
             for (let b_key in buildings){
                 const building = buildings[b_key];   
@@ -344,6 +386,10 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * Setup the existing Tracks tokens (in player building section) built by players 
+         * @param {*} tracks 
+         */
         setupTracks: function(tracks){
             for(let i in tracks){
                 const track = tracks[i];
@@ -352,11 +398,15 @@ function (dojo, declare) {
             this.addTooltipHtmlToClass("token_track", this.res_info['track']['tt']);
         },
 
+        /**
+         * Create Building worker slots 
+         * that are used for assigning workers to buildings (when owned by players)
+         * @param {*} building - information about the building to add slots to
+         * @param {*} b_info - info from material.inc for building_id 
+         */
         addBuildingWorkerSlots: function(building, b_info){
             const key = building.b_key; 
             const id = building.b_id;
-            console.log (key, id);
-            console.log (b_info);
             if (!(b_info.hasOwnProperty('slot'))) return;
             const b_divId = `${TPL_BLD_TILE}_${key}`;
             if (b_info.slot == 1){
@@ -386,6 +436,10 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * Create Workers that are hired by players, and place them in worker slots, if currently assigned.
+         * @param {*} workers 
+         */
         setupWorkers: function(workers) {
             for (let w_key in workers){
                 const worker = workers[w_key];
@@ -404,7 +458,9 @@ function (dojo, declare) {
             this.addTooltipHtmlToClass("token_worker", this.res_info['workers']['tt']);
         },
         
-
+        /**
+         * connect actions to the Bid Slots, used for bids.
+         */
         setupBidZones: function () {
             this.bid_zone_divId[ZONE_PENDING] = 'pending_bids';
             this.bid_zone_divId[ZONE_PASSED] = 'passed_bids';
@@ -418,6 +474,10 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * Creates the player Bid Tokens (Boot) and puts them in locations mapping to their position on auction board.
+         * @param {*} bids 
+         */
         setupBidTokens: function(bids) {
             for(let p_id in bids){
                 const token_bid_loc = bids[p_id].bid_loc;
@@ -441,6 +501,10 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * Creates, and places the player train tokens on the auction board.
+         * @param {*} players 
+         */
         setupRailLines: function(players) {
             for(let p_id in players){
                 const player_rail_adv = players[p_id].rail_adv;
@@ -450,6 +514,13 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * connects click actions to buttons for selecting Trade actions (on trade board), 
+         * 
+         * it also will assign click action to the button for approve trade/undo transactions.
+         * it will also unhide the undo transactions buttons if it is possible to take that action.
+         * @param {boolean} can_undo_trades 
+         */
         setupTradeButtons: function(can_undo_trades){
             const options = dojo.query(`#${TRADE_BOARD_ID} .trade_option`);
             for(let i in options){
@@ -464,6 +535,11 @@ function (dojo, declare) {
             } 
         },
 
+        /**
+         * Connects click actions to the bonus actions for get Rail advancement action.
+         * 
+         * @param {*} resource_info 
+         */
         setupBonusButtons: function(resource_info){
             const bonus_options = dojo.query('.train_bonus');
             for(let i in bonus_options){
@@ -476,6 +552,13 @@ function (dojo, declare) {
             }
         },
 
+        /**
+         * Connect the actions for 
+         *   the future auctions button
+         *   the building discard button
+         *   the future building button
+         * and then call the method that will show/hide them based upon if those areas have buildings/auctions in them.
+         */
         setupShowButtons: function(){
             // future auctions (don't need to do anything)
             dojo.connect($(`tgl_future_auc`), 'onclick', this, 'toggleShowAuctions');
@@ -486,6 +569,13 @@ function (dojo, declare) {
             this.showHideButtons();
         },
 
+        /**
+         * show/hide the 
+         *   the future auctions button
+         *   the building discard button
+         *   the future building button
+         * such that if the areas have building tiles or auction tiles in them, they will be shown.
+         */
         showHideButtons: function(){
             let future_auctions = dojo.query(`.future_auction_zone .${TPL_AUC_TILE}`);
             if (future_auctions.length == 0){
@@ -1523,53 +1613,9 @@ function (dojo, declare) {
         },
 
         updateScoreForBuilding: function (p_id, b_id, up=true) {
-            //console.log(p_id, b_id, up);
             var value = 0;
-            /*switch(Number(b_id)){
-                case BLD_FORGE:
-                    var value = 1;
-                    console.log('updateScore' + value);
-                break;
-                case BLD_GRAIN_MILL: 
-                case BLD_MARKET:
-                case BLD_GENERAL_STORE:
-                case BLD_WORKSHOP:
-                case BLD_MEATPACKING_PLANT:
-                    var value = 2;
-                    console.log('updateScore' + value);
-                break;
-                case BLD_BANK:
-                case BLD_DUDE_RANCH:
-                case BLD_TRAIN_STATION:
-                    var value = 3;
-                    console.log('updateScore' + value);
-                break;
-                case BLD_RODEO:
-                case BLD_LAWYER:
-                    var value = 4;
-                    console.log('updateScore' + value);
-                break;
-                case BLD_FACTORY:
-                case BLD_FAIRGROUNDS:
-                case BLD_TERMINAL:
-                case BLD_RAIL_YARD:
-                    var value = 6;
-                    console.log('updateScore' + value);
-                break;
-                case BLD_RESTARAUNT:
-                case BLD_CIRCUS:
-                    var value = 8;
-                    console.log('updateScore' + value);
-                break;
-                case BLD_CHURCH:
-                case BLD_TOWN_HALL:
-                    var value = 10;
-                    console.log('updateScore' + value);
-                break;
-            }*/
             if (this.building_info[b_id].vp != null)
                 var value = this.building_info[b_id].vp;
-            //console.log('updateScore' + value);
             if (up) this.scoreCtrl[p_id].incValue(value);
             else this.scoreCtrl[p_id].incValue(-value);
         },
@@ -1793,7 +1839,13 @@ function (dojo, declare) {
                     }
                     if (args.loan != null && typeof args.loan == 'string'){
                         args.loan = this.format_block('jptpl_track_log', {type: 'loan'});
-                    }    
+                    }
+                    if (args.worker != null && typeof args.worker == 'string'){
+                        args.worker = this.getOneResourceAsDiv('worker', 1)
+                    }
+                    if (args.onOff != null && typeof args.onOff == 'string'){
+                        args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
+                    }
 
                     if (args.token != null && typeof (args.null != "string")){
                         if (args.token.color != null) {
@@ -1830,7 +1882,7 @@ function (dojo, declare) {
                         args.auction = this.addColor(args.auction.str, color);
                     } else {
                         let color = ASSET_COLORS[Number(this.current_auction)+10];
-                        args.auction = this.addColor("AUCTION "+this.current_auction, color);
+                        args.auction = this.addColorNumber("AUCTION ", this.current_auction, color);
                     }
                     
                     if (args.tradeAway != null){
@@ -1863,6 +1915,10 @@ function (dojo, declare) {
             
         addColor: function(string, color) {
             return this.format_block('jstpl_color_log', {string:string, color:color});
+        },
+
+        addColorNumber: function(string, number, color){
+            return this.format_block('jstpl_color_number_log', {color:color, string:string, number:number});
         },
 
         getOneResourceAsDiv: function(type, amount){

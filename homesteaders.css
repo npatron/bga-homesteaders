@@ -28,10 +28,11 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.useFont {
+.font {
    font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
+.bold {font-weight: bold;}
 .biggerFont {
    font: normal 30px/1 "Old Standard TT";
    font-variant: small-caps;
@@ -50,48 +51,14 @@
    text-decoration-thickness: 1.5px;
 }
 
-.font_res {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: lightgreen;
-}
-.font_com {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: darksalmon;
-}
-.font_ind {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: royalblue;
-}
-.font_spe {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: gold;
-}
-.font_a1 {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: lightseagreen;
-}
-.font_a2 {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: orange;
-}
-.font_a3 {
-   font: normal 20px/1 "Old Standard TT";
-   font-variant: small-caps;
-   font-weight: bold;
-   color: hotpink;
-}
+.res {color: lightgreen;}
+.com {color: darksalmon;}
+.ind {color: royalblue;}
+.spe {color: gold;}
+.a1 {color: lightseagreen;}
+.a2 {color: orange;}
+.a3 {color: hotpink;}
+.a4 {color: purple;}
 .alignleft {float: left;}
 .aligncenter {float: center;}
 .alignright {float: right;}
@@ -101,9 +68,11 @@
    font-variant: small-caps;
 }
 #useSilver_form {
-   grid-row: span 4;
-   margin: auto;
    height: 20px;
+   grid-row: span 7;
+   margin-left: 15px;
+   margin-top: auto;
+   margin-bottom: auto;
 }
 
 /*===============*
@@ -171,55 +140,7 @@ a#tgl_future_bld{
    grid-row: span 4;
 }
 
-.switch {
-   position: relative;
-   display: inline-block;
- }
- .switch-input {
-   display: none;
- }
- .switch-label {
-   display: block;
-   width: 48px;
-   height: 24px;
-   text-indent: -150%;
-   clip: rect(0 0 0 0);
-   color: transparent;
-   user-select: none;
- }
- .switch-label::before,
- .switch-label::after {
-   content: "";
-   display: block;
-   position: absolute;
-   cursor: pointer;
- }
- .switch-label::before {
-   width: 100%;
-   height: 100%;
-   background-color: #dedede;
-   border-radius: 9999em;
-   -webkit-transition: background-color 0.25s ease;
-   transition: background-color 0.25s ease;
- }
- .switch-label::after {
-   top: 0;
-   left: 0;
-   width: 24px;
-   height: 24px;
-   border-radius: 50%;
-   background-color: #fff;
-   box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
-   -webkit-transition: left 0.25s ease;
-   transition: left 0.25s ease;
- }
- .switch-input:checked + .switch-label::before {
-   background-color: #89c12d;
- }
- .switch-input:checked + .switch-label::after {
-   left: 24px;
- }
- 
+
 /*====================*
  * Bid Slot Locations *
  *    (on board)      *
@@ -633,7 +554,7 @@ div#trade_bank_trade_silver{
    box-sizing: content-box;
    cursor:pointer;
 }
-
+/*
 .color_yellow {
    background-color: yellow;  
 }
@@ -648,8 +569,7 @@ div#trade_bank_trade_silver{
 }
 .color_purple {
    background-color: purple;
-}
-
+}*/
 .border_yellow {
    border-color:yellow;
    border-radius: 2px;
@@ -690,18 +610,23 @@ div#trade_bank_trade_silver{
    border-radius: 2px;
    border-style: solid;
 }
-.border_lightseagreen{
+.border_a1{
    border-color:lightseagreen;
    border-radius: 2px;
    border-style: solid;
 }
-.border_orange{
+.border_a2{
    border-color:orange;
    border-radius: 2px;
    border-style: solid;
 }
-.border_hotpink{
+.border_a3{
    border-color:hotpink;
+   border-radius: 2px;
+   border-style: solid;
+}
+.border_a4{
+   border-color:purple;
    border-radius: 2px;
    border-style: solid;
 }

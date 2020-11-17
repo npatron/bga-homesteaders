@@ -168,7 +168,7 @@ class homesteaders extends Table
         return array(
             'auctions' => $this->Auction->getAllAuctionsFromDB(),
             'auction_info' => $this->auction_info,
-            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv` FROM `player` " ),// add useSilver
+            'players' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `player_score` score, `color_name`, `player_name`, `rail_adv`, `use_silver` FROM `player` " ),
             'buildings' => $this->Building->getAllBuildings(),
             'building_info' => $this->building_info,
             'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
@@ -238,6 +238,18 @@ class homesteaders extends Table
     {
         $this->checkAction( 'trade' );
         $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
+    }
+
+    public function playerToggleCheckbox( $enabled ){
+        $cur_p_id = $this->getCurrentPlayerId();
+        $val = ($enabled?1:0);
+        $this->DbQuery( "UPDATE `player` SET use_silver = '$val' WHERE player_id = '$cur_p_id'" );
+        $this->notifyPlayer($cur_p_id, 'autoPay', clienttranslate('${You} set Auto-Pay ${worker} ${arrow} ${onOff}'), array(
+            'player_id'=>$cur_p_id,
+            'worker'=>  'worker',
+            'arrow'=>   'arrow',
+            'onOff'=> ($enabled?_("on"):_("off")),
+        ));
     }
 
     /***  place workers phase ***/
