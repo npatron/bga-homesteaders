@@ -19,7 +19,6 @@ define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
-    "ebg/zone",
     "dijit/form/CheckBox"
 ],
 function (dojo, declare) {
@@ -157,8 +156,6 @@ function (dojo, declare) {
 
             // zone control
             this.token_zone = [];
-            this.token_zone[ZONE_PENDING] = new ebg.zone();
-            this.token_zone[ZONE_PASSED] = new ebg.zone();
             this.token_divId = [];
             
             // indexed by location [discard-0, Auctions-(1,2,3)]
@@ -291,9 +288,8 @@ function (dojo, declare) {
                 this.isSpectator = false;
             } 
             this.player_color[p_id] = current_player_color;
-            this.token_divId[p_id] = 'token_zone_' + current_player_color;
-            this.token_zone[p_id] = new ebg.zone();
-            this.token_zone[p_id].create ( this, 'worker_zone_'+ current_player_color , this.worker_width, this.worker_height );
+            this.token_divId[p_id]  = 'token_zone_' + current_player_color;
+            this.token_zone[p_id]   = 'worker_zone_'+ current_player_color;
 
             this.player_building_zone_id[p_id] = TPL_BLD_ZONE + this.player_color[p_id];
         },
@@ -447,9 +443,9 @@ function (dojo, declare) {
                         this.token_divId[worker.p_id] );
                 const worker_divId = `token_worker_${w_key}`;
                 if (worker.b_key != 0 ){ 
-                    dojo.place(worker_divId, this.building_worker_ids[worker.b_key][worker.b_slot])
+                    dojo.place(worker_divId, this.building_worker_ids[worker.b_key][worker.b_slot]);
                 } else {
-                    this.token_zone[worker.p_id].placeInZone(worker_divId);
+                    dojo.place(worker_divId, this.token_zone[worker.p_id]);
                 }
                 if (worker.p_id == this.player_id){
                     dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
@@ -1820,18 +1816,35 @@ function (dojo, declare) {
                     if (!this.isSpectator)
                         args.You = this.divYou(); // will replace ${You} with colored version
                     
-                    // other known variables
+                    // begin -> resource args
+                    // only one type of resource.
                     if (args.type != null){
-                        if (typeof (args.type) == "string"){
-                            args.amount = 1;
+                        if (typeof (args.type) == "string"){ // not an array just type as string
                             args.typeStr = args.type;
-                            args.type = this.getOneResourceAsDiv(args.type, 1);
-                        } else {
+                            args.amount = 1;
+                            args.type = this.getOneResourceAsDiv(args.type);
+                        } else { // array with {type,amount} values
                             args.typeStr = args.type.type;
                             args.amount = args.type.amount;
                             args.type = this.getOneResourceAsDiv(args.typeStr, args.amount);
                         }
                     }
+                    // multiple types of resources
+                    if (args.tradeAway != null){
+                        args.tradeAway_arr = args.tradeAway;
+                        args.tradeAway = this.getResourceArrayAsDiv(args.tradeAway_arr);
+                    }
+                    if (args.tradeFor != null){
+                        args.tradeFor_arr = args.tradeFor;
+                        args.tradeFor = this.getResourceArrayAsDiv(args.tradeFor_arr);
+                    }
+                    if (args.resources != null){
+                        args.resource_arr = args.resources;
+                        args.resources = this.getResourceArrayAsDiv(args.resources);
+                    }
+                    // end -> resource args
+
+                    // begin -> specific token args 
                     if (args.arrow != null){
                         args.arrow = this.format_block('jstpl_resource_inline', {type: 'arrow'});
                     }
@@ -1842,13 +1855,9 @@ function (dojo, declare) {
                         args.loan = this.format_block('jptpl_track_log', {type: 'loan'});
                     }
                     if (args.worker != null && typeof args.worker == 'string'){
-                        args.worker = this.getOneResourceAsDiv('worker', 1)
+                        args.worker = this.getOneResourceAsDiv('worker')
                     }
-                    if (args.onOff != null && typeof args.onOff == 'string'){
-                        args.onOff_val = (args.onOff == 'on'?true:false);
-                        args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
-                    }
-
+                    // handles player_tokens
                     if (args.token != null && typeof (args.null != "string")){
                         if (args.token.color != null) {
                             var color = args.token.color;
@@ -1862,42 +1871,47 @@ function (dojo, declare) {
                         }
                         args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : type});
                     }
-                    if (args.reason_string != null && typeof (args.reason_string) != "string"){
-                        if (args.reason_string.type != null){
-                            let color = ASSET_COLORS[Number(args.reason_string.type)];
-                            args.reason_string = this.addColor(args.reason_string.str, color);
-                        } else if (args.reason_string.token != null) {
-                            const color = this.player_color[args.reason_string.player_id];
-                            args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
-                        } else if (args.reason_string.worker != null) {
-                            args.reason_string = this.getOneResourceAsDiv('worker', 1);
-                        } else if (args.reason_string.track != null) {
-                            args.reason_string = this.format_block('jptpl_track_log', {type:'track'});
-                        }
+                    // end -> specific token args
+
+                    // begin -> add font only args
+                    // format onOff with font (no color)
+                    if (args.onOff != null && typeof args.onOff == 'string'){
+                        args.onOff_val = (args.onOff == 'on'?true:false);
+                        args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
                     }
+                    // format text with font (no color)
+                    if (args.text != null && typeof args.text == 'string'){
+                        args.text = this.format_block('jstpl_color_log', {color:'', string:args.text});
+                    }
+                    // formats args.building_name to have the building Color by type
                     if (args.building_name != null && typeof (args.building_name) != "string"){
                         let color = ASSET_COLORS[Number(args.building_name.type)];
-                        args.building_name = this.addColor(args.building_name.str, color);
+                        args.building_name = this.format_block('jstpl_color_log', {string:args.building_name.str, color:color});
                     }
+                    // this will always set `args.auction` (allowing it to be used in the Title)
                     if (args.auction != null && typeof (args.auction) != 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.auction = this.addColor(args.auction.str, color);
+                        args.auction = this.format_block('jstpl_color_log', {string:args.auction.str, color:color});
                     } else {
                         let color = ASSET_COLORS[Number(this.current_auction)+10];
-                        args.auction = this.addColorNumber("AUCTION ", this.current_auction, color);
+                        args.auction = this.format_block('jstpl_color_number_log', {color:color, string:"AUCTION ", number:this.current_auction});
                     }
-                    
-                    if (args.tradeAway != null){
-                        args.tradeAway_arr = args.tradeAway;
-                        args.tradeFor_arr = args.tradeFor;
-                        args.tradeAway = this.getResourceArrayAsDiv(args.tradeAway_arr);
-                        args.tradeFor = this.getResourceArrayAsDiv(args.tradeFor_arr);
-                    }
-                    
-                    if (args.resources != null){
-                        args.resource_arr = args.resources;
-                        args.resources = this.getResourceArrayAsDiv(args.resources);
-                    }
+                    // end -> add font only args
+
+                    // handles Building & Auctions, player_tokens, worker, or track
+                    if (args.reason_string != null && typeof (args.reason_string) != "string"){
+                        if (args.reason_string.type != null){ //Building & Auctions
+                            let color = ASSET_COLORS[Number(args.reason_string.type)];
+                            args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string.str, color:color});
+                        } else if (args.reason_string.token != null) { // player_tokens (bid/train)
+                            const color = this.player_color[args.reason_string.player_id];
+                            args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
+                        } else if (args.reason_string.worker != null) { // worker token
+                            args.reason_string = this.getOneResourceAsDiv('worker');
+                        } else if (args.reason_string.track != null) { // track 
+                            args.reason_string = this.format_block('jptpl_track_log', {type:'track'});
+                        }
+                    }                     
                 }
             } catch (e) {
                 console.error(log,args,"Exception thrown", e.stack);
@@ -1914,16 +1928,8 @@ function (dojo, declare) {
             var you = "<span style=\"font-weight:bold;color:#" + color + ";" + color_bg + "\">" + __("lang_mainsite", "You") + "</span>";
             return you;
         },
-            
-        addColor: function(string, color) {
-            return this.format_block('jstpl_color_log', {string:string, color:color});
-        },
 
-        addColorNumber: function(string, number, color){
-            return this.format_block('jstpl_color_number_log', {color:color, string:string, number:number});
-        },
-
-        getOneResourceAsDiv: function(type, amount){
+        getOneResourceAsDiv: function(type, amount=1){
             var resString = '<div class="log_container">';
             if (amount > 0){ 
                 var tokenDiv = this.format_block('jstpl_resource_log', {type : type});
@@ -1993,11 +1999,7 @@ function (dojo, declare) {
             console.log ( 'notif_workerMoved' );
             console.log ( notif );
             const worker_divId = 'token_worker_'+Number(notif.args.worker_key);
-            const parent_id =  $(worker_divId).parentElement.id;
             this.moveObject(worker_divId, this.building_worker_ids[Number(notif.args.building_key)][Number(notif.args.building_slot)]);
-            if (!parent_id.startsWith("slot_")){
-                this.token_zone[notif.args.player_id].removeFromZone(worker_divId);
-            } 
         },
 
         notif_railAdv: function( notif ){
@@ -2011,9 +2013,7 @@ function (dojo, declare) {
             console.log ('notif_gainWorker');
             console.log ( notif );
             const worker_divId = `token_worker_${notif.args.worker_key}`;
-            dojo.place(this.format_block( 'jptpl_worker', {id: notif.args.worker_key}), 
-                    this.token_divId[Number(notif.args.player_id)] );
-            this.token_zone[notif.args.player_id].placeInZone(worker_divId);
+            dojo.place(this.format_block( 'jptpl_worker', {id: notif.args.worker_key}), this.token_zone[notif.args.player_id] );
             if (notif.args.player_id == this.player_id){
                 dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 if (this.currentState == "allocateWorkers" && notif.args.player_id == this.player_id){

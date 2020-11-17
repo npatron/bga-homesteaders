@@ -68,7 +68,7 @@
    font-variant: small-caps;
 }
 #useSilver_form {
-   height: 20px;
+   height: 30px;
    grid-row: span 7;
    margin-left: 15px;
    margin-top: auto;
@@ -554,22 +554,6 @@ div#trade_bank_trade_silver{
    box-sizing: content-box;
    cursor:pointer;
 }
-/*
-.color_yellow {
-   background-color: yellow;  
-}
-.color_blue {
-   background-color: blue; 
-}
-.color_green {
-   background-color: green; 
-}
-.color_red {
-   background-color: red; 
-}
-.color_purple {
-   background-color: purple;
-}*/
 .border_yellow {
    border-color:yellow;
    border-radius: 2px;
@@ -1127,9 +1111,9 @@ div#trade_bank_trade_silver{
    position: relative;
    filter: drop-shadow(0px 0px 1px #000000);
 }
-.bid_slot .player_token_bid:not(:first-child){
+/*.bid_slot .player_token_bid:not(:first-child){
    left: -25px;
-}
+}*/
 .player_token_train {
    background-image: url('img/fancy_tokens_80x83.png');
    background-size: 100px 260px;

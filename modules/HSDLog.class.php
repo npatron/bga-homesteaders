@@ -171,6 +171,7 @@ class HSDLog extends APP_GameClass
   {
     $players = $this->game->loadPlayersBasicInfos();
     foreach ($players as $p_id => $player) {
+      $this->game->giveExtraTime( $p_id );
       $this->insert($p_id, 0, 'allowTrades');
     }
   }
@@ -245,6 +246,7 @@ class HSDLog extends APP_GameClass
   public function winAuction($p_id, $auc_no, $bid_cost)
   {
     $this->insert($p_id, $auc_no, 'winAuction', array('cost' => $bid_cost));
+    $this->game->giveExtraTime( $p_id );
     $this->insert($p_id, 0, 'allowTrades');
   }
 

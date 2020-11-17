@@ -111,6 +111,7 @@ $machinestates = array(
         "transitions" => array( "nextBid" => STATE_PLAYER_BID,),
     ),
 
+    // player bid phase.
     STATE_PLAYER_BID => array(
         "name" => "playerBid",
         "description" => clienttranslate('${actplayer} must bid on auction or pass'),
@@ -122,6 +123,7 @@ $machinestates = array(
                                 "rail" => STATE_RAIL_BONUS )
     ),
 
+    // choose bonus from rail advancement.
     STATE_RAIL_BONUS => array(
         "name" => "getRailBonus",
         "description" => clienttranslate('${actplayer} must choose a railroad bonus'),
@@ -134,6 +136,7 @@ $machinestates = array(
                                 "endAuction" => STATE_END_BUILD)
     ),
 
+    //game state that determines next bidder/end of auction, and assigns next player.
     STATE_NEXT_BID => array(
         "name" => "nextBid",
         "description" => '',
