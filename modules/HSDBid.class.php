@@ -89,7 +89,6 @@ class HSDBid extends APP_GameClass
 
     function passBid(){
         $p_id = $this->game->getActivePlayerId();
-        $players_passed = $this->game->getGameStateValue('players_passed');
         $token_arr = array('token'=> 'bid', 'player_id'=>$p_id);
 		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes ${token}'), array (
                 'player_id' => $p_id,
@@ -99,7 +98,8 @@ class HSDBid extends APP_GameClass
         $this->game->DbQuery("UPDATE `bids` SET `bid_loc` ='".BID_PASS."', `outbid`='0' WHERE `player_id` = '$p_id'");
         if ($this->game->getPlayersNumber() == 2)
             $this->updateDummyBidWeight(true);
-        $this->game->setGameStateValue('players_passed', ++$players_passed);
+        $this->game->incGameStateValue('players_passed', 1);
+        //phase is used for rail adv, so it knows where to go next.
         $this->game->setGameStateValue('phase', 2);
         $this->game->Resource->getRailAdv($p_id, $token_arr);
     }
@@ -191,6 +191,25 @@ class HSDBid extends APP_GameClass
             }
         }
         return ($valid_bids);
+    }
+
+    /***** ZOMBIE BID (player quit) ******/
+
+    function zombieDummyPass(){
+        $this->makeDummyBid(array_values($this->getDummyBidOptions())[0]);
+    }
+
+    function zombiePass($p_id){
+        $token_arr = array('token'=> 'bid', 'player_id'=>$p_id);
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes ${token}'), array (
+                'player_id' => $p_id,
+                'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
+                'bid_location'=> BID_PASS,
+                'token' => $token_arr,));
+        $this->game->DbQuery("UPDATE `bids` SET `bid_loc` ='".BID_PASS."', `outbid`='0' WHERE `player_id` = '$p_id'");
+        if ($this->game->getPlayersNumber() == 2)
+            $this->updateDummyBidWeight(true);
+        $this->game->incGameStateValue('players_passed', 1);
     }
 
     /***** DUMMY ACTIONS (2-player only) *****/

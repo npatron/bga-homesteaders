@@ -188,17 +188,19 @@
   define('AUC3_SPAN' , '<span class="font bold a3">');
   define('END_SPAN',   '</span>');
   define('CENTER_DIV', '<div style="text-align: center;" class="useFont">');
+  define('LEFT_DIV', '<div style="text-align: left;" class="useFont">');
   define('END_DIV', '</div>');
   define('LEFT_P', '<p class="alignleft">');
   define('RIGHT_P', '<p class="alignright">');
   define('END_P', '</p>');
-  define('COST', '<br><p><span class="useFont">'._('Cost: ').'</span>');
+  define('COST', '<br><p class="useFont">'._('Cost: '));
 
-  define('ALLOW_TRADE', "<hr><p><small>"._("Allow Trade:")."<br></small></p>");
-  define('INCOME', "<hr><p><small>"._("Income:")."<br></small></p>");
+  define('ALLOW_TRADE', '<hr><div class="income">'._("allow trade:").'<br></div>');
+  define('INCOME', '<hr><span class="income">'._("income:").'<br></span>');
   define('R_HTML', '<span aria="Residential" class="font bold res">'._("Residential").'</span>');
   define('C_HTML', '<span aria="Commercial" class="font bold com">'._("Commercial").'</span>');
   define('I_HTML', '<span aria="Industrial" class="font bold ind">'._("Industrial").'</span>');
   define('S_HTML', '<span aria="Special" class="font bold spe">'._("Special").'</span>');
   define('A_HTML', '<span class="font bold res">'._("A").'</span><span class="font bold com">'._("N").'</span><span class="font bold ind">'._("Y").'</span>');
+
 
