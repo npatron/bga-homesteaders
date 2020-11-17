@@ -140,7 +140,7 @@ $this->building_info = array(
   BLD_HOMESTEAD_YELLOW => array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV_("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
               "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
               "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
@@ -156,7 +156,7 @@ $this->building_info = array(
    BLD_HOMESTEAD_RED => array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV_("Produce:  ").SILVER_HTML.SILVER_HTML.
+              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
               "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
               "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
@@ -188,7 +188,7 @@ $this->building_info = array(
    BLD_HOMESTEAD_BLUE => array(
     'name' => _("Homestead"),
     'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-            "<hr>".INCOME.CENTER_DIV_("Produce:  ").SILVER_HTML.SILVER_HTML.
+            "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
             "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
             "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
@@ -304,7 +304,7 @@ $this->building_info = array(
     'name' => _("Ranch"),
     'tt'   => RES_SPAN.("Ranch").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
               COST.WOOD_HTML." ". STEEL_HTML." ". FOOD_HTML. END_P."<hr>".
-              CENTER_DIV._(" When Built: gain").TRADE_HTML.END_DIV
+              CENTER_DIV._(" When Built: gain").TRADE_HTML.END_DIV.
               INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").COW_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
