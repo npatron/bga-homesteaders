@@ -1780,25 +1780,26 @@ function (dojo, declare) {
         {
             console.log ( 'notifications subscriptions setup' );
             var notifs = [
-                ['updateAuction', 500],
-                ['updateBuildingStocks', 1000],
+                ['autoPay', 50],
+                ['buildBuilding', 1000],
+                ['cancel', 500],
+                ['clearAllBids', 250],
                 ['gainWorker', 200],
                 ['gainTrack', 200],
-                ['workerMoved', 200],
-                ['railAdv', 250],
+                ['loanPaid', 500],
+                ['loanTaken', 500],
                 ['moveBid', 250],
                 ['moveFirstPlayer', 100],
-                ['buildBuilding', 1000],
                 ['playerIncome', 200],
                 ['playerIncomeGroup', 500],
                 ['playerPayment', 200],
                 ['playerPaymentGroup', 500],
-                ['trade', 200],
-                ['loanTaken', 500],
-                ['loanPaid', 500],
-                ['clearAllBids', 250],
-                ['cancel', 500],
+                ['railAdv', 250],
                 ['score', 2000],
+                ['trade', 200],
+                ['updateAuction', 500],
+                ['updateBuildingStocks', 1000],
+                ['workerMoved', 200],
               ];
 
             notifs.forEach(notif => {
@@ -1844,6 +1845,7 @@ function (dojo, declare) {
                         args.worker = this.getOneResourceAsDiv('worker', 1)
                     }
                     if (args.onOff != null && typeof args.onOff == 'string'){
+                        args.onOff_val = (args.onOff == 'on'?true:false);
                         args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
                     }
 
@@ -1944,6 +1946,12 @@ function (dojo, declare) {
                 }
             }
             return aggregateString + "</div>";
+        },
+
+        notif_autoPay: function (notif){
+            if (this.player_id == notif.args.player_id){
+                $('checkbox1').checked = notif.args.onOff_val;
+            }
         },
 
         notif_updateAuction: function( notif ) {
