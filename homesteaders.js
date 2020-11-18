@@ -1177,6 +1177,7 @@ function (dojo, declare) {
             this.addActionButton( 'btn_more_gold', _('More ') + tkn_gold, 'raiseGold', null, false, 'gray');
             this.addActionButton( 'btn_less_gold', _('Less ') + tkn_gold, 'lowerGold', null, false, 'gray');
             dojo.addClass( 'btn_less_gold', 'noshow');
+            dojo.style( $('btn_less_gold'), 'display', 'none');
         },
 
         lowerGold: function(){
@@ -1188,13 +1189,15 @@ function (dojo, declare) {
                 dojo.removeClass( 'pay_silver',     'noshow');
                 dojo.removeClass( 'pay_silver_tkn', 'noshow');
                 dojo.removeClass( 'btn_more_gold',  'noshow');
+                dojo.style( $('btn_more_gold'), 'display', 'inline-block');
                 this.silverCounter.setValue(this.silverCost);
             }
             console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
             if(this.goldAmount == 0){
                 dojo.addClass( 'btn_less_gold', 'noshow');
                 dojo.addClass( 'pay_gold',      'noshow');
-                dojo.addClass( 'pay_gold_tkn',  'noshow');
+                dojo.addClass( 'pay_gold_tkn',  'noshow');            
+                dojo.style( $('btn_less_gold'), 'display', 'none');
             }
         },
 
@@ -1203,6 +1206,7 @@ function (dojo, declare) {
             dojo.removeClass( 'pay_gold',      'noshow');
             dojo.removeClass( 'pay_gold_tkn',  'noshow');
             dojo.removeClass( 'btn_less_gold', 'noshow');
+            dojo.style( $('btn_less_gold'), 'display', 'inline-block');
             this.goldAmount++;
             this.goldCounter.setValue(this.goldAmount);
             this.silverCost -= 5;
@@ -1211,6 +1215,7 @@ function (dojo, declare) {
                 dojo.addClass( 'pay_silver',     'noshow');
                 dojo.addClass( 'pay_silver_tkn', 'noshow');
                 dojo.addClass( 'btn_more_gold',  'noshow');
+                dojo.style( $('btn_more_gold'), 'display', 'none');
             }
             console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
         },
