@@ -260,7 +260,7 @@ class homesteaders extends Table
         $worker_cost = array('trade'=>1,'food'=>1);
         if (!$this->Resource->canPlayerAfford($cur_p_id, $worker_cost))
             throw new BgaUserException( _("You cannot afford to hire a worker"));
-        $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, 'Hire Worker');
+        $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, _('Hire Worker'));
         $this->Log->updateResource($cur_p_id, "trade", -1);
         $this->Log->updateResource($cur_p_id, "food", -1);
         $this->Resource->addWorker($cur_p_id, 'hire');
@@ -271,7 +271,7 @@ class homesteaders extends Table
         $this->checkAction( "placeWorker" );
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
-        if ($w_owner != $cur_p_id){ throw new BgaUserException("This is not your worker.");}
+        if ($w_owner != $cur_p_id){ throw new BgaUserException(_("This is not your worker."));}
         $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${type} to ${building_name}' ), array(
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
@@ -347,7 +347,7 @@ class homesteaders extends Table
         } else if ($state['name'] === 'payAuction') {
             $this->payAuction($gold);
         } else {
-            throw new BgaVisibleSystemException ( "playe pay called, from wrong state: ".$state['name'] );
+            throw new BgaVisibleSystemException ( _("player pay called from wrong state") );
         }
     }
 
@@ -425,16 +425,16 @@ class homesteaders extends Table
         $act_p_id = $this->getActivePlayerId();
         $auction_bonus = $this->getGameStateValue( 'auction_bonus');
         if ($auction_bonus == AUC_BONUS_WORKER) {
-            $this->Resource->addWorker($act_p_id, 'auction bonus');
+            $this->Resource->addWorker($act_p_id, _('auction bonus'));
             $this->gamestate->nextState( 'done' );
         } else if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV){
-            $this->Resource->addWorker($act_p_id, 'auction bonus');
+            $this->Resource->addWorker($act_p_id, _('auction bonus'));
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
             $auc_no = $this->getGameStateValue( 'current_auction');
             $this->Resource->getRailAdv( $act_p_id, "AUCTION ".$auc_no, 'auction', $auc_no );
             $this->gamestate->nextState( 'railBonus' );
         } else {
-            throw new BgaVisibleSystemException ( "free Hire Worker called, but auction bonus is ".$auction_bonus );
+            throw new BgaVisibleSystemException ( _("Free Hire Worker called, but auction bonus is ").$auction_bonus );
         }
     }
 
@@ -704,7 +704,7 @@ class homesteaders extends Table
                 $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${first}'),array(
                     'player_id'=>$first_p_id,
                     'player_name'=>$this->getPlayerName($first_p_id),
-                    'first'=>'First Player'));
+                    'first'=>_('First Player')));
             }
             $this->Bid->clearBidForPlayer($auction_winner_id);// for dummy bid case.
         } else {
@@ -713,7 +713,7 @@ class homesteaders extends Table
                 $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${first}'),array(
                     'player_id'=>$auction_winner_id,
                     'player_name'=>$this->getPlayerName($auction_winner_id),
-                    'first'=>'First Player'
+                    'first'=>_('First Player'),
                 ));
             }
             $this->gamestate->changeActivePlayer( $auction_winner_id );

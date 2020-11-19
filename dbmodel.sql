@@ -22,6 +22,8 @@
 ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
 ALTER TABLE `player` ADD `rail_adv`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
 ALTER TABLE `player` ADD `use_silver` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'pay workers with silver 0-true, 1-false';
+ -- allows showing cancelled/undo actions as crossed out in log.
+ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS `bids` (
   `player_id` INT(8) NOT NULL,
@@ -35,7 +37,6 @@ CREATE TABLE IF NOT EXISTS `workers` (
   `player_id`     INT(8) UNSIGNED NOT NULL COMMENT 'Player controlling the worker',
   `building_key`  INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Building working at',
   `building_slot` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Which slot in buiding',
---  `selected`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'selected:1 or not:0',
   PRIMARY KEY (`worker_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 ;
 
@@ -45,13 +46,11 @@ CREATE TABLE IF NOT EXISTS `tracks` (
   PRIMARY KEY (`rail_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 
-
 CREATE TABLE IF NOT EXISTS `buildings` (
   `building_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
   `building_type` INT(1) UNSIGNED NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
---  `cost`          VARCHAR(16)     NOT NULL DEFAULT '0' COMMENT 'cost: list of costs (0-non, 1-wood, 2-steel,3-gold,4-copper,5-food,6-cow,7-debt)',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
   `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
@@ -63,9 +62,6 @@ CREATE TABLE IF NOT EXISTS `auctions` (
   `auction_id`       INT(2) UNSIGNED NOT NULL COMMENT 'Identity of Auction tile',
   `position`         INT(2) UNSIGNED NOT NULL COMMENT 'position of Auction in Deck (1-10)',
   `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3',
---  `state`            INT(1) UNSIGNED NOT NULL COMMENT 'state: 0-face-Down, 1-face-Up',
---  `build_type`       INT(2) UNSIGNED DEFAULT 0 NOT NULL COMMENT '0-None, + 1 RES, +2 COM, +4 IND, +8 SPE', -- use $this->auction_info instead
---  `bonus`            INT(1) UNSIGNED DEFAULT 0 NOT NULL, -- use $this->auction_info instead
   PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB ;
 
@@ -86,7 +82,6 @@ CREATE TABLE IF NOT EXISTS `resources` (
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB;
 
--- used for undo.
 CREATE TABLE IF NOT EXISTS `log` (
   `log_id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `round`     INT(11) NOT NULL,
@@ -97,5 +92,3 @@ CREATE TABLE IF NOT EXISTS `log` (
   `action_arg` JSON,
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
-
-ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;

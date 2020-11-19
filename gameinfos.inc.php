@@ -12,6 +12,9 @@
 
 $gameinfos = array( 
 
+// Game Name
+'game_name' => 'Homesteaders',
+
 // Game designer (or game designers, separated by commas)
 'designer' => 'Alex Rockwell',       
 
@@ -22,7 +25,7 @@ $gameinfos = array(
 'year' => 2009,                 
 
 // Game publisher
-'publisher' => 'Tasty Minstrel Games, Quined Games',                     
+'publisher' => 'Tasty Minstrel Games',               
 
 // Url of game publisher website
 'publisher_website' => 'http://playtmg.com/, https://www.quined.nl/',   
@@ -63,7 +66,7 @@ $gameinfos = array(
 // Note: if you are NOT using any tie breaker, leave the empty string.
 //
 // Example: 'tie_breaker_description' => totranslate( "Number of remaining cards in hand" ),
-'tie_breaker_description' => "Silver Remaining",
+'tie_breaker_description' => totranslate( "Silver Remaining" ),
 
 // If in the game, all losers are equal (no score to rank them or explicit in the rules that losers are not ranked between them), set this to true 
 // The game end result will display "Winner" for the 1st player and "Loser" for all other players

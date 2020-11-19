@@ -1095,7 +1095,7 @@ div#trade_bank_trade_silver{
 }
 .token_worker:not(:first-child) {
    left: 20px;
-   top: -35px;
+   top: -42px;
 }
 
 /*===============*

@@ -78,7 +78,7 @@ class HSDLog extends APP_GameClass
   {
     foreach ($stats as $stat) {
       if (!is_array($stat)) {
-        throw new BgaVisibleSystemException("incrementStats: Not an array");
+        throw new BgaVisibleSystemException(_("incrementStats: Not an array"));
       }
 
       $player_id = $stat[0];
@@ -88,7 +88,7 @@ class HSDLog extends APP_GameClass
 
       $name = $stat[1];
       if (empty($name)) {
-        throw new BgaVisibleSystemException("incrementStats: Missing name");
+        throw new BgaVisibleSystemException(_("incrementStats: Missing name"));
       }
 
       $value = 1;

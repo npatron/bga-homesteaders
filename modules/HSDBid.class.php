@@ -239,24 +239,23 @@ class HSDBid extends APP_GameClass
         $val =$this->game->getUniqueValuefromDB("SELECT `bid_loc` FROM `bids` WHERE `player_id`=".DUMMY_OPT);
         if ($down){ // on outbid
             $new_val = max(21, $val -1); // 21 or -1; (21-> 3-silver)
-            $string = "Lower";
         } else { // on pass
             $new_val = min(26, $val +1); // 26 or +1; (26-> 9-silver)
-            $string = "Increase";
         }
         $cost = $this->bid_cost_array[$new_val%10];
         $token_arr = array('token'=> 'bid', 'player_id'=>DUMMY_OPT);
         if ($new_val == $val){
-            $this->game->notifyAllPlayers("moveBid", clienttranslate( '${token} cannot be '. $string.'ed past ${cost}'), array (
+            $this->game->notifyAllPlayers("moveBid", clienttranslate( '${token} cannot be updated past ${cost}'), array (
                 'player_id' => DUMMY_OPT,
                 'token' => $token_arr,
                 'bid_location'=> $val,
                 'cost' =>$cost ));    
         } else {
             $this->game->DBQuery("UPDATE `bids` SET `bid_loc`=$new_val WHERE `player_id`=".DUMMY_OPT);
-            $this->game->notifyAllPlayers("moveBid", clienttranslate( $string.' ${token} to ${cost}'), array (
+            $this->game->notifyAllPlayers("moveBid", '${token} ${arrow} ${cost}', array (
             'player_id' => DUMMY_OPT,
             'token' => $token_arr,
+            'arrow' => 'arrow',
             'bid_location'=> $new_val,
             'cost' =>$cost ));
         }

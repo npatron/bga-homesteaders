@@ -183,16 +183,16 @@ class HSDBuilding extends APP_GameClass
         $b_id = $building['b_id'];
         $b_name = $this->getBuildingNameFromId($b_id);
         if (!$afford){
-            throw new BgaUserException( _("You cannot afford to build ".$b_name));
+            throw new BgaUserException( _("You cannot afford to build ").$b_name);
         }
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
-            throw new BgaUserException( _("You have already built a ".$b_name));
+            throw new BgaUserException( _("You have already built a ").$b_name);
         }
         
         $this->payForBuilding($p_id, $b_cost);
-        $message = '${player_name} builds ${building_name}';
+        $message = '${player_name} '._('builds').' ${building_name}';
         $building['p_id'] = $p_id;
-        $values = array(  'player_id' => $p_id,
+        $values = array('player_id' => $p_id,
                         'player_name' => $this->game->getPlayerName($p_id),
                         'building' => $building,
                         'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)),);
@@ -201,7 +201,7 @@ class HSDBuilding extends APP_GameClass
             $values['resources'] = $b_cost;
             $values['arrow'] = "arrow";
         }
-        $this->game->notifyAllPlayers( "buildBuilding", clienttranslate( $message ), $values);
+        $this->game->notifyAllPlayers( "buildBuilding", $message, $values);
         $this->game->Log->buyBuilding($p_id, $b_key, $b_cost);
         $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
         $this->game->DbQuery( $sql );
@@ -264,7 +264,7 @@ class HSDBuilding extends APP_GameClass
                     }
                 } else {
                     if (!array_key_exists($slot, $b_info)) 
-                        throw new BgaVisibleSystemException ($b_id." has no value at ".$slot);
+                        throw new BgaVisibleSystemException (_("Invalid worker slot selected"));
                     else foreach ($b_info[$slot] as $type => $amt){
                         $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
                     }

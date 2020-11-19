@@ -474,7 +474,7 @@ $this->building_info = array(
     'tt'   => IND_SPAN._("Forge").END_SPAN.":".
               COST. STEEL_HTML. END_P. RIGHT_P.VP_HTML.END_P."<hr>".
               CENTER_DIV._(" When Built: Advance")."<br>".
-              _(" on Railroad track")."<br>".("(and get bonus).")."<br>".
+              _(" on Railroad track")."<br>"._("(and get bonus).")."<br>".
               _(" get ").VP_HTML._(" whenever you build")."<br>".
               _("a building, (after this one)").
               INCOME.CENTER_DIV.WORKER_HTML._(" Can Produce: ").VP2_HTML.END_DIV,

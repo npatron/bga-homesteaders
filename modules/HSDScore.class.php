@@ -100,7 +100,7 @@ class HSDScore extends APP_GameClass
         // 1 + 2 + 3 + 4 + 5 etc for loans
         $loans = $this->getScoreFromLoans($p_id);
         $this->game->setStat($loans, 'vp_loan', $p_id);
-        $this->game->NotifyAllPlayers('score', 'updating ${player_name}s  scores', array(
+        $this->game->NotifyAllPlayers('score', clienttranslate('updating ${player_name} score'), array(
             'player_id' => $p_id,
             'player_name' => $this->game->getPlayerName($p_id),
             'resource'=> array(
