@@ -24,7 +24,6 @@
             <span id="bld_future" class="font bold">{SHOW} </span><br><span class="font bold"> {FUTURE_BUILDING}</span>
         </a>
         <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
-        <!-- begin useSilver -->
         <div id='useSilver_form'> 
             <tr>
                 <input type="checkbox" id="checkbox1"/>
@@ -34,7 +33,6 @@
                 </label>
             </tr>
         </div> 
-        <!-- end useSilver -->
         
     </div>
     <!-- Auction Board -->

@@ -68,11 +68,8 @@
    font-variant: small-caps;
 }
 #useSilver_form {
-   height: 30px;
    grid-row: span 7;
-   margin-left: 15px;
-   margin-top: auto;
-   margin-bottom: auto;
+   margin: auto;
 }
 
 /*===============*
@@ -102,6 +99,7 @@ div#board {
    grid-column: 1/-1;
    grid-template-columns: repeat(auto-fill, 205px);
    grid-template-rows: repeat(auto-fill, 5px);
+   align-items: center;
 }
 #btn_pay_done{
    width: 115px;
@@ -134,20 +132,15 @@ a#tgl_future_bld{
 #round_text {
    margin-top: auto;
    margin-bottom: auto;
-   grid-row: span 5;
+   grid-row: span 6;
 }
-#useSilver {
-   grid-row: span 4;
-}
-
 
 /*====================*
  * Bid Slot Locations *
  *    (on board)      *
  *====================*/
 div#pending_bids{
-   top: 1%;
-   left: 40%; 
+   left: 37%; 
    height: 50px;
    width: 200px;
    display: grid;
@@ -155,13 +148,13 @@ div#pending_bids{
 }
 div#passed_bids{
    bottom: 1%;
-   left: 40%;
+   left: 37%;
    height: 50px;
    width: 200px;
 }
 .bid_slot {
    display: grid;
-   grid-template-columns: repeat(2, 25px);
+   grid-template-columns: 25px 25px;
    position: absolute;
    height: 8.25%;
    width: 6%;
@@ -304,6 +297,9 @@ div#bid_slot_3_21{
    top: 80%;
    height: 7.5%;
    width: 14%;
+   display: grid;
+   grid-template-columns: 50% 50%;
+   grid-template-rows: 50% 50%;
 }
 div#train_advancement_0{
    left: 6.4%;
@@ -1092,10 +1088,7 @@ div#trade_bank_trade_silver{
    z-index: 2;
    filter: drop-shadow(0px 0px 1px #000000);
    position: relative;
-}
-.token_worker:not(:first-child) {
-   left: 20px;
-   top: -42px;
+   display: inline-block;
 }
 
 /*===============*
@@ -1111,9 +1104,6 @@ div#trade_bank_trade_silver{
    position: relative;
    filter: drop-shadow(0px 0px 1px #000000);
 }
-/*.bid_slot .player_token_bid:not(:first-child){
-   left: -25px;
-}*/
 .player_token_train {
    background-image: url('img/fancy_tokens_80x83.png');
    background-size: 100px 260px;
@@ -1122,41 +1112,6 @@ div#trade_bank_trade_silver{
    height: 52px;
    position: relative;
    filter: drop-shadow(0px 0px 1px #000000);
-}
-/* 2-trains */
-.player_token_train:nth-child(2){
-   left: 50%;
-   top: -52px;
-}
-/* 3-trains */
-.player_token_train:nth-child(1):nth-last-child(3){
-   left: -8%;
-   top: 7%;
-}
-.player_token_train:nth-child(2):nth-last-child(2){
-   left: 22%;
-   top: -143%;
-}
-.player_token_train:nth-child(3):nth-last-child(1){
-   left: 55%;
-   top: -245%;
-}
-/* 4-trains */
-.player_token_train:nth-child(1):nth-last-child(4){
-   left: -8%;
-    top: 14%;
-}
-.player_token_train:nth-child(2):nth-last-child(3){
-   left: 18%;
-   top: -143%;
-}
-.player_token_train:nth-child(3):nth-last-child(2){
-   left: 43%;
-   top: -245%;
-}
-.player_token_train:nth-child(4):nth-last-child(1){
-   left: 67%;
-   top: -396%;
 }
 
 .bid_yellow {
@@ -1264,7 +1219,7 @@ div#trade_bank_trade_silver{
 }
 .slot_12_1 {
    bottom: 14px;
-   left: 26px;
+   left: 33px;
 }
 .slot_15_1 {
    bottom: 14px;
@@ -1278,6 +1233,8 @@ div#trade_bank_trade_silver{
    bottom: 13px;
    left: 28px;
    width: 70px;
+   display: grid;
+   grid-template-rows: 20px 20px;
 }
 .slot_23_1 {
    bottom: 48px;
@@ -1289,7 +1246,7 @@ div#trade_bank_trade_silver{
 }
 .slot_24_1 {
    bottom: 13px;
-   left: 38px;
+   left: 39px;
 }
 .slot_26_1 {
    bottom: 8px;
