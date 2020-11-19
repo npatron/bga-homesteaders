@@ -114,6 +114,7 @@ $gameinfos = array(
     //  minimum possible value: 740
     'max' => null
 ),
+'enable_3d' => false,
 
 // Game presentation
 // Short game presentation text that will appear on the game description page, structured as an array of paragraphs.

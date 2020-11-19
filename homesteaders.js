@@ -152,8 +152,6 @@ function (dojo, declare) {
         addMoveToLog: override_addMoveToLog,
 
         constructor: function(){
-            console.log('homesteaders constructor');
-
             // zone control
             this.token_zone = [];
             this.token_divId = [];
@@ -218,8 +216,6 @@ function (dojo, declare) {
         
         setup: function( gamedatas )
         {
-            console.log( "Starting game setup" );
-            //dojo.destroy('debug_output');
             this.isSpectator = true;
             this.playerCount = 0;
             // Setting up player boards
@@ -236,7 +232,6 @@ function (dojo, declare) {
                 // when displaying for a spectator remove the player config checkbox.
                 this.dojo.destroy('useSilver_form');
             }
-            console.log("#players: "+this.playerCount);
             if (this.playerCount == 2){
                 this.player_color[DUMMY_BID] = this.getAvailableColor();
                 this.player_color[DUMMY_OPT] = this.player_color[0];
@@ -270,8 +265,6 @@ function (dojo, declare) {
             
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications(gamedatas.cancel_move_ids);
-
-            console.log( "Ending game setup" );
         },
 
         ///////////////////////////////////////////////////
@@ -300,10 +293,9 @@ function (dojo, declare) {
         },
 
         toggleCheckbox: function(event) {
-            console.log('toggle checkbox', event.target.checked);
             this.ajaxcall( "/homesteaders/homesteaders/toggleCheckbox.html", {lock: true, checked:(event.target.checked)}, this, 
-            function( result ) { }, 
-            function( is_error) { } );
+                function( result ) { }, 
+                function( is_error) { } );
         },
 
         /**
@@ -314,7 +306,6 @@ function (dojo, declare) {
         orientPlayerZones: function (order_table){
             let next_pId = this.player_id;    
             for (let i = 0; i < this.playerCount; i++){
-                console.log( "next: "+next_pId );
                 dojo.place(`player_zone_${this.player_color[next_pId]}`, PLAYER_ORDER[i] , 'replace');
                 next_pId = order_table[this.player_id];
             }
@@ -329,7 +320,6 @@ function (dojo, declare) {
             for(let i in player_color_option){
                 if (!this.player_color.includes(player_color_option[i]))
                 {   
-                    console.log(player_color_option[i]);
                     return player_color_option[i];
                 }
             }
@@ -339,9 +329,6 @@ function (dojo, declare) {
          * temporary solution to speed up loading, may want to remove for release.
          */
         omitImages: function() {
-            //this.dontPreloadImage( 'game_display0.png' );
-            //this.dontPreloadImage( 'game_display1.png' );
-            //this.dontPreloadImage( 'game_display2.png' );
             this.dontPreloadImage( 'exp_building_144x196.png' );
         },
 
@@ -478,9 +465,6 @@ function (dojo, declare) {
             for(let p_id in bids){
                 const token_bid_loc = bids[p_id].bid_loc;
                 const token_color = this.player_color[p_id];
-                console.log(bids);
-                console.log(token_color);
-                console.log(this.bid_zone_divId[ZONE_PENDING]);
                 if( p_id == DUMMY_OPT) {
                     this.bid_token_divId[p_id] = `token_bid_${token_color}_dummy`;
                     dojo.place(this.format_block( 'jptpl_dummy_player_token', {color: token_color, type: "bid"}), this.bid_zone_divId[ZONE_PENDING]);
@@ -605,13 +589,11 @@ function (dojo, declare) {
         //
         onEnteringState: function( stateName, args )
         {
-            console.log( 'Entering state: '+stateName );
             this.currentState = stateName;
             
             switch( stateName )
             {
                 case 'startRound':
-                    console.log(args);
                     this.setupTiles (args.args.round_number, 
                         args.args.auctions);  
                     break;
@@ -648,7 +630,6 @@ function (dojo, declare) {
         //
         onLeavingState: function( stateName )
         {
-            console.log( 'Leaving state: '+stateName );
             const current_player_id = this.player_id;
             
             switch( stateName )
@@ -701,7 +682,6 @@ function (dojo, declare) {
         onUpdateActionButtons: function( stateName, args )
         {
             const current_player_id = this.player_id;
-            console.log( 'onUpdateActionButtons: '+stateName );
             const tkn_arrow = this.format_block( 'jstpl_resource_inline', {type:'arrow'}, ); 
             const tkn_copper = this.format_block( 'jstpl_resource_inline', {type:'copper'}, );
             const tkn_cow  = this.format_block( 'jstpl_resource_inline', {type:'cow'}, );
@@ -737,7 +717,6 @@ function (dojo, declare) {
                         this.addTradeLoanButtons();
                     break;
                     case 'dummyPlayerBid'://2-player dummy bid phase
-                        console.log (args);
                         for (let bid_key in args.valid_bids) {
                             const bid_slot_id = this.getBidLocDivIdFromBidNo(args.valid_bids[bid_key]);
                             dojo.addClass(bid_slot_id, "selectable" );
@@ -777,7 +756,6 @@ function (dojo, declare) {
                         }
                         for(let i in bonus_ids){
                             const id = bonus_ids[i];
-                            console.log(`${i}: ${id}`);
                             dojo.addClass(id,'selectable');
                         }
                         this.addActionButton( 'btn_choose_bonus', _('Choose Bonus'), 'doneSelectingBonus');
@@ -791,7 +769,6 @@ function (dojo, declare) {
                     case 'chooseBuildingToBuild':
                     case 'trainStationBuild':
                         this.last_selected['building']="";
-                        console.log(args.allowed_buildings);
                         //mark buildings as selectable
                         for(let i in args.allowed_buildings){
                             const building = args.allowed_buildings[i];
@@ -824,8 +801,6 @@ function (dojo, declare) {
                     break;
                     case 'bonusChoice':
                         const option = Number(args.auction_bonus);
-                        console.log('bonus option: ' + option);
-                         
                         switch (option){
                             case AUCBONUS_WORKER:
                             case AUCBONUS_WORKER_RAIL_ADV:
@@ -883,7 +858,6 @@ function (dojo, declare) {
 
         /*** setup new Round ***/
         setupTiles: function(round_number, auction_tiles) {
-            console.log("r# "+round_number );
             this.roundCounter.setValue(round_number);
             this.showCurrentAuctions(auction_tiles, round_number);
         },
@@ -1037,11 +1011,9 @@ function (dojo, declare) {
          */
         getBidNoFromSlotId: function(bidLoc_divId){
             const split_bid = bidLoc_divId.split("_");
-            console.log( "bidLoc_divId -> " + bidLoc_divId + "split_bid -> " + split_bid);
             const aucNo = Number(split_bid[2]);
             const bid_no = BID_VAL_ARR.indexOf(Number(split_bid[3])) + 1;
             // bids start at 1 
-            console.log( "aucNo -> " + aucNo + " bid_no -> " + bid_no);
             return ((aucNo-1)*10 + bid_no);
         },
 
@@ -1095,7 +1067,6 @@ function (dojo, declare) {
         },
 
         moveBid: function(p_id, bid_loc){
-            console.log('Moving BID:');
             if (bid_loc == OUTBID || bid_loc == NO_BID) {
                 this.moveObject(this.bid_token_divId[p_id], this.bid_zone_divId[ZONE_PENDING]);
             } else if (bid_loc == BID_PASS) {
@@ -1128,13 +1099,10 @@ function (dojo, declare) {
          * if selected is true it will also clear the last_selected[] for this type
          */
         clearSelectable: function(type, selected = false){
-            console.log(`clearing ${type} selectable/selected`);
-            
             const selectables = dojo.query(TYPE_SELECTOR[type]);
             selectables.removeClass('selectable');
             
             if (selected == true && this.last_selected[type] != "" && this.last_selected[type] != null){
-                console.log("clearing selected:"+ this.last_selected[type]);
                 dojo.removeClass(this.last_selected[type], 'selected');
                 this.last_selected[type] = "";
             }
@@ -1147,7 +1115,6 @@ function (dojo, declare) {
          */
         updateSelected: function(type, selected_id) {
             // if not selectable, ignore the call.
-            console.log ('updated selected type: '+type);
             if (!( dojo.hasClass (selected_id, 'selectable')))
             { return; }
             // clear previously selected
@@ -1192,7 +1159,6 @@ function (dojo, declare) {
                 dojo.style( $('btn_more_gold'), 'display', 'inline-block');
                 this.silverCounter.setValue(this.silverCost);
             }
-            console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
             if(this.goldAmount == 0){
                 dojo.addClass( 'btn_less_gold', 'noshow');
                 dojo.addClass( 'pay_gold',      'noshow');
@@ -1217,7 +1183,6 @@ function (dojo, declare) {
                 dojo.addClass( 'btn_more_gold',  'noshow');
                 dojo.style( $('btn_more_gold'), 'display', 'none');
             }
-            console.log ('gold -> '+ this.goldAmount+' silver ->'+this.silverCost);
         },
 
         /****** 
@@ -1248,12 +1213,10 @@ function (dojo, declare) {
         },
         
         onSelectTradeAction: function( evt){
-            console.log( 'onClickOnTradeSlot' );
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
             this.updateSelected('trade', evt.target.id);
             if (dojo.hasClass( evt.target.id ,'selected')){
-                console.log( 'trade is selected' );
                 if (dojo.hasClass(CONFIRM_TRADE_BTN_ID, 'noshow')){
                     dojo.removeClass(CONFIRM_TRADE_BTN_ID, 'noshow');    
                 }
@@ -1374,7 +1337,6 @@ function (dojo, declare) {
         
         onClickOnWorker: function( evt )
         {
-            console.log( 'onClickOnWorker' );
             evt.preventDefault();
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
@@ -1385,7 +1347,6 @@ function (dojo, declare) {
 
         onClickOnWorkerSlot: function( evt )
         {
-            console.log( 'onClickOnWorkerSlot' );
             dojo.stopEvent( evt );
             const target_divId = evt.target.id;
             if (target_divId.startsWith('token_worker')){// call click on worker
@@ -1414,7 +1375,6 @@ function (dojo, declare) {
                     return;
                 }
             }
-            console.log( `target: ${target_divId}` );
             const building_key = Number(target_divId.split('_')[1]);
             const building_slot = Number(target_divId.split('_')[2]);
 
@@ -1467,7 +1427,6 @@ function (dojo, declare) {
         /***** PLAYER BID PHASE *****/
         onClickOnBidSlot: function ( evt ) 
         {
-            console.log( 'onSelectBidSlot' );
             evt.preventDefault();
             dojo.stopEvent( evt );
             var target_divId = evt.target.id;
@@ -1511,7 +1470,6 @@ function (dojo, declare) {
 
         /***** CHOOSE BONUS OPTION *****/
         onSelectBonusOption: function( evt ){
-            console.log( 'onSelectBonusOption' );
             evt.preventDefault();
             dojo.stopEvent( evt );
             if( !dojo.hasClass(evt.target.id,'selectable')){ return; }
@@ -1539,8 +1497,6 @@ function (dojo, declare) {
 
         /***** BUILD BUILDING PHASE *****/
         onClickOnBuilding: function( evt , parent=false){
-            console.log( 'onClickOnBuilding' );
-            console.log( evt);
             evt.preventDefault();
             dojo.stopEvent( evt );
             let target_id = evt.target.id;
@@ -1559,7 +1515,6 @@ function (dojo, declare) {
         chooseBuilding: function () {
             if (this.checkAction( 'buildBuilding')){
                 const building_divId = this.last_selected['building'];
-                console.log(building_divId);
                 if (building_divId == "") {
                     this.showMessage( _("You must select 1 building"), 'error' );
                     return;
@@ -1779,7 +1734,6 @@ function (dojo, declare) {
        
         setupNotifications: function(cancel_move_ids)
         {
-            console.log ( 'notifications subscriptions setup' );
             var notifs = [
                 ['autoPay', 50],
                 ['buildBuilding', 1000],
@@ -1966,15 +1920,12 @@ function (dojo, declare) {
         },
 
         notif_updateAuction: function( notif ) {
-            console.log ( 'notif_updateAuction' );
-            console.log ( notif );
             if (notif.args.state == 'discard') {
                 this.clearAuction(notif.args.auction_no);
                 const bid_token = dojo.query(`[id^="bid_slot_${notif.args.auction_no}"] [id^="token_bid"]`);
                 for(let i in bid_token){// THIS NEEDS TO BE UPDATED TO REMOVE FROM CURRENT ZONE.
                     if (bid_token[i].id != null){
-                        const bid_color = bid_token[i].id.split('_')[2];
-                        //console.log("bid color to move: "+bid_color);
+                        const bid_color = bid_token[i].id.split('_')[2];                        
                         for(let p_id in this.player_color){
                             if (p_id == DUMMY_OPT) continue;
                             if (this.player_color[p_id] == bid_color){
@@ -1995,28 +1946,21 @@ function (dojo, declare) {
         },
 
         notif_updateBuildingStocks: function ( notif ){
-            console.log ( 'notif_updateBuildings' );
             this.updateBuildingStocks(notif.args.buildings);
             this.showHideButtons();
         },
 
         notif_workerMoved: function( notif ){
-            console.log ( 'notif_workerMoved' );
-            console.log ( notif );
             const worker_divId = 'token_worker_'+Number(notif.args.worker_key);
             this.moveObject(worker_divId, this.building_worker_ids[Number(notif.args.building_key)][Number(notif.args.building_slot)]);
         },
 
         notif_railAdv: function( notif ){
-            console.log ('notif_railAdv');
-            console.log ( notif );
             const train_token = this.train_token_divId[notif.args.player_id];
             this.moveObject(train_token, `train_advancement_${notif.args.rail_destination}`);
         }, 
 
         notif_gainWorker: function( notif ){
-            console.log ('notif_gainWorker');
-            console.log ( notif );
             const worker_divId = `token_worker_${notif.args.worker_key}`;
             dojo.place(this.format_block( 'jptpl_worker', {id: notif.args.worker_key}), this.token_zone[notif.args.player_id] );
             if (notif.args.player_id == this.player_id){
@@ -2028,13 +1972,10 @@ function (dojo, declare) {
         },
 
         notif_gainTrack: function( notif ){
-            console.log ('notif_gainTrack');
-            console.log ( notif );
-            
             dojo.place(this.format_block( 'jptpl_track', 
                     {id: Number(notif.args.track_key), color: this.player_color[Number(notif.args.player_id)]}),
                     this.token_divId[Number(notif.args.player_id)]);
-            
+            this.addTooltipHtml(`token_track_${notif.args.track_key}`, this.res_info['track']['tt']);
             if (notif.args.tradeAway_arr != null){
                 var destination = this.getTargetFromNotifArgs(notif);
                 const player_zone_divId = `player_board_${notif.args.player_id}`;
@@ -2050,13 +1991,10 @@ function (dojo, declare) {
         },
 
         notif_moveBid: function( notif ){
-            console.log ('notif_moveBid');
-            console.log ( notif );
             this.moveBid(notif.args.player_id, notif.args.bid_location);
         },
 
         notif_moveFirstPlayer: function (notif ){
-            console.log ('notif_moveFirstPlayer');
             const p_id = Number(notif.args.player_id);
             const tile_id = FIRST_PLAYER_ID;
             if (p_id != this.first_player){
@@ -2072,21 +2010,15 @@ function (dojo, declare) {
         },
 
         notif_buildBuilding: function( notif ){
-            console.log ('notif_buildBuilding');
-            //console.log ( notif ); 
-
             this.addBuildingToPlayer(notif.args.building);
             this.updateScoreForBuilding(notif.args.player_id, notif.args.building.b_id);
             
             var destination = `${TPL_BLD_TILE}_${Number(notif.args.building.b_key)}`; 
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             var delay = 0;
-            //console.log(notif.args.resource_arr);
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
-                //console.log(`${type}: ${amt} `);
                 for(let i = 0; i < amt; i++){
-                    //console.log("sending token '"+type+"' to '"+ destination+ "'");
                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(-1);
@@ -2096,14 +2028,10 @@ function (dojo, declare) {
         },
 
         notif_playerIncome: function( notif ){
-            console.log ('notif_playerIncome');
-            //console.log ( notif );
-
             var start = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
-                console.log(`sending token '${notif.args.type}' from '${start}' to '${player_zone_divId}'`);
-                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr)}), 'limbo', start , player_zone_divId , 500 , 100*i );
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr)}), 'limbo', start , player_zone_divId , 500 , 100*i );
                 if (notif.args.player_id == this.player_id){
                     if (VP_TOKENS.includes(notif.args.typeStr)){
                         this.resourceCounters['vp'].incValue(Number(notif.args.typeStr.charAt(2)));    
@@ -2116,9 +2044,6 @@ function (dojo, declare) {
         },
 
         notif_playerIncomeGroup: function( notif ){
-            console.log ('notif_playerIncomeGroup');
-            console.log ( notif );
-
             var start = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             var delay = 0;
@@ -2137,10 +2062,7 @@ function (dojo, declare) {
             }
         },
 
-        notif_playerPayment: function( notif ){
-            console.log ('notif_playerPayment');
-            //console.log ( notif);
-            
+        notif_playerPayment: function( notif ){         
             var destination = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             for(let i = 0; i < notif.args.amount; i++){
@@ -2152,19 +2074,13 @@ function (dojo, declare) {
         },
 
         notif_playerPaymentGroup: function( notif ){
-            console.log ('notif_playerPaymentGroup');
-            console.log ( notif );
-
             var destination = this.getTargetFromNotifArgs(notif);
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             var delay = 0;
-            console.log(notif.args.resource_arr);
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
-                console.log(`${type}: ${amt} `);
-                for(let i = 0; i < amt; i++){
-                    console.log("sending token '"+type+"' to '"+ destination+ "'");
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                                for(let i = 0; i < amt; i++){
+                                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
                     if (notif.args.player_id == this.player_id){
                         this.resourceCounters[type].incValue(-1);
                     }
@@ -2173,9 +2089,7 @@ function (dojo, declare) {
         },
 
         notif_trade: function( notif ){
-            console.log ('notif_trade');
             const player_zone = `player_board_${notif.args.player_id}`;
-
             var delay = 0;
             for(let type in notif.args.tradeAway_arr){
                 let amt = notif.args.tradeAway_arr[type];
@@ -2205,9 +2119,6 @@ function (dojo, declare) {
         },
 
         notif_loanPaid: function( notif ){
-            console.log ('notif_loanPaid');
-            console.log (notif);
-
             const player_board_div = `player_board_${notif.args.player_id}`;
             var destination = this.getTargetFromNotifArgs(notif);
             this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , player_board_div, destination,  500 , 0 );
@@ -2232,8 +2143,6 @@ function (dojo, declare) {
         },
 
         notif_loanTaken: function( notif ){
-            console.log ('notif_loanTaken');
-
             const player_zone_divId = `player_board_${notif.args.player_id}`;
             this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', player_zone_divId,  500 , 0 );
             this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 100);
@@ -2246,8 +2155,6 @@ function (dojo, declare) {
         },
 
         notif_score: function( notif ){
-            console.log ('notif_score');
-            console.log (notif.args);
             if (this.isTop == false){
                 this.isTop = true;
                 this.moveObject('player_zones', 'main_container', 'before');
@@ -2256,7 +2163,6 @@ function (dojo, declare) {
             this.scoreCtrl[p_id].setValue(0);
             for(let b_key in notif.args.building){
                 const building = notif.args.building[b_key];
-                console.log (b_key, building);
                 var bld_score = 0;
                 if (Number(building.static) >0){
                     bld_score += Number(building.static);
@@ -2271,16 +2177,12 @@ function (dojo, declare) {
             dojo.place(`<div id="score_grid_${p_id}" class="score_grid"></div>`, player_zone_divId);
             for(let type in notif.args.resource){
                 const amt = notif.args.resource[type];
-                console.log (type, amt);
                 this.scoreCtrl[p_id].incValue(amt);
                 this.displayScoring( `score_grid_${p_id}`, this.player_color[p_id], amt, 2000 );
             }
         },
 
         notif_cancel: function( notif ){
-            console.log ("notif_cancel");
-            console.log (notif.args);
-
             let p_id = notif.args.player_id;
             const isThisPlayer = p_id== this.player_id;
             const player_zone = `player_board_${p_id}`;
@@ -2304,7 +2206,6 @@ function (dojo, declare) {
                         }
                     break;
                     case 'gainWorker':
-                        console.log ('gainWorker');
                         this.fadeOutAndDestroy(`token_worker_${log.w_key}`);
                     break;
                     case 'gainTrack':
@@ -2359,7 +2260,6 @@ function (dojo, declare) {
                         }
                     break;
                     case 'updateResource':
-                        console.log ('updateResource');
                         if (log.amt < 0){
                             for(let j = 0; j < Math.abs(log.amt); j++){
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:log.type}), 'limbo' , player_zone, 'board', 500 , 50*(delay++) );
