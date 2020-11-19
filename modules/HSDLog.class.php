@@ -324,6 +324,7 @@ class HSDLog extends APP_GameClass
               }
             }
             $this->game->setGameStateValue('last_building', 0);
+            $this->game->setGameStateValue('building_bonus', 0);
             $js_update_arr[] = array('action'=>'build', 'building'=>$building, 'cost'=>$cost);
             $building_score = $this->game->Building->getBuildingScoreFromKey($b_key);
             $this->game->Score->dbIncScore($p_id, -$building_score);

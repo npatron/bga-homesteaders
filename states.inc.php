@@ -220,8 +220,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stEndBuildRound",
         "updateGameProgression" => true,
-        "transitions" => array( "undoTurn"     => STATE_PAY_AUCTION,
-                                "endRound"     => STATE_END_ROUND, 
+        "transitions" => array( "endRound"     => STATE_END_ROUND, 
                                 "nextBuilding" => STATE_NEXT_BUILDING )
     ),
     

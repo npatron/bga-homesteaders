@@ -80,8 +80,6 @@ class HSDAuction extends APP_GameClass
     function discardAuctionTile(){
         $auction_no = $this->game->getGameStateValue( 'current_auction' );
         $round_number = $this->game->getGameStateValue( 'round_number' );
-        $this->game->notifyAllPlayers( "updateAuction", _( 'discard ${auction}' ), 
-                array('auction'=> array('str'=>'AUCTION '.$auction_no, 'key'=>$auction_no), 'auction_no'=>$auction_no, 'state'=>'discard') );
         $sql = "UPDATE `auctions` SET `location`='".AUC_LOC_DISCARD."' WHERE `location` = '$auction_no' AND position = '$round_number'";
         $this->game->DbQuery( $sql);
     }

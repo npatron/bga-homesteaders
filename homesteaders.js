@@ -664,6 +664,9 @@ function (dojo, declare) {
                     this.hideUndoTransactionsButtonIfPossible();
                     this.disableTradeIfPossible();
                     break;
+                case 'endBuildRound':
+                    this.clearAuction();
+                    break;
                 case 'getRailBonus':
                     this.clearSelectable('bonus', true);
                     const active_train = this.train_token_divId[this.getActivePlayerId()];
@@ -910,13 +913,27 @@ function (dojo, declare) {
         /**
          * The plan is for this to be called after each auction tile is resolved (building & bonuses)
          * it should remove the auction tile at auction_no, so that it is clear what state we are at. 
-         * @param {Number} auction_no 
          */
-        clearAuction: function(auction_no){
-            const auc_id = dojo.query(`#${TPL_AUC_ZONE}${auction_no} .auction_tile`)[0].id;
+        clearAuction: function(){
+            const auc_id = dojo.query(`#${TPL_AUC_ZONE}${this.current_auction} .auction_tile`)[0].id;
             if (auc_id != null){
                 dojo.destroy(auc_id);
             }
+
+            const bid_token = dojo.query(`[id^="bid_slot_${this.current_auction}"] [id^="token_bid"]`);
+            for(let i in bid_token){
+                if (bid_token[i].id != null){
+                    const bid_color = bid_token[i].id.split('_')[2];                        
+                    for(let p_id in this.player_color){
+                        if (p_id == DUMMY_OPT) continue;
+                        if (this.player_color[p_id] == bid_color){
+                            this.moveBid(p_id, BID_PASS);
+                        }
+                    }
+                }
+            }
+            if (this.current_auction < this.number_auctions){ this.current_auction++;}
+            else { this.current_auction = 1; }
         },
 
         /***** building utils *****/
@@ -1919,30 +1936,7 @@ function (dojo, declare) {
             }
         },
 
-        notif_updateAuction: function( notif ) {
-            if (notif.args.state == 'discard') {
-                this.clearAuction(notif.args.auction_no);
-                const bid_token = dojo.query(`[id^="bid_slot_${notif.args.auction_no}"] [id^="token_bid"]`);
-                for(let i in bid_token){// THIS NEEDS TO BE UPDATED TO REMOVE FROM CURRENT ZONE.
-                    if (bid_token[i].id != null){
-                        const bid_color = bid_token[i].id.split('_')[2];                        
-                        for(let p_id in this.player_color){
-                            if (p_id == DUMMY_OPT) continue;
-                            if (this.player_color[p_id] == bid_color){
-                                this.moveBid(p_id, BID_PASS);
-                            }
-                        }
-                    }
-                }
-                if (notif.args.auction_no < this.number_auctions){ this.current_auction++;   }
-                else                                             { this.current_auction = 1; }
-            } else if (notif.args.state == 'show'){
-                this.setupCurrentAuctions(notif.auctions);
-                for (let p_id in this.player_color){
-                    if(p_id = DUMMY_OPT) continue;
-                    this.moveBid(p_id, NO_BID);
-                }
-            }
+        notif_updateAuction: function( ) {
         },
 
         notif_updateBuildingStocks: function ( notif ){

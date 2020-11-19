@@ -1171,11 +1171,11 @@ div#trade_bank_trade_silver{
 }
 .slot_1_1 {
    bottom: 10px;
-   left: 9px;
+   left: 14px;
 }
 .slot_1_2 {
    bottom: 8px;
-   left: 64px;
+   left: 68px;
 }
 .slot_2_1 {
    bottom: 9px;
@@ -1234,7 +1234,7 @@ div#trade_bank_trade_silver{
    left: 28px;
    width: 70px;
    display: grid;
-   grid-template-rows: 20px 20px;
+   grid-template-columns   : 20px 20px;
 }
 .slot_23_1 {
    bottom: 48px;

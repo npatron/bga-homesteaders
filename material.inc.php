@@ -480,7 +480,7 @@ $this->building_info = array(
               INCOME.CENTER_DIV.WORKER_HTML._(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
-    'cost' => array('steel'=>1),
+    'cost' => array('steel'=>2),
     'vp'   => 1,
     'slot' => 1,
     's1'   => array('vp2'=>1),

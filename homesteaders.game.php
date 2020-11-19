@@ -369,7 +369,7 @@ class homesteaders extends Table
         $bid_cost = $this->Bid->getBidCost($act_p_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
         $auc_no = $this->getGameStateValue('current_auction');
-        $this->Resource->pay($act_p_id, $bid_cost, $gold, "AUCTION ".$auc_no, $auc_no);
+        $this->Resource->pay($act_p_id, $bid_cost, $gold, _("auction ").$auc_no, $auc_no);
         if ($this->Auction->doesCurrentAuctionHaveBuildPhase()){
             $this->gamestate->nextstate( 'build' );
         } else {
@@ -431,7 +431,7 @@ class homesteaders extends Table
             $this->Resource->addWorker($act_p_id, _('auction bonus'));
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
             $auc_no = $this->getGameStateValue( 'current_auction');
-            $this->Resource->getRailAdv( $act_p_id, "AUCTION ".$auc_no, 'auction', $auc_no );
+            $this->Resource->getRailAdv( $act_p_id, _("auction ").$auc_no, 'auction', $auc_no );
             $this->gamestate->nextState( 'railBonus' );
         } else {
             throw new BgaVisibleSystemException ( _("Free Hire Worker called, but auction bonus is ").$auction_bonus );
@@ -451,7 +451,7 @@ class homesteaders extends Table
             else $tradeForType = 'vp4';
         }
         $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, array($tradeAwayType=>1), array($tradeForType=>1), "AUCTION ".$auc, 'auction', $auc);
+        $this->Resource->specialTrade($act_p_id, array($tradeAwayType=>1), array($tradeForType=>1), _("auction ").$auc, 'auction', $auc);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -467,7 +467,7 @@ class homesteaders extends Table
         if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV) {
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
             $auc_no = $this->getGameStateValue('current_auction');
-            $this->Resource->getRailAdv( $act_p_id, "AUCTION ".$auc_no, 'auction', $auc_no );
+            $this->Resource->getRailAdv( $act_p_id, _("auction ").$auc_no, 'auction', $auc_no );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
