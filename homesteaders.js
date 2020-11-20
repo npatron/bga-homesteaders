@@ -1873,6 +1873,10 @@ function (dojo, declare) {
                         let color = ASSET_COLORS[Number(args.building_name.type)];
                         args.building_name = this.format_block('jstpl_color_log', {string:args.building_name.str, color:color});
                     }
+                    if (args.amount != null && typeof(args.amount) == string){
+                        let color = ASSET_COLORS[Number(args.auction.key)+10];
+                        args.amount = this.format_block('jstpl_color_log', {string:args.amount, color:color});
+                    }
                     // this will always set `args.auction` (allowing it to be used in the Title)
                     if (args.auction != null && typeof (args.auction) != 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];

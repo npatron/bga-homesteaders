@@ -156,7 +156,7 @@ class HSDBid extends APP_GameClass
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
                 'amount' => $amt,
-                'auction' => array('str'=>'AUCTION '.$auc, 'key'=> $auc),
+                'auction' => array('str'=>'auction '.$auc, 'key'=> $auc),
                 'bid_location'=> $bid_loc) );
         $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`='$bid_loc', `outbid`='0' WHERE `player_id`='$p_id'");
     }
