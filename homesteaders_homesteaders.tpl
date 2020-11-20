@@ -17,6 +17,9 @@
         <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
             <span id='auc_future' class="font bold">{SHOW} </span><span class="font bold"> {FUTURE_AUCTION}</span>
         </a>
+        <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
+            <span id="bld_main" class="font bold">{HIDE} </span><br><span class="font bold"> {MAIN_BUILDING}</span>
+        </a>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
             <span id="bld_discard" class="font bold">{SHOW} </span><br><span class="font bold"> {BUILDING_DISCARD}</span>
         </a>

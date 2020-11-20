@@ -43,6 +43,8 @@
         $round_number = $this->game->getGameStateValue('round_number');
         $this->tpl['ROUND_NUMBER'] = $round_number;
         $this->tpl['SHOW']             = _("Show");
+        $this->tpl['HIDE']             = _("Hide");
+        $this->tpl['MAIN_BUILDING']    = _("Current Buildings");
         $this->tpl['FUTURE_AUCTION']   = _("Auctions");
         $this->tpl['CONFIRM_TRADE']    = _("Confirm Trade");
         $this->tpl['UNDO_TRADE']       = _("Undo Transctions");

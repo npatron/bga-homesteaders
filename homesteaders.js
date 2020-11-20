@@ -104,6 +104,7 @@ function (dojo, declare) {
     const BLD_CIRCUS        = 34;
     const BLD_RAIL_YARD     = 35;
 
+    const AUC_LOC_FUTURE = 2;
     // string templates for dynamic assets
     const TPL_BLD_TILE = "building_tile";
     const TPL_BLD_STACK = "building_stack_";
@@ -114,12 +115,17 @@ function (dojo, declare) {
     const FIRST_PLAYER_ID = 'first_player_tile';
     const CONFIRM_TRADE_BTN_ID = 'confirm_trade_btn';
     const UNDO_TRADE_BTN_ID = 'undo_trades_btn';
-    const PAYMENT_SECTION_ID = 'payment_section';
+
+    // arrays for the map between toggle buttons and show/hide zones 
+    const TOGGLE_BTN_ID     = ['tgl_future_bld', 'tgl_main_bld', 'tgl_future_auc', 'tgl_past_bld'];
+    const TOGGLE_BTN_STR_ID = ['bld_future', 'bld_main', 'auc_future', 'bld_discard'];
+    const TILE_CONTAINER_ID = ['future_building_container', 'main_building_container', 'future_auction_container', 'past_building_container'];
+    const TILE_ZONE_DIVID   = ['future_building_zone', 'main_building_zone', 'future_auction_1', 'past_building_zone'];
+    
     const TRADE_BOARD_ID = 'trade_board';
     const TYPE_SELECTOR = {'bid':'.bid_slot', 'bonus':'.train_bonus', 'worker_slot':'.worker_slot',
     'building':'.building_tile', 'worker':'.token_worker', 'trade':'.trade_option'};
-    const BUILDING_ZONE_DIVID = ['future_building_zone', 'main_building_zone', 'future_auction_container', 'past_building_zone'];
-
+    
 
     // other Auction Locations are the auction number (1-3).
     const AUCLOC_DISCARD = 0;
@@ -540,13 +546,20 @@ function (dojo, declare) {
          * and then call the method that will show/hide them based upon if those areas have buildings/auctions in them.
          */
         setupShowButtons: function(){
-            // future auctions (don't need to do anything)
-            dojo.connect($(`tgl_future_auc`), 'onclick', this, 'toggleShowAuctions');
-            // discard buildings
-            dojo.connect($(`tgl_past_bld`),  'onclick', this, 'toggleShowBldDiscard');
-            // future buildings 
-            dojo.connect($(`tgl_future_bld`),  'onclick', this, 'toggleShowBldFuture');
+            dojo.connect($(TOGGLE_BTN_ID[AUC_LOC_FUTURE]), 'onclick', this, 'toggleShowAuctions');
+            dojo.connect($(TOGGLE_BTN_ID[BLD_LOC_OFFER]), 'onclick', this, 'toggleShowBldMain');
+            dojo.connect($(TOGGLE_BTN_ID[BLD_LOC_DISCARD]),  'onclick', this, 'toggleShowBldDiscard');
+            dojo.connect($(TOGGLE_BTN_ID[BLD_LOC_FUTURE]),  'onclick', this, 'toggleShowBldFuture');
             this.showHideButtons();
+        },
+
+        showHideToggleButton: function(index, tileId = TPL_BLD_TILE){
+            let tile_count = dojo.query(`#${TILE_ZONE_DIVID[index]} .${tileId}`);
+            if (tile_count.length == 0){
+                dojo.addClass(TOGGLE_BTN_ID[index], 'noshow');
+            } else if (dojo.hasClass(TOGGLE_BTN_ID[index], 'noshow')){
+                dojo.removeClass(TOGGLE_BTN_ID[index], 'noshow');
+            }
         },
 
         /**
@@ -554,31 +567,14 @@ function (dojo, declare) {
          *   the future auctions button
          *   the building discard button
          *   the future building button
+         *   the Main building button
          * such that if the areas have building tiles or auction tiles in them, they will be shown.
          */
         showHideButtons: function(){
-            let future_auctions = dojo.query(`.future_auction_zone .${TPL_AUC_TILE}`);
-            if (future_auctions.length == 0){
-                dojo.addClass('tgl_future_auc', 'noshow');
-            } else if (dojo.hasClass('tgl_future_auc', 'noshow')){
-                dojo.removeClass('tgl_future_auc', 'noshow');
-            }
-            let discard_buildings = dojo.query(`#${BUILDING_ZONE_DIVID[BLD_LOC_DISCARD]} .${TPL_BLD_TILE}`);
-            if (discard_buildings.length == 0){
-                dojo.addClass('tgl_past_bld', 'noshow');
-            } else if (dojo.hasClass('tgl_past_bld', 'noshow')){
-                dojo.removeClass('tgl_past_bld', 'noshow');
-            }
-            let future_buildings = dojo.query(`#${BUILDING_ZONE_DIVID[BLD_LOC_FUTURE]} .${TPL_BLD_TILE}`);
-            if (future_buildings.length == 0){
-                dojo.addClass('tgl_future_bld', 'noshow');
-            } else if (dojo.hasClass('tgl_future_bld', 'noshow')){
-                dojo.removeClass('tgl_future_bld', 'noshow');
-            }
-            let main_buildings = dojo.query(`#${BUILDING_ZONE_DIVID[BLD_LOC_OFFER]} .${TPL_BLD_TILE}`);
-            if (main_buildings.length == 0){ // for final round when main buildingZone is empty.
-                dojo.addClass('main_building_container', 'noshow');
-            } 
+            this.showHideToggleButton(AUC_LOC_FUTURE, TPL_AUC_TILE);
+            this.showHideToggleButton(BLD_LOC_DISCARD);
+            this.showHideToggleButton(BLD_LOC_FUTURE);
+            this.showHideToggleButton(BLD_LOC_OFFER);
         },
 
         ///////////////////////////////////////////////////
@@ -720,6 +716,7 @@ function (dojo, declare) {
                         this.addTradeLoanButtons();
                     break;
                     case 'dummyPlayerBid'://2-player dummy bid phase
+                        this.last_selected['bid'] = '';
                         for (let bid_key in args.valid_bids) {
                             const bid_slot_id = this.getBidLocDivIdFromBidNo(args.valid_bids[bid_key]);
                             dojo.addClass(bid_slot_id, "selectable" );
@@ -727,6 +724,7 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_confirm', _('Confirm Dummy Bid'), 'confirmDummyBidButton' );
                     break;
                     case 'playerBid':
+                        this.last_selected['bid'] = '';
                         for (let bid_key in args.valid_bids) {// mark bid_slots as selectable
                             const bid_slot_id = this.getBidLocDivIdFromBidNo(args.valid_bids[bid_key]);
                             dojo.addClass(bid_slot_id, "selectable" );
@@ -771,6 +769,7 @@ function (dojo, declare) {
                     break;
                     case 'chooseBuildingToBuild':
                     case 'trainStationBuild':
+                        this.showTileZone(BLD_LOC_OFFER);
                         this.last_selected['building']="";
                         //mark buildings as selectable
                         for(let i in args.allowed_buildings){
@@ -945,7 +944,7 @@ function (dojo, declare) {
                 return;
             }
             if ($(b_divId) != null){ // if element already exists, just move it.
-                const wasInMain = (dojo.query( `#${BUILDING_ZONE_DIVID[BLD_LOC_OFFER]} #${b_divId}`).length == 1);
+                const wasInMain = (dojo.query( `#${TILE_ZONE_DIVID[BLD_LOC_OFFER]} #${b_divId}`).length == 1);
                 if (wasInMain){
                     this.moveObject(`${TPL_BLD_TILE}_${b_key}`, this.player_building_zone_id[building.p_id]);
                     dojo.disconnect(this.b_connect_handler[b_key]);
@@ -967,7 +966,7 @@ function (dojo, declare) {
 
         addBuildingToOffer: function(building, b_info = null){
             const b_divId = `${TPL_BLD_TILE}_${building.b_key}`;
-            const b_loc = BUILDING_ZONE_DIVID[building.location];
+            const b_loc = TILE_ZONE_DIVID[building.location];
             if (document.querySelector(`#${b_loc} #${b_divId}`) != null){ 
                 return; //if already correct, do nothing.
             }
@@ -990,7 +989,7 @@ function (dojo, declare) {
             if (this.main_building_counts[b_id] == 0 || this.main_building_counts[b_id] == null){ // make the zone if missing
                 const b_order = (30*Number(building.b_type)) + Number(b_id);
                 dojo.place(this.format_block( 'jstpl_building_stack', 
-                {id: b_id, order: b_order}), BUILDING_ZONE_DIVID[building.location]);
+                {id: b_id, order: b_order}), TILE_ZONE_DIVID[building.location]);
                 this.main_building_counts[b_id] = 0;
             }
         },
@@ -1278,41 +1277,51 @@ function (dojo, declare) {
             }
         },
 
-        /** Show Future/Discard piles */
+        /** Show/Hide Tile Zones */
+        toggleShowButton: function (index){
+            if(dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
+                this.showTileZone(index);
+            } else {
+                this.hideTileZone(index);
+            }
+        },
+        
+        hideTileZone: function(index){
+            if (!dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
+                $(TOGGLE_BTN_STR_ID[index]).innerText = _('Show');
+                dojo.addClass(TILE_CONTAINER_ID[index], 'noshow');
+            }
+        },
+
+        showTileZone: function(index){
+            if(dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
+                $(TOGGLE_BTN_STR_ID[index]).innerText = _('Hide');
+                dojo.removeClass(TILE_CONTAINER_ID[index], 'noshow');
+            }
+        },
+
         toggleShowAuctions: function( evt ){
             evt.preventDefault();
             dojo.stopEvent( evt );
-            if(dojo.hasClass('future_auction_container','noshow')){
-                $('auc_future').innerText = _('Hide');
-                dojo.removeClass('future_auction_container', 'noshow');
-            } else {
-                $('auc_future').innerText = _('Show');
-                dojo.addClass('future_auction_container', 'noshow');
-            }
+            this.toggleShowButton(AUC_LOC_FUTURE);
+        },
+
+        toggleShowBldMain: function (evt ){
+            evt.preventDefault();
+            dojo.stopEvent( evt );
+            this.toggleShowButton(BLD_LOC_OFFER);
         },
 
         toggleShowBldDiscard: function( evt ){
             evt.preventDefault();
             dojo.stopEvent( evt );
-            if(dojo.hasClass('past_building_container','noshow')){
-                $('bld_discard').innerText = _('Hide');
-                dojo.removeClass('past_building_container','noshow');
-            } else {
-                $('bld_discard').innerText = _('Show');
-                dojo.addClass('past_building_container','noshow');
-            }
+            this.toggleShowButton(BLD_LOC_DISCARD);
         },
 
         toggleShowBldFuture: function( evt ){
             evt.preventDefault();
             dojo.stopEvent( evt );
-            if(dojo.hasClass('future_building_container','noshow')){
-                $('bld_future').innerText = _('Hide');
-                dojo.removeClass('future_building_container','noshow');
-            } else {
-                $('bld_future').innerText = _('Show');
-                dojo.addClass('future_building_container','noshow');
-            }
+            this.toggleShowButton(BLD_LOC_FUTURE);
         },
 
         /***** PLACE WORKERS PHASE *****/
