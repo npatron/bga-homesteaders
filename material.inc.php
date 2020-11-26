@@ -34,6 +34,7 @@ $this->resource_map = array(
 
 $this->special_resource_map = array(
   'vp2' => array('vp'=>2),
+  'vp3' => array('vp'=>3),
   'vp4' => array('vp'=>4),
   'vp6' => array('vp'=>6),
   'vp8' => array('vp'=>8),
@@ -44,8 +45,9 @@ $this->resource_info = array(
     'name'   => _("Silver"),
     'db_int' => SILVER,
     'tt'     => "<span class='score_token score_silver tt'></span>".
-    CENTER_DIV._("Silver:")."<br>".
-            _("Used to pay ").WORKER_HTML."<br>"._("and to pay for Auction costs"),
+            CENTER_DIV._("Silver:")."<br>".
+            _("Used to pay ").WORKER_HTML."<br>".
+            _("and to pay for Auction costs").END_DIV,
   ),
   'workers' => array(
     'name'   => _("Worker"),
@@ -57,20 +59,21 @@ $this->resource_info = array(
   'track' => array(
     'name'   => _("Railroad Track"),
     'db_int' => TRACK,
-    'tt'     => CENTER_DIV._("Track:")."<br>"._(" Produces ").SILVER_HTML._(" each round").END_DIV,
+    'tt'     => TRACK_HTML.CENTER_DIV._("Track:")."<br>".
+                _(" Produces ").SILVER_HTML._(" each round").END_DIV,
   ),
   'wood' => array(
     'name'   => _("Wood"),
     'db_int' => WOOD,
     'tt'     => "<div class='score_token score_wood tt'></div>".
-    CENTER_DIV._("Wood:")."<br>".
+            CENTER_DIV._("Wood:")."<br>".
             _(" Required to build some buildings").END_DIV,
   ),
   'food' => array(
     'name'   => _("Food"),
     'db_int' => FOOD,
     'tt'     => "<div class='score_token score_food tt'></div>".
-    CENTER_DIV._("Food:")."<br>".
+            CENTER_DIV._("Food:")."<br>".
             _(" Required to build some buildings")."<br>".
             _(" Used to Hire new ").WORKER_HTML.END_DIV,
   ),
@@ -78,14 +81,14 @@ $this->resource_info = array(
     'name'   => _("Steel"),
     'db_int' => STEEL,
     'tt'     => "<div class='score_token score_steel tt'></div>".
-    CENTER_DIV._("Steel:")."<br>".
+              CENTER_DIV._("Steel:")."<br>".
               _(" Required to build some buildings").END_DIV,
   ),
   'gold' => array(
     'name'   => _("Gold"),
     'db_int' => GOLD,
     'tt'     => "<div class='score_token score_gold tt'></div>".
-    CENTER_DIV._("Gold:")."<br>"._(" Required to build some buildings")."<br>".
+            CENTER_DIV._("Gold:")."<br>"._(" Required to build some buildings")."<br>".
             _("Can be used to pay Workers / Auction costs(as 5 silver)")."<br>".
             _("End: Worth ").VP2_HTML.END_DIV,
   ),
@@ -93,7 +96,7 @@ $this->resource_info = array(
     'name'   => _("Copper"),
     'db_int' => COPPER,
     'tt'     => "<div class='score_token score_copper tt'></div>".
-    CENTER_DIV._("Copper:")."<br>".
+              CENTER_DIV._("Copper:")."<br>".
                 _(" Required to build some buildings")."<br>".
                 _("End: Worth ").VP2_HTML.END_DIV,
   ),
@@ -101,7 +104,7 @@ $this->resource_info = array(
     'name'   => _("Livestock"),
     'db_int' => COW,
     'tt'     => '<div class="score_token score_cow tt"></div>'.
-    CENTER_DIV._("Livestock:")."<br>".
+                CENTER_DIV._("Livestock:")."<br>".
                 _(" Required to build some buildings")."<br>".
                 _("End: Worth ").VP2_HTML.END_DIV,
   ),
@@ -402,7 +405,7 @@ $this->building_info = array(
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('steel'=>1),
     'vp'   => 2,
-    'inc'  => array('VP'=>1),
+    'inc'  => array('vp'=>1),
     'amt'  => 2,
     'on_b' => BUILD_BONUS_WORKER,
    ),
@@ -596,8 +599,10 @@ $this->building_info = array(
     'name' => _("Train Station"),
     'tt'   => IND_SPAN._("Train Station").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
               COST. WOOD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built: gain ").FULL_TRACK_HTML.END_DIV.
-              CENTER_DIV._(" & you may build another")."<br>"._("building of ").A_HTML._("type").END_DIV.INCOME,
+              CENTER_DIV._(" When Built: gain ").TRACK_HTML."<br>".
+              _(" & you may build another")."<br>".
+              _("building of ").A_HTML.
+              _("type").END_DIV.INCOME,
     'stage'=> STAGE_CITY,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('wood'=>1,'copper'=>1),

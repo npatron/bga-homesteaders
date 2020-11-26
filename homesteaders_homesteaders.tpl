@@ -168,8 +168,8 @@ var jstpl_pay_button = '<span id="pay_gold" class="noshow useFont">0</span> \
  <span id="pay_gold_tkn" class="noshow log_gold token_inline"></span> \
  <span id="pay_silver" class="useFont">0</span> \
 <span id="pay_silver_tkn" class="log_silver token_inline"></span>';
-var jstpl_color_log = '<span class="font bold ${color}">${string}</span>';
-var jstpl_color_number_log = '<span class="font bold ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
+var jstpl_color_log = '<span class="font ${color}">${string}</span>';
+var jstpl_color_number_log = '<span class="font ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
 var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';

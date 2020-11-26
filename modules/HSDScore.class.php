@@ -166,8 +166,7 @@ class HSDScore extends APP_GameClass
         $counts[VP_B_WORKER] = $this->game->getUniqueValueFromDB("SELECT `workers` FROM `resources` WHERE `player_id`='$p_id'");
         $counts[VP_B_TRACK] = $this->game->getUniqueValueFromDB("SELECT `track` FROM `resources` WHERE `player_id`='$p_id'");
         $counts[VP_B_BUILDING] = count($p_buildings);
-        $counts[VP_B_WRK_TRK] = $counts[VP_B_TRACK] +$counts[VP_B_WORKER];
-
+        
         $this->game->setStat($counts[VP_B_BUILDING],    'buildings', $p_id);
         $this->game->setStat($counts[TYPE_RESIDENTIAL], 'residential', $p_id);
         $this->game->setStat($counts[TYPE_COMMERCIAL],  'industrial', $p_id);
@@ -183,9 +182,19 @@ class HSDScore extends APP_GameClass
             $vps['static']+= $b_static_vp;
             if (array_key_exists('vp_b',$this->game->building_info[$b_id])){
                 $vp_index = $this->game->building_info[$b_id]['vp_b'];
-                $vps['bonus'] += $counts[$vp_index];
-                $this->game->setStat($counts[$vp_index], "bonus_vp_${b_id}", $p_id);
-                $vps_b[$b_key] = array('bonus'=>$counts[$vp_index], 'static'=>$b_static_vp);
+                if ($vp_index == VP_B_WRK_TRK){
+                    $vps['bonus'] += $counts[4];
+                    $this->game->incStat($counts[4], "bonus_vp_4", $p_id);
+                    $vps['bonus'] += $counts[5];
+                    $this->game->incStat($counts[5], "bonus_vp_5", $p_id);
+                    $vps_b[$b_key] = array('bonus'=>$counts[4]+ $counts[5], 'static'=>$b_static_vp);
+
+                } else {
+                    $vps['bonus'] += $counts[$vp_index];
+                    $this->game->incStat($counts[$vp_index], "bonus_vp_$vp_index", $p_id);
+                    $vps_b[$b_key] = array('bonus'=>$counts[$vp_index], 'static'=>$b_static_vp);
+                }
+                
             } else {
                 $vps_b[$b_key] = array('static'=>$b_static_vp);
             }

@@ -51,7 +51,6 @@ class homesteaders extends Table
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
             "last_building"     => 19,
-            "dummy_bid_val"     => 20,
         ) );
         
         $this->Log      = new HSDLog($this);
@@ -119,7 +118,6 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building', 0 );
-        $this->setGameStateInitialValue( 'dummy_bid_val', 3 ); //3-> 5 silver
         
         $values = array();
         // set colors

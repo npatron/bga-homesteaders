@@ -51,10 +51,34 @@
    text-decoration-thickness: 1.5px;
 }
 
-.res {color: lightgreen;}
-.com {color: darksalmon;}
-.ind {color: royalblue;}
-.spe {color: gold;}
+.res {text-decoration: underline;
+   -webkit-text-decoration-color: lightgreen;
+   text-decoration-color: lightgreen;
+   text-decoration-thickness: 3px;
+}
+.com {
+   text-decoration: underline;
+   -webkit-text-decoration-color: darksalmon;
+   text-decoration-color: darksalmon;
+   text-decoration-thickness: 3px;
+}
+.ind {text-decoration: underline;
+   -webkit-text-decoration-color: royalblue;
+   text-decoration-color: royalblue;
+   text-decoration-thickness: 3px;
+}
+.spe {
+   text-decoration: underline;
+   -webkit-text-decoration-color: gold;
+   text-decoration-color: gold;
+   text-decoration-thickness: 3px;
+}
+.any{ 
+   text-decoration: underline;
+   -webkit-text-decoration-color: gray;
+   text-decoration-color: gray;
+   text-decoration-thickness: 3px;
+}
 .a1 {color: lightseagreen;}
 .a2 {color: orange;}
 .a3 {color: hotpink;}
@@ -576,6 +600,7 @@ div#trade_bank_trade_silver{
    box-sizing: content-box;
    cursor:pointer;
 }
+/** Player Borders */
 .border_yellow {
    border-color:yellow;
    border-radius: 2px;
@@ -601,6 +626,7 @@ div#trade_bank_trade_silver{
    border-radius: 2px;
    border-style: solid;
 }
+/* TileZone Borders */
 .border_black {
    border-color:black;
    border-radius: 2px;
@@ -616,6 +642,7 @@ div#trade_bank_trade_silver{
    border-radius: 2px;
    border-style: solid;
 }
+/* auction borders */
 .border_a1{
    border-color:lightseagreen;
    border-radius: 2px;

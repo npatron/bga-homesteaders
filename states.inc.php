@@ -239,7 +239,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stEndGameActions",
         "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
-        "transitions" => array( "" => STATE_END_GAME)
+        "transitions" => array( "" => STATE_UPDATE_SCORES)
     ),
 
     STATE_UPDATE_SCORES => array(
@@ -247,9 +247,8 @@ $machinestates = array(
         "description" => '',
         "type" => "game",
         "action" => "stUpdateScores",
-        "transitions" => array( "nextAuction" => STATE_START_ROUND )
+        "transitions" => array( "nextAuction" => 99 )
     ),
-
 
     // Final state.
     // Please do not modify (and do not overload action/args methods).

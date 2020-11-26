@@ -321,7 +321,7 @@ class HSDresource extends APP_GameClass
                 $this->updateAndNotifyIncome($p_id, 'cow', 1, $rail_bonus_arr, 'train');
             break;
             case VP:
-                $this->updateAndNotifyIncome($p_id, 'vp', 3, $rail_bonus_arr, 'train');
+                $this->updateAndNotifyIncome($p_id, 'vp3', 1, $rail_bonus_arr, 'train');
             break;
         }
     }
@@ -514,7 +514,7 @@ class HSDresource extends APP_GameClass
         if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_GENERAL_STORE)){
             $tradeFor = $this->updateKeyOrCreate($tradeFor, 'silver', 1);
         }
-        $buy_sell = ($sell?_('Sells'):_("Buys"));
+        $buy_sell = ($sell?_('sells'):_("buys"));
         if ($building_name === ""){
             $this->game->notifyAllPlayers( "trade", clienttranslate('${player_name} ${buy_sell} ${tradeAway} ${arrow} ${tradeFor}'), 
             array(  'player_id' => $p_id,               'player_name' => $p_name,

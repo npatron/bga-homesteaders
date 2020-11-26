@@ -152,13 +152,14 @@ class HSDBid extends APP_GameClass
         // then update bid for this 
         $auc = ceil($bid_loc/10);
         $amt = $this->bid_cost_array[$bid_loc%10];
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} Bids ${amount} for ${auction}'), array (
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} Bids ${bidVal} for ${auction}'), array (
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
-                'amount' => $amt,
+                'bidVal' => $amt,
                 'auction' => array('str'=>'auction '.$auc, 'key'=> $auc),
                 'bid_location'=> $bid_loc) );
         $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`='$bid_loc', `outbid`='0' WHERE `player_id`='$p_id'");
+        $this->Log->makeBid($p_id);
     }
 
     function getValidBids($p_id) {

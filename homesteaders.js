@@ -54,57 +54,16 @@ function (dojo, declare) {
     const ZONE_PENDING = -1;
     const ZONE_PASSED = -2;
 
-    const TYPE_RESIDENTIAL = 0;
-    const TYPE_COMMERCIAL  = 1;
-    const TYPE_INDUSTRIAL  = 2;
-    const TYPE_SPECIAL     = 3;
-
     const BLD_LOC_FUTURE  = 0;
     const BLD_LOC_OFFER   = 1;
     const BLD_LOC_PLAYER  = 2;
     const BLD_LOC_DISCARD = 3;
+    const AUC_LOC_FUTURE  = 2;
 
-    const BLD_HOMESTEAD_YELLOW = 1;
-    const BLD_HOMESTEAD_RED    = 2;
-    const BLD_HOMESTEAD_GREEN  = 3;
-    const BLD_HOMESTEAD_BLUE   = 4;
-    
-    const BLD_GRAIN_MILL = 5;
-    const BLD_FARM       = 6;
-    const BLD_MARKET     = 7;
-    const BLD_FOUNDRY    = 8;
-    const BLD_STEEL_MILL = 9;
+    // building ID's required for trade
+    const BLD_MARKET = 7;
+    const BLD_BANK   = 22;
 
-    const BLD_BOARDING_HOUSE     = 10;
-    const BLD_RAILWORKERS_HOUSE = 11;
-    const BLD_RANCH             = 12;
-    const BLD_TRADING_POST      = 13;
-    const BLD_GENERAL_STORE     = 14;
-    const BLD_GOLD_MINE         = 15;
-    const BLD_COPPER_MINE       = 16;
-    const BLD_RIVER_PORT        = 17;
-
-    const BLD_CHURCH            = 18;
-    const BLD_WORKSHOP          = 19;
-    const BLD_DEPOT             = 20;
-    const BLD_STABLES           = 21;
-    const BLD_BANK              = 22;
-    const BLD_MEATPACKING_PLANT = 23;
-    const BLD_FORGE             = 24;
-    const BLD_FACTORY           = 25;
-    const BLD_RODEO             = 26;
-    const BLD_LAWYER            = 27;
-    const BLD_FAIRGROUNDS       = 28;
-
-    const BLD_DUDE_RANCH    = 29;
-    const BLD_TOWN_HALL     = 30;
-    const BLD_TERMINAL      = 31;
-    const BLD_RESTARAUNT    = 32;
-    const BLD_TRAIN_STATION = 33;
-    const BLD_CIRCUS        = 34;
-    const BLD_RAIL_YARD     = 35;
-
-    const AUC_LOC_FUTURE = 2;
     // string templates for dynamic assets
     const TPL_BLD_TILE = "building_tile";
     const TPL_BLD_STACK = "building_stack_";
@@ -143,16 +102,12 @@ function (dojo, declare) {
     const BUILD_BONUS_WORKER = 3; 
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
-    const BID_VAL_ARR_BACK = {3:0, 4:1, 5:2, 6:3, 7:4, 9:5, 12:6, 16:7, 21:8};
     const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe',
                           10:'a4' ,11:'a1',12:'a2',13:'a3'};
-    const VP_TOKENS = ['vp2','vp4','vp6','vp8'];
+    const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8'];
 
     // map of tpl id's  used to place the player_zones in turn order.
     const PLAYER_ORDER = ['First', 'Second', 'Third', 'Fourth'];
-    
-    const TILE_WIDTH = 144;
-    const TILE_HEIGHT = 196;
 
     return declare("bgagame.homesteaders", ebg.core.gamegui, {
         addMoveToLog: override_addMoveToLog,
@@ -444,7 +399,6 @@ function (dojo, declare) {
                     dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 }
             }
-            //this.addTooltipHtmlToClass("token_worker", this.res_info['workers']['tt']);
         },
         
         /**
@@ -1778,7 +1732,6 @@ function (dojo, declare) {
                 ['railAdv', 250],
                 ['score', 2000],
                 ['trade', 200],
-                ['updateAuction', 500],
                 ['updateBuildingStocks', 1000],
                 ['workerMoved', 200],
               ];
@@ -1873,9 +1826,9 @@ function (dojo, declare) {
                         let color = ASSET_COLORS[Number(args.building_name.type)];
                         args.building_name = this.format_block('jstpl_color_log', {string:args.building_name.str, color:color});
                     }
-                    if (args.amount != null && typeof(args.amount) == string){
+                    if (args.bidVal != null && typeof(args.bidVal) == 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.amount = this.format_block('jstpl_color_log', {string:args.amount, color:color});
+                        args.bidVal = this.format_block('jstpl_color_log', {string:args.bidVal, color:color});
                     }
                     // this will always set `args.auction` (allowing it to be used in the Title)
                     if (args.auction != null && typeof (args.auction) != 'string'){
@@ -1947,9 +1900,6 @@ function (dojo, declare) {
             if (this.player_id == notif.args.player_id){
                 $('checkbox1').checked = notif.args.onOff_val;
             }
-        },
-
-        notif_updateAuction: function( ) {
         },
 
         notif_updateBuildingStocks: function ( notif ){

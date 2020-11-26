@@ -25,41 +25,34 @@ class HSDLog extends APP_GameClass
     foreach ($players as $player_id => $player) {
       $this->game->initStat('player', 'building_vp', 0, $player_id);
       $this->game->initStat('player', 'building_bonus_vp', 0, $player_id);
-      $this->game->initStat('player', 'vp_chits', 0, $player_id);
-      $this->game->initStat('player', 'vp_gold', 0, $player_id);
-      $this->game->initStat('player', 'vp_cow', 0, $player_id);
-      $this->game->initStat('player', 'vp_copper', 0, $player_id);
-      $this->game->initStat('player', 'vp_loan', 0, $player_id);
+      $this->game->initStat('player', 'vp_chits',   0, $player_id);
+      $this->game->initStat('player', 'vp_gold',    0, $player_id);
+      $this->game->initStat('player', 'vp_cow',     0, $player_id);
+      $this->game->initStat('player', 'vp_copper',  0, $player_id);
+      $this->game->initStat('player', 'vp_loan',    0, $player_id);
 
-      $this->game->initStat('player', 'bonus_vp_10', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_11', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_20', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_21', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_22', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_25', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_27', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_28', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_29', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_30', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_31', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_32', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_34', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_35', 0, $player_id);
-
-      $this->game->initStat('player', 'buildings', 1, $player_id);
+      $this->game->initStat('player', 'bonus_vp_res', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_ind', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_com', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_spe', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_wrk', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_trk', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_bld', 0, $player_id);
+      
+      $this->game->initStat('player', 'buildings',   1, $player_id);
       $this->game->initStat('player', 'residential', 1, $player_id);
-      $this->game->initStat('player', 'industrial', 0, $player_id);
-      $this->game->initStat('player', 'commercial', 0, $player_id);
-      $this->game->initStat('player', 'special', 0, $player_id);
-      $this->game->initStat('player', 'bids', 0, $player_id);
+      $this->game->initStat('player', 'industrial',  0, $player_id);
+      $this->game->initStat('player', 'commercial',  0, $player_id);
+      $this->game->initStat('player', 'special',     0, $player_id);
+      $this->game->initStat('player', 'bids',        0, $player_id);
 
-      $this->game->initStat('player', 'auctions_won', 0, $player_id);
-      $this->game->initStat('player', 'win_auction_1', 0, $player_id);
-      $this->game->initStat('player', 'win_auction_2', 0, $player_id);
-      $this->game->initStat('player', 'win_auction_3', 0, $player_id);
+      $this->game->initStat('player', 'auctions_won',     0, $player_id);
+      $this->game->initStat('player', 'win_auction_1',    0, $player_id);
+      $this->game->initStat('player', 'win_auction_2',    0, $player_id);
+      $this->game->initStat('player', 'win_auction_3',    0, $player_id);
       $this->game->initStat('player', 'spent_on_auctions', 0, $player_id);
-      $this->game->initStat('player', 'times_outbid', 0, $player_id);
-      $this->game->initStat('player', 'outbids', 0, $player_id);
+      $this->game->initStat('player', 'times_outbid',     0, $player_id);
+      $this->game->initStat('player', 'outbids',          0, $player_id);
       
       $this->game->initStat('player', 'loans', 0, $player_id);
     }
@@ -106,8 +99,8 @@ class HSDLog extends APP_GameClass
   /*
    * insert: add a new log entry
    * params:
-   *   - $player_id: the player who is making the action
-   *   - $piece_id : the piece whose is making the action
+   *   - int $player_id: the player who is making the action
+   *   - int $piece_id : the token or auc_no the action pertains.
    *   - string $action : the name of the action
    *   - array $args : action arguments (eg space)
    */
@@ -119,7 +112,7 @@ class HSDLog extends APP_GameClass
     if ($action === 'build') {
       $stats[] = ['table', 'buildings'];
       $stats[] = [$player_id, 'buildings'];
-      $building_type = $this->game->Building->getBuildingTypeFromId($piece_id);
+      $building_type = $this->game->Building->getBuildingTypeFromKey($piece_id);
       if ($building_type == TYPE_RESIDENTIAL)
         $stats[] = [$player_id, 'residential'];
       else if ($building_type == TYPE_COMMERCIAL)
@@ -159,7 +152,7 @@ class HSDLog extends APP_GameClass
    */
   public function allowTrades($p_id = null)
   {
-    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $p_id = $p_id ?: $this->game->getActivePlayerId();
     $this->insert($p_id, 0, 'allowTrades');
   }
 
@@ -194,7 +187,9 @@ class HSDLog extends APP_GameClass
     $this->insert($p_id, 0, 'railAdv');
   }
 
-  // for edge cases, preventing 
+  /* for resource updates that need to be undone by undo,
+   * but don't need other logging.
+   */
   public function updateResource($p_id, $type, $amt)
   {
     $this->insert($p_id, 0, "updateResource", array('type'=>$type, 'amt'=>$amt));
@@ -204,6 +199,10 @@ class HSDLog extends APP_GameClass
   public function takeLoan($p_id)
   {
     $this->insert($p_id, 0, 'loan');
+  }
+
+  public function makeBid($p_id){
+    $this->insert($p_id, 0, 'bid');
   }
 
   public function addWorker($p_id, $w_key)
@@ -260,7 +259,7 @@ class HSDLog extends APP_GameClass
    */
   public function getLastActions($p_id = null, $actions = ['build', 'trade', 'loan', 'gainTrack', 'gainWorker', 'railAdv', 'updateResource'], $afterAction = 'winAuction')
   {
-    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $p_id = $p_id ?: $this->game->getActivePlayerId();
     $actionsNames = "'" . implode("','", $actions) . "'";
     $sql = "SELECT * FROM `log` WHERE `action` IN ($actionsNames) AND `player_id` = '$p_id' AND log_id > (SELECT `log_id` FROM `log` WHERE `player_id` = '$p_id' AND `action` = '$afterAction' ORDER BY log_id DESC LIMIT 1) ORDER BY `log_id` DESC";
     return $this->game->getCollectionFromDB( $sql );
@@ -268,7 +267,7 @@ class HSDLog extends APP_GameClass
 
   public function getLastTransactions($p_id = null)
   {
-    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $p_id = $p_id ?: $this->game->getActivePlayerId();
     $actions =  $this->getLastActions($p_id, ['trade', 'loan', 'gainWorker', 'updateResource', 'loanPaid'], 'allowTrades');
     return $actions;
   }
@@ -278,7 +277,7 @@ class HSDLog extends APP_GameClass
    */
   public function cancelTransactions($p_id = null)
   {
-    $p_id = $p_id ?? $this->game->getActivePlayerId();
+    $p_id = $p_id ?: $this->game->getActivePlayerId();
     $logs = $this->getLastTransactions($p_id);
     $transactions = $this->cancelLogs($p_id, $logs);
     $this->game->notifyAllPlayers('cancel', clienttranslate('${player_name} cancels Transactions'), array(

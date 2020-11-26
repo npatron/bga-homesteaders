@@ -225,6 +225,6 @@
   define('C_HTML', '<span aria="Commercial" class="font bold com">'._("Commercial").'</span>');
   define('I_HTML', '<span aria="Industrial" class="font bold ind">'._("Industrial").'</span>');
   define('S_HTML', '<span aria="Special" class="font bold spe">'._("Special").'</span>');
-  define('A_HTML', '<span class="font bold res">'._("A").'</span><span class="font bold com">'._("N").'</span><span class="font bold ind">'._("Y").'</span>');
+  define('A_HTML', '<span class="font bold">'._("ANY").'</span>');
 
 
