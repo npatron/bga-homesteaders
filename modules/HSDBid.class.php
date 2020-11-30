@@ -159,7 +159,7 @@ class HSDBid extends APP_GameClass
                 'auction' => array('str'=>'auction '.$auc, 'key'=> $auc),
                 'bid_location'=> $bid_loc) );
         $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`='$bid_loc', `outbid`='0' WHERE `player_id`='$p_id'");
-        $this->Log->makeBid($p_id);
+        $this->game->Log->makeBid($p_id);
     }
 
     function getValidBids($p_id) {
@@ -231,7 +231,7 @@ class HSDBid extends APP_GameClass
                 'player_id' => DUMMY_BID,
                 'token' => array('token'=> 'bid', 'player_id'=>DUMMY_BID),
                 'amount' => $amt,
-                'auction' => array('str'=>'AUCTION '.$auc, 'key'=> $auc),
+                'auction' => array('str'=>'auction '.$auc, 'key'=> $auc),
                 'bid_location'=> $bid_loc) );
         $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`='$bid_loc', `outbid`='0' WHERE `player_id`='".DUMMY_BID."'");
     }

@@ -621,7 +621,7 @@ class homesteaders extends Table
                 $worker_cost = $player['workers'];
                 while ($silver < $worker_cost){// forced loan.
                     $silver +=2;
-                    $this->playerTakeLoan($p_id);
+                    $this->Resource->takeLoan($p_id);
                 }
                 $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker'=>'worker'));
             } else { // ask this player to choose payment.
@@ -842,7 +842,7 @@ class homesteaders extends Table
 
         if ($state['type'] === "multipleactiveplayer") {
             // Make sure player is in a non blocking status for role turn
-            $this->gamestate->setPlayerNonMultiactive( $act_p_id );
+            $this->gamestate->setPlayerNonMultiactive( $act_p_id , '');
             
             return;
         }

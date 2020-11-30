@@ -28,7 +28,7 @@ $gameinfos = array(
 'publisher' => 'Tasty Minstrel Games',               
 
 // Url of game publisher website
-'publisher_website' => 'http://playtmg.com/, https://www.quined.nl/',   
+'publisher_website' => 'http://playtmg.com/',   
 
 // Board Game Geek ID of the publisher
 'publisher_bgg_id' => 9499,

@@ -31,13 +31,13 @@ class HSDLog extends APP_GameClass
       $this->game->initStat('player', 'vp_copper',  0, $player_id);
       $this->game->initStat('player', 'vp_loan',    0, $player_id);
 
-      $this->game->initStat('player', 'bonus_vp_res', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_ind', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_com', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_spe', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_wrk', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_trk', 0, $player_id);
-      $this->game->initStat('player', 'bonus_vp_bld', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_0', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_1', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_2', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_3', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_4', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_5', 0, $player_id);
+      $this->game->initStat('player', 'bonus_vp_6', 0, $player_id);
       
       $this->game->initStat('player', 'buildings',   1, $player_id);
       $this->game->initStat('player', 'residential', 1, $player_id);
