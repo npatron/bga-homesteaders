@@ -75,7 +75,7 @@
   define("BLD_RAIL_YARD",     35);  
 
   // expansion
-  define("BLD_LUMBERYARD",  37);
+  define("BLD_LUMBERMILL",  37);
   define("BLD_SALOON",      38);
   define("BLD_SILVER_MINE", 39);
   define("BLD_HOTEL",       40);
@@ -124,6 +124,7 @@
   define("VP_B_TRACK",       5);
   define("VP_B_BUILDING",    6);
   define("VP_B_WRK_TRK",     7);
+  define("VP_B_PAID_LOAN",   8);
 
   define("BUILD_BONUS_NONE",           0);
   define("BUILD_BONUS_PAY_LOAN",       1);

@@ -139,70 +139,26 @@ $this->resource_info = array(
 );
 
 // DEFINE THE BUILDING STATIC VALUES. (indexed by building_id)
-$this->building_info = array(
-  BLD_HOMESTEAD_YELLOW => array(
-    'name' => _("Homestead"),
-    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-              "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
-              "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
-    'type' => TYPE_RESIDENTIAL,
-    'stage'=> 0,
-    'inc'  => array('silver'=>2),
-    'slot' => 2,
-    's1'   => array('wood'=>1),
-    's1_tt'=> _("Produces ").WOOD_HTML,
-    's2'   => array('vp'=>1),
-    's2_tt'=> _("Produces ").VP_HTML,
-    'amt'  => 0,
-   ),
-   BLD_HOMESTEAD_RED => array(
-    'name' => _("Homestead"),
-    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-              "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
-              "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
-    'type' => TYPE_RESIDENTIAL,
-    'stage'=> 0,
-    'inc'  => array('silver'=>2),
-    'slot' => 2,
-    's1'   => array('wood'=>1),
-    's1_tt'=> _("Produces ").WOOD_HTML,
-    's2'   => array('vp'=>1),
-    's2_tt'=> _("Produces ").VP_HTML,
-    'amt'  => 0,
-   ),
-   BLD_HOMESTEAD_GREEN => array(
-    'name' => _("Homestead"),
-    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-              "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-              "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
-              "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
-    'type' => TYPE_RESIDENTIAL,
-    'stage'=> 0,
-    'inc'  => array('silver'=>2),
-    'slot' => 2,
-    's1'   => array('wood'=>1),
-    's1_tt'=> _("Produces ").WOOD_HTML,
-    's2'   => array('vp'=>1),
-    's2_tt'=> _("Produces ").VP_HTML,
-    'amt'  => 0,
-   ),
-   BLD_HOMESTEAD_BLUE => array(
-    'name' => _("Homestead"),
-    'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
-            "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-            "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
-            "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
-    'type' => TYPE_RESIDENTIAL,
-    'stage'=> 0,
-    'inc'  => array('silver'=>2),
-    'slot' => 2,
-    's1'   => array('wood'=>1),
-    's1_tt'=> _("Produces ").WOOD_HTML,
-    's2'   => array('vp'=>1),
-    's2_tt'=> _("Produces ").VP_HTML,'amt'  => 0,
-   ),
+$this->building_info = array_merge(
+  array_fill_keys( 
+    array(BLD_HOMESTEAD_YELLOW, BLD_HOMESTEAD_RED, BLD_HOMESTEAD_GREEN, BLD_HOMESTEAD_BLUE, BLD_HOMESTEAD_PURPLE), 
+    array(
+      'name' => _("Homestead"),
+      'tt'   => RES_SPAN._("Homestead").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
+                "<hr>".INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
+                "<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
+                "<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV,
+      'type' => TYPE_RESIDENTIAL,
+      'stage'=> 0,
+      'inc'  => array('silver'=>2),
+      'slot' => 2,
+      's1'   => array('wood'=>1),
+      's1_tt'=> _("Produces ").WOOD_HTML,
+      's2'   => array('vp'=>1),
+      's2_tt'=> _("Produces ").VP_HTML,
+      'amt'  => 0,
+  )),
+  array(
    BLD_GRAIN_MILL => array(
     'name' => _("Grain Mill"),
     'tt'   => RES_SPAN._("Grain Mill").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
@@ -637,7 +593,123 @@ $this->building_info = array(
     'vp_b' => VP_B_BUILDING,
     'amt'  => 1,
    ),
-);
+   BLD_LUMBERMILL => array(
+    'name' => _("Lumbermill"),
+    'tt'   => SPE_SPAN._("Lumbermill").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 6,
+    'vp_b' => VP_B_BUILDING,
+    'amt'  => 1,
+   ),
+   BLD_SALOON => array(
+    'name' => _("Rail Yard"),
+    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 6,
+    'vp_b' => VP_B_BUILDING,
+    'amt'  => 1,
+   ),
+   BLD_SILVER_MINE => array(
+    'name' => _("Rail Yard"),
+    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 6,
+    'vp_b' => VP_B_BUILDING,
+    'amt'  => 1,
+   ),
+   BLD_HOTEL => array(
+    'name' => _("Rail Yard"),
+    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 6,
+    'vp_b' => VP_B_BUILDING,
+    'amt'  => 1,
+   ),
+   BLD_WAREHOUSE => array(
+    'name' => _("Rail Yard"),
+    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
+              CENTER_DIV._(" When Built: Advance")."<br>".
+              _(" on Railroad track (and get Bonus).")."<br>".
+              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 6,
+    'vp_b' => VP_B_BUILDING,
+    'amt'  => 1,
+   ),
+   BLD_POST_OFFICE => array(
+    'name' => _("Rail Yard"),
+    'desc' => clienttranslate(" When Built: Advance on Railroad track (and get Bonus).\nEnd: ${vp} ${arrow} Building"),
+    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
+              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".INCOME,
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 6,
+    'vp_b' => VP_B_BUILDING,
+    'amt'  => 1,
+   ),
+));
+
+foreach ($this->building_info as $b_id=> $b_val){
+  if ($b_val['type'] == TYPE_RESIDENTIAL)     $typeSpan = '<span class="font bold res">';
+  else if ($b_val['type'] == TYPE_COMMERCIAL) $typeSpan = '<span class="font bold com">'; 
+  else if ($b_val['type'] == TYPE_INDUSTRIAL) $typeSpan = '<span class="font bold ind">';
+  else if ($b_val['type'] == TYPE_SPECIAL)    $typeSpan = '<span class="font bold spe">';
+  else                                        $typeSpan = '<span class="font bold">';
+  $vp = 'vp';
+  if ($b_val['vp'] != 1) $vp .= $b_val['vp']; // vp0, vp2, vp4 etc.
+  $vp_html = "<p class=\"alignright\"><span aria=\"$vp\" title=\"$vp\" class=\"log_$vp token_inline\"></span></p>";
+  
+  if (array_key_exists('cost', $b_val)){
+    $cost_html = '<br><p class="useFont">'._('Cost: ');
+    
+    $cost_html .='</p><hr>';
+  } else $cost_html = '<hr>';
+  if (array_key_exists('description', $b_val)){
+    $description_html = $b_val['description'];
+  } else $description_html = '<hr>';
+  
+
+  $this->building_info[$b_id]['tt'] = 
+  $typeSpan.$b_val['name'].'</span>'.$vp_html.$cost_html.
+INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
+"<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
+"<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV;
+} 
+
 
 $this->auction_info = array( 
   1 => array(
