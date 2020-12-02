@@ -191,7 +191,7 @@ function (dojo, declare) {
                 this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
             } else {
                 // when displaying for a spectator remove the player config checkbox.
-                this.dojo.destroy('useSilver_form');
+                dojo.destroy('useSilver_form');
             }
             if (this.playerCount == 2){
                 this.player_color[DUMMY_BID] = this.getAvailableColor();
