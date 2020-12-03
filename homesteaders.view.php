@@ -64,8 +64,8 @@
         } 
         
         $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
-        // for 2p or 4p all 3 bid slots, for 3p only 2.
-        for ($a=1; $a <= ($players_nbr==3? 2:3); $a++){
+        
+        for ($a=1; $a <= 3; $a++){
           for ($bid=1; $bid < 10; $bid++){          
             $this->page->insert_block( "bid_slot", array('A'=> $a, 'B'=> $this->game->Bid->bid_cost_array[$bid]) );
           }
