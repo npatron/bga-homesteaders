@@ -102,8 +102,9 @@ function (dojo, declare) {
     const BUILD_BONUS_WORKER = 3; 
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
-    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe',
+    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 6:'',
                           10:'a4' ,11:'a1',12:'a2',13:'a3'};
+    const ASSET_STRINGS = {0:_('Residential'), 1:_('Commercial'),2:_('Industrial'),3:_('Special'), 6:_('Building')};
     const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8'];
 
     // map of tpl id's  used to place the player_zones in turn order.
@@ -191,7 +192,7 @@ function (dojo, declare) {
                 this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
             } else {
                 // when displaying for a spectator remove the player config checkbox.
-                this.dojo.destroy('useSilver_form');
+                dojo.destroy('useSilver_form');
             }
             if (this.playerCount == 2){
                 this.player_color[DUMMY_BID] = this.getAvailableColor();
@@ -208,7 +209,6 @@ function (dojo, declare) {
             this.setupBuildings(gamedatas.buildings, gamedatas.building_info);
             
             this.setupTracks(gamedatas.tracks);
-            
 
             dojo.place(FIRST_PLAYER_ID, this.player_building_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
@@ -357,7 +357,7 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), b_divId);
                 this.building_worker_ids[key] = [];
                 this.building_worker_ids[key][1] = `slot_${key}_1`;
-                this.addTooltipHtml(  this.building_worker_ids[key][1], b_info['s1_tt'] );
+                this.addTooltipHtml( this.building_worker_ids[key][1], formatWorkerSlotTooltip(b_info ,1));
                 dojo.connect($(this.building_worker_ids[key][1]), 'onclick', this, 'onClickOnWorkerSlot');
             } else if (b_info.slot == 2){
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), b_divId);
@@ -365,8 +365,8 @@ function (dojo, declare) {
                 this.building_worker_ids[key] = [];
                 this.building_worker_ids[key][1] = `slot_${key}_1`;
                 this.building_worker_ids[key][2] = `slot_${key}_2`;
-                this.addTooltipHtml( this.building_worker_ids[key][1], b_info['s1_tt'] );
-                this.addTooltipHtml( this.building_worker_ids[key][2], b_info['s2_tt'] );
+                this.addTooltipHtml( this.building_worker_ids[key][1], formatWorkerSlotTooltip(b_info, 1));
+                this.addTooltipHtml( this.building_worker_ids[key][2], formatWorkerSlotTooltip(b_info, 2));
                 dojo.connect($(this.building_worker_ids[key][1]), 'onclick', this, 'onClickOnWorkerSlot');
                 dojo.connect($(this.building_worker_ids[key][2]), 'onclick', this, 'onClickOnWorkerSlot');  
             } else if (b_info.slot == 3){
@@ -374,10 +374,18 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 3, key: key, id: id}), b_divId);
                 this.building_worker_ids[key] = [];
                 this.building_worker_ids[key][3] = `slot_${key}_3`;
-                this.addTooltipHtml( this.building_worker_ids[key][3], b_info['s3_tt'] );
+                this.addTooltipHtml( this.building_worker_ids[key][3], formatWorkerSlotTooltip(b_info, 3));
                 dojo.style(this.building_worker_ids[key][3], 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(this.building_worker_ids[key][3]), 'onclick', this, 'onClickOnWorkerSlot');
             }
+        },
+        
+        formatWorkerSlotTooltip(b_info, slot_no){
+            var tt = this.getOneResourceAsDiv('worker');
+            if (slot_no == 3) { tt += this.getOneResourceAsDiv('worker'); }
+            tt += " "+this.format_block('jstpl_resource_inline', {type: 'arrow'}) 
+                + " "+this.getResourceArrayAsDiv(b_info['s'+slot_no]);
+            return tt;
         },
 
         /**
@@ -916,6 +924,81 @@ function (dojo, declare) {
             if (building.p_id == this.player_id){
                 this.updateHasBuilding(b_id); 
             }
+        },
+
+        formatTooltipBuilding:function (b_info){
+            var vp = 'vp0';
+            if (this.building_info[b_id].vp != null){
+                vp = 'vp'+Number(this.building_info[b_id].vp).toString();
+                if (vp == 'vp1'){ vp = 'vp';}
+            }
+
+            return this.format_block('jptpl_bld_tt', {
+                type:  ASSET_COLORS[b_info.type.],
+                name: b_info.name,
+                vp:   vp,
+                COST: _('Cost: '),
+                cost_vals: this.getResourceArrayAsDiv(b_info.cost),
+                desc: this.formatDescription(b_info),
+                INCOME: _('income:'),
+                inc_vals: this.formatIncome(b_info),
+            });
+        },
+
+        formatDescription: function(b_info){
+            var full_desc = '';
+            if (b_info.desc != null){// replaces any ${val} with formatted resource log of type val
+                full_desc = b_info.desc.replaceAll(/\${(.*?)}/g, 
+                        function(f){ return this.format_block('jstpl_resource_log', {type: f.substr(2, f.length -3)});});
+            }
+            if (b_info.on_b != null){
+
+            }
+            if (b_info.vp_b != null){
+                let vp_b = _("END: ")+ this.format_block('jstpl_resource_log', {type: 'vp'}) + _(" per ");
+                switch(b_info.vp_b){
+                    case 0: //VP_B_RESIDENTIAL
+                    case 1: //VP_B_COMMERCIAL
+                    case 2: //VP_B_INDUSTRIAL
+                    case 3: //VP_B_SPECIAL
+                    case 6: //VP_B_BUILDING
+                        vp_b += this.format_block('jstpl_color_log', {string: ASSET_STRINGS[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]});
+                    break;
+                    case 4: //VP_B_WORKER
+                        vp_b += this.format_block('jstpl_resource_log', {type: 'worker'});
+                    break;
+                    case 7: //VP_B_WRK_TRK
+                        vp_b += this.format_block('jstpl_resource_log', {type: 'worker'});
+                    case 5: //VP_B_TRACK
+                        vp_b += this.format_block('jptpl_track_log', {type: 'track'});
+                        break;
+                    break;
+                    
+                    case 8: //VP_B_PAID_LOAN (expansion)
+                }
+            }
+            
+        },
+
+        formatIncome: function(b_info){
+            var inc_vals = '';
+            if (b_info.inc != null){
+                inc_vals = _('Produces ') + this.getResourceArrayAsDiv(b_info.inc) +'<br>';
+            }
+            if (b_info.slot != null){
+                let worker = this.format_block('jstpl_resource_log', {type: 'worker'});
+                if (b_info.slot ==1){
+                    inc_vals += worker + this.getResourceArrayAsDiv(b_info.s1) +'<br>';
+                }
+                if (b_info.slot ==2){
+                    inc_vals += worker + _('Can produce ')+ this.getResourceArrayAsDiv(b_info.s1) +'<br>' 
+                              + worker + _('Can produce ')+ this.getResourceArrayAsDiv(b_info.s2) +'<br>';
+                }
+                if (b_info.slot ==3){
+                    inc_vals += worker + worker +_('Can produce ')+ this.getResourceArrayAsDiv(b_info.s3) +'<br>';
+                }
+            }
+            return inc_vals;
         },
 
         addBuildingToOffer: function(building, b_info = null){
@@ -1793,7 +1876,7 @@ function (dojo, declare) {
                         args.loan = this.format_block('jptpl_track_log', {type: 'loan'});
                     }
                     if (args.worker != null && typeof args.worker == 'string'){
-                        args.worker = this.getOneResourceAsDiv('worker')
+                        args.worker = this.getOneResourceAsDiv('worker');
                     }
                     // handles player_tokens
                     if (args.token != null && typeof (args.null != "string")){

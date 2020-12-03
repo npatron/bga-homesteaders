@@ -190,6 +190,7 @@ $this->building_info = array_merge(
    ),
    BLD_MARKET => array(
     'name' => _("Market"),
+    'desc' => clienttranslate('Allows trades\n ${trade}${wood} ${arrow} ${food}\n${trade}${food} ${arrow} ${steel}'),
     'tt'   => COM_SPAN._("Market").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
               COST.WOOD_HTML.END_P.
               CENTER_DIV.ALLOW_TRADE. TRADE_HTML. WOOD_HTML." ".ARROW_HTML." ".FOOD_HTML.
@@ -287,6 +288,7 @@ $this->building_info = array_merge(
    ),
    BLD_GENERAL_STORE => array(
     'name' => _("General Store"),
+    'desc' => clienttranslate('Whenever you Sell, get an additional ${silver}'),
     'tt'   => COM_SPAN.("General Store").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
               COST. STEEL_HTML. END_P."<hr>".
               CENTER_DIV._(" Whenever you Sell, ")."<br>".
@@ -327,6 +329,7 @@ $this->building_info = array_merge(
    ),
    BLD_RIVER_PORT => array(
     'name' => _("River Port"),
+    'desc' => clienttranslate('You may pay for ${copper} or ${cow} in building costs or auction costs using ${gold} instead'),
     'tt'   => IND_SPAN._("River Port").END_SPAN.":".RIGHT_P.VP0_HTML.END_P.
             COST. WOOD_HTML. END_P. "<hr>".
             CENTER_DIV._(" You may pay for ").COPPER_HTML._(" or ").COW_HTML.
@@ -383,6 +386,7 @@ $this->building_info = array_merge(
    ),
    BLD_BANK => array(
     'name' => _("Bank"),
+    'desc' => clienttranslate('Allow trade:\n${trade} ${arrow} ${silver}'),
     'tt'   => COM_SPAN._("Bank").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
               COST. STEEL_HTML. COPPER_HTML. END_P.
               ALLOW_TRADE.CENTER_DIV.TRADE_HTML." ".ARROW_HTML." ".SILVER_HTML."<br>".
@@ -430,6 +434,7 @@ $this->building_info = array_merge(
    ),
    BLD_FORGE => array(
     'name' => _("Forge"),
+    'desc' => clienttranslate('Get ${vp} whenever you build a building (after this one)'),
     'tt'   => IND_SPAN._("Forge").END_SPAN.":".
               COST. STEEL_HTML. END_P. RIGHT_P.VP_HTML.END_P."<hr>".
               CENTER_DIV._(" When Built: Advance")."<br>".
@@ -471,11 +476,12 @@ $this->building_info = array_merge(
     'type' => TYPE_SPECIAL,
     'cost' => array('food'=>1, 'cow'=>1),
     'vp'   => 4,
-    'inc'  => array('silver'=>5),
+    'inc'  => array('silver'=>'5'),
     'amt'  => 1,
    ),
    BLD_LAWYER => array(
     'name' => _("Lawyer"),
+    'desc' => clienttranslate('You may overbid others with the same bid value'),
     'tt'   => SPE_SPAN._("Lawyer").END_SPAN.":".RIGHT_P.VP4_HTML.END_P.
               COST. WOOD_HTML. GOLD_HTML. COW_HTML. END_P. "<hr>".
               CENTER_DIV._(" You May overbid others with the same Bid.").
@@ -595,90 +601,73 @@ $this->building_info = array_merge(
    ),
    BLD_LUMBERMILL => array(
     'name' => _("Lumbermill"),
+    'desc' => clienttranslate('May use ${wood}${vp} in place of ${steel} in building costs'),
     'tt'   => SPE_SPAN._("Lumbermill").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
               COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
               CENTER_DIV._(" When Built: Advance")."<br>".
               _(" on Railroad track (and get Bonus).")."<br>".
               _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
-    'stage'=> STAGE_CITY,
-    'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
-    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 6,
-    'vp_b' => VP_B_BUILDING,
-    'amt'  => 1,
+    'stage'=> STAGE_SETTLEMENT,
+    'type' => TYPE_RESIDENTIAL,
+    'inc'  => array('wood'=>1, 'silver'=>1),
+    'vp'   => 3,
+    'amt'  => 2,
    ),
    BLD_SALOON => array(
-    'name' => _("Rail Yard"),
-    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
-              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built: Advance")."<br>".
-              _(" on Railroad track (and get Bonus).")."<br>".
-              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
-    'stage'=> STAGE_CITY,
-    'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
-    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 6,
-    'vp_b' => VP_B_BUILDING,
-    'amt'  => 1,
+    'name' => _("Saloon"),
+    'tt'   => "",
+    'stage'=> STAGE_SETTLEMENT_TOWN,
+    'type' => TYPE_COMMERCIAL,
+    'on_b' => BUILD_BONUS_SILVER_SILVER,
+    'vp'   => 1,
+    'amt'  => 2,
    ),
    BLD_SILVER_MINE => array(
-    'name' => _("Rail Yard"),
-    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
-              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built: Advance")."<br>".
-              _(" on Railroad track (and get Bonus).")."<br>".
-              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
-    'stage'=> STAGE_CITY,
-    'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'name' => _("Silver Mine"),
+    'tt'   => "",
+    'stage'=> STAGE_SETTLEMENT_TOWN,
+    'type' => TYPE_INDUSTRIAL,
+    'cost' => array('wood'=>1),
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 6,
-    'vp_b' => VP_B_BUILDING,
-    'amt'  => 1,
+    'vp'   => 2,
+    'slot' => 1,
+    's1'   => array('silver'=>3),
+    's1_tt'=> "Produces ".SILVER_HTML.SILVER_HTML.SILVER_HTML,
+    'amt'  => 2,
    ),
    BLD_HOTEL => array(
-    'name' => _("Rail Yard"),
-    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
-              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built: Advance")."<br>".
-              _(" on Railroad track (and get Bonus).")."<br>".
-              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
-    'stage'=> STAGE_CITY,
-    'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
-    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 6,
-    'vp_b' => VP_B_BUILDING,
+    'name' => _("Hotel"),
+    'desc' => clienttranslate('When you gain ${worker} gain ${silver}'),
+    'tt'   => "",
+    'stage'=> STAGE_TOWN,
+    'type' => TYPE_RESIDENTIAL,
+    'cost' => array('food'=>1,'steel'=>1),
+    'on_b' => BUILD_BONUS_SILVER_WORKERS,
+    'slot' => 1,
+    's1'   => array('vp2'=>1),
+    's1_tt'=> "Produces ".VP2_HTML,
+    'vp'   => 3,
     'amt'  => 1,
    ),
    BLD_WAREHOUSE => array(
-    'name' => _("Rail Yard"),
-    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
-              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".
-              CENTER_DIV._(" When Built: Advance")."<br>".
-              _(" on Railroad track (and get Bonus).")."<br>".
-              _(" End: ").VP_HTML." ".ARROW_HTML._(" Building").END_DIV.INCOME,
-    'stage'=> STAGE_CITY,
-    'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
-    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 6,
-    'vp_b' => VP_B_BUILDING,
+    'name' => _("Warehouse"),
+    'tt'   => "",
+    'stage'=> STAGE_TOWN,
+    'type' => TYPE_COMMERCIAL,
+    'cost' => array('wood'=>1,'steel'=>1,'copper'=>1),
+    'on_b' => BUILD_BONUS_PLACE_RESOURCES,
+    'vp'   => 3,
+    'inc'  => array('special'=> 1), // This will require special handling by the player, & probably a new state just for this.
     'amt'  => 1,
    ),
    BLD_POST_OFFICE => array(
-    'name' => _("Rail Yard"),
-    'desc' => clienttranslate(" When Built: Advance on Railroad track (and get Bonus).\nEnd: ${vp} ${arrow} Building"),
-    'tt'   => SPE_SPAN._("Rail Yard").END_SPAN.":".RIGHT_P.VP6_HTML.END_P.
-              COST. STEEL_HTML. STEEL_HTML. GOLD_HTML. COPPER_HTML. END_P. "<hr>".INCOME,
+    'name' => _("Post Office"),
+    'tt'   => "",
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
-    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 6,
-    'vp_b' => VP_B_BUILDING,
+    'cost' => array('wood'=>2,'steel'=>1,'cow'=>1),
+    'vp'   => 8,
+    'vp_b' => VP_B_PAID_LOAN,
     'amt'  => 1,
    ),
 ));

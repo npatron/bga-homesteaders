@@ -126,12 +126,15 @@
   define("VP_B_WRK_TRK",     7);
   define("VP_B_PAID_LOAN",   8);
 
-  define("BUILD_BONUS_NONE",           0);
-  define("BUILD_BONUS_PAY_LOAN",       1);
-  define("BUILD_BONUS_TRADE",          2);
-  define("BUILD_BONUS_WORKER",         3);
+  define("BUILD_BONUS_NONE",            0);
+  define("BUILD_BONUS_PAY_LOAN",        1);
+  define("BUILD_BONUS_TRADE",           2);
+  define("BUILD_BONUS_WORKER",          3);
   define("BUILD_BONUS_RAIL_ADVANCE",    4);
   define("BUILD_BONUS_TRACK_AND_BUILD", 5);
+  define("BUILD_BONUS_SILVER_SILVER",   6);
+  define("BUILD_BONUS_SILVER_WORKERS",  7);
+  define("BUILD_BONUS_PLACE_RESOURCES", 8);
 
   define("AUC_BONUS_NONE",            0);
   define("AUC_BONUS_WORKER",          1);
