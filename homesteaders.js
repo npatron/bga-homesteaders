@@ -934,7 +934,7 @@ function (dojo, declare) {
             }
 
             return this.format_block('jptpl_bld_tt', {
-                type:  ASSET_COLORS[b_info.type.],
+                type:  ASSET_COLORS[b_info.type],
                 name: b_info.name,
                 vp:   vp,
                 COST: _('Cost: '),
@@ -952,32 +952,62 @@ function (dojo, declare) {
                         function(f){ return this.format_block('jstpl_resource_log', {type: f.substr(2, f.length -3)});});
             }
             if (b_info.on_b != null){
+                on_build_desc = _("When built: ");
+                switch(b_info.on_b){
+                    case 1: //BUILD_BONUS_PAY_LOAN
+                        on_build_desc += this.format_block('jptpl_x_loan', {});
+                        break;
+                    case 2: //BUILD_BONUS_TRADE
+                        on_build_desc += GAIN + this.format_block('jstpl_resource_log', {type: 'trade'}) + "<br>";
+                        break;
+                    case 3: //BUILD_BONUS_WORKER
+                        on_build_desc += GAIN + this.format_block('jstpl_resource_log', {type: 'worker'}) + "<br>";
+                        break;
+                    case 4: //BUILD_BONUS_RAIL_ADVANCE
+                        on_build_desc += _('advance on Railroad track') + "<br>";
+                        break;
+                    case 5: //BUILD_BONUS_TRACK_AND_BUILD
 
+                    case 6: //BUILD_BONUS_SILVER_SILVER
+                        on_build_desc += getOneResourceAsDiv('silver',2) + "<br>";
+                        break;
+                    case 7: //BUILD_BONUS_SILVER_WORKERS
+                        const WORKER = this.format_block('jstpl_resource_log', {type: 'worker'});
+                        const SILVER = this.format_block('jstpl_resource_log', {type: 'silver'});
+                        on_build_desc +=  SILVER + _(' per ') + WORKER + '<br>'+ _('When you gain ')+ WORKER +_(' gain ') + SILVER;
+                        break;
+                    case 8: //BUILD_BONUS_PLACE_RESOURCES
+
+                }
             }
             if (b_info.vp_b != null){
-                let vp_b = _("END: ")+ this.format_block('jstpl_resource_log', {type: 'vp'}) + _(" per ");
+                const END = _("END: ");
+                const PER = _(" per ");
+                let vp_b = END + this.format_block('jstpl_resource_log', {type: 'vp'}) + PER;
                 switch(b_info.vp_b){
                     case 0: //VP_B_RESIDENTIAL
                     case 1: //VP_B_COMMERCIAL
                     case 2: //VP_B_INDUSTRIAL
                     case 3: //VP_B_SPECIAL
                     case 6: //VP_B_BUILDING
-                        vp_b += this.format_block('jstpl_color_log', {string: ASSET_STRINGS[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]});
-                    break;
-                    case 4: //VP_B_WORKER
-                        vp_b += this.format_block('jstpl_resource_log', {type: 'worker'});
-                    break;
-                    case 7: //VP_B_WRK_TRK
-                        vp_b += this.format_block('jstpl_resource_log', {type: 'worker'});
-                    case 5: //VP_B_TRACK
-                        vp_b += this.format_block('jptpl_track_log', {type: 'track'});
+                        vp_b += this.format_block('jstpl_color_log', {string: ASSET_STRINGS[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
                         break;
-                    break;
-                    
+                    case 4: //VP_B_WORKER
+                        vp_b += this.format_block('jstpl_resource_log', {type: 'worker'}) + "<br>";
+                        break;
+                    case 7: //VP_B_WRK_TRK
+                        vp_b += this.format_block('jstpl_resource_log', {type: 'worker'}) + "<br>";
+                        vp_b += END + this.format_block('jstpl_resource_log', {type: 'vp'}) + PER;
+                    case 5: //VP_B_TRACK
+                        vp_b += this.format_block('jptpl_track_log', {type: 'track'}) + "<br>";
+                        break;
                     case 8: //VP_B_PAID_LOAN (expansion)
+                        vp_b += this.format_block('jptpl_track_log', {type: 'loan'}) + "<br>";
+                        break;
                 }
+                full_desc += vp_b;
             }
-            
+            return full_desc;
         },
 
         formatIncome: function(b_info){

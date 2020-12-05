@@ -615,7 +615,6 @@ $this->building_info = array_merge(
    ),
    BLD_SALOON => array(
     'name' => _("Saloon"),
-    'tt'   => "",
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'type' => TYPE_COMMERCIAL,
     'on_b' => BUILD_BONUS_SILVER_SILVER,
