@@ -45,13 +45,13 @@
         $this->tpl['SHOW']             = _("Show");
         $this->tpl['HIDE']             = _("Hide");
         $this->tpl['MAIN_BUILDING']    = _("Current Buildings");
-        $this->tpl['FUTURE_AUCTION']   = _("Auctions");
+        $this->tpl['FUTURE_AUCTION']   = _("Upcoming Auctions");
         $this->tpl['CONFIRM_TRADE']    = _("Confirm Trade");
         $this->tpl['UNDO_TRADE']       = _("Undo Transctions");
         $this->tpl['BUILDING_STOCK']   = _("Main Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Building Discard");
         $this->tpl['FUTURE_BUILDING']  = _("Upcoming Buildings");
-        $this->tpl['PAY']              = _("auto-pay");
+        $this->tpl['PAY']              = _("Auto-pay");
         $this->tpl['WITH']             = _("with");
 
         $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );

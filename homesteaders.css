@@ -30,8 +30,9 @@
 
 .font {
    font-family: 'Old Standard TT';
+   font-style: normal;
 }
-.usefont {
+.useFont {
    font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
@@ -82,10 +83,26 @@
    text-decoration-color: gray;
    text-decoration-thickness: 3px;
 }
-.a1 {color: lightseagreen;}
-.a2 {color: orange;}
-.a3 {color: hotpink;}
-.a4 {color: purple;}
+.a1 {
+   color: lightseagreen;
+   font-size: 20px;
+   font-variant: small-caps;
+}
+.a2 {
+   color: orange;
+   font-size: 20px;
+   font-variant: small-caps;
+}
+.a3 {
+   color: hotpink;
+   font-size: 20px;
+   font-variant: small-caps;
+}
+.a4 {
+   color: purple;
+   font-size: 20px;
+   font-variant: small-caps;
+}
 .alignleft {float: left;}
 .aligncenter {float: center;}
 .alignright {float: right;}
@@ -95,7 +112,7 @@
    font-variant: small-caps;
 }
 #useSilver_form {
-   grid-row: span 7;
+   grid-row: span 6;
    margin: auto;
 }
 
@@ -175,37 +192,37 @@
 #confirm_trade_btn{
    height: 17px;
    width: 180px;
-   grid-row: span 7;
+   grid-row: span 6;
    order: 8;
 }
 #undo_trades_btn{
    height: 17px;
    width: 180px;
-   grid-row: span 7;
+   grid-row: span 6;
    order: 7;
 }
 a#tgl_main_bld{
-   height: 35px;
+   height: 17px;
    width: 180px;
-   grid-row: span 11;
+   grid-row: span 6;
    order: 5;
 }
 a#tgl_future_auc{
    height: 17px;
    width: 180px;
-   grid-row: span 7;
+   grid-row: span 6;
    order: 4;
 }
 a#tgl_past_bld{
-   height: 35px;
+   height: 17px;
    width: 180px;
-   grid-row: span 11;
+   grid-row: span 6;
    order: 6;
 }
 a#tgl_future_bld{
-   height: 35px;
+   height: 17px;
    width: 180px;
-   grid-row: span 11;
+   grid-row: span 6;
    order: 6;
 }
 #round_text {

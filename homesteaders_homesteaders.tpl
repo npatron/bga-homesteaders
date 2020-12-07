@@ -15,22 +15,22 @@
         <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
         <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
         <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
-            <span id='auc_future' class="useFont bold">{SHOW} </span><span class="useFont bold"> {FUTURE_AUCTION}</span>
+            <span id='auc_future' class="font bold">{SHOW} </span><span class="font bold"> {FUTURE_AUCTION}</span>
         </a>
         <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_main" class="useFont bold">{HIDE} </span><br><span class="useFont bold"> {MAIN_BUILDING}</span>
+            <span id="bld_main" class="font bold">{HIDE} </span><span class="font bold"> {MAIN_BUILDING}</span>
         </a>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_discard" class="useFont bold">{SHOW} </span><br><span class="useFont bold"> {BUILDING_DISCARD}</span>
+            <span id="bld_discard" class="font bold">{SHOW} </span><span class="font bold"> {BUILDING_DISCARD}</span>
         </a>
         <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_future" class="useFont bold">{SHOW} </span><br><span class="useFont bold"> {FUTURE_BUILDING}</span>
+            <span id="bld_future" class="font bold">{SHOW} </span><span class="font bold"> {FUTURE_BUILDING}</span>
         </a>
-        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
+        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
         <div id='useSilver_form'> 
             <tr>
                 <input type="checkbox" id="checkbox1"/>
-                <label for="checkbox1" name="checkbox1_lbl" class="useFont bold">
+                <label for="checkbox1" name="checkbox1_lbl" class="font bold">
                     {PAY} <span aria="worker" title="worker" class="log_worker token_inline"></span>
                     {WITH} <span aria="silver" title="silver" class="log_silver token_inline"></span>
                 </label>
