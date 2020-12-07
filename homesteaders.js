@@ -918,7 +918,7 @@ function (dojo, declare) {
                 }
             } else { // create it as well;
                 dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), this.player_building_zone_id[building.p_id]);
-                this.addTooltipHtml( b_divId, b_info['tt'] );
+                this.addTooltipHtml( b_divId, this.formatTooltipBuilding(b_info) );
                 this.addBuildingWorkerSlots(building, b_info);
             }
             if (building.p_id == this.player_id){
