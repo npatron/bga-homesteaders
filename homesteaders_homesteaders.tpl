@@ -12,25 +12,25 @@
 -->
 <div id="main_container" class="container">
     <div id ="top">
-        <span id="round_text" class="font">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
-        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
+        <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
+        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="useFont">{UNDO_TRADE}</span></a>
         <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
-            <span id='auc_future' class="font bold">{SHOW} </span><span class="font bold"> {FUTURE_AUCTION}</span>
+            <span id='auc_future' class="useFont bold">{SHOW} </span><span class="useFont bold"> {FUTURE_AUCTION}</span>
         </a>
         <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_main" class="font bold">{HIDE} </span><br><span class="font bold"> {MAIN_BUILDING}</span>
+            <span id="bld_main" class="useFont bold">{HIDE} </span><br><span class="useFont bold"> {MAIN_BUILDING}</span>
         </a>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_discard" class="font bold">{SHOW} </span><br><span class="font bold"> {BUILDING_DISCARD}</span>
+            <span id="bld_discard" class="useFont bold">{SHOW} </span><br><span class="useFont bold"> {BUILDING_DISCARD}</span>
         </a>
         <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_future" class="font bold">{SHOW} </span><br><span class="font bold"> {FUTURE_BUILDING}</span>
+            <span id="bld_future" class="useFont bold">{SHOW} </span><br><span class="useFont bold"> {FUTURE_BUILDING}</span>
         </a>
-        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
+        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="useFont">{CONFIRM_TRADE}</span></a>
         <div id='useSilver_form'> 
             <tr>
                 <input type="checkbox" id="checkbox1"/>
-                <label for="checkbox1" name="checkbox1_lbl" class="font bold">
+                <label for="checkbox1" name="checkbox1_lbl" class="useFont bold">
                     {PAY} <span aria="worker" title="worker" class="log_worker token_inline"></span>
                     {WITH} <span aria="silver" title="silver" class="log_silver token_inline"></span>
                 </label>
@@ -168,8 +168,8 @@ var jstpl_pay_button = '<span id="pay_gold" class="noshow useFont">0</span> \
  <span id="pay_gold_tkn" class="noshow log_gold token_inline"></span> \
  <span id="pay_silver" class="useFont">0</span> \
 <span id="pay_silver_tkn" class="log_silver token_inline"></span>';
-var jstpl_color_log = '<span class="font ${color}">${string}</span>';
-var jstpl_color_number_log = '<span class="font ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
+var jstpl_color_log = '<span title="${string}" class="font ${color}">${string}</span>';
+var jstpl_color_number_log = '<span class="useFont ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
 var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';

@@ -29,6 +29,9 @@
 }
 
 .font {
+   font-family: 'Old Standard TT';
+}
+.usefont {
    font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
