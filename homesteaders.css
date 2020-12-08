@@ -111,10 +111,7 @@
    font: normal 15px/1 "Old Standard TT";
    font-variant: small-caps;
 }
-#useSilver_form {
-   grid-row: span 6;
-   margin: auto;
-}
+
 
 /*===============*
  * Main Container*
@@ -138,12 +135,68 @@
    order: 1;
    grid-column: 1/-1;
    grid-template-columns: repeat(auto-fill, 205px);
-   grid-auto-rows: 5px;
+   grid-auto-rows: 30px;
    align-items: center;
    grid-gap: 1px;
 }
 #trade_top {
    order: 2;
+}
+
+
+/*============*
+ * Button css *
+ *============*/
+ 
+ #btn_pay_done{
+   width: 115px;
+}
+#confirm_trade_btn{
+   height: 17px;
+   width: 180px;
+   order: 8;
+}
+#undo_trades_btn{
+   height: 17px;
+   width: 180px;
+   order: 7;
+}
+a#tgl_main_bld{
+   height: 17px;
+   width: 180px;
+   order: 5;
+}
+a#tgl_future_auc{
+   height: 17px;
+   width: 180px;
+   order: 4;
+}
+a#tgl_past_bld{
+   height: 17px;
+   width: 180px;
+   order: 6;
+}
+a#tgl_future_bld{
+   height: 17px;
+   width: 180px;
+   order: 6;
+}
+#top_texts {
+   margin-top: auto;
+   margin-bottom: auto;
+   grid-row: span 3;
+   order: 0;
+   grid-column: 1/2;
+   display: grid;
+   grid-auto-rows: 30px;
+}
+#round_text {
+   order: 1/2;
+   margin: auto;
+}
+#useSilver_form {
+   margin: auto;
+   grid-row: 3/4;
 }
 /*================*
  * Main Container *
@@ -180,56 +233,6 @@
    .container {
       grid-template-columns: 205px 690px 740px;
    }
-}
-
-/*============*
- * Button css *
- *============*/
- 
-#btn_pay_done{
-   width: 115px;
-}
-#confirm_trade_btn{
-   height: 17px;
-   width: 180px;
-   grid-row: span 6;
-   order: 8;
-}
-#undo_trades_btn{
-   height: 17px;
-   width: 180px;
-   grid-row: span 6;
-   order: 7;
-}
-a#tgl_main_bld{
-   height: 17px;
-   width: 180px;
-   grid-row: span 6;
-   order: 5;
-}
-a#tgl_future_auc{
-   height: 17px;
-   width: 180px;
-   grid-row: span 6;
-   order: 4;
-}
-a#tgl_past_bld{
-   height: 17px;
-   width: 180px;
-   grid-row: span 6;
-   order: 6;
-}
-a#tgl_future_bld{
-   height: 17px;
-   width: 180px;
-   grid-row: span 6;
-   order: 6;
-}
-#round_text {
-   margin-top: auto;
-   margin-bottom: auto;
-   grid-row: span 6;
-   order: 0;
 }
 
 /*====================*
@@ -418,20 +421,20 @@ div#train_advancement_5{
 }
 .train_bonus {
    position: absolute;
-   top: 73%;
+   top: 73.5%;
    height: 6%;
 }
 div#train_bonus_1_trade{
-   left: 26%;
+   left: 26.25%;
    width: 4%;
 }
 div#train_bonus_2_track{
-   left: 40.65%;
+   left: 40.75%;
    width: 4%;
 }
 div#train_bonus_3_worker{
-   left: 55.5%;
-   width: 4%;
+   left: 55.65%;
+   width: 3.5%;
 }
 div#train_bonus_4_wood{
    top: 75%;
@@ -442,38 +445,37 @@ div#train_bonus_4_wood{
 div#train_bonus_4_food{
    top: 76%;
    height: 3%;
-   left: 66.7%;
-   width: 1.5%;
+   left: 66.8%;
+   width: 1.6%;
 }
 div#train_bonus_4_steel{
    top: 76%;
    height: 3%;
-   left: 68.6%;
-   width: 1.5%;
+   left: 68.7%;
+   width: 1.7%;
 }
 div#train_bonus_4_gold{
    top: 76%;
    height: 3%;
-   left: 70.6%;
-   width: 1.5%;
+   left: 70.7%;
+   width: 1.6%;
 }
 div#train_bonus_4_copper{
    top: 76%;
    height: 3%;
-   left: 72.4%;
+   left: 72.5%;
    width: 2.5%;
 }
 div#train_bonus_4_cow{
    top: 75.5%;
    height: 3.5%;
-   left: 75.2%;
+   left: 75.4%;
    width: 2.8%;
 }
 div#train_bonus_5_vp{
-   left: 84%;
-   width: 5%;
+   left: 84.5%;
+   width: 4%;
 }
-
 
 /*=============================*
  * Trade Board                 *
@@ -497,11 +499,11 @@ div#trade_board {
 }
 div#trade_buy_wood{
    left: 1.5%;
-   top: 15.5%;
+   top: 16%;
 }
 div#trade_buy_food{
    left: 18%;
-   top: 15.5%;
+   top: 16%;
 }
 div#trade_buy_steel{
    left: 1.5%;
@@ -521,11 +523,11 @@ div#trade_buy_livestock{
 }
 div#trade_sell_wood{
    left: 39.5%;
-   top: 15.5%;
+   top: 16%;
 }
 div#trade_sell_food{
    left: 55.8%;
-   top: 15.5%;
+   top: 16%;
 }
 div#trade_sell_steel{
    left: 39.5%;

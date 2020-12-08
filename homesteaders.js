@@ -1031,7 +1031,7 @@ function (dojo, declare) {
                     dojo.query(`#${TRADE_BOARD_ID} [id^="trade_market"]`).addClass('selectable');
                 }
                 if (this.hasBuilding[BLD_BANK] != null){
-                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_bank"]').addClass('selectable`);
+                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_bank"]`).addClass('selectable');
                 }
             }
         },
