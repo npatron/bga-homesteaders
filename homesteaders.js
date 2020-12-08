@@ -2121,7 +2121,7 @@ function (dojo, declare) {
             for(let b_key in notif.args.building){
                 const building = notif.args.building[b_key];
                 var bld_score = 0;
-                if (Number(building.static) >0){
+                if (building.static && Number(building.static) >0){
                     bld_score += Number(building.static);
                 } 
                 if (building.bonus != null && Number(building.bonus) >0){
@@ -2135,7 +2135,6 @@ function (dojo, declare) {
             for(let type in notif.args.resource){
                 const amt = notif.args.resource[type];
                 this.scoreCtrl[p_id].incValue(amt);
-                this.displayScoring( `score_grid_${p_id}`, this.player_color[p_id], amt, 2000 );
             }
         },
 
