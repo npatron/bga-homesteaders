@@ -1045,7 +1045,7 @@ function (dojo, declare) {
             if ($(b_divId) == null){ //if missing make the building 
                 dojo.place(this.format_block( 'jstpl_buildings', {key: building.b_key, id: building.b_id}), zone_id);
                 this.b_connect_handler[building.b_key] = dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
-                this.addTooltipHtml( b_divId, b_info['tt'] );
+                this.addTooltipHtml( b_divId, this.formatDescription(b_info) );
                 this.addBuildingWorkerSlots(building, b_info);
                 this.main_building_counts[building.b_id]++;
             }
