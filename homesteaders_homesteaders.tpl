@@ -171,15 +171,15 @@ var jstpl_pay_button = '<span id="pay_gold" class="noshow useFont">0</span> \
 <span id="pay_silver_tkn" class="log_silver token_inline"></span>';
 var jstpl_color_log = '<span title="${string}" class="font ${color}">${string}</span>';
 var jstpl_color_number_log = '<span class="font ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
-var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
-var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
+var jstpl_resource_inline = '<span title = "${type}" class="log_${type} token_inline"></span>';
+var jstpl_resource_log= '<span title = "${type}" class="log_${type} log_token"></span>';
 var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
 var jptpl_track_log= '<div title = "${type}" class="log_inline_${type}" ></div>';
 var jptpl_x_loan= '<div title ="pay_loan" class="x_out log_inline_loan" ></div>';
 
 var jptpl_bld_tt = '<span class="font bold ${type}">${name}</span><p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} token_inline"></span></p><br>\
-    <p class="useFont">${COST}${cost_vals}</p><hr>\
-    <div style="text-align: center;" class="useFont">${}</div><hr>\
+    <p class="useFont">${COST} ${cost_vals}</p><hr>\
+    <span style="text-align: center;" class="useFont">${desc}</span><hr>\
     <span class="income">${INCOME}<br></span>\
     <div style="text-align: center;" class="useFont">${inc_vals}<div>';
 </script>  

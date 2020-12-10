@@ -227,7 +227,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV._(" Produces ").STEEL_HTML._(" each round").END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
-    'cost' => array('wood'=>2,'gold'=>1),
+    'cost' => array('gold'=>1,'wood'=>2,),
     'inc'  => array('steel'=>1),
     'amt'  => 1,
    ),
@@ -268,7 +268,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").COW_HTML.END_DIV,
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
-    'cost' => array('wood'=>1,'steel'=>1,'food'=>1),
+    'cost' => array('steel'=>1,'food'=>1,'wood'=>1,),
     'slot' => 1,
     's1'   => array('cow'=>1),
     's1_tt'=> clienttranslate("Produces ").COW_HTML,
@@ -308,7 +308,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").GOLD_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
-    'cost' => array('wood'=>1,'steel'=>1),
+    'cost' => array('steel'=>1,'wood'=>1,),
     'slot' => 1,
     's1'   => array('gold'=>1),
     's1_tt'=> _("Produces ").GOLD_HTML,
@@ -321,7 +321,7 @@ $this->building_info = array_merge(
             INCOME.CENTER_DIV.WORKER_HTML._(" Can produce ").COPPER_HTML.END_DIV,
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
-    'cost' => array('wood'=>2,'steel'=>1),
+    'cost' => array('steel'=>1, 'wood'=>2),
     'slot' => 1,
     's1'   => array('copper'=>1),
     's1_tt'=> _("Produces ").COPPER_HTML,
@@ -350,7 +350,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV._(" Produces ").VP2_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
-    'cost' => array('wood'=>1,'steel'=>1,'gold'=>1,'copper'=>1),
+    'cost' => array('copper'=>1,'gold'=>1,'steel'=>1,'wood'=>1),
     'vp'   => 10,
     'inc'  => array('vp2'=>1),
     'amt'  => 1,
@@ -378,27 +378,11 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV._(" Produces ").SILVER_HTML.SILVER_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
-    'cost' => array('wood'=>1,'steel'=>1),
+    'cost' => array('steel'=>1,'wood'=>1,),
     'vp_b' => VP_B_TRACK,
     'inc'  => array('silver'=>2),
     'amt'  => 2,
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-   ),
-   BLD_BANK => array(
-    'name' => _("Bank"),
-    'desc' => clienttranslate('Allow trade:\n${trade} ${arrow} ${silver}'),
-    'tt'   => COM_SPAN._("Bank").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
-              COST. STEEL_HTML. COPPER_HTML. END_P.
-              ALLOW_TRADE.CENTER_DIV.TRADE_HTML." ".ARROW_HTML." ".SILVER_HTML."<br>".
-              _(" End: ").END_SPAN.VP_HTML." ".ARROW_HTML." ".S_HTML.END_DIV.
-              INCOME.CENTER_DIV._(" Pays off ").LOAN_HTML._(" each round").END_DIV,
-    'stage'=> STAGE_TOWN,
-    'type' => TYPE_COMMERCIAL,
-    'cost' => array('steel'=>1,'copper'=>1),
-    'vp'   => 3,
-    'vp_b' => VP_B_SPECIAL,
-    'inc'  => array('loan'=>-1),
-    'amt'  => 1,
    ),
    BLD_STABLES => array(
     'name' => _("Stables"),
@@ -413,6 +397,22 @@ $this->building_info = array_merge(
     'inc'  => array('trade'=>1, 'vp'=>1),
     'amt'  => 1,
    ),
+   BLD_BANK => array(
+    'name' => _("Bank"),
+    'desc' => clienttranslate('Allow trade:\n${trade} ${arrow} ${silver}'),
+    'tt'   => COM_SPAN._("Bank").END_SPAN.":".RIGHT_P.VP3_HTML.END_P.
+              COST. STEEL_HTML. COPPER_HTML. END_P.
+              ALLOW_TRADE.CENTER_DIV.TRADE_HTML." ".ARROW_HTML." ".SILVER_HTML."<br>".
+              _(" End: ").END_SPAN.VP_HTML." ".ARROW_HTML." ".S_HTML.END_DIV.
+              INCOME.CENTER_DIV._(" Pays off ").LOAN_HTML._(" each round").END_DIV,
+    'stage'=> STAGE_TOWN,
+    'type' => TYPE_COMMERCIAL,
+    'cost' => array('copper'=>1, 'steel'=>1),
+    'vp'   => 3,
+    'vp_b' => VP_B_SPECIAL,
+    'inc'  => array('loan'=>-1),
+    'amt'  => 1,
+   ),
    BLD_MEATPACKING_PLANT => array(
     'name' => _("Meatpacking Plant"),
     'tt'   => IND_SPAN._("Meatpacking Plant").END_SPAN.":".RIGHT_P.VP2_HTML.END_P.
@@ -423,7 +423,7 @@ $this->building_info = array_merge(
               _(" Can Produce: ").VP2_HTML.END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
-    'cost' => array('wood'=>1,'cow'=>1),
+    'cost' => array('cow'=>1, 'wood'=>1,),
     'vp'   => 2,
     'slot' => 2,
     's1'   => array('vp2'=>1),
@@ -460,7 +460,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV._(" Income: ").VP2_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2, 'copper'=>1),
+    'cost' => array('copper'=>1, 'steel'=>2),
     'vp'   => 6,
     'vp_b' => VP_B_INDUSTRIAL,
     'inc'  => array('vp2'=>1),
@@ -474,9 +474,9 @@ $this->building_info = array_merge(
               "<br>"._(" (max 5) each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
-    'cost' => array('food'=>1, 'cow'=>1),
+    'cost' => array('cow'=>1,'food'=>1),
     'vp'   => 4,
-    'inc'  => array('silver'=>'5'),
+    'inc'  => array('silver'=>'x'),
     'amt'  => 1,
    ),
    BLD_LAWYER => array(
@@ -489,7 +489,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV._(" Produces ").VP2_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
-    'cost' => array('wood'=>1, 'gold'=>1, 'cow'=>1),
+    'cost' => array('cow'=>1, 'gold'=>1, 'wood'=>1),
     'vp'   => 4,
     'vp_b' => VP_B_COMMERCIAL,
     'inc'  => array('vp2'=>1),
@@ -503,7 +503,7 @@ $this->building_info = array_merge(
               INCOME.CENTER_DIV._(" Produces ").GOLD_HTML._(" each round").END_DIV,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
-    'cost' => array('wood'=>2,'copper'=>1,'cow'=>1),
+    'cost' => array('cow'=>1, 'copper'=>1, 'wood'=>2,),
     'vp'   => 6,
     'vp_b' => VP_B_RESIDENTIAL,
     'inc'  => array('gold'=>1),
@@ -670,34 +670,6 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
 ));
-
-foreach ($this->building_info as $b_id=> $b_val){
-  if ($b_val['type'] == TYPE_RESIDENTIAL)     $typeSpan = '<span class="font bold res">';
-  else if ($b_val['type'] == TYPE_COMMERCIAL) $typeSpan = '<span class="font bold com">'; 
-  else if ($b_val['type'] == TYPE_INDUSTRIAL) $typeSpan = '<span class="font bold ind">';
-  else if ($b_val['type'] == TYPE_SPECIAL)    $typeSpan = '<span class="font bold spe">';
-  else                                        $typeSpan = '<span class="font bold">';
-  $vp = 'vp';
-  if ($b_val['vp'] != 1) $vp .= $b_val['vp']; // vp0, vp2, vp4 etc.
-  $vp_html = "<p class=\"alignright\"><span aria=\"$vp\" title=\"$vp\" class=\"log_$vp token_inline\"></span></p>";
-  
-  if (array_key_exists('cost', $b_val)){
-    $cost_html = '<br><p class="useFont">'._('Cost: ');
-    
-    $cost_html .='</p><hr>';
-  } else $cost_html = '<hr>';
-  if (array_key_exists('description', $b_val)){
-    $description_html = $b_val['description'];
-  } else $description_html = '<hr>';
-  
-
-  $this->building_info[$b_id]['tt'] = 
-  $typeSpan.$b_val['name'].'</span>'.$vp_html.$cost_html.
-INCOME.CENTER_DIV._("Produce:  ").SILVER_HTML.SILVER_HTML.
-"<br>".WORKER_HTML._(" Can Produce:  ").WOOD_HTML.
-"<br>".WORKER_HTML._(" Can Produce:  ").VP_HTML.END_DIV;
-} 
-
 
 $this->auction_info = array( 
   1 => array(
