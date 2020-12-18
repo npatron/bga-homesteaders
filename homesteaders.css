@@ -943,6 +943,12 @@ div#trade_bank_trade_silver{
    display: block;
    float: center;
 }
+.tt_container{
+   min-width: 100px;
+   max-width: 200px;
+   float: center;
+   text-align: center;
+}
 
 /*=============*
  * Token Zones *

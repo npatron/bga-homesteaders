@@ -177,11 +177,12 @@ var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${co
 var jptpl_track_log= '<div title = "${type}" class="log_inline_${type}" ></div>';
 var jptpl_x_loan= '<div title ="pay_loan" class="x_out log_inline_loan" ></div>';
 
-var jptpl_bld_tt = '<span class="font bold ${type}">${name}</span><p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} token_inline"></span></p><br>\
-    <p class="useFont">${COST} ${cost_vals}</p><hr>\
-    <span style="text-align: center;" class="useFont">${desc}</span><hr>\
+var jptpl_res_tt = '<div class="tt_container" style="text-align:center;">${value}</br>';0
+var jptpl_bld_tt = '<div class="tt_container"><span class="font bold ${type}" style="text-align:left;">${name}</span><p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} token_inline"></span></p><br>\
+    <p class="useFont" style="text-align: left;">${COST} ${cost_vals}</p><hr>\
+    <span class="font">${desc}</span><hr>\
     <span class="income">${INCOME}<br></span>\
-    <div style="text-align: center;" class="useFont">${inc_vals}<div>';
+    <div class="font">${inc_vals}</div></div>';
 </script>  
 
 {OVERALL_GAME_FOOTER}

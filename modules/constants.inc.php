@@ -231,4 +231,3 @@
   define('S_HTML', '<span aria="Special" class="font bold spe">'._("Special").'</span>');
   define('A_HTML', '<span class="font bold">'._("ANY").'</span>');
 
-

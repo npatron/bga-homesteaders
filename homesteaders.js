@@ -84,7 +84,7 @@ function (dojo, declare) {
     const TRADE_BOARD_ID = 'trade_board';
     const TYPE_SELECTOR = {'bid':'.bid_slot', 'bonus':'.train_bonus', 'worker_slot':'.worker_slot',
     'building':'.building_tile', 'worker':'.token_worker', 'trade':'.trade_option'};
-    
+    const PER_STR = _(' per ');
 
     // other Auction Locations are the auction number (1-3).
     const AUCLOC_DISCARD = 0;
@@ -307,8 +307,9 @@ function (dojo, declare) {
                 this.resourceCounters[key] = new ebg.counter();
                 this.resourceCounters[key].create(resourceId);
                 this.resourceCounters[key].setValue(value);
-                this.addTooltipHtml( resourceId, info[key]['tt'] );
-                this.addTooltipHtml( iconId, info[key]['tt'] );
+                let tooltip_html = this.format_block('jptpl_res_tt', {value:this.replaceTooltipStrings(info[key]['tt'])});
+                this.addTooltipHtml( resourceId, tooltip_html);
+                this.addTooltipHtml( iconId, tooltip_html);
             }
         },
 
@@ -946,14 +947,21 @@ function (dojo, declare) {
             });
         },
 
+        replaceTooltipStrings(inputString){
+            let _this = this;
+            var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
+                    function(f){ return _this.getOneResourceAsDiv(f.substr(2, f.length -3),1,true);});
+            updatedString = updatedString.replaceAll(/(\\n)/g, '<br>') + '<br>';
+            return updatedString;
+        },
+
         formatDescription: function(b_info){
             var full_desc = '';
-            let _this = this;
+            
             if (b_info.desc != null){// replaces any ${val} with formatted resource log of type val
-                full_desc = b_info.desc.replaceAll(/\${(.*?)}/g, 
-                        function(f){ return _this.format_block('jstpl_resource_log', {type: f.substr(2, f.length -3)});});
-                full_desc = full_desc.replaceAll(/(\\n)/g, '<br>') + '<br>';
+                full_desc =  this.replaceTooltipStrings(b_info.desc);
             }
+
             if (b_info.on_b != null){
                 const GAIN = _(' gain ');
                 var on_build_desc = _("When built: ");
@@ -971,7 +979,9 @@ function (dojo, declare) {
                         on_build_desc += _('advance on Railroad track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-
+                        on_build_desc += this.getOneResourceAsDiv('track', 1, true) +'<br>' +
+                        _('You may also build another building of ') ;
+                        break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
                         on_build_desc += this.getOneResourceAsDiv('silver',2);
                         break;
@@ -986,9 +996,8 @@ function (dojo, declare) {
                 full_desc += on_build_desc + '<br>';
             }
             if (b_info.vp_b != null){
-                const END = _("END: ");
-                const PER = _(" per ");
-                let vp_b = END + this.getOneResourceAsDiv('vp') + PER;
+                const END = _("End: ");
+                let vp_b = END + this.getOneResourceAsDiv('vp', 1, true) + PER_STR;
                 switch(b_info.vp_b){
                     case 0: //VP_B_RESIDENTIAL
                     case 1: //VP_B_COMMERCIAL
@@ -1002,9 +1011,9 @@ function (dojo, declare) {
                         break;
                     case 7: //VP_B_WRK_TRK
                         vp_b += this.getOneResourceAsDiv('worker') + "<br>";
-                        vp_b += END + this.format_block('jstpl_resource_log', {type: 'vp'}) + PER;
+                        vp_b += END + this.getOneResourceAsDiv('vp', 1, true) + PER_STR;
                     case 5: //VP_B_TRACK
-                        vp_b += this.format_block('jptpl_track_log', {type: 'track'}) + "<br>";
+                        vp_b += this.getOneResourceAsDiv('track', 1, true) + "<br>";
                         break;
                     case 8: //VP_B_PAID_LOAN (expansion)
                         vp_b += this.format_block('jptpl_track_log', {type: 'loan'}) + "<br>";
@@ -1017,19 +1026,19 @@ function (dojo, declare) {
 
         formatIncome: function(b_info){
             var inc_vals = '';
-            
+            const worker = this.getOneResourceAsDiv('worker', 1, true);
             if (b_info.inc != null){
                 if (b_info.inc.silver =='x'){
-                    inc_vals = _('Produces ') + this.getOneResourceAsDiv('silver',1, true) +_(' per ')+
-                        this.getOneResourceAsDiv('worker',1,true) +_('each round (max 5)') + '<br>';
+                    inc_vals = this.getOneResourceAsDiv('silver', 1, true) +PER_STR+ worker +_('(max 5)') + '<br>';
+                } else if (b_info.inc.loan == '-1') {
+                    inc_vals = _('Pay off ')+ this.format_block('jptpl_track_log', {type: 'loan'}) + '<br>';
                 } else {
-                    inc_vals = _('Produces ') + this.getResourceArrayAsDiv(b_info.inc, true) +_(' each round') + '<br>';
+                    inc_vals = this.getResourceArrayAsDiv(b_info.inc, true) + '<br>';
                 }
             }
             if (b_info.slot != null){
-                const worker = this.getOneResourceAsDiv('worker', 1, true);
                 if (b_info.slot ==1){
-                    inc_vals += worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>';
+                    inc_vals +=  worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>';
                 }
                 if (b_info.slot ==2){
                     inc_vals += worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>' 
