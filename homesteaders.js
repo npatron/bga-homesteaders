@@ -221,8 +221,13 @@ function (dojo, declare) {
             this.setupTradeButtons(gamedatas.can_undo_trades);
             this.setupBonusButtons(gamedatas.resource_info);
             this.setupShowButtons();
-            this.roundCounter.create('round_number');
-            this.roundCounter.setValue( gamedatas.round_number);
+            if (gamedatas.round_number ==11){
+                dojo.destroy('#round_number');
+                $("round_text").innerHTML=_('Final Income and Scoring Round');
+            } else {
+                this.roundCounter.create('round_number');
+                this.roundCounter.setValue(gamedatas.round_number);
+            }
             
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications(gamedatas.cancel_move_ids);
@@ -815,7 +820,12 @@ function (dojo, declare) {
 
         /*** setup new Round ***/
         setupTiles: function(round_number, auction_tiles) {
-            this.roundCounter.setValue(round_number);
+            if (round_number == 11){
+                dojo.destroy('#round_number');
+                $("round_text").innerHTML=_('Final Income and Scoring Round');
+            } else {
+                this.roundCounter.setValue(round_number);
+            }
             this.showCurrentAuctions(auction_tiles, round_number);
         },
 
@@ -1293,7 +1303,9 @@ function (dojo, declare) {
         donePlacingWorkers: function(){
             if( this.checkAction( 'done')){
                 const tokenZone = this.token_divId[this.player_id];
-                if (dojo.query(`#${tokenZone} .token_worker`).length >0 ){
+                const playerBuildingZone = this.player_building_zone_id[this.player_id];
+                if (dojo.query(`#${tokenZone} .token_worker`).length > 0 &&
+                    dojo.query(`#${playerBuildingZone} .worker_slot:empty`).length > 0){
                     this.confirmationDialog( _('You still have workers to assign, Continue?'), dojo.hitch( this, function() {
                     this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
                     function( result ) { 
