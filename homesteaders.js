@@ -107,7 +107,7 @@ function (dojo, declare) {
     const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8'];
 
     // map of tpl id's  used to place the player_zones in turn order.
-    const PLAYER_ORDER = ['First', 'Second', 'Third', 'Fourth'];
+    const PLAYER_ORDER = ['currentPlayer','First', 'Second', 'Third', 'Fourth',];
 
     return declare("bgagame.homesteaders", ebg.core.gamegui, {
         addMoveToLog: override_addMoveToLog,
@@ -270,10 +270,15 @@ function (dojo, declare) {
          * @param {array} order_table 
          */
         orientPlayerZones: function (order_table){
-            let next_pId = this.player_id;    
-            for (let i = 0; i < this.playerCount; i++){
+            dojo.place(`player_zone_${this.player_color[this.player_id]}`, PLAYER_ORDER[0] , 'first');
+            dojo.removeClass(PLAYER_ORDER[0],'noshow');
+            let next_pId = order_table[this.player_id];
+            for (let i = 1; i < this.playerCount; i++){
                 dojo.place(`player_zone_${this.player_color[next_pId]}`, PLAYER_ORDER[i] , 'replace');
                 next_pId = order_table[this.player_id];
+            }
+            for(let i = this.playerCount; i < PLAYER_ORDER.length; i++){
+                dojo.destroy(PLAYER_ORDER[i]);
             }
         },
 
