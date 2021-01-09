@@ -40,7 +40,7 @@ class homesteaders extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         
-        self::initGameStateLabels( array( 
+        self::initGameStateLabels( array(
             "round_number"      => 10,
             "first_player"      => 11,
             "phase"             => 12,
@@ -51,6 +51,7 @@ class homesteaders extends Table
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
             "last_building"     => 19,
+            "show_player_info"  => SHOW_PLAYER_INFO,
         ) );
         
         $this->Log      = new HSDLog($this);
@@ -177,9 +178,10 @@ class homesteaders extends Table
             'number_auctions' => $this->getGameStateValue( 'number_auctions' ),
             'player_order' => $this->getNextPlayerTable(),
             'player_resources' => $this->getObjectFromDb( "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '$cur_p_id'" ),
-            'resources' => $this->getCollectionFromDb( "SELECT `player_id` p_id, `workers`, `track` FROM `resources` " ),
+            'resources' => $this->Resources->getResources($cur_p_id),
             'resource_info' => $this->resource_info,
             'round_number' => $this->getGameStateValue( 'round_number' ),
+            'show_player_info' => $this->getShowPlayerInfo(),
             'tracks' => $this->getCollectionFromDb("SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` "),
             'workers' => $this->getCollectionFromDb( "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot FROM `workers`" ),
         );
@@ -213,6 +215,18 @@ class homesteaders extends Table
 
     function getPlayerColorName($p_id){
         return $this->getUniqueValueFromDB( "SELECT `color_name` FROM `player` WHERE `player_id`=$p_id" );
+    }
+
+    /** Temporary solution to handle existing games while adding option show_player_info
+     * should be able to just replace it with 
+     * getGameStateValue('show_player_info' );
+     */
+    function getShowPlayerInfo(){
+        try {
+            return $this->getGameStateValue( 'show_player_info' );
+        } catch (Exception $e) {
+            return false;
+        }
     }
     
     

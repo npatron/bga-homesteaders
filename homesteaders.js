@@ -158,6 +158,7 @@ function (dojo, declare) {
             this.b_connect_handler = [];
             this.hasBuilding = []; 
             this.last_selected = [];
+            this.showAllResources = false;
             this.goldAsCopper = false;
             this.goldAsCow = false;
         },
@@ -179,6 +180,7 @@ function (dojo, declare) {
         {
             this.isSpectator = true;
             this.playerCount = 0;
+            this.showAllResources = gamedatas.show_player_info;
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
                 this.playerCount++;
@@ -187,8 +189,8 @@ function (dojo, declare) {
             }
             if (!this.isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
-                this.setupPlayerResources(gamedatas.player_resources, gamedatas.resource_info);
                 this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
+                this.setupPlayerResources(gamedatas.player_resources, gamedatas.resources, gamedatas.resource_info);
             } else {
                 // when displaying for a spectator remove the player config checkbox.
                 dojo.destroy('useSilver_form');
@@ -241,10 +243,12 @@ function (dojo, declare) {
             const current_player_color = player.color_name;
             const p_id = player.p_id;            
             dojo.removeClass("player_zone_"+current_player_color, "noshow");
-            if( this.player_id == p_id){
+            if (his.player_id == p_id) {
+                this.isSpectator = false;
+            }
+            if( this.player_id == p_id || this.show_player_info){
                 const player_board_div = 'player_board_'+p_id;
                 dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
-                this.isSpectator = false;
             } 
             this.player_color[p_id] = current_player_color;
             this.token_divId[p_id]  = 'token_zone_' + current_player_color;
@@ -306,19 +310,29 @@ function (dojo, declare) {
         /**
          * should only be called when not spectator, 
          * It will put the player resources in the player Score area.
-         * @param {*} resources 
+         * @param {*} player_resources - if hide player resources & not-spectator, fill resources with this
+         * @param {*} resources        - otherwise use this to fill all resources.
          * @param {*} info 
          */
-        setupPlayerResources: function (resources, info){
-            for (const [key, value] of Object.entries(resources)) {
+        setupPlayerResources: function (player_resources, resources, info){
+            if (this.show_player_info){
+                resources.foreach((resources) ->this.setupOnePlayerResources())
+            }else if (!this.isSpectator){
+                this.setupOnePlayerResources(player_resources, info);
+            }
+        },
+
+        setupOnePlayerResources: function (resource, info) {
+            for (const [key, value] of Object.entries(resource)) {
                 if (key == "p_id") continue;
-                let resourceId = `${key}count_${resources.p_id}`;
-                let iconId = `${key}icon_p${resources.p_id}`;
+                let resourceId = `${key}count_${resource.p_id}`;
+                let iconId = `${key}icon_p${resource.p_id}`;
                 this.resourceCounters[key] = new ebg.counter();
                 this.resourceCounters[key].create(resourceId);
                 this.resourceCounters[key].setValue(value);
                 this.addTooltipHtml( resourceId, info[key]['tt'] );
                 this.addTooltipHtml( iconId, info[key]['tt'] );
+                }
             }
         },
 
