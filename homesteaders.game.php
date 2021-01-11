@@ -171,14 +171,14 @@ class homesteaders extends Table
             'buildings' => $this->Building->getAllBuildings(),
             'building_info' => $this->building_info,
             'bids' => $this->getCollectionFromDB( "SELECT `player_id` p_id, `bid_loc` FROM `bids`" ),
-            'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id))> 0 && $this->checkAction('trade',false)),
+            'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id)) > 0 && $this->checkAction('trade', false)),
             'cancel_move_ids' => $this->Log->getCancelMoveIds(),
             'current_auctions' => $this->Auction->getCurrentRoundAuctions(), 
             'first_player' => $this->getGameStateValue( 'first_player'),
             'number_auctions' => $this->getGameStateValue( 'number_auctions' ),
             'player_order' => $this->getNextPlayerTable(),
             'player_resources' => $this->getObjectFromDb( "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '$cur_p_id'" ),
-            'resources' => $this->Resources->getResources($cur_p_id),
+            'resources' => $this->Resource->getResources($cur_p_id),
             'resource_info' => $this->resource_info,
             'round_number' => $this->getGameStateValue( 'round_number' ),
             'show_player_info' => $this->getShowPlayerInfo(),
@@ -223,7 +223,7 @@ class homesteaders extends Table
      */
     function getShowPlayerInfo(){
         try {
-            return $this->getGameStateValue( 'show_player_info' );
+            return ($this->getGameStateValue( 'show_player_info' ) == 0);
         } catch (Exception $e) {
             return false;
         }

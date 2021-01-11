@@ -26,13 +26,14 @@
 
 $game_options = array(
 
-    SHOW_PLAYER_INFO => array(
+    //SHOW_PLAYER_INFO
+    100 => array(
         'name' => totranslate('show or hide resources'),
         'values' => array(
-            SHOW_ALL_RESOURCES => array(
-                'name' => totranslate('show all plaayer resources'),
+            0 => array(//SHOW_ALL_RESOURCES
+                'name' => totranslate('show all player resources'),
             ),
-            HIDE_ALL_RESOURCES => array(
+            1 => array(//HIDE_ALL_RESOURCES
                 'name' => totranslate('hide resources from other players'),
                 'description' => totranslate('hide player resources'),
                 'nobeginner'=>true,

@@ -153,12 +153,11 @@ function (dojo, declare) {
             // for tracking current auction (for title update)
             this.current_auction = 1;
             this.number_auctions = 0;
-            this.isTop = false;
 
             this.b_connect_handler = [];
             this.hasBuilding = []; 
             this.last_selected = [];
-            this.showAllResources = false;
+            this.show_player_info = false;
             this.goldAsCopper = false;
             this.goldAsCow = false;
         },
@@ -180,7 +179,8 @@ function (dojo, declare) {
         {
             this.isSpectator = true;
             this.playerCount = 0;
-            this.showAllResources = gamedatas.show_player_info;
+            this.show_player_info = gamedatas.show_player_info;
+            console.log(gamedatas);
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
                 this.playerCount++;
@@ -243,7 +243,7 @@ function (dojo, declare) {
             const current_player_color = player.color_name;
             const p_id = player.p_id;            
             dojo.removeClass("player_zone_"+current_player_color, "noshow");
-            if (his.player_id == p_id) {
+            if (this.player_id == p_id) {
                 this.isSpectator = false;
             }
             if( this.player_id == p_id || this.show_player_info){
@@ -316,23 +316,33 @@ function (dojo, declare) {
          */
         setupPlayerResources: function (player_resources, resources, info){
             if (this.show_player_info){
-                resources.foreach((resources) ->this.setupOnePlayerResources())
-            }else if (!this.isSpectator){
+                console.log('all_resources');
+                for (let player_res in resources){
+                    this.setupOnePlayerResources(resources[player_res], info);
+                }
+            } else if (!this.isSpectator){
+                console.log('only_this_player');
                 this.setupOnePlayerResources(player_resources, info);
             }
         },
 
+        /**
+         * Resource array for this person.
+         * @param {array} resource 
+         * @param {*} info 
+         */
         setupOnePlayerResources: function (resource, info) {
+            this.resourceCounters[resource.p_id] = [];
             for (const [key, value] of Object.entries(resource)) {
-                if (key == "p_id") continue;
+                console.log(resource, key, value);
+                if (key == "p_id" || key == "workers" || key == "track") continue;
                 let resourceId = `${key}count_${resource.p_id}`;
                 let iconId = `${key}icon_p${resource.p_id}`;
-                this.resourceCounters[key] = new ebg.counter();
-                this.resourceCounters[key].create(resourceId);
-                this.resourceCounters[key].setValue(value);
+                this.resourceCounters[resource.p_id][key] = new ebg.counter();
+                this.resourceCounters[resource.p_id][key].create(resourceId);
+                this.resourceCounters[resource.p_id][key].setValue(value);
                 this.addTooltipHtml( resourceId, info[key]['tt'] );
                 this.addTooltipHtml( iconId, info[key]['tt'] );
-                }
             }
         },
 
@@ -1962,18 +1972,19 @@ function (dojo, declare) {
         },
 
         notif_gainTrack: function( notif ){
+            const p_id = Number(notif.args.player_id);
             dojo.place(this.format_block( 'jptpl_track', 
                     {id: Number(notif.args.track_key), color: this.player_color[Number(notif.args.player_id)]}),
-                    this.token_divId[Number(notif.args.player_id)]);
+                    this.token_divId[p_id]);
             this.addTooltipHtml(`token_track_${notif.args.track_key}`, this.res_info['track']['tt']);
             if (notif.args.tradeAway_arr != null){
                 var destination = this.getTargetFromNotifArgs(notif);
-                const player_zone_divId = `player_board_${notif.args.player_id}`;
+                const player_zone_divId = `player_board_${p_id}`;
                 for(let type in notif.args.tradeAway_arr){
                     for(let i = 0; i < notif.args.tradeAway_arr[type]; i++){
                         this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
-                        if (notif.args.player_id == this.player_id){
-                            this.resourceCounters[type].incValue(-1);
+                        if (p_id == this.player_id || this.show_player_info){
+                            this.resourceCounters[p_id][type].incValue(-1);
                         }
                     }
                 }
@@ -2000,18 +2011,19 @@ function (dojo, declare) {
         },
 
         notif_buildBuilding: function( notif ){
+            const p_id = notif.args.player_id;
             this.addBuildingToPlayer(notif.args.building);
-            this.updateScoreForBuilding(notif.args.player_id, notif.args.building.b_id);
+            this.updateScoreForBuilding(p_id, notif.args.building.b_id);
             
             var destination = `${TPL_BLD_TILE}_${Number(notif.args.building.b_key)}`; 
-            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            const player_zone_divId = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
                 for(let i = 0; i < amt; i++){
                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
-                    if (notif.args.player_id == this.player_id){
-                        this.resourceCounters[type].incValue(-1);
+                    if (p_id == this.player_id || this.show_player_info){
+                        this.resourceCounters[p_id][type].incValue(-1);
                     }
                 }   
             }
@@ -2019,33 +2031,34 @@ function (dojo, declare) {
 
         notif_playerIncome: function( notif ){
             var start = this.getTargetFromNotifArgs(notif);
-            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_zone_divId = `player_board_${p_id}`;
             for(let i = 0; i < notif.args.amount; i++){
             this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr)}), 'limbo', start , player_zone_divId , 500 , 100*i );
-                if (notif.args.player_id == this.player_id){
+            if (p_id == this.player_id || this.show_player_info){
                     if (VP_TOKENS.includes(notif.args.typeStr)){
-                        this.resourceCounters['vp'].incValue(Number(notif.args.typeStr.charAt(2)));    
+                        this.resourceCounters[p_id]['vp'].incValue(Number(notif.args.typeStr.charAt(2)));
                     } else{ // normal case
-                        this.resourceCounters[notif.args.typeStr].incValue(1);
+                        this.resourceCounters[p_id][notif.args.typeStr].incValue(1);
                     }
-                    
                 }
             }  
         },
 
         notif_playerIncomeGroup: function( notif ){
             var start = this.getTargetFromNotifArgs(notif);
-            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_zone_divId = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
                 for(let i = 0; i < amt; i++){
                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', start , player_zone_divId , 500 , 100*(delay++) );
-                    if (notif.args.player_id == this.player_id){
+                    if (p_id == this.player_id || this.show_player_info){
                         if (VP_TOKENS.includes(notif.args.typeStr)){
-                            this.resourceCounters['vp'].incValue(Number(notif.args.typeStr.charAt(2)));    
+                            this.resourceCounters[p_id]['vp'].incValue(Number(notif.args.typeStr.charAt(2)));    
                         } else{ // normal case
-                            this.resourceCounters[type].incValue(1);
+                            this.resourceCounters[p_id][type].incValue(1);
                         }
                     }
                 }   
@@ -2054,39 +2067,42 @@ function (dojo, declare) {
 
         notif_playerPayment: function( notif ){         
             var destination = this.getTargetFromNotifArgs(notif);
-            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_zone_divId = `player_board_${p_id}`;
             for(let i = 0; i < notif.args.amount; i++){
                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:notif.args.typeStr}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
-                if (notif.args.player_id == this.player_id){
-                    this.resourceCounters[notif.args.typeStr].incValue(-1);
+                if (p_id == this.player_id || this.show_player_info){
+                    this.resourceCounters[p_id][notif.args.typeStr].incValue(-1);
                 }
             }
         },
 
         notif_playerPaymentGroup: function( notif ){
             var destination = this.getTargetFromNotifArgs(notif);
-            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_zone_divId = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
-                                for(let i = 0; i < amt; i++){
-                                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
-                    if (notif.args.player_id == this.player_id){
-                        this.resourceCounters[type].incValue(-1);
+                    for(let i = 0; i < amt; i++){
+                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                        if (p_id == this.player_id || this.show_player_info){
+                            this.resourceCounters[p_id][type].incValue(-1);
                     }
                 }   
             }
         },
 
         notif_trade: function( notif ){
-            const player_zone = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_zone = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.tradeAway_arr){
                 let amt = notif.args.tradeAway_arr[type];
                 for(let i = 0; i < amt; i++){
                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone,TRADE_BOARD_ID , 500 , 100*(delay++) );
-                    if (notif.args.player_id == this.player_id){
-                        this.resourceCounters[type].incValue(-1);
+                    if (p_id == this.player_id || this.show_player_info){
+                        this.resourceCounters[p_id][type].incValue(-1);
                     }
                 }   
             }
@@ -2095,60 +2111,58 @@ function (dojo, declare) {
                 for(let i = 0; i < amt; i++){
                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', TRADE_BOARD_ID, player_zone, 500 , 100*(delay++) );
                 }   
-                if (notif.args.player_id == this.player_id){
+                if (p_id == this.player_id || this.show_player_info){
                     if (VP_TOKENS.includes(type)){
                         amt = amt * Number(type.charAt(2));
-                        this.resourceCounters['vp'].incValue(amt);
+                        this.resourceCounters[p_id]['vp'].incValue(amt);
                     } else {
-                        this.resourceCounters[type].incValue(amt);
+                        this.resourceCounters[p_id][type].incValue(amt);
                     }
                 }
             }
-            if (notif.args.player_id == this.player_id)
+            if (p_id == this.player_id)
                 this.showUndoTransactionsButtonIfPossible();
         },
 
         notif_loanPaid: function( notif ){
-            const player_board_div = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_board_div = `player_board_${p_id}`;
             var destination = this.getTargetFromNotifArgs(notif);
             this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , player_board_div, destination,  500 , 0 );
-            if (notif.args.player_id == this.player_id){
-                this.resourceCounters['loan'].incValue(-1);
+            if (p_id == this.player_id || this.show_player_info){
+                this.resourceCounters[p_id]['loan'].incValue(-1);
             }
             if (notif.args.type != null ){
                 if (notif.args.typeStr == 'gold'){
                     this.slideTemporaryObject( notif.args.type , 'limbo', player_board_div, 'board', 500, 100);
-                    if (notif.args.player_id == this.player_id){
-                        this.resourceCounters['gold'].incValue(-1);
+                    if (p_id == this.player_id || this.show_player_info){
+                        this.resourceCounters[p_id]['gold'].incValue(-1);
                     }
                 } else {
                     for (let i = 0; i < 5; i++){
                         this.slideTemporaryObject( notif.args.type, 'limbo', player_board_div, 'board', 500, 100 +(i*100)); 
                     }
-                    if (notif.args.player_id == this.player_id){
-                        this.resourceCounters['silver'].incValue(-5);
+                    if (p_id == this.player_id || this.show_player_info){
+                        this.resourceCounters[p_id]['silver'].incValue(-5);
                     }
                 }
             }
         },
 
         notif_loanTaken: function( notif ){
-            const player_zone_divId = `player_board_${notif.args.player_id}`;
+            const p_id = notif.args.player_id;
+            const player_zone_divId = `player_board_${p_id}`;
             this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', player_zone_divId,  500 , 0 );
             this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 100);
             this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 200);
-            if (notif.args.player_id == this.player_id){
-                this.resourceCounters['loan'].incValue(1);
-                this.resourceCounters['silver'].incValue(2);
+            if (p_id == this.player_id || this.show_player_info){
+                this.resourceCounters[p_id]['loan'].incValue(1);
+                this.resourceCounters[p_id]['silver'].incValue(2);
                 this.showUndoTransactionsButtonIfPossible();
             }
         },
 
         notif_score: function( notif ){
-            if (this.isTop == false){
-                this.isTop = true;
-                this.moveObject('player_zones', 'main_container', 'before');
-            }
             const p_id = notif.args.player_id;
             this.scoreCtrl[p_id].setValue(0);
             for(let b_key in notif.args.building){
@@ -2172,8 +2186,8 @@ function (dojo, declare) {
         },
 
         notif_cancel: function( notif ){
-            let p_id = notif.args.player_id;
-            const isThisPlayer = p_id== this.player_id;
+            const p_id = notif.args.player_id;
+            const updateResource = (p_id == this.player_id) || this.show_player_info;
             const player_zone = `player_board_${p_id}`;
             var delay = 0;
             // update values as undone
@@ -2182,14 +2196,12 @@ function (dojo, declare) {
                 switch (log.action){
                     case 'build':
                         this.cancelBuild(log.building);
-                        if (isThisPlayer){
+                        if (updateResource){
                             for(let type in log.cost){
                                 let amt = log.cost[type];
                                 for(let j = 0; j < amt; j++){
                                     this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone, 'board' , 500 , 50*(delay++) );
-                                    if (isThisPlayer){
-                                        this.resourceCounters[type].incValue(1);
-                                    }
+                                    this.resourceCounters[p_id][type].incValue(1);
                                 }   
                             }
                         }
@@ -2204,21 +2216,21 @@ function (dojo, declare) {
                         this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , player_zone, 'board', 500 , 50 * (delay++) );
                         this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', player_zone, 'board', 500 , 50 *(delay++));
                         this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', player_zone, 'board', 500 , 50 *(delay++));
-                        if (isThisPlayer){
-                            this.resourceCounters['loan'].incValue(-1);
-                            this.resourceCounters['silver'].incValue(-2);
+                        if (updateResource){
+                            this.resourceCounters[p_id]['loan'].incValue(-1);
+                            this.resourceCounters[p_id]['silver'].incValue(-2);
                         }    
                     break;
                     case 'loanPaid':
                         this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', player_zone, 500 , 0 );
-                        if (isThisPlayer){
-                            this.resourceCounters['loan'].incValue(1);
+                        if (updateResource){
+                            this.resourceCounters[p_id]['loan'].incValue(1);
                         }
                         if (log.type != null){
                             for(let j = 0; j < log.amt; j++){
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:log.type}), 'limbo', player_zone, 'board', 500 , 50*(delay++) );
-                                if (isThisPlayer){
-                                    this.resourceCounters[log.type].incValue(1);
+                                if (updateResource){
+                                    this.resourceCounters[p_id][log.type].incValue(1);
                                 }
                             }
                         }
@@ -2233,8 +2245,8 @@ function (dojo, declare) {
                             let amt = log.tradeAway_arr[type];
                             for(let j = 0; j < amt; j++){
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone, TRADE_BOARD_ID , 500 , 50*(delay++) );
-                                if (isThisPlayer){
-                                    this.resourceCounters[type].incValue(1);
+                                if (updateResource){
+                                    this.resourceCounters[p_id][type].incValue(1);
                                 }
                             }   
                         }
@@ -2242,8 +2254,8 @@ function (dojo, declare) {
                             let amt = log.tradeFor_arr[type];
                             for(let j = 0; j < amt; j++){
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', TRADE_BOARD_ID, player_zone, 500 , 50*(delay++) );
-                                if (isThisPlayer){
-                                    this.resourceCounters[type].incValue(-1);
+                                if (updateResource){
+                                    this.resourceCounters[p_id][type].incValue(-1);
                                 }
                             }   
                         }
@@ -2252,15 +2264,15 @@ function (dojo, declare) {
                         if (log.amt < 0){
                             for(let j = 0; j < Math.abs(log.amt); j++){
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:log.type}), 'limbo' , player_zone, 'board', 500 , 50*(delay++) );
-                                if (isThisPlayer){
-                                    this.resourceCounters[log.type].incValue(-1);
+                                if (updateResource){
+                                    this.resourceCounters[p_id][log.type].incValue(-1);
                                 }
                             }
                         } else {
                             for(let j = 0; j < log.amt; j++){
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:log.type}), 'limbo', 'board', player_zone, 500 , 50*(delay++) );
-                                if (isThisPlayer){
-                                    this.resourceCounters[log.type].incValue(1);
+                                if (updateResource){
+                                    this.resourceCounters[p_id][log.type].incValue(1);
                                 }
                             }
                         }
@@ -2271,7 +2283,7 @@ function (dojo, declare) {
             this.cancelNotifications(notif.args.move_ids);
             // mark logs as cancelled.
             
-            if ( notif.args.player_id == this.player_id){
+            if ( p_id == this.player_id){
                 this.hideUndoTransactionsButtonIfPossible();
             }
         },

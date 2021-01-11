@@ -21,9 +21,9 @@ class HSDresource extends APP_GameClass
     function getResources(){
         $show_player_info = $this->game->getGameStateValue('show_player_info');
         if ($show_player_info == SHOW_ALL_RESOURCES){
-            return $this->game->getObjectFromDb( "SELECT `player_id` p_id, `workers`, `track`, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources`" );
+            return $this->game->getCollectionFromDB( "SELECT `player_id` p_id, `workers`, `track`, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources`" );
         } else {
-            return $this->game->getObjectFromDb("SELECT `player_id` p_id, `workers`, `track` FROM `resources` " );
+            return $this->game->getCollectionFromDB("SELECT `player_id` p_id, `workers`, `track` FROM `resources` " );
         }
     }
 

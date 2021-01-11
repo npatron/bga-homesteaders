@@ -207,8 +207,7 @@ class HSDBuilding extends APP_GameClass
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('last_building', $b_key);
         
-        $building_score = $this->getBuildingScoreFromId( $b_id );
-        $this->game->Score->dbIncScore($p_id, $building_score);
+        $this->game->Score->updatePlayerBuildingScore($p_id);
     }
 
     function payForBuilding($p_id, $b_cost){

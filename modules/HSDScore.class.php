@@ -153,6 +153,13 @@ class HSDScore extends APP_GameClass
         return $vp;
     }
 
+    function updatePlayerBuildingScore (int $p_id) 
+    {
+        $bld_score = $this->getPlayerVPsFromBuildings($p_id);
+        $total = $bld_score['vp']['static'] + $bld_score['vp']['bonus'];
+        $this->dbSetScore($p_id, $total); 
+    }
+
     function getPlayerVPsFromBuildings (Int $p_id)
     {
         $p_buildings = $this->game->Building->getAllPlayerBuildings($p_id);
