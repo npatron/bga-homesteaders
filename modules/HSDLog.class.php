@@ -172,8 +172,9 @@ class HSDLog extends APP_GameClass
   /*
    * addBuild: add a new build entry to log
    */
-  public function buyBuilding($p_id, $building_key, $cost)
+  public function buyBuilding($p_id, $building_key, $cost, $oldScore)
   {
+    $cost['oldScore']= $oldScore;
     $this->insert($p_id, $building_key, 'build', $cost);
   }
 
@@ -320,13 +321,14 @@ class HSDLog extends APP_GameClass
               if (in_array($type, $this->game->resource_map)) {
                 $cost[$type] = $amt;
                 $this->game->Resource->updateResource($p_id, $type, $amt);
+              } else if ($type ==='oldScore'){
+                $this->game->Score->dbSetScore($p_id, $amt);
+                $oldScore = $amt;
               }
             }
             $this->game->setGameStateValue('last_building', 0);
             $this->game->setGameStateValue('building_bonus', 0);
-            $js_update_arr[] = array('action'=>'build', 'building'=>$building, 'cost'=>$cost);
-            $building_score = $this->game->Building->getBuildingScoreFromKey($b_key);
-            $this->game->Score->dbIncScore($p_id, -$building_score);
+            $js_update_arr[] = array('action'=>'build', 'building'=>$building, 'cost'=>$cost, 'score'=>$oldScore);
         break;
         case 'gainWorker':
             $w_key = $log['piece_id'];

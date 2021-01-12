@@ -54,6 +54,15 @@ function (dojo, declare) {
     const ZONE_PENDING = -1;
     const ZONE_PASSED = -2;
 
+    const VP_B_RESIDENTIAL = 0; 
+    const VP_B_COMMERCIAL = 1; 
+    const VP_B_INDUSTRIAL = 2; 
+    const VP_B_SPECIAL = 3; 
+    const VP_B_WORKER = 4; 
+    const VP_B_TRACK = 5; 
+    const VP_B_BUILDING = 6;
+    const VP_B_WRK_TRK = 7; //Workers & TRACK Bonus
+
     const BLD_LOC_FUTURE  = 0;
     const BLD_LOC_OFFER   = 1;
     const BLD_LOC_PLAYER  = 2;
@@ -83,7 +92,8 @@ function (dojo, declare) {
     
     const TRADE_BOARD_ID = 'trade_board';
     const TYPE_SELECTOR = {'bid':'.bid_slot', 'bonus':'.train_bonus', 'worker_slot':'.worker_slot',
-    'building':'.building_tile', 'worker':'.token_worker', 'trade':'.trade_option'};
+    'building':'.building_tile', 'worker':'.token_worker', 'trade':'.trade_option',
+    'track':'.token_track'};
     
 
     // other Auction Locations are the auction number (1-3).
@@ -316,12 +326,12 @@ function (dojo, declare) {
          */
         setupPlayerResources: function (player_resources, resources, info){
             if (this.show_player_info){
-                console.log('all_resources');
+                //console.log('all_resources');
                 for (let player_res in resources){
                     this.setupOnePlayerResources(resources[player_res], info);
                 }
             } else if (!this.isSpectator){
-                console.log('only_this_player');
+                //console.log('only_this_player');
                 this.setupOnePlayerResources(player_resources, info);
             }
         },
@@ -334,7 +344,7 @@ function (dojo, declare) {
         setupOnePlayerResources: function (resource, info) {
             this.resourceCounters[resource.p_id] = [];
             for (const [key, value] of Object.entries(resource)) {
-                console.log(resource, key, value);
+                //console.log(resource, key, value);
                 if (key == "p_id" || key == "workers" || key == "track") continue;
                 let resourceId = `${key}count_${resource.p_id}`;
                 let iconId = `${key}icon_p${resource.p_id}`;
@@ -954,9 +964,7 @@ function (dojo, declare) {
                 this.addTooltipHtml( b_divId, b_info['tt'] );
                 this.addBuildingWorkerSlots(building, b_info);
             }
-            if (building.p_id == this.player_id){
-                this.updateHasBuilding(b_id); 
-            }
+            this.updateHasBuilding(building.p_id, b_id); 
         },
 
         addBuildingToOffer: function(building, b_info = null){
@@ -999,16 +1007,20 @@ function (dojo, declare) {
             this.createBuildingZoneIfMissing(building);
             this.moveObject(b_divId, `building_stack_${building.b_id}`);
             this.main_building_counts[building.b_id]++;
-            this.updateScoreForBuilding(building.p_id, building.b_id, false);
-            if (this.player_id == building.p_id){//remove from hasBuilding
-                this.hasBuilding.splice(building.b_id, 1); 
-            }
+            
+            //remove from hasBuilding
+            this.hasBuilding[building.p_id].splice(building.b_id, 1);
+
+            //this.updateScoreForBuilding(building.p_id, building.b_id, false);
             this.b_connect_handler[building.b_key] = dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
         },
         
-        updateHasBuilding(b_id) {
-            if (this.hasBuilding[b_id] == null)
-                this.hasBuilding[b_id] = true;
+        updateHasBuilding(p_id, b_id) {
+            if (this.hasBuilding[p_id] == null){
+                this.hasBuilding[p_id] = [];
+            }
+            if (this.hasBuilding[p_id][b_id] == null)
+                this.hasBuilding[p_id][b_id] = true;
         },
 
         /***** Bid utils *****/
@@ -1068,11 +1080,11 @@ function (dojo, declare) {
                 this.last_selected['trade']='';
                 //make the trade options selectable
                 dojo.query(`div#${TRADE_BOARD_ID} .trade_option:not([id^="trade_market"]):not([id^="trade_bank"])`).addClass('selectable');
-                if (this.hasBuilding[BLD_MARKET] != null){
+                if (this.hasBuilding[this.player_id][BLD_MARKET] != null){
                     dojo.query(`#${TRADE_BOARD_ID} [id^="trade_market"]`).addClass('selectable');
                 }
-                if (this.hasBuilding[BLD_BANK] != null){
-                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_bank"]`).addClass('selectable');
+                if (this.hasBuilding[this.player_id][BLD_BANK] != null){
+                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_bank"]`  ).addClass('selectable');
                 }
             }
         },
@@ -1591,12 +1603,66 @@ function (dojo, declare) {
             }
         },
 
-        updateScoreForBuilding: function (p_id, b_id, up=true) {
-            var value = 0;
-            if (this.building_info[b_id].vp != null)
-                var value = this.building_info[b_id].vp;
-            if (up) this.scoreCtrl[p_id].incValue(value);
-            else this.scoreCtrl[p_id].incValue(-value);
+        updateScore: function (p_id, score) {
+            this.scoreCtrl[p_id].setValue(score);
+        },
+
+        calculateAndUpdateScore: function(p_id) {
+            
+            var score = this.calculateBuildingScore(p_id);
+            console.log('score: ' + score);
+            if (this.show_player_info){
+                score += this.resourceCounters[p_id]['vp'].getValue();
+            }
+            this.updateScore(p_id,score);
+        },
+
+        calculateBuildingScore: function(p_id) {
+            let score = 0;
+            let bld_type = [0,0,0,0,0,0,0];// count of bld of types: [res,com,ind,spe]
+            let vp_b =     [0,0,0,0,0,0,0];//vp_b [Res, Com, Ind, Spe, Wrk, Trk, Bld]
+            for(let b_id in this.hasBuilding[p_id]){
+                if (this.building_info[b_id].vp != null){
+                    score += this.building_info[b_id].vp;
+                }
+                if (this.building_info[b_id].vp_b != null){
+                    if (this.building_info[b_id].vp_b == VP_B_WRK_TRK){
+                        vp_b[VP_B_WORKER] ++;
+                        vp_b[VP_B_TRACK] ++;
+                    } else {
+                        vp_b[this.building_info[b_id].vp_b]++;
+                    }
+                }
+                bld_type[this.building_info[b_id].type] ++;
+                bld_type[VP_B_BUILDING]++;
+            }
+            
+            bld_type[VP_B_WORKER] = this.getPlayerWorkerCount(p_id);
+            bld_type[VP_B_TRACK] = this.getPlayerTrackCount(p_id);
+            console.log('score b-4: ' + score);
+            console.log(`bld_type: ` + bld_type);
+            console.log(`vp_b: ` + vp_b);
+            for (let i in vp_b){
+                console.log(`score${i}: ` + score);
+                console.log(`bld_type${i}: ` + bld_type[i]);
+                console.log(`vp_b${i}: ` + vp_b[i]);
+                score += (bld_type[i] * vp_b[i]);
+            }
+            console.log('score aftr: ' + score);
+            
+            return score;
+        },
+
+        getPlayerWorkerCount:function(p_id){
+            const playerZone = `player_zone_${this.player_color[p_id]}`;
+            const workerSelector = TYPE_SELECTOR['worker'];
+            return dojo.query(`#${playerZone} ${workerSelector}`).length;
+        },
+
+        getPlayerTrackCount:function(p_id){
+            const playerZone = `player_zone_${this.player_color[p_id]}`;
+            const trackSelector = TYPE_SELECTOR['track'];
+            return dojo.query(`#${playerZone} ${trackSelector}`).length;
         },
 
         /***** Building Bonus *****/
@@ -1969,6 +2035,7 @@ function (dojo, declare) {
                     dojo.addClass(worker_divId, 'selectable');
                 }                
             }
+            this.calculateAndUpdateScore(notif.args.player_id);
         },
 
         notif_gainTrack: function( notif ){
@@ -2011,9 +2078,10 @@ function (dojo, declare) {
         },
 
         notif_buildBuilding: function( notif ){
+            console.log('notif_buildBuilding');
+            console.log(notif.args);
             const p_id = notif.args.player_id;
             this.addBuildingToPlayer(notif.args.building);
-            this.updateScoreForBuilding(p_id, notif.args.building.b_id);
             
             var destination = `${TPL_BLD_TILE}_${Number(notif.args.building.b_key)}`; 
             const player_zone_divId = `player_board_${p_id}`;
@@ -2027,6 +2095,7 @@ function (dojo, declare) {
                     }
                 }   
             }
+            this.calculateAndUpdateScore(p_id);
         },
 
         notif_playerIncome: function( notif ){
@@ -2042,7 +2111,8 @@ function (dojo, declare) {
                         this.resourceCounters[p_id][notif.args.typeStr].incValue(1);
                     }
                 }
-            }  
+            }
+            this.calculateAndUpdateScore(p_id);
         },
 
         notif_playerIncomeGroup: function( notif ){
@@ -2063,6 +2133,7 @@ function (dojo, declare) {
                     }
                 }   
             }
+            this.calculateAndUpdateScore(p_id);
         },
 
         notif_playerPayment: function( notif ){         
@@ -2075,6 +2146,7 @@ function (dojo, declare) {
                     this.resourceCounters[p_id][notif.args.typeStr].incValue(-1);
                 }
             }
+            this.calculateAndUpdateScore(p_id);
         },
 
         notif_playerPaymentGroup: function( notif ){
@@ -2091,6 +2163,7 @@ function (dojo, declare) {
                     }
                 }   
             }
+            this.calculateAndUpdateScore(p_id);
         },
 
         notif_trade: function( notif ){
@@ -2122,6 +2195,7 @@ function (dojo, declare) {
             }
             if (p_id == this.player_id)
                 this.showUndoTransactionsButtonIfPossible();
+            this.calculateAndUpdateScore(p_id);
         },
 
         notif_loanPaid: function( notif ){
@@ -2196,6 +2270,7 @@ function (dojo, declare) {
                 switch (log.action){
                     case 'build':
                         this.cancelBuild(log.building);
+                        this.updateScore(p_id, log.score);
                         if (updateResource){
                             for(let type in log.cost){
                                 let amt = log.cost[type];
@@ -2248,6 +2323,9 @@ function (dojo, declare) {
                                 if (updateResource){
                                     this.resourceCounters[p_id][type].incValue(1);
                                 }
+                                if (log.type == 'vp'){
+                                    this.scoreCtrl[p_id].incValue(1);
+                                }
                             }   
                         }
                         for(let type in log.tradeFor_arr){
@@ -2256,6 +2334,9 @@ function (dojo, declare) {
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', TRADE_BOARD_ID, player_zone, 500 , 50*(delay++) );
                                 if (updateResource){
                                     this.resourceCounters[p_id][type].incValue(-1);
+                                }
+                                if (log.type == 'vp'){
+                                    this.scoreCtrl[p_id].incValue(-1);
                                 }
                             }   
                         }
@@ -2266,6 +2347,9 @@ function (dojo, declare) {
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:log.type}), 'limbo' , player_zone, 'board', 500 , 50*(delay++) );
                                 if (updateResource){
                                     this.resourceCounters[p_id][log.type].incValue(-1);
+                                    if (log.type == 'vp'){
+                                        this.scoreCtrl[p_id].incValue(-1);
+                                    }
                                 }
                             }
                         } else {
@@ -2273,6 +2357,9 @@ function (dojo, declare) {
                                 this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:log.type}), 'limbo', 'board', player_zone, 500 , 50*(delay++) );
                                 if (updateResource){
                                     this.resourceCounters[p_id][log.type].incValue(1);
+                                }
+                                if (log.type == 'vp'){
+                                    this.scoreCtrl[p_id].incValue(1);
                                 }
                             }
                         }
@@ -2286,6 +2373,7 @@ function (dojo, declare) {
             if ( p_id == this.player_id){
                 this.hideUndoTransactionsButtonIfPossible();
             }
+            this.calculateAndUpdateScore(p_id);
         },
 
         getTargetFromNotifArgs: function( notif ){

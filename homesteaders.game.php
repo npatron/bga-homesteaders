@@ -343,6 +343,7 @@ class homesteaders extends Table
         } else if ($bonus != AUC_BONUS_NONE){      
             $next_state = 'auction_bonus'; 
         }
+        $this->Score->updatePlayerScore($act_p_id);
         $this->gamestate->nextState ($next_state);
     }
 

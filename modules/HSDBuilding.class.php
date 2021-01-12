@@ -190,24 +190,23 @@ class HSDBuilding extends APP_GameClass
         }
         
         $this->payForBuilding($p_id, $b_cost);
+        $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
         $message = '${player_name} '._('builds').' ${building_name}';
         $building['p_id'] = $p_id;
         $values = array('player_id' => $p_id,
                         'player_name' => $this->game->getPlayerName($p_id),
                         'building' => $building,
-                        'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)),);
+                        'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)));
         if (count($b_cost)>0) {
             $message .= ' ${arrow} ${resources}';
             $values['resources'] = $b_cost;
             $values['arrow'] = "arrow";
         }
         $this->game->notifyAllPlayers( "buildBuilding", $message, $values);
-        $this->game->Log->buyBuilding($p_id, $b_key, $b_cost);
-        $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
+        $this->game->Log->buyBuilding($p_id, $b_key, $b_cost, $this->game->Score->dbGetScore($p_id));
+        
         $this->game->DbQuery( $sql );
         $this->game->setGameStateValue('last_building', $b_key);
-        
-        $this->game->Score->updatePlayerBuildingScore($p_id);
     }
 
     function payForBuilding($p_id, $b_cost){
