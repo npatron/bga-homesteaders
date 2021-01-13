@@ -1,5 +1,11 @@
 <?php
 
+  // game options.
+  define("SHOW_PLAYER_INFO", 100);
+  // options in show info
+  define("SHOW_ALL_RESOURCES", 0);
+  define("HIDE_ALL_RESOURCES", 1);
+
   // states
   define("STATE_START_ROUND",        10);
   define("STATE_PLACE_WORKERS",      20);

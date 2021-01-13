@@ -238,7 +238,7 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} may choose to take actions before scoring'),
         "type" => "multipleactiveplayer",
         "action" => "stEndGameActions",
-        "possibleactions" => array( "payLoan", "trade", 'hireWorker', "done" ),
+        "possibleactions" => array( "payLoan", "takeLoan", "trade", 'hireWorker', "done" ),
         "transitions" => array( "" => STATE_UPDATE_SCORES)
     ),
 

@@ -18,6 +18,15 @@ class HSDresource extends APP_GameClass
         return $this->game->getUniqueValueFromDB("SELECT `$type` FROM `resources` WHERE `player_id`='$p_id'");
     }
 
+    function getResources(){
+        $show_player_info = $this->game->getGameStateValue('show_player_info');
+        if ($show_player_info == SHOW_ALL_RESOURCES){
+            return $this->game->getCollectionFromDB( "SELECT `player_id` p_id, `workers`, `track`, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources`" );
+        } else {
+            return $this->game->getCollectionFromDB("SELECT `player_id` p_id, `workers`, `track` FROM `resources` " );
+        }
+    }
+
     /**
      * This will NOT notify the player only for use when notification has already happened (workers), drack, loan, 
      * updating the trackers: bid_loc, rail_adv, 
@@ -50,6 +59,7 @@ class HSDresource extends APP_GameClass
             $amount = $amt * $this->game->special_resource_map[$type][$actual_type];
             $this->updateResource($p_id, $actual_type, $amount);
         }
+        $this->game->Score->updatePlayerScore($p_id);
     }
 
     /**
@@ -78,6 +88,7 @@ class HSDresource extends APP_GameClass
                     $this->updateResource($p_id, $actual_type, $amount);
                 }
             }
+            $this->game->Score->updatePlayerScore($p_id);
         } else if (count($income_arr) == 1) {
             $type = array_keys($income_arr)[0];
             $this->updateAndNotifyIncome($p_id, $type, $income_arr[$type], $reason_string, $origin, $key);
@@ -100,6 +111,7 @@ class HSDresource extends APP_GameClass
         $values = $this->updateArrForNotify($values, $origin, $key);
         $this->game->notifyAllPlayers( "playerPayment", clienttranslate( '${reason_string} cost ${player_name} ${type}' ), $values );
         $this->updateResource($p_id, $type, -$amount);
+        $this->game->Score->updatePlayerScore($p_id);
     }
 
     /**
@@ -122,6 +134,7 @@ class HSDresource extends APP_GameClass
                     $this->updateResource($p_id, $type, -$amt);
                 }
             }
+            $this->game->Score->updatePlayerScore($p_id);
         } else if (count($payment_arr) == 1) {
             $type = array_keys($payment_arr)[0];
             $this->updateAndNotifyPayment($p_id, $type, $payment_arr[$type], $reason_string, $origin, $key);
@@ -160,6 +173,7 @@ class HSDresource extends APP_GameClass
         }
         $this->game->Log->addWorker($p_id, $w_key);
         $this->updateResource($p_id, 'workers', 1);
+        $this->game->Score->updatePlayerScore($p_id);
     }
     /**
      * Add worker for player 
@@ -181,6 +195,7 @@ class HSDresource extends APP_GameClass
         $this->game->notifyAllPlayers( "gainTrack", clienttranslate( '${player_name} recieves ${track} from ${reason_string}' ), $values);
         $this->game->Log->addTrack($p_id, $track_key);
         $this->updateResource($p_id, 'track', 1);
+        $this->game->Score->updatePlayerScore($p_id);
     }
     
     function updateArrForNotify($values, $origin, $key){
@@ -249,7 +264,6 @@ class HSDresource extends APP_GameClass
         $this->updateResource ($p_id, 'loan', -1);
         $this->game->Log->payOffLoan($p_id, $type, $amt);
     }
-    
 
     function freePayOffLoan($player_id, $reason, $origin ="", $key =0)
     {
