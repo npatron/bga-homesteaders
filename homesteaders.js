@@ -1545,15 +1545,16 @@ function (dojo, declare) {
             if( !dojo.hasClass(target_id, 'selectable')){ return; }
             if( this.checkAction( 'buildBuilding' )) {
                 if (dojo.hasClass(target_id, 'selected')){
-                    dojo.addClass('btn_choose_building' ,'disabled');
+                    dojo.addClass('btn_choose_building', 'disabled');
                     $('bld_name').innerText = '';
                 } else {
-                    dojo.addRemoveClass('btn_choose_building' ,'disabled');
+                    dojo.removeClass('btn_choose_building', 'disabled');
                     let building_id = $(target_id).className.split(' ')[1].split('_')[2];
                     if (this.building_info[building_id]['cost'] == null) {
                         $('bld_name').innerText = this.building_info[building_id]['name'];    
                     } else {
-                        $('bld_name').innerText = this.building_info[building_id]['name'] + '('+ this.getResourceArrayAsDiv(this.building_info[building_id]['cost']) + ')';
+                        $('bld_name').innerText = this.building_info[building_id]['name'];
+                        //$('bld_name').append(this.getResourceArrayAsDiv(this.building_info[building_id]['cost']));
                     }
                 }
                 this.updateSelected('building', target_id);

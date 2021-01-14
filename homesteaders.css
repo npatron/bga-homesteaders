@@ -201,7 +201,7 @@ a#tgl_future_bld{
    margin: auto;
    grid-row: 3/4;
 }
-button.disabled {
+button:disabled {
    border: 1px solid #999999;
    background-color: #cccccc;
    color: #666666;
