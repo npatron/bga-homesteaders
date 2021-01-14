@@ -775,7 +775,8 @@ function (dojo, declare) {
                             const building_divId = `${TPL_BLD_TILE}_${building.building_key}`;
                             dojo.addClass(building_divId, 'selectable');
                         }
-                        this.addActionButton( 'btn_choose_building', _('Build'),     'chooseBuilding');
+                        this.addActionButton( 'btn_choose_building', _('Build ') + '<span id="bld_name"></span>', 'chooseBuilding');
+                        dojo.addClass('btn_choose_building' ,'disabled');
                         if (args.riverPort){
                             if (this.goldAsCow){
                                 this.addActionButton( 'btn_gold_cow', tkn_gold +" <span id='cow_as'>"+_('As')+"</span> " + tkn_cow, 'toggleGoldAsCow', null, false, 'blue');
@@ -1543,6 +1544,18 @@ function (dojo, declare) {
             }
             if( !dojo.hasClass(target_id, 'selectable')){ return; }
             if( this.checkAction( 'buildBuilding' )) {
+                if (dojo.hasClass(target_id, 'selected')){
+                    dojo.addClass('btn_choose_building' ,'disabled');
+                    $('bld_name').innerText = '';
+                } else {
+                    dojo.addRemoveClass('btn_choose_building' ,'disabled');
+                    let building_id = $(target_id).className.split(' ')[1].split('_')[2];
+                    if (this.building_info[building_id]['cost'] == null) {
+                        $('bld_name').innerText = this.building_info[building_id]['name'];    
+                    } else {
+                        $('bld_name').innerText = this.building_info[building_id]['name'] + '('+ this.getResourceArrayAsDiv(this.building_info[building_id]['cost']) + ')';
+                    }
+                }
                 this.updateSelected('building', target_id);
             }
         },
