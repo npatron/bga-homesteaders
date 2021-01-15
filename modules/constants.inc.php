@@ -154,31 +154,31 @@
   define("AUC_BONUS_3VP_SELL_FREE",   9);
 
   // Events
-  define("EVT_1",            0);
-  define("EVT_2",          1);
-  define("EVT_3", 2);
-  define("EVT_4",  3);
-  define("EVT_5",   4);
-  define("EVT_6",      5);
-  define("EVT_7", 6);
-  define("EVT_8",     7);
-  define("EVT_9",      8);
-  define("EVT_10",   9);
-  define("EVT_11",            10);
-  define("EVT_12",          11);
-  define("EVT_13", 12);
-  define("EVT_14",  13);
-  define("EVT_15",   14);
-  define("EVT_16",      15);
-  define("EVT_17", 16);
-  define("EVT_18",     17);
-  define("EVT_19",      18);
-  define("EVT_20",   19);
-  define("EVT_21",            20);
-  define("EVT_22",          21);
-  define("EVT_23", 22);
-  define("EVT_24",  23);
-  define("EVT_25",   24);
+  define("EVT_1_1", 0);
+  define("EVT_1_2", 1);
+  define("EVT_1_3", 2);
+  define("EVT_1_4", 3);
+  define("EVT_1_5", 4);
+  define("EVT_1_6", 5);
+  define("EVT_1_7", 6);
+  define("EVT_1_8", 7);
+  define("EVT_1_9", 8);
+  define("EVT_1_10", 9);
+  define("EVT_2_1", 10);
+  define("EVT_2_2", 11);
+  define("EVT_2_3", 12);
+  define("EVT_2_4", 13);
+  define("EVT_2_5", 14);
+  define("EVT_2_6", 15);
+  define("EVT_2_7", 16);
+  define("EVT_2_8", 17);
+  define("EVT_2_9", 18);
+  define("EVT_2_10", 19);
+  define("EVT_3_1", 20);
+  define("EVT_3_2", 21);
+  define("EVT_3_3", 22);
+  define("EVT_3_4", 23);
+  define("EVT_3_5", 24);
 
   // Bid location mapping
   define("NO_BID",     0);

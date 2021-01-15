@@ -719,22 +719,91 @@ $this->auction_info = array(
 );
 
 $this->events_info = array(
-  EVT_1 => array(
+  EVT_1_1 => array(
+    'name' => _('Abandoned Stockpile'),
+    'tt' => _('pay 1 less resource on build from Auction 1'),
+  ),
+  EVT_1_2 => array(
+    'name' => _('Bureaucratic Error'),
+    'tt' => _('Auction 1 is skipped this round'),
+  ),
+  EVT_1_3 => array(
+    'name' => _('Central Pacific RR'),
+    'tt' => _('Recieve Track on pass'),
 
   ),
-  EVT_2 => array(
+  EVT_1_4 => array(
+    'name' => _('Eager Investors'),
+    'tt' => _('pay 1 less resource on build from Auction 1'),
 
   ),
-  EVT_3 => array(
+  EVT_1_5 => array(
+    'name' => _('Extra Lot'),
 
   ),
-  EVT_4 => array(
+  EVT_1_6 => array(
+    'name' => _('Migrant Workers'),
 
   ),
-  EVT_5 => array(
+  EVT_1_7 => array(
+    'name' => _('Railroad Contracts'),
 
   ),
-  EVT_6 => array(
+  EVT_1_8 => array(
+    'name' => _('Rapid Expansion'),
 
+  ),
+  EVT_1_9 => array(
+    'name' => _('Traveling Traders'),
+
+  ),
+  EVT_1_10 => array(
+    'name' => _('Union Pacific RR'),
+
+  ),
+  EVT_2_1 => array(
+    'name' => _('Bank Favors'),
+  ),
+  EVT_2_2 => array(
+    'name' => _('Fortune Seeker'),
+  ),
+  EVT_2_3 => array(
+    'name' => _('Industrialization'),
+  ),
+  EVT_2_4 => array(
+    'name' => _('Interest'),
+  ),
+  EVT_2_5 => array(
+    'name' => _('Sharecropping'),
+  ),
+  EVT_2_6 => array(
+    'name' => _('State Fair'),
+  ),
+  EVT_2_7 => array(
+    'name' => _('Transcontinental Railroad'),
+  ),
+  EVT_2_8 => array(
+    'name' => _('Timber Culture Act'),
+  ),
+  EVT_2_9 => array(
+    'name' => _('Wartime Demand'),
+  ),
+  EVT_2_10 => array(
+    'name' => _('Western Pacific RR'),
+  ),
+  EVT_3_1 => array(
+    'name' => _('Commercial Dominance'),
+  ),
+  EVT_3_2 => array(
+    'name' => _('Industrial Dominance'),
+  ),
+  EVT_3_3 => array(
+    'name' => _('Nelson Act'),
+  ),
+  EVT_3_4 => array(
+    'name' => _('Property Taxes'),
+  ),
+  EVT_3_5 => array(
+    'name' => _('Residential Dominance'),
   ),
 );
