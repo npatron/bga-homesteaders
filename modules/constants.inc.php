@@ -154,63 +154,46 @@
   define("AUC_BONUS_3VP_SELL_FREE",   9);
 
   // Events
-  define("EVT_1_1", 0);
-  define("EVT_1_2", 1);
-  define("EVT_1_3", 2);
-  define("EVT_1_4", 3);
-  define("EVT_1_5", 4);
-  define("EVT_1_6", 5);
-  define("EVT_1_7", 6);
-  define("EVT_1_8", 7);
-  define("EVT_1_9", 8);
-  define("EVT_1_10", 9);
-  define("EVT_2_1", 10);
-  define("EVT_2_2", 11);
-  define("EVT_2_3", 12);
-  define("EVT_2_4", 13);
-  define("EVT_2_5", 14);
-  define("EVT_2_6", 15);
-  define("EVT_2_7", 16);
-  define("EVT_2_8", 17);
-  define("EVT_2_9", 18);
-  define("EVT_2_10", 19);
-  define("EVT_3_1", 20);
-  define("EVT_3_2", 21);
-  define("EVT_3_3", 22);
-  define("EVT_3_4", 23);
-  define("EVT_3_5", 24);
+  // Settlement Events #1-10
+  // Town Events #11-20
+  // City Events #21-25
+  // all_b (bonus for all players) after income, before bids
+  define("EVT_VP_4SILVER",   1);
+  define("EVT_TRADE",        2);
+  define("EVT_LOAN_TRACK",   3);
+  define("EVT_LEAST_WORKER", 4);
+  define("EVT_INTEREST",     5);
+  define("EVT_PAY_LOAN_FOOD",6);
+  define("EVT_COPPER_COW_GET_GOLD",7);
+  define("EVT_DEV_TRACK_VP3",8);
+  define("EVT_VP_FOR_WOOD", 9);
+  define("EVT_SELL_NO_TRADE",10);
+  define("EVT_LEAST_BLD_TRACK",11);
+  define("EVT_IND_VP",      12);
+  define("EVT_BLD_TAX_SILVER",13);
+  define("EVT_RES_ADV_TRACK",14);
+
+  // auc_b (auction bonus)
+  define("EVT_AUC_DISCOUNT_1_RES", 1);
+  define("EVT_AUC_NO_AUCTION",     2);
+  define("EVT_AUC_BONUS_WORKER",   3);
+  define("EVT_AUC_2SILVER_TRACK",  4);
+  define("EVT_AUC_BUILD_AGAIN",    5);
+  define("EVT_AUC_TRACK",          6);
+  define("EVT_AUC_STEEL_ANY",      7);
+  define("EVT_AUC_COM_DISCOUNT",   8);
+  // pass_b (bonus when passing)
+  define("EVT_PASS_TRACK",       1);
+  define("EVT_PASS_DEPT_SILVER", 2);
 
   // Bid location mapping
   define("NO_BID",     0);
-  define("BID_A1_B3",  1);
-  define("BID_A1_B4",  2);
-  define("BID_A1_B5",  3);
-  define("BID_A1_B6",  4);
-  define("BID_A1_B7",  5);
-  define("BID_A1_B9",  6);
-  define("BID_A1_B12", 7);
-  define("BID_A1_B16", 8);
-  define("BID_A1_B21", 9);
+  // A1 bids are 1-9
   define("OUTBID",     10);
-  define("BID_A2_B3",  11);
-  define("BID_A2_B4",  12);
-  define("BID_A2_B5",  13);
-  define("BID_A2_B6",  14);
-  define("BID_A2_B7",  15);
-  define("BID_A2_B9",  16);
-  define("BID_A2_B12", 17);
-  define("BID_A2_B16", 18);
-  define("BID_A2_B21", 19);
+  // A2 bids are 11-19
   define("BID_PASS",   20);
-  define("BID_A3_B3",  21);
-  define("BID_A3_B4",  22);
-  define("BID_A3_B5",  23);
-  define("BID_A3_B6",  24);
-  define("BID_A3_B7",  25);
-  define("BID_A3_B9",  26);
-  define("BID_A3_B12", 27);
-  define("BID_A3_B16", 28);
-  define("BID_A3_B21", 29);
+  // A3 bids are 21-29 (4players only)
+  // A4 bids are 31-39 (5players only)
 
   // phases that caused rail bonus.
   define ("PHASE_BID_PASS" ,  1);

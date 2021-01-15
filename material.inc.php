@@ -718,92 +718,165 @@ $this->auction_info = array(
   
 );
 
+  // Events
+  // Settlement Events #1-10
+  // Town Events       #11-20
+  // City Events       #21-25
 $this->events_info = array(
-  EVT_1_1 => array(
-    'name' => _('Abandoned Stockpile'),
-    'tt' => _('pay 1 less resource on build from Auction 1'),
+  1 => array(
+    'name'  => _('Abandoned Stockpile'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('The winner of Auction 1 builds for one resource less (their choice)'),
+    'auc'   => array(1),
   ),
-  EVT_1_2 => array(
-    'name' => _('Bureaucratic Error'),
-    'tt' => _('Auction 1 is skipped this round'),
+  2 => array(
+    'name'  => _('Bureaucratic Error'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('Auction 1 is unavailable this round'),
+    'auc'   => array(1),
   ),
-  EVT_1_3 => array(
-    'name' => _('Central Pacific RR'),
-    'tt' => _('Recieve Track on pass'),
-
+  3 => array(
+    'name'  => _('Central Pacific RR'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('Players who pass get a ${track}'),
+    'pass'  => EVT_PASS_TRACK,
   ),
-  EVT_1_4 => array(
-    'name' => _('Eager Investors'),
-    'tt' => _('pay 1 less resource on build from Auction 1'),
-
+  4 => array(
+    'name'  => _('Eager Investors'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('All players who have a ${vp} get 4-${silver}'),
+    'all_b' => EVT_VP_4SILVER,
   ),
-  EVT_1_5 => array(
-    'name' => _('Extra Lot'),
-
+  5 => array(
+    'name'  => _('Extra Lot'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('Auction 1 also gives build (Any Type)'),
+    'auc'   => array(1),
   ),
-  EVT_1_6 => array(
-    'name' => _('Migrant Workers'),
-
+  6 => array(
+    'name'  => _('Migrant Workers'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('Auction 1 also gives ${worker}'),
+    'auc'   => array(1),
+    'auc_b' => EVT_AUC_BONUS_WORKER,
   ),
-  EVT_1_7 => array(
-    'name' => _('Railroad Contracts'),
-
+  7 => array(
+    'name'  => _('Railroad Contracts'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('All auctions also give 2-{silver} ${arrow} ${adv_track}'),
+    'auc'   => array(1,2,3,4),
+    'auc_b' => EVT_AUC_2SILVER_TRACK,
   ),
-  EVT_1_8 => array(
-    'name' => _('Rapid Expansion'),
-
+  8 => array(
+    'name'  => _('Rapid Expansion'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('All auctions with bulding opportunities also give a second building opportunity of the same type'),
+    'auc'   => array(1,2,3,4),
+    'auc_b' => EVT_AUC_BUILD_AGAIN,
   ),
-  EVT_1_9 => array(
-    'name' => _('Traveling Traders'),
-
+  9 => array(
+    'name'  => _('Traveling Traders'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('All players get a ${trade}'),
+    'all_b' => EVT_TRADE,
   ),
-  EVT_1_10 => array(
-    'name' => _('Union Pacific RR'),
-
+  10 => array(
+    'name'  => _('Union Pacific RR'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => _('Auction 1 also gives ${track}'),
+    'auc'   => array(1),
+    'auc_b' => EVT_AUC_TRACK,
   ),
-  EVT_2_1 => array(
-    'name' => _('Bank Favors'),
+  11 => array(
+    'name'  => _('Bank Favors'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('The player(s) with the least ${loan} gets ${adv_track}'),
+    'all_b' => EVT_LOAN_TRACK,
   ),
-  EVT_2_2 => array(
-    'name' => _('Fortune Seeker'),
+  12 => array(
+    'name'  => _('Fortune Seeker'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('The player(s) with the fewest ${worker} gets a ${worker}'),
+    'all_b' => EVT_LEAST_WORKER,
   ),
-  EVT_2_3 => array(
-    'name' => _('Industrialization'),
+  13 => array(
+    'name'  => _('Industrialization'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('All auctions also give ${steel} ${arrow} ${any}'),
+    'auc'   => array(1,2,3,4),
+    'auc_b' => EVT_AUC_STEEL_ANY,
   ),
-  EVT_2_4 => array(
+  14 => array(
     'name' => _('Interest'),
+    'stage' => STAGE_TOWN,
+    'tt' => _('Players must pay ${silver} per ${loan} (${loan} taken to pay the interest does not also need to be paid for)'),
+    'all_b' => EVT_INTEREST,
   ),
-  EVT_2_5 => array(
-    'name' => _('Sharecropping'),
+  15 => array(
+    'name'  => _('Sharecropping'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('players may pay off ${loan} for 1-${food} apiece'),
+    'all_b' => EVT_PAY_LOAN_FOOD,
   ),
-  EVT_2_6 => array(
-    'name' => _('State Fair'),
+  16 => array(
+    'name'  => _('State Fair'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('The player(s) with the most ${copper} plus ${cow} (at least one) gets a ${gold}'),
+    'all_b' => EVT_COPPER_COW_GET_GOLD,
   ),
-  EVT_2_7 => array(
-    'name' => _('Transcontinental Railroad'),
+  17 => array(
+    'name'  => _('Transcontinental Railroad'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('The player(s) who is farthest advanced on the Railroad Development Track gets ${vp3}'),
+    'all_b' => EVT_DEV_TRACK_VP3,
   ),
-  EVT_2_8 => array(
-    'name' => _('Timber Culture Act'),
+  18 => array(
+    'name'  => _('Timber Culture Act'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('Players get ${vp} for every ${wood} held'),
+    'all_b' => EVT_VP_FOR_WOOD,
   ),
-  EVT_2_9 => array(
-    'name' => _('Wartime Demand'),
+  19 => array(
+    'name'  => _('Wartime Demand'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('Players may sell any number of resources wthout spending ${trade}'),
+    'all_b' => EVT_SELL_NO_TRADE,
   ),
-  EVT_2_10 => array(
-    'name' => _('Western Pacific RR'),
+  20 => array(
+    'name'  => _('Western Pacific RR'),
+    'stage' => STAGE_TOWN,
+    'tt'    => _('The player(s) with the fewest Buildings get a ${track}'),
+    'all_b' => EVT_LEAST_BLD_TRACK,
   ),
-  EVT_3_1 => array(
-    'name' => _('Commercial Dominance'),
+  21 => array(
+    'name'  => _('Commercial Dominance'),
+    'stage' => STAGE_CITY,
+    'tt'    => _('The player(s) with the most ${com} buildings only pays half their Auction bid (round down)'),
+    'auc' => array(1,2,3,4),
+    'auc_b' => EVT_AUC_COM_DISCOUNT,
   ),
-  EVT_3_2 => array(
-    'name' => _('Industrial Dominance'),
+  22 => array(
+    'name'  => _('Industrial Dominance'),
+    'stage' => STAGE_CITY,
+    'tt'    => _('The player(s) with the most ${ind} buildings gets ${vp} for each resource they recieved in income (${wood}, ${food}, ${steel}, ${gold}, ${copper}, ${cow} produced by buildings and not from trade)'),
+    'all_b' => EVT_IND_VP,
   ),
-  EVT_3_3 => array(
-    'name' => _('Nelson Act'),
+  23 => array(
+    'name'  => _('Nelson Act'),
+    'stage' => STAGE_CITY,
+    'tt'    => _('Players who pass may pay off debt for 3-{silver} apiece'),
+    'pass' => EVT_PASS_DEPT_SILVER,
   ),
-  EVT_3_4 => array(
-    'name' => _('Property Taxes'),
+  24 => array(
+    'name'  => _('Property Taxes'),
+    'stage' => STAGE_CITY,
+    'tt'    => _('Players must pay ${silver} per Building they have'),
+    'all_b' => EVT_BLD_TAX_SILVER,
   ),
-  EVT_3_5 => array(
-    'name' => _('Residential Dominance'),
+  25 => array(
+    'name'  => _('Residential Dominance'),
+    'stage' => STAGE_CITY,
+    'tt'    => _('The player(s) with the most ${res} buildings gets ${adv_track}'),
+    'all_b' => EVT_RES_ADV_TRACK,
   ),
 );
