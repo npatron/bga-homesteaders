@@ -150,6 +150,35 @@
   define("AUC_BONUS_COW_FOR_VP",      5);
   define("AUC_BONUS_6VP_AND_FOOD_VP", 6);
   define("AUC_BONUS_FOOD_FOR_VP",     7);
+  define("AUC_BONUS_4DEPT_FREE",      8);
+  define("AUC_BONUS_3VP_SELL_FREE",   9);
+
+  // Events
+  define("EVT_1",            0);
+  define("EVT_2",          1);
+  define("EVT_3", 2);
+  define("EVT_4",  3);
+  define("EVT_5",   4);
+  define("EVT_6",      5);
+  define("EVT_7", 6);
+  define("EVT_8",     7);
+  define("EVT_9",      8);
+  define("EVT_10",   9);
+  define("EVT_11",            10);
+  define("EVT_12",          11);
+  define("EVT_13", 12);
+  define("EVT_14",  13);
+  define("EVT_15",   14);
+  define("EVT_16",      15);
+  define("EVT_17", 16);
+  define("EVT_18",     17);
+  define("EVT_19",      18);
+  define("EVT_20",   19);
+  define("EVT_21",            20);
+  define("EVT_22",          21);
+  define("EVT_23", 22);
+  define("EVT_24",  23);
+  define("EVT_25",   24);
 
   // Bid location mapping
   define("NO_BID",     0);

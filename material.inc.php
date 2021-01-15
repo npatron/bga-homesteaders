@@ -129,7 +129,7 @@ $this->building_info = array_merge(
     'name' => _("Grain Mill"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
-    'cost' => array('wood'=>1,'steel'=>1),
+    'cost' => array('steel'=>1,'wood'=>1),
     'vp'   => 2,
     'inc'  => array('food'=>1),
     'amt'  => 1,
@@ -345,7 +345,7 @@ $this->building_info = array_merge(
     'name' => _("Rodeo"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
-    'cost' => array('cow'=>1,'food'=>1),
+    'cost' => array('cow'=>1, 'food'=>1),
     'vp'   => 4,
     'inc'  => array('silver'=>'x'),
     'amt'  => 1,
@@ -375,7 +375,7 @@ $this->building_info = array_merge(
     'name' => _("Dude Ranch"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_RESIDENTIAL,
-    'cost' => array('wood'=>1,'food'=>1),
+    'cost' => array('food'=>1,'wood'=>1),
     'vp'   => 3,
     'vp_b' => VP_B_WORKER,
     'amt'  => 2,
@@ -402,7 +402,7 @@ $this->building_info = array_merge(
     'name' => _("Restaraunt"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,
-    'cost' => array('wood'=>1,'cow'=>1),
+    'cost' => array('cow'=>1,'wood'=>1),
     'vp'   => 8,
     'vp_b' => VP_B_SPECIAL,
     'amt'  => 2,
@@ -420,7 +420,7 @@ $this->building_info = array_merge(
     'name' => _("Circus"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
-    'cost' => array('food'=>2,'cow'=>1),
+    'cost' => array('cow'=>1,'food'=>2),
     'vp'   => 8,
     'vp_b' => VP_B_WORKER,
     'amt'  => 1,
@@ -429,7 +429,7 @@ $this->building_info = array_merge(
     'name' => _("Rail Yard"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
-    'cost' => array('steel'=>2,'gold'=>1,'copper'=>1),
+    'cost' => array('copper'=>1,'gold'=>1,'steel'=>2),
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
     'vp'   => 6,
     'vp_b' => VP_B_BUILDING,
@@ -440,6 +440,7 @@ $this->building_info = array_merge(
     'desc' => clienttranslate('May use ${wood}${vp} in place of ${steel} in building costs'),
     'stage'=> STAGE_SETTLEMENT,
     'type' => TYPE_RESIDENTIAL,
+    'cost' => array(),
     'inc'  => array('wood'=>1, 'silver'=>1),
     'vp'   => 3,
     'amt'  => 2,
@@ -448,6 +449,7 @@ $this->building_info = array_merge(
     'name' => _("Saloon"),
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'type' => TYPE_COMMERCIAL,
+    'cost' => array(),
     'on_b' => BUILD_BONUS_SILVER_SILVER,
     'vp'   => 1,
     'amt'  => 2,
@@ -469,7 +471,7 @@ $this->building_info = array_merge(
     'desc' => clienttranslate('When you gain ${worker} gain ${silver}'),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
-    'cost' => array('food'=>1,'steel'=>1),
+    'cost' => array('steel'=>1,'food'=>1),
     'on_b' => BUILD_BONUS_SILVER_WORKERS,
     'slot' => 1,
     's1'   => array('vp2'=>1),
@@ -481,7 +483,7 @@ $this->building_info = array_merge(
     'name' => _("Warehouse"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
-    'cost' => array('wood'=>1,'steel'=>1,'copper'=>1),
+    'cost' => array('copper'=>1,'steel'=>1,'wood'=>1),
     'on_b' => BUILD_BONUS_PLACE_RESOURCES,
     'vp'   => 3,
     'inc'  => array('special'=> 1), // This will require special handling by the player, & probably a new state just for this.
@@ -491,7 +493,7 @@ $this->building_info = array_merge(
     'name' => _("Post Office"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
-    'cost' => array('wood'=>2,'steel'=>1,'cow'=>1),
+    'cost' => array('cow'=>1,'steel'=>1,'wood'=>2),
     'vp'   => 8,
     'vp_b' => VP_B_PAID_LOAN,
     'amt'  => 1,
@@ -683,5 +685,56 @@ $this->auction_info = array(
             _("May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
   ),
+  31 => array(
+    'build' => array(TYPE_RESIDENTIAL),
+  ),
+  32 => array(
+    'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
+  ),
+  33 => array(
+    'build' => array(TYPE_INDUSTRIAL),
+  ),
+  34 => array(
+    'bonus'=> AUC_BONUS_NONE,
+  ),
+  35 => array(
+    'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
+  ),
+  36 => array(
+    'build' => array(TYPE_COMMERCIAL, TYPE_SPECIAL),
+  ),
+  37 => array(
+    'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
+  ),
+  38 => array(
+    'bonus' => AUC_BONUS_4DEPT_FREE,
+  ),
+  39 => array(
+    'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
+  ),
+  40 => array(
+    'bonus' => AUC_BONUS_3VP_SELL_FREE,
+  ),
   
+);
+
+$this->events_info = array(
+  EVT_1 => array(
+
+  ),
+  EVT_2 => array(
+
+  ),
+  EVT_3 => array(
+
+  ),
+  EVT_4 => array(
+
+  ),
+  EVT_5 => array(
+
+  ),
+  EVT_6 => array(
+
+  ),
 );
