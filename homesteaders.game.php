@@ -630,15 +630,10 @@ class homesteaders extends Table
         $autoPayPlayers = $this->getCollectionFromDB( "SELECT `player_id`, `use_silver` FROM `player`");
         $pendingPlayers = array();
         foreach($resources as $p_id => $player){
-            if (($player['gold'] == 0 && $player['trade'] == 0) || $autoPayPlayers[$p_id]['use_silver'] === '1'
-                 /* player setting for auto-pay selected */){
-                $silver = $player['silver'];
-                $worker_cost = $player['workers'];
-                while ($silver < $worker_cost){// forced loan.
-                    $silver +=2;
-                    $this->Resource->takeLoan($p_id);
-                }
-                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker'=>'worker'));
+            /* player has no gold/trade or has auto-pay selected and they can afford it with out loans */
+            if ($player['silver'] >= $player['workers'] && 
+            (($player['gold'] == 0 && $player['trade'] == 0) || $autoPayPlayers[$p_id]['use_silver'] === '1')){
+                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker' => 'worker'));
             } else { // ask this player to choose payment.
                 $pendingPlayers[] = $p_id;
                 $this->giveExtraTime($p_id);
