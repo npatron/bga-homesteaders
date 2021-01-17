@@ -143,7 +143,7 @@
 <script type="text/javascript">
 
 var jstpl_building_stack= '<div id="building_stack_${id}" class="building_zone_diag" style="order: ${order}"></div>';
-var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"></div>';
+var jstpl_buildings='<div id="building_tile_${key}" class="building_tile build_tile_${id}"><div id="b_gray_${key}" class="noshow gray_layer"></div></div>';
 var jstpl_building_slot='<div id="slot_${key}_${slot}" class="worker_slot slot_${id}_${slot} key_${key}"></div>'; 
 
 var jstpl_auction_tile='<div id="auction_tile_${auc}" class="auction_tile border_${color}"> </div>';
