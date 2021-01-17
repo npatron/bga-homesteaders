@@ -58,6 +58,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getAllPlayerBuildings($p_id){
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."'";
         //, `build_order` b_order //ORDER BY `build_order` ASC
         return ($this->game->getCollectionFromDB( $sql ));
     }
