@@ -58,13 +58,13 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getAllPlayerBuildings($p_id){
-        //, `build_order` b_order //ORDER BY `build_order` ASC
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 
     /**** Utility ****/
     function getBuildingFromKey($b_key){ // TODO add b_vp for next run through.
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `building_key`='$b_key'";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `building_key`='$b_key'";
         return ($this->game->getObjectFromDB($sql));
     }
 
@@ -74,11 +74,14 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingTypeFromId($b_id){
-        return ($this->game->building_info[$b_id]['type']);
+        $sql = "SELECT `building_type` FROM `buildings` WHERE `building_id`='".$b_id."'";
+        $building_type = $this->game->getObjectListFromDB( $sql );
+        return (reset($building_type));
     }
 
     function getBuildingTypeFromKey($b_key){
-        return ($this->getBuildingTypeFromId($this->getBuildingIdFromKey($b_key)));
+        $sql = "SELECT `building_type` FROM `buildings` WHERE `building_key`='".$b_key."'";
+        return ($this->game->getUniqueValuefromDB( $sql ));
     }
 
     function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
@@ -161,15 +164,15 @@ class HSDBuilding extends APP_GameClass
      */
     function getAllowedBuildings( $build_type_options) {// into an array of constants
         if (count($build_type_options) ==0){ return array(); }
-            $sql = "SELECT `building_id` b_id, `building_key` FROM `buildings` WHERE `location`=".BLD_LOC_OFFER." ORDER BY building_key ASC";
-            $active_buildings = $this->game->getCollectionFromDB( $sql );
-            $allowed_buildings = array();
-            foreach($active_buildings as $b_key => $building){
-                if (in_array($this->game->building_info[$active_buildings[$b_key]['b_id']]['type'], $build_type_options)){
-                    $allowed_buildings[] = $building;
-                }
+            $sql = "SELECT * FROM `buildings` WHERE `location`=".BLD_LOC_OFFER." AND (";
+            $values = array();
+            foreach($build_type_options as $i=>$option){
+                $values[] = "`building_type`='".$build_type_options[$i]."'";
             }
-        return $allowed_buildings;
+            $sql .= implode( ' OR ', $values ); 
+            $sql .= ")";
+            $buildings = $this->game->getCollectionFromDB( $sql );
+        return $buildings;
     }
 
     function buildBuilding( $p_id, $b_key, $goldAsCow = false, $goldAsCopper = false )
@@ -185,10 +188,9 @@ class HSDBuilding extends APP_GameClass
         if ($this->doesPlayerOwnBuilding($p_id, $b_id)){
             throw new BgaUserException( _("You have already built a ").$b_name);
         }
-        //$build_order = $this->game->incGameStateValue( 'build_order', 1 );
+        
         $this->payForBuilding($p_id, $b_cost);
         $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
-        //, `build_order`='$build_order'
         $message = '${player_name} '._('builds').' ${building_name}';
         $building['p_id'] = $p_id;
         $values = array('player_id' => $p_id,

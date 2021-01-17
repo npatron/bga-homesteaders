@@ -71,7 +71,6 @@ function (dojo, declare) {
 
     // building ID's required for trade
     const BLD_MARKET = 7;
-    const BLD_RIVER_PORT = 17;
     const BLD_BANK   = 22;
 
     // string templates for dynamic assets
@@ -645,7 +644,6 @@ function (dojo, declare) {
                 case 'trainStationBuild':
                 case 'chooseBuildingToBuild':
                     this.clearSelectable('building', true);
-                    dojo.query('.gray_layer').addClass('noshow');
                     this.hideUndoTransactionsButtonIfPossible();
                     this.disableTradeIfPossible();
                     break;
@@ -694,8 +692,7 @@ function (dojo, declare) {
             const tkn_vp2 = this.format_block( 'jstpl_resource_inline', {type:'vp2'}, ); 
                      
             if( this.isCurrentPlayerActive() )
-            {
-                console.log(stateName);
+            {            
                 switch( stateName )
                 {
                     case 'allocateWorkers':
@@ -770,19 +767,13 @@ function (dojo, declare) {
                     break;
                     case 'chooseBuildingToBuild':
                     case 'trainStationBuild':
-                        console.log(args);
                         this.showTileZone(BLD_LOC_OFFER);
                         this.last_selected['building']="";
                         //mark buildings as selectable
                         for(let i in args.allowed_buildings){
                             const building = args.allowed_buildings[i];
                             const building_divId = `${TPL_BLD_TILE}_${building.building_key}`;
-                            console.log(building_divId);
                             dojo.addClass(building_divId, 'selectable');
-                            if (!this.isAffordable(this.player_id, building.b_id)){
-                                let b_mask_divId = "b_gray_"+ building.building_key;
-                                dojo.removeClass(b_mask_divId, "noshow");
-                            }
                         }
                         this.addActionButton( 'btn_choose_building', _('Build ') + '<span id="bld_name"></span>', 'chooseBuilding');
                         dojo.addClass('btn_choose_building' ,'disabled');
@@ -1032,74 +1023,6 @@ function (dojo, declare) {
             if (this.hasBuilding[p_id][b_id] == null)
                 this.hasBuilding[p_id][b_id] = true;
         },
-
-        isAffordable(p_id, b_id){
-            let cost = this.building_info[b_id]['cost'];
-            let gold_cost = 0;
-            let basic_cost = 0;
-            let adv_cost = 0;
-            for(let type in cost){
-                switch(type){
-                    case 'wood':
-                    case 'food':
-                    case 'steel':
-                        if (cost[type] < this.resourceCounters[type]){
-                            basic_cost += cost[type] < this.resourceCounters[type].getValue();
-                        }
-                    break;
-                    case 'gold':
-                        if (cost[type] < this.resourceCounters[type]){
-                            gold_cost += cost[type] < this.resourceCounters[type].getValue();
-                        }
-                    break;
-                    case 'copper':
-                    case 'cow':
-                        if (cost[type] < this.resourceCounters[type]){
-                            adv_cost -= cost[type] < this.resourceCounters[type].getValue();
-                        }
-                    break;
-                }
-            }
-            let trades = this.resourceCounters[p_id]['trade'].getValue();
-            if (basic_cost > 0){
-                trades -= b_cost;
-            }
-            let gold = this.resourceCounters[p_id]['gold'].getValue();
-            if (gold_cost > 0){
-                trades -= gold_cost;
-                gold -= gold_cost;
-            }
-            if (adv_cost > 0){
-                if (this.hasBuilding[p_id][BLD_RIVER_PORT]){
-                    if (gold < adv_cost){
-                        trades = trades + gold - adv_cost;
-                    }
-                } else if (gold <= adv_cost){
-                    trades = trades + gold - (2 * adv_cost);
-                } else {
-                    trades -= adv_cost
-                }
-            }
-            if (trades <0) 
-                return false;
-            else
-                return true;
-        },
-
-        /*getAffordableBuildings() {
-            for (let b_id in  this.main_building_counts){
-                if (this.main_building_counts[b_id] == null ||this.main_building_counts[b_id] == 0) continue;
-                if (this.hasBuilding[this.player_id].includes(b_id) || this.isAffordable(this.player_id, b_id)){
-                    let buildings = dojo.query("#" + TILE_ZONE_DIVID[BLD_LOC_OFFER] + " ." + TPL_BLD_TILE + "_"+ i);
-                    console.log(buildings);
-                    for (let building in buildings) {
-                        let b_key = building.id.split("_")[2];
-                        let b_mask_divId = "b_mask_"+ b_key;
-                        dojo.removeClass(b_mask_divId, "noshow");
-                    }
-                }
-            }
-        },*/
 
         /***** Bid utils *****/
         /**(see constants.inc for BidlocationMapping)
@@ -1701,7 +1624,7 @@ function (dojo, declare) {
         calculateAndUpdateScore: function(p_id) {
             
             var score = this.calculateBuildingScore(p_id);
-            //console.log('score: ' + score);
+            console.log('score: ' + score);
             if (this.show_player_info){
                 score += this.resourceCounters[p_id]['vp'].getValue();
             }
@@ -1730,16 +1653,16 @@ function (dojo, declare) {
             
             bld_type[VP_B_WORKER] = this.getPlayerWorkerCount(p_id);
             bld_type[VP_B_TRACK] = this.getPlayerTrackCount(p_id);
-            //console.log('score b-4: ' + score);
-            //console.log(`bld_type: ` + bld_type);
-            //console.log(`vp_b: ` + vp_b);
+            console.log('score b-4: ' + score);
+            console.log(`bld_type: ` + bld_type);
+            console.log(`vp_b: ` + vp_b);
             for (let i in vp_b){
-                //console.log(`score${i}: ` + score);
-                //console.log(`bld_type${i}: ` + bld_type[i]);
-                //console.log(`vp_b${i}: ` + vp_b[i]);
+                console.log(`score${i}: ` + score);
+                console.log(`bld_type${i}: ` + bld_type[i]);
+                console.log(`vp_b${i}: ` + vp_b[i]);
                 score += (bld_type[i] * vp_b[i]);
             }
-            //console.log('score aftr: ' + score);
+            console.log('score aftr: ' + score);
             
             return score;
         },

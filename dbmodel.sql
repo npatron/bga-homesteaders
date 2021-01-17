@@ -49,11 +49,11 @@ CREATE TABLE IF NOT EXISTS `tracks` (
 CREATE TABLE IF NOT EXISTS `buildings` (
   `building_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
+  `building_type` INT(1) UNSIGNED NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
   `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
-  `build_order`   INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'when building was built',
   PRIMARY KEY (`building_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 

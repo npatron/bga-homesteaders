@@ -119,7 +119,6 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building', 0 );
-        $this->setGameStateInitialValue( 'build_order',   1);
         
         $values = array();
         // set colors
