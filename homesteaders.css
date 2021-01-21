@@ -950,6 +950,20 @@ div#trade_bank_trade_silver{
    height: 20px;
    width: 20px;
 }
+.bank_trade {
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 260px 98px;
+   background-position: -99px -72px;
+   height: 20px;
+   width: 20px;
+}
+.market {
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 272px 98px;
+   background-position: -84px -72px;
+   height: 20px;
+   width: 20px;
+}
 .player_silver {
    background-size: 353.5px 111.1px;
    background-position: -86.46px 0px;
@@ -1039,7 +1053,8 @@ div#trade_bank_trade_silver{
    /* left: 2px; */
 }
 .player_food_text {
-   grid-row: 1 / 4;
+   grid-row: 2 / 3;
+   grid-column: 2 / 3;
 }
 .buy_food {
    grid-row: 1 / 2;
@@ -1049,9 +1064,11 @@ div#trade_bank_trade_silver{
 }
 .sell_food {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 .trade_market_food {
-   grid-row: 1 / 4;
+   grid-row: 1 / 2;
+   grid-column: 2 / 3;
 }
 .player_steel {
    background-size: 454.5px 142.9px;
@@ -1061,7 +1078,8 @@ div#trade_bank_trade_silver{
    grid-row: 1 / 4;
 }
 .player_steel_text {
-   grid-row: 1 / 4;
+   grid-row: 2 / 3;
+   grid-column: 2 / 3;
 }
 .buy_steel{
    grid-row: 1 / 2;
@@ -1071,9 +1089,11 @@ div#trade_bank_trade_silver{
 }
 .sell_steel {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 .trade_market_steel{
    grid-row: 1 / 2;
+   grid-column: 2 / 3;
 }
 .player_gold{
    background-size: 380px 119.6px;

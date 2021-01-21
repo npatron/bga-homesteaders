@@ -44,6 +44,7 @@ $this->resource_info = array(
   'silver' => array(
     'name'   => _("Silver"),
     'db_int' => SILVER,
+    'bank'   => array(),
     'tt'     => "<span class='score_token score_silver tt'></span>".
             CENTER_DIV._("Silver:")."<br>".
             _("Used to pay ").WORKER_HTML."<br>".
@@ -65,6 +66,7 @@ $this->resource_info = array(
   'wood' => array(
     'name'   => _("Wood"),
     'db_int' => WOOD,
+    'trade_val' => array('silver'=> 1),
     'tt'     => "<div class='score_token score_wood tt'></div>".
             CENTER_DIV._("Wood:")."<br>".
             _(" Required to build some buildings").END_DIV,
@@ -72,6 +74,8 @@ $this->resource_info = array(
   'food' => array(
     'name'   => _("Food"),
     'db_int' => FOOD,
+    'trade_val' => array('silver'=> 2),
+    'market' => array('wood'=>-1),
     'tt'     => "<div class='score_token score_food tt'></div>".
             CENTER_DIV._("Food:")."<br>".
             _(" Required to build some buildings")."<br>".
@@ -80,6 +84,8 @@ $this->resource_info = array(
   'steel' => array(
     'name'   => _("Steel"),
     'db_int' => STEEL,
+    'trade_val' => array('silver'=> 3),
+    'market' => array('food'=>-1),
     'tt'     => "<div class='score_token score_steel tt'></div>".
               CENTER_DIV._("Steel:")."<br>".
               _(" Required to build some buildings").END_DIV,
@@ -87,6 +93,7 @@ $this->resource_info = array(
   'gold' => array(
     'name'   => _("Gold"),
     'db_int' => GOLD,
+    'trade_val' => array('silver'=> 4),
     'tt'     => "<div class='score_token score_gold tt'></div>".
             CENTER_DIV._("Gold:")."<br>"._(" Required to build some buildings")."<br>".
             _("Can be used to pay Workers / Auction costs(as 5 silver)")."<br>".
@@ -95,6 +102,7 @@ $this->resource_info = array(
   'copper' => array(
     'name'   => _("Copper"),
     'db_int' => COPPER,
+    'trade_val' => array('gold'=> 1),
     'tt'     => "<div class='score_token score_copper tt'></div>".
               CENTER_DIV._("Copper:")."<br>".
                 _(" Required to build some buildings")."<br>".
@@ -103,6 +111,7 @@ $this->resource_info = array(
   'cow' => array(
     'name'   => _("Livestock"),
     'db_int' => COW,
+    'trade_val' => array('gold'=> 1),
     'tt'     => '<div class="score_token score_cow tt"></div>'.
                 CENTER_DIV._("Livestock:")."<br>".
                 _(" Required to build some buildings")."<br>".

@@ -150,6 +150,7 @@ function (dojo, declare) {
             this.building_worker_ids = [];
             this.score_resourceCounters = []; // player's resource counters
             this.board_resourceCounters = [];
+            this.offsetCounter = [];
 
             this.token_dimension = 50;
             this.bid_height = 52;
@@ -327,12 +328,10 @@ function (dojo, declare) {
          */
         setupPlayerResources: function (player_resources, resources, info){
             if (this.show_player_info){
-                //console.log('all_resources');
                 for (let player_res in resources){
                     this.setupOnePlayerResources(resources[player_res], info);
                 }
             } else if (!this.isSpectator){
-                //console.log('only_this_player');
                 this.setupOnePlayerResources(player_resources, info);
             }
         },
@@ -533,6 +532,33 @@ function (dojo, declare) {
             if (!this.isCurrentPlayerActive() || !can_undo_trades){
                 dojo.addClass(UNDO_TRADE_BTN_ID,'noshow');
             } 
+            const buyButtons = dojo.query(`.buy`);
+            for(let i in buyButtons){
+                if (buyButtons[i].id != null){
+                    dojo.connect($(buyButtons[i]), 'onclick', this, 'onBuyResource');
+            }   }
+            const sellButtons = dojo.query(`.sell`);
+            for(let i in sellButtons){
+                if (sellButtons[i].id != null){
+                    dojo.connect($(sellButtons[i]), 'onclick', this, 'onSellResource');
+            }   }
+            const marketButtons = dojo.query(`.market`);
+            for(let i in marketButtons){
+                if (marketButtons[i].id != null){
+                    dojo.connect($(marketButtons[i]), 'onclick', this, 'onMarketResource');
+            }   }
+            const bankButtons = dojo.query(`.bank_trade`);
+            for(let i in bankButtons){
+                if (bankButtons[i].id != null){
+                    dojo.connect($(bankButtons[i]), 'onclick', this, 'onBankResource');
+            }   }
+            for (const [key, value] of Object.entries(this.res_info)) {
+                if ( key == "workers" || key == "track") continue;
+                let boardResourceId = `${key}_offset_${this.player_color[this.player_id]}`;
+                this.offsetCounter[key] = new ebg.counter();
+                this.offsetCounter[key].create(boardResourceId);
+                this.offsetCounter[key].setValue(0);
+            }
         },
 
         /**
@@ -1249,6 +1275,62 @@ function (dojo, declare) {
                 this.ajaxcall( "/homesteaders/homesteaders/takeLoan.html", {lock: true}, this, 
                 function( result ) {
                 }, function( is_error) {} );     
+            }
+        },
+
+        onBuyResource: function ( evt ){
+            console.log('onBuyResource');
+            console.log(evt);
+            dojo.stopEvent( evt );
+            let type = evt.target.id.split('_')[0];
+            // when buying, trade costs trade_val, so make it negative.
+            let tradeChange = this.res_info[type]['trade_val'];
+            tradeChange[type] = 1;
+            tradeChange['trade'] = -1;
+            this.updateTrade(tradeChange);
+        },
+
+        onSellResource: function ( evt ){
+            console.log('onSellResource');
+            dojo.stopEvent( evt );
+            let type = evt.target.id.split('_')[0];
+            let tradeChange = this.res_info[type]['trade_val']; 
+            tradeChange[type] = -1;
+            tradeChange['trade'] = -1;
+            tradeChange['vp'] = 1;  
+            this.updateTrade(tradeChange);
+        },
+
+        onMarketResource: function ( evt ){
+            console.log('onMarketResource');
+            dojo.stopEvent( evt );
+            let type = evt.target.id.split('_')[0];
+            let tradeChange = this.res_info[type]['market']; 
+            tradeChange['trade'] = -1;
+            this.updateTrade(tradeCost);
+        },
+
+        onBankResource: function ( evt ){
+            console.log('onBankResource');
+            dojo.stopEvent( evt );
+            this.updateTrade({'silver':1, 'trade':-1});
+        },
+
+        canAddTrade: function( change){
+            console.log('canAddTrade: ');
+            console.log(change );
+            let can_afford = true;
+            for (let type in change){
+                can_afford &= (this.board_resourceCounters[this.player_id][type].getValue() + change[type] + this.offsetCounter[type].getValue())>=0;
+            }
+            return can_afford;
+        },
+
+        updateTrade: function( change ){
+            console.log('updateTrade');
+            if (!this.canAddTrade(change)) return;
+            for (let type in change){
+                this.offsetCounter[type].incValue(change[type]);
             }
         },
         
