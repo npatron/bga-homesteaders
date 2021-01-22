@@ -69,6 +69,10 @@ function (dojo, declare) {
     const BLD_LOC_DISCARD = 3;
     const AUC_LOC_FUTURE  = 2;
 
+    const TRADE_BUTTON_SHOW    = 0;
+    const TRADE_BUTTON_HIDE    = 1;
+    const TRADE_BUTTON_CONFIRM = 2;
+
     // building ID's required for trade
     const BLD_MARKET = 7;
     const BLD_BANK   = 22;
@@ -149,8 +153,11 @@ function (dojo, declare) {
             
             this.building_worker_ids = [];
             this.score_resourceCounters = []; // player's resource counters
-            this.board_resourceCounters = [];
-            this.offsetCounter = [];
+            
+            // only this.player_id used for trade/loans/etc.
+            this.board_resourceCounters = []; 
+            this.offset_resourceCounter = [];
+            this.new_resourceCounter = [];
 
             this.token_dimension = 50;
             this.bid_height = 52;
@@ -534,30 +541,34 @@ function (dojo, declare) {
             } 
             const buyButtons = dojo.query(`.buy`);
             for(let i in buyButtons){
-                if (buyButtons[i].id != null){
-                    dojo.connect($(buyButtons[i]), 'onclick', this, 'onBuyResource');
-            }   }
+                if (buyButtons[i].id != null)
+                    dojo.connect($(buyButtons[i]) ,'onclick', this, 'onBuyResource');
+            }
             const sellButtons = dojo.query(`.sell`);
             for(let i in sellButtons){
-                if (sellButtons[i].id != null){
-                    dojo.connect($(sellButtons[i]), 'onclick', this, 'onSellResource');
-            }   }
+                if (sellButtons[i].id != null)
+                    dojo.connect($(sellButtons[i]) ,'onclick', this, 'onSellResource');
+            }
             const marketButtons = dojo.query(`.market`);
             for(let i in marketButtons){
-                if (marketButtons[i].id != null){
+                if (marketButtons[i].id != null)
                     dojo.connect($(marketButtons[i]), 'onclick', this, 'onMarketResource');
-            }   }
+            }
             const bankButtons = dojo.query(`.bank_trade`);
             for(let i in bankButtons){
-                if (bankButtons[i].id != null){
+                if (bankButtons[i].id != null)
                     dojo.connect($(bankButtons[i]), 'onclick', this, 'onBankResource');
-            }   }
+            }
             for (const [key, value] of Object.entries(this.res_info)) {
                 if ( key == "workers" || key == "track") continue;
                 let boardResourceId = `${key}_offset_${this.player_color[this.player_id]}`;
-                this.offsetCounter[key] = new ebg.counter();
-                this.offsetCounter[key].create(boardResourceId);
-                this.offsetCounter[key].setValue(0);
+                this.offset_resourceCounter[key] = new ebg.counter();
+                this.offset_resourceCounter[key].create(boardResourceId);
+                this.offset_resourceCounter[key].setValue(0);
+                let newResourceId = `${key}_new_${this.player_color[this.player_id]}`;
+                this.new_resourceCounter[key] = new ebg.counter();
+                this.new_resourceCounter[key].create(newResourceId);
+                this.new_resourceCounter[key].setValue(0);
             }
         },
 
@@ -1103,34 +1114,7 @@ function (dojo, declare) {
             dojo.addClass(UNDO_TRADE_BTN_ID,'noshow');
         },
         
-        disableTradeIfPossible: function() {
-            if (dojo.query(`#${TRADE_BOARD_ID} .selectable`).length >0){
-                // now make the trade options not selectable
-                this.clearSelectable('trade', true);
-                if (!dojo.hasClass(CONFIRM_TRADE_BTN_ID, 'noshow') ){
-                    dojo.addClass( CONFIRM_TRADE_BTN_ID, 'noshow');
-                }
-                dojo.addClass('trade_bottom', 'trade_size');
-                this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_bottom', true, 'trade_top', 'noshow');
-            }
-        },
-
-        enableTradeIfPossible: function() {
-            if (!dojo.query(`#${TRADE_BOARD_ID} .selectable`).length >0){
-                // make space for it, and move trade board to top.
-                dojo.removeClass(`trade_top`, `noshow`);
-                this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_top', false, 'trade_bottom', 'trade_size');
-                this.last_selected['trade']='';
-                //make the trade options selectable
-                dojo.query(`div#${TRADE_BOARD_ID} .trade_option:not([id^="trade_market"]):not([id^="trade_bank"])`).addClass('selectable');
-                if (this.hasBuilding[this.player_id][BLD_MARKET] != null){
-                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_market"]`).addClass('selectable');
-                }
-                if (this.hasBuilding[this.player_id][BLD_BANK] != null){
-                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_bank"]`  ).addClass('selectable');
-                }
-            }
-        },
+        
 
         moveBid: function(p_id, bid_loc){
             if (bid_loc == OUTBID || bid_loc == NO_BID) {
@@ -1267,7 +1251,60 @@ function (dojo, declare) {
         /***** TRADE *****/
         addTradeLoanButtons: function(){
             this.addActionButton( 'btn_trade', "<span id='tr_show'>"+_('Show')+"</span> "+_('Trade'), 'tradeActionButton', null, false, 'gray' );
-            this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
+            //this.addActionButton( 'btn_take_loan', _('Take Loan'), 'takeLoan', null, false, 'gray' );
+        },
+
+        disableTradeIfPossible: function() {
+            dojo.query('.this_player_resources').removeClass('trade_sizing');
+            dojo.query('.offset_text').addClass('noshow');
+            dojo.query('.take_loan').addClass('noshow');
+            dojo.query('.buy').addClass('noshow');
+            dojo.query('.sell').addClass('noshow');
+            dojo.query('.market').addClass('noshow');
+            dojo.query('.bank_trade').addClass('noshow');
+            dojo.query('.new_text').addClass('noshow');
+            /*if (dojo.query(`#${TRADE_BOARD_ID} .selectable`).length >0){
+                // now make the trade options not selectable
+                this.clearSelectable('trade', true);
+                if (!dojo.hasClass(CONFIRM_TRADE_BTN_ID, 'noshow') ){
+                    dojo.addClass( CONFIRM_TRADE_BTN_ID, 'noshow');
+                }
+                dojo.addClass('trade_bottom', 'trade_size');
+                this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_bottom', true, 'trade_top', 'noshow');
+            }*/
+        },
+
+        enableTradeIfPossible: function() {
+            dojo.query('.this_player_resources').addClass('trade_sizing');
+            dojo.query('.offset_text.noshow').removeClass('noshow');
+            dojo.query('.take_loan.noshow').removeClass('noshow');
+            dojo.query('.buy.noshow').removeClass('noshow');
+            dojo.query('.sell.noshow').removeClass('noshow');
+            dojo.query('.new_text').removeClass('noshow');
+            if (this.hasBuilding[this.player_id][BLD_MARKET] != null){
+                dojo.query(`.market.noshow`).removeClass('noshow');
+            }
+            if (this.hasBuilding[this.player_id][BLD_BANK] != null){
+                dojo.query(`.bank_trade.noshow`).removeClass('noshow');
+            }
+            for(let type in this.board_resourceCounters[this.player_id]){
+                this.new_resourceCounter[type].setValue(this.board_resourceCounters[this.player_id][type].getValue());
+            }
+            
+            /*if (!dojo.query(`#${TRADE_BOARD_ID} .selectable`).length >0){
+                // make space for it, and move trade board to top.
+                dojo.removeClass(`trade_top`, `noshow`);
+                this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_top', false, 'trade_bottom', 'trade_size');
+                this.last_selected['trade']='';
+                //make the trade options selectable
+                dojo.query(`div#${TRADE_BOARD_ID} .trade_option:not([id^="trade_market"]):not([id^="trade_bank"])`).addClass('selectable');
+                if (this.hasBuilding[this.player_id][BLD_MARKET] != null){
+                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_market"]`).addClass('selectable');
+                }
+                if (this.hasBuilding[this.player_id][BLD_BANK] != null){
+                    dojo.query(`#${TRADE_BOARD_ID} [id^="trade_bank"]`  ).addClass('selectable');
+                }
+            }*/
         },
 
         takeLoan: function(){
@@ -1321,7 +1358,7 @@ function (dojo, declare) {
             console.log(change );
             let can_afford = true;
             for (let type in change){
-                can_afford &= (this.board_resourceCounters[this.player_id][type].getValue() + change[type] + this.offsetCounter[type].getValue())>=0;
+                can_afford &= (this.new_resourceCounter[type].getValue() + change[type] )>=0;
             }
             return can_afford;
         },
@@ -1330,8 +1367,25 @@ function (dojo, declare) {
             console.log('updateTrade');
             if (!this.canAddTrade(change)) return;
             for (let type in change){
-                this.offsetCounter[type].incValue(change[type]);
+                let offsetVal = this.offset_resourceCounter[type].incValue(change[type]);
+                
+                this.new_resourceCounter[type].incValue((change[type]));
+                if (offsetVal > 0){
+                    console.log('pos', type, offsetVal);
+                    dojo.query(`#${type}_offset_${this.player_color[this.player_id]}.negative`).removeClass('negative');
+                    dojo.query(`#${type}_offset_${this.player_color[this.player_id]}`).addClass('positive');
+                } else if (offsetVal < 0 ){
+                    console.log('neg', type, offsetVal);
+                    dojo.query(`#${type}_offset_${this.player_color[this.player_id]}.positive`).removeClass('positive');
+                    dojo.query(`#${type}_offset_${this.player_color[this.player_id]}`).addClass('negative');
+                } else {
+                    console.log('neut', type, offsetVal);
+                    dojo.query(`#${type}_offset_${this.player_color[this.player_id]}.positive`).removeClass('positive');
+                    dojo.query(`#${type}_offset_${this.player_color[this.player_id]}.negative`).removeClass('negative');
+                }
             }
+            this.showUndoTransactionsButtonIfPossible();
+            this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
         },
         
         onSelectTradeAction: function( evt){
@@ -1366,8 +1420,47 @@ function (dojo, declare) {
             }
         },
 
+        setTradeButtonTo: function( toVal){
+            switch(toVal){
+                case TRADE_BUTTON_SHOW:
+                    dojo.addClass('btn_trade','bgabutton_gray');
+                    dojo.query('#btn_trade.bgabutton_red').removeClass('bgabutton_red');
+                    dojo.query('#btn_trade.bgabutton_blue').removeClass('bgabutton_blue');
+                    $('tr_show').innerText= _('Show');
+                    break;
+                case TRADE_BUTTON_HIDE:
+                    dojo.query('#btn_trade.bgabutton_gray').removeClass('bgabutton_gray');
+                    dojo.query('#btn_trade.bgabutton_blue').removeClass('bgabutton_blue');
+                    dojo.addClass('btn_trade','bgabutton_red');
+                    $('tr_show').innerText= _('Hide');
+                    break;
+                case TRADE_BUTTON_CONFIRM:
+                    dojo.query('#btn_trade.bgabutton_gray').removeClass('bgabutton_gray');
+                    dojo.query('#btn_trade.bgabutton_red').removeClass('bgabutton_red');
+                    dojo.addClass('btn_trade','bgabutton_blue');
+                    $('tr_show').innerText= _('Confirm');
+                    break;
+            }
+        },
+
         tradeActionButton: function(){
             if( this.checkAction( 'trade' ) ){
+                if (dojo.query('#btn_trade.bgabutton_blue').length > 0){
+                    // confirm trade
+                    this.disableTradeIfPossible();
+                    this.setTradeButtonTo( TRADE_BUTTON_SHOW );
+                    return;
+                }
+                if (dojo.query('#btn_trade.bgabutton_red').length > 0){
+                    this.disableTradeIfPossible();
+                    this.setTradeButtonTo( TRADE_BUTTON_SHOW);
+                    return;
+                }
+                this.enableTradeIfPossible();
+                this.setTradeButtonTo( TRADE_BUTTON_HIDE);
+            }
+            // old trade behavior
+            /*if( this.checkAction( 'trade' ) ){
                 // if trade options already displayed, set done.
                 if (dojo.query(`#${TRADE_BOARD_ID} .selectable`).length >0){ 
                     this.disableTradeIfPossible();
@@ -1380,7 +1473,7 @@ function (dojo, declare) {
                 dojo.removeClass('btn_trade','bgabutton_gray');
                 dojo.addClass('btn_trade','bgabutton_red');
                 $('tr_show').innerText= _('Hide');
-            }
+            }*/
         },
 
         /** Show/Hide Tile Zones */
