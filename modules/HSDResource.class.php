@@ -444,81 +444,33 @@ class HSDresource extends APP_GameClass
         $tradeFor = array ();
         $sell = false;
         $building_name = "";
-        switch($tradeAction){
-            case 'buy_wood':
-                $tradeAway['silver'] = 1;
-                $tradeFor['wood'] = 1;
-            break;
-            case 'buy_food':
-                $tradeAway['silver'] = 2;
-                $tradeFor['food'] = 1;
-            break;
-            case 'buy_steel':
-                $tradeAway['silver'] = 3;
-                $tradeFor['steel'] = 1;
-            break;
-            case 'buy_gold':
-                $tradeAway['silver'] = 4;
-                $tradeFor['gold'] = 1;
-            break;
-            case 'buy_copper':
-                $tradeAway['gold'] = 1;
-                $tradeFor['copper'] = 1;
-            break;
-            case 'buy_livestock':
-                $tradeAway['gold'] = 1;
-                $tradeFor['cow'] = 1;
-            break;
-            case 'sell_wood':
-                $tradeAway['wood'] = 1;
-                $tradeFor['silver'] = 1;
+        $tradeAct_segs = explode('_',$tradeAction);
+        switch($tradeAct_segs[0]){
+            case 'buy':
+                $type = $tradeAct_segs[1];
+                $tradeAway = array_merge($tradeAway, 
+                    $this->game->resource_info[$type]['trade_val']);
+                $tradeFor[$type] = 1;
+            case 'sell':
+                $type = $tradeAct_segs[1];
+                $tradeAway[$type] = 1;
+                $tradeFor = $this->game->resource_info[$type]['trade_val'];
                 $tradeFor['vp'] = 1;
                 $sell = true;
             break;
-            case 'sell_food':
-                $tradeAway['food'] = 1;
-                $tradeFor['silver'] = 2;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_steel':
-                $tradeAway['steel'] = 1;
-                $tradeFor['silver'] = 3;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_gold':
-                $tradeAway['gold'] = 1;
-                $tradeFor['silver'] = 4;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_copper':
-                $tradeAway['copper'] = 1;
-                $tradeFor['gold'] = 1;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_livestock':
-                $tradeAway['cow'] = 1;
-                $tradeFor['gold'] = 1;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'market_wood_food':
+            case 'market':
+                $type = $tradeAct_segs[1];//food or steel
                 $building_name = array('str'=>'Market', 'type'=>TYPE_COMMERCIAL);
-                $tradeAway['wood'] = 1;
-                $tradeFor['food'] = 1;
+                $tradeAway[$type] = array_merge($tradeAway, $this->game->resource_info[$type]['market']);
+                $tradeFor[$type] = 1;
             break;
-            case 'market_food_steel':
-                $building_name = array('str'=>'Market', 'type'=>TYPE_COMMERCIAL);
-                $tradeAway['food'] = 1;
-                $tradeFor['steel'] = 1;
-            break;
-            case 'bank_trade_silver':
+            case 'bank':
                 $building_name = array('str'=>'Bank', 'type'=>TYPE_COMMERCIAL);
                 $tradeFor['silver'] = 1;
             break;
+            case 'loan':
+                $this->takeLoan($p_id);
+                return;
             default: 
                 throw new BgaVisibleSystemException (_('Invalid TradeAction: ').$tradeAction);
         }

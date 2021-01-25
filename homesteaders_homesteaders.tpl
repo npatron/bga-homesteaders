@@ -123,11 +123,11 @@
             </span>
             <span id="loan_group" class="this_player_resource_group">
                 <span id="loanicon_{COLOR}"   class="player_loan score"></span>
-                <span id="loancount_{COLOR}" class="player_loan_text player_text">0</span>
+                <span id="loancount_{COLOR}" class="player_loan_text player_text_loan">0</span>
                 <span id="loan_more_{COLOR}" class="buy_loan take_loan noshow"></span>
-                <span id="loan_offset_{COLOR}" class="player_loan_offset offset_text noshow">0</span>
+                <span id="loan_offset_{COLOR}" class="player_loan_offset offset_text_loan noshow">0</span>
                 <!--<span id="loan_less_{COLOR}" class="sell_loan sell noshow"></span> -->
-                <span id="loan_new_{COLOR}" class="player_loan_new new_text noshow">0</span>
+                <span id="loan_new_{COLOR}" class="player_loan_new new_text_loan noshow">0</span>
             </span>
             <span id="vp_group" class="this_player_resource_group">
                 <span id="vpicon_{COLOR}"   class="score_token player_vp score"></span>

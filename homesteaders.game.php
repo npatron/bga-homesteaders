@@ -249,7 +249,11 @@ class homesteaders extends Table
     public function playerTrade( $tradeAction )
     {
         $this->checkAction( 'trade' );
-        $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
+        $trades = explode(',',$tradeAction);
+        foreach( $trades as $key=>$val ){
+            $tradeVal = $this->trade_map[$val];
+            $this->Resource->trade($this->getCurrentPlayerId(), $tradeVal);
+        }
     }
 
     public function playerToggleCheckbox( $enabled ){

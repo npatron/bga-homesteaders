@@ -47,7 +47,7 @@ class action_homesteaders extends APP_GameAction
 
   public function trade(){
     self::setAjaxMode( );
-    $trade_action = self::getArg( "trade_action", AT_alphanum, true );
+    $trade_action = self::getArg( "trade_action", AT_numberlist, true );
     $this->game->playerTrade($trade_action);
     self::ajaxResponse( );
   }

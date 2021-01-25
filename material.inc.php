@@ -40,6 +40,12 @@ $this->special_resource_map = array(
   'vp8' => array('vp'=>8),
 );
 
+$this->trade_map = array(
+  0=>'buy_wood', 1=>'buy_food', 2=>'buy_steel', 3=>'buy_gold', 4=>'buy_copper', 5=>'buy_cow',
+  6=>'sell_wood', 7=>'sell_food', 8=>'sell_steel', 9=>'sell_gold', 10=>'sell_cow',11=>'sell_copper', 
+  12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan');
+
+
 $this->resource_info = array(
   'silver' => array(
     'name'   => _("Silver"),

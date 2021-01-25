@@ -163,6 +163,7 @@
    height: 17px;
    width: 180px;
    order: 7;
+   margin-left: 20px;
 }
 a#tgl_main_bld{
    height: 17px;
@@ -923,29 +924,49 @@ div#trade_bank_trade_silver{
    display: grid;
    grid-template-columns: repeat(auto-fit, 70px);
 }
+.loan_sizing {
+   grid-template-columns: 70px 70px 90px repeat(auto-fit, 70px);
+}
 .trade_sizing {
-   grid-template-columns: repeat(auto-fit, 110px);
+   grid-template-columns: repeat(auto-fit, 90px);
 }
 .this_player_resource_group{
    display: grid;
    grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 50px 20px 20px 20px;
+   grid-template-columns: 50px 20px 20px;
 }
 .offset_text{
    grid-column: 3 / 4;
    grid-row: 2 / 3;
    margin: auto;
 }
-.offset_text.negative{
+.negative{
    color: red;
 }
-.offset_text.positive{
+.positive{
    color: green;
 }
 .new_text {
    position: relative;
    font-size: x-large;
-   grid-column: 4 / 5;
+   grid-column: 2 / 3;
+   grid-row: 1 / 4;
+   margin: auto;
+}
+.player_text_loan {
+   position: relative;
+   margin: auto;
+   font-size: x-large;
+}
+.offset_text_loan{
+   grid-column: 3 / 4;
+   grid-row: 2 / 3;
+   margin: auto;
+}
+.new_text_loan {
+   position: relative;
+   font-size: x-large;
+   grid-column: 2 / 3;
    grid-row: 1 / 4;
    margin: auto;
 }
@@ -1075,7 +1096,6 @@ div#trade_bank_trade_silver{
 }
 .player_food_text {
    grid-row: 1 / 4;
-   grid-column: 2 / 3;
 }
 .player_steel_text.show_market{
    grid-row: 2 / 4;
