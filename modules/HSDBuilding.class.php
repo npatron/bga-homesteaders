@@ -63,7 +63,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     /**** Utility ****/
-    function getBuildingFromKey($b_key){ // TODO add b_vp for next run through.
+    function getBuildingFromKey($b_key){ 
         $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `building_key`='$b_key'";
         return ($this->game->getObjectFromDB($sql));
     }

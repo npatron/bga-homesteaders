@@ -246,13 +246,13 @@ class homesteaders extends Table
         $this->Resource->takeLoan($this->getCurrentPlayerId());
     }
     
-    public function playerTrade( $tradeAction )
+    public function playerTrade( $tradeAction_csv )
     {
         $this->checkAction( 'trade' );
-        $trades = explode(',',$tradeAction);
-        foreach( $trades as $key=>$val ){
-            $tradeVal = $this->trade_map[$val];
-            $this->Resource->trade($this->getCurrentPlayerId(), $tradeVal);
+        $tradeAction_arr = explode(',', $tradeAction_csv);
+        foreach( $tradeAction_arr as $key=>$val ){
+            $tradeAction = $this->trade_map[$val];
+            $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
         }
     }
 

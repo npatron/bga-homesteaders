@@ -451,6 +451,7 @@ class HSDresource extends APP_GameClass
                 $tradeAway = array_merge($tradeAway, 
                     $this->game->resource_info[$type]['trade_val']);
                 $tradeFor[$type] = 1;
+            break;
             case 'sell':
                 $type = $tradeAct_segs[1];
                 $tradeAway[$type] = 1;
@@ -499,7 +500,6 @@ class HSDresource extends APP_GameClass
         foreach($tradeFor as $type=>$amt){
             $this->updateResource($p_id, $type, $amt);
         }
-        
     }
 
     /**updates an array by setting  */

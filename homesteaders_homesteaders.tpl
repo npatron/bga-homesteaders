@@ -106,6 +106,7 @@
     <!-- BEGIN this_player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR}" style="margin-top:4px;">
         <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
+        <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
         <div id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</div>
         <div class="this_player_resources">
             <span id="silver_group" class="this_player_resource_group">
