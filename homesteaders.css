@@ -493,7 +493,7 @@ div#train_bonus_5_vp{
 div#trade_board {
    background-image: url('img/trade.jpg');
    position: relative;
-   width: 690px;
+   width: 512px;
    height: 180px;
    background-size: 690px auto;
    background-repeat: no-repeat;
@@ -567,7 +567,7 @@ div#trade_bank_trade_silver{
    bottom: 0%;
 }
 .trade_size {
-   width: 690px;
+   width: 512px;
    height: 180px;
 }
 
@@ -1881,6 +1881,7 @@ div#auction_tile_30 {
 }
 #first_player_tile { /* First Player */
    background-position: 100% 100%;
+   order:99;
    /* -webkit-transform: scale(.3, .3);
    -moz-transform: scale(.3, .3);
    transform: scale(.3, .3); */
