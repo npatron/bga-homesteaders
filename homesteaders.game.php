@@ -305,7 +305,7 @@ class homesteaders extends Table
     {
         $p_id = $this->getCurrentPlayerId();
         $this->Resource->collectIncome($p_id);
-        $this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
+        //$this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
     }
 
     /*** Player Bid Phase ***/
@@ -359,7 +359,7 @@ class homesteaders extends Table
 
     public function playerPay($gold) {
         $state = $this->gamestate->state();
-        if ($state['name'] === 'payWorkers'){
+        if ($state['name'] === 'payWorkers' || $state['name'] === 'allocateWorkers'){
             $this->payWorkers($gold);
         } else if ($state['name'] === 'payAuction') {
             $this->payAuction($gold);

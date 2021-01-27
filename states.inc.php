@@ -41,10 +41,12 @@ $machinestates = array(
         "descriptionmyturn" => clienttranslate('${you} must allocate workers'),
         "type" => "multipleactiveplayer",
         "action" => "stPlaceWorkers",
+        "args" => "argPayWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
-        "transitions" => array( "auction" => STATE_PAY_WORKERS )
+        "transitions" => array( "auction" => STATE_BEGIN_AUCTION )
     ),
 
+    // removing this and handling it in allocateWorkers.
     STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),
