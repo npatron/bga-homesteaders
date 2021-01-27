@@ -705,17 +705,20 @@ function (dojo, declare) {
                     this.clearSelectable('building', true);
                     this.hideUndoTransactionsButtonIfPossible();
                     this.disableTradeIfPossible();
+                    this.hideTradeOffsetVals();
                     break;
                 case 'allocateWorkers':
                     this.clearSelectable('worker', true); 
                     this.clearSelectable('worker_slot', false);
                     this.hideUndoTransactionsButtonIfPossible();
                     this.disableTradeIfPossible();
+                    this.hideTradeOffsetVals();
                 case 'payAuction':
                 case 'bonusChoice':
                 case 'payWorkers':
                     this.hideUndoTransactionsButtonIfPossible();
                     this.disableTradeIfPossible();
+                    this.hideTradeOffsetVals();
                     break;
                 case 'endBuildRound':
                     this.clearAuction();
@@ -823,6 +826,7 @@ function (dojo, declare) {
                         this.goldAmount = 0;
                         this.addPaymentButtons();
                         this.addTradeLoanButtons();
+                        this.offsetForPaymentButton();
                     break;
                     case 'chooseBuildingToBuild':
                     case 'trainStationBuild':
@@ -1110,28 +1114,6 @@ function (dojo, declare) {
             return this.bid_zone_divId[Math.ceil(bid_no/10)][Number(bid_no%10) -1];
         },
 
-        showUndoTransactionsButtonIfPossible: function(){
-            if (this.transactionLog.length == 0){
-                dojo.query(`#${UNDO_TRADE_BTN_ID}:not(.noshow)`).addClass('noshow');
-                dojo.query(`#${UNDO_LAST_TRADE_BTN_ID}:not(.noshow)`).addClass('noshow');   
-                if ((dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_blue`).length > 0))
-                    this.setTradeButtonTo( TRADE_BUTTON_HIDE );
-            } else if (this.isCurrentPlayerActive()){
-                if (this.transactionLog.length == 1){
-                    dojo.query(`#${UNDO_LAST_TRADE_BTN_ID}.noshow`).removeClass('noshow');
-                } else {
-                    dojo.query(`#${UNDO_LAST_TRADE_BTN_ID}.noshow`).removeClass('noshow');
-                    dojo.query(`#${UNDO_TRADE_BTN_ID}.noshow`).removeClass('noshow');
-                }
-            }
-        },
-
-        hideUndoTransactionsButtonIfPossible: function(){
-            this.transactionLog = [];
-            this.transactionCost = [];
-            this.showUndoTransactionsButtonIfPossible();
-        },
-
         moveBid: function(p_id, bid_loc){
             if (bid_loc == OUTBID || bid_loc == NO_BID) {
                 this.moveObject(this.bid_token_divId[p_id], this.bid_zone_divId[ZONE_PENDING]);
@@ -1251,6 +1233,17 @@ function (dojo, declare) {
             }
         },
 
+        offsetForPaymentButton: function() {
+            if (this.silverCost >0){
+                let silver = getOffsetValue('silver');
+                this.offset_resourceCounter.silver.setValue(silver + this.silverCounter);
+            } 
+            if (this.goldAmount > 0){
+                let gold = getOffsetValue('gold');
+                this.offset_resourceCounter.gold.setValue(gold + this.goldAmount);
+            }
+        },
+
         /****** 
          * cancelNotifications: 
          * cancel past notification log messages with the given move IDs (from sharedcode)
@@ -1265,6 +1258,28 @@ function (dojo, declare) {
         },
 
         /***** TRADE *****/
+        showUndoTransactionsButtonIfPossible: function(){
+            if (this.transactionLog.length == 0){
+                dojo.query(`#${UNDO_TRADE_BTN_ID}:not(.noshow)`).addClass('noshow');
+                dojo.query(`#${UNDO_LAST_TRADE_BTN_ID}:not(.noshow)`).addClass('noshow');   
+                if ((dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_blue`).length > 0))
+                    this.setTradeButtonTo( TRADE_BUTTON_HIDE );
+            } else if (this.isCurrentPlayerActive()){
+                if (this.transactionLog.length == 1){
+                    dojo.query(`#${UNDO_LAST_TRADE_BTN_ID}.noshow`).removeClass('noshow');
+                } else {
+                    dojo.query(`#${UNDO_LAST_TRADE_BTN_ID}.noshow`).removeClass('noshow');
+                    dojo.query(`#${UNDO_TRADE_BTN_ID}.noshow`).removeClass('noshow');
+                }
+            }
+        },
+
+        hideUndoTransactionsButtonIfPossible: function(){
+            this.transactionLog = [];
+            this.transactionCost = [];
+            this.showUndoTransactionsButtonIfPossible();
+        },
+
         addTradeLoanButtons: function(){
             this.addActionButton( TRADE_BUTTON_ID, "<span id='tr_show'>"+_('Show')+"</span> "+_('Trade'), 'tradeActionButton', null, false, 'gray' );
             this.addLoanButtons();
@@ -1410,13 +1425,13 @@ function (dojo, declare) {
             dojo.query(`.offset_text.negative`).removeClass('negative');
         },
 
-        takeLoan: function(){
+        /*takeLoan: function(){
             if( this.checkAction( 'takeLoan')){
                 this.ajaxcall( "/homesteaders/homesteaders/takeLoan.html", {lock: true}, this, 
                 function( result ) {
                 }, function( is_error) {} );     
             }
-        },
+        },*/
 
         onBuyResource: function ( evt ){
             console.log('onBuyResource');
@@ -1760,12 +1775,20 @@ function (dojo, declare) {
         /***** PAY WORKERS PHASE *****/
         donePay: function(){
             if( this.checkAction( 'done')){
-                this.ajaxcall( "/homesteaders/homesteaders/donePay.html", {
-                    gold: this.goldAmount, lock: true}, this, 
-                function( result ) { 
-                    //this.hidePaymentSection();
-                    this.disableTradeIfPossible(); }, 
-                function( is_error) { } ); 
+                if (this.transactionLog.length >0){
+                    this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
+                        lock: true, 
+                        trade_action: this.transactionLog.join(',')
+                     }, this, function( result ) {
+                        this.transactionLog = [];
+                        this.ajaxcall( "/homesteaders/homesteaders/donePay.html", {
+                            gold: this.goldAmount, lock: true}, this, 
+                            function( result ) { 
+                                //this.hidePaymentSection();
+                                this.disableTradeIfPossible(); }, 
+                                function( is_error) { } );
+                     }, function( is_error) {});    
+                } 
             }
         },
 
