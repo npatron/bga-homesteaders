@@ -1879,12 +1879,16 @@ div#auction_tile_30 {
    background-position: 87.5% 100%;
    order: 35;
 }
-#first_player_tile { /* First Player */
+.fp_tile { /* First Player */
    background-position: 100% 100%;
-   order:99;
-   /* -webkit-transform: scale(.3, .3);
-   -moz-transform: scale(.3, .3);
-   transform: scale(.3, .3); */
+}
+.fp_icon {
+   -webkit-transform: scale(.25, .25);
+   -moz-transform: scale(.25, .25);
+   transform: scale(.25, .25); 
+   position: absolute;
+   left: 43%;
+   top: -63%;
 }
 /* EXPANSION BUILDINGS */
 .build_tile_36 { /* Purple homestead */

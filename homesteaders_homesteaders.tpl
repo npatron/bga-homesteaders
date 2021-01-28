@@ -10,6 +10,9 @@
 -------
 
 -->
+<div id="breadcrumbs" class="breadcrumbs wlimit">
+    
+</div> 
 <div id="main_container" class="container">
     <div id="currentPlayer" class="noshow"></div>
     
@@ -98,7 +101,7 @@
 
 <!-- Token limbo -->
 <div id="limbo"> 
-    <div id='first_player_tile' class='building_tile'> </div>
+    <div id='first_player_tile' class='building_tile fp_tile fp_icon'> </div>
 </div>
 <!-- Player Buildings section -->
 <div id='player_zones' class="players_container">
@@ -276,9 +279,9 @@ var jstpl_pay_button = '<span id="pay_gold" class="noshow useFont">0</span> \
 var jstpl_color_log = '<span title="${string}" class="font ${color}">${string}</span>';
 var jstpl_color_number_log = '<span class="useFont ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
 var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inline"></div>';
-var jstpl_resource_log= '<div title = "${type}" class="log_${type} log_token"></div>';
-var jstpl_player_token_log= '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
-var jptpl_track_log= '<div title = "${type}" class="log_inline_${type}" ></div>';
+var jstpl_resource_log = '<div title = "${type}" class="log_${type} log_token"></div>';
+var jstpl_player_token_log = '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
+var jptpl_track_log = '<div title = "${type}" class="log_inline_${type}" ></div>';
 
 </script>  
 
