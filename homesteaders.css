@@ -244,6 +244,81 @@ button:disabled {
    }
 }
 
+/*=================* 
+ * BreadCrumbs for *
+ * transaction log * 
+ *=================*/
+ .anchor {
+	position: relative;
+	width: 100%; 
+	overflow-x: auto;
+	overflow-y: hidden;
+	/* text-align: center; */
+	
+	/*** GI : center interface **/
+    max-width: 985px;
+    margin: auto;	
+    /*** GI (end) **/
+    
+}
+
+.anchor>* {
+	display: inline-block;
+	text-align: left;
+}
+
+.breadcrumbs {
+	text-align: center;
+	line-height: 40px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+	margin-bottom: 10px;
+    overflow: hidden; 
+	background: #b5552b url(img/loc_plan.png);
+	background-position: 0% 50%;
+}
+
+.breadcrumbs_element {
+	display: inline-block;
+	height: 40px;
+	padding: 5px 0 5px 35px;
+	background-color: #d5c392;
+	background-color: #813818;
+	position: relative;
+	float: left;
+	color: antiquewhite;
+}
+
+
+.breadcrumbs_element:after {
+	content: " ";
+	width: 0;
+	height: 0;
+	border-top: 25px solid transparent;
+	/* Go big on the size, and let overflow hide */
+	border-bottom: 25px solid transparent;
+	border-left: 30px solid #813818;
+	position: absolute;
+	top: 50%;
+	margin-top: -25px;
+	left: 100%;
+	z-index: 3;
+}
+
+.breadcrumbs_element:before {
+	content: " ";
+	width: 0;
+	height: 0;
+	border-top: 25px solid transparent;
+	border-bottom: 25px solid transparent;
+	border-left: 30px solid white;
+	position: absolute;
+	top: 50%;
+	margin-top: -25px;
+	margin-left: 1px;
+	left: 100%;
+	z-index: 2;
+}
+
 /*====================*
  * Bid Slot Locations *
  *    (on board)      *
@@ -930,6 +1005,9 @@ div#trade_bank_trade_silver{
 .trade_sizing {
    grid-template-columns: repeat(auto-fit, 90px);
 }
+.all_sizing {
+   grid-template-columns: repeat(auto-fit, 110px);
+}
 .this_player_resource_group{
    display: grid;
    grid-template-rows: 20px 19px 20px;
@@ -949,9 +1027,9 @@ div#trade_bank_trade_silver{
 .new_text {
    position: relative;
    font-size: x-large;
-   grid-column: 2 / 3;
    grid-row: 1 / 4;
    margin: auto;
+   color:blue;
 }
 .player_text_loan {
    position: relative;
@@ -966,9 +1044,9 @@ div#trade_bank_trade_silver{
 .new_text_loan {
    position: relative;
    font-size: x-large;
-   grid-column: 2 / 3;
    grid-row: 1 / 4;
    margin: auto;
+   color:blue;
 }
 .player_resource_group{
    display: grid;

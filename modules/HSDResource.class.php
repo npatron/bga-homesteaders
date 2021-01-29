@@ -341,7 +341,7 @@ class HSDresource extends APP_GameClass
     }
 
     function canPlayerAfford($p_id, $r_arr){
-        $sql = "SELECT * FROM `resources` WHERE `player_id` ='".$p_id."'";
+        $sql = "SELECT `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE `player_id` ='".$p_id."'";
         $p_resources = $this->game->getObjectFromDB($sql);
         $enough = true;
         foreach( $r_arr as $key => $resource){
@@ -352,6 +352,8 @@ class HSDresource extends APP_GameClass
     
     function collectIncome($p_id) 
     {
+        $sql = "SELECT `is_paid` FROM `resources` WHERE `player_id`='".$p_id."'";
+        $alreadyPaid = $this->game->getUniqueValueFromDB( $sql ); 
         $sql = "SELECT `track` FROM `resources` WHERE `player_id`='".$p_id."'";
         $p_tracks = $this->game->getUniqueValueFromDB( $sql ); 
         $this->game->Building->buildingIncomeForPlayer($p_id);

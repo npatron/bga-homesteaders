@@ -553,8 +553,8 @@ class homesteaders extends Table
 
     function argPayWorkers()
     {
-        $worker_counts = $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
-        return array('worker_counts'=>$worker_counts);
+        $args = $this->getCollectionFromDB("SELECT `player_id`, `workers`, `paid` FROM `resources`");
+        return array('args'=>$args);
     }
 
     function argDummyValidBids() {
