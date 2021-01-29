@@ -36,6 +36,25 @@ class HSDresource extends APP_GameClass
         $this->game->DbQuery( $sql );
     }
 
+    function getPaid($p_id){
+        // temporary solution to create missing column.
+        try{
+            $this->game->DbQuery( "ALTER TABLE `resources` ADD `paid` INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+        } catch (Exception $e){/* do nothing.*/}
+        return $this->game->getUniqueValueFromDB( "SELECT `paid` FROM `resources` WHERE `player_id`='$p_id'" ); 
+    }
+
+    function setPaid($p_id, $val=1){
+        $this->game->DbQuery( "UPDATE `resources` SET `paid`='$val' WHERE `player_id`='$p_id'");
+    }
+
+    function clearPaid(){
+        try {
+            $this->game->DbQuery( "ALTER TABLE `resources` ADD `paid` INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+        } catch (Exception $e){/* do nothing.*/}
+        $this->game->DbQuery( "UPDATE `resources` SET `paid`='0' ");
+    }
+
     ////// RESOURCE CLIENT & DB MANIPULATION //////
     /**
      * p_id - player id
@@ -352,14 +371,14 @@ class HSDresource extends APP_GameClass
     
     function collectIncome($p_id) 
     {
-        $sql = "SELECT `is_paid` FROM `resources` WHERE `player_id`='".$p_id."'";
-        $alreadyPaid = $this->game->getUniqueValueFromDB( $sql ); 
-        $sql = "SELECT `track` FROM `resources` WHERE `player_id`='".$p_id."'";
-        $p_tracks = $this->game->getUniqueValueFromDB( $sql ); 
-        $this->game->Building->buildingIncomeForPlayer($p_id);
-        if($p_tracks > 0) {
-            $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, array('track'=>'track'));
-        }
+        if ($this->getPaid($p_id) == 0){
+            $p_tracks = $this->game->getUniqueValueFromDB( "SELECT `track` FROM `resources` WHERE `player_id`='$p_id'" ); 
+            $this->game->Building->buildingIncomeForPlayer( $p_id );
+            if($p_tracks > 0) {
+                $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, array('track'=>'track'));
+            }
+            $this->setPaid($p_id);
+        } 
     }
 
     function getRailAdv($p_id, $reason_string="", $origin="", $key=0) {

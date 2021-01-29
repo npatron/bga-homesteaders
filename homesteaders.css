@@ -1005,7 +1005,7 @@ div#trade_bank_trade_silver{
 .trade_sizing {
    grid-template-columns: repeat(auto-fit, 90px);
 }
-.all_sizing {
+.income_sizing {
    grid-template-columns: repeat(auto-fit, 110px);
 }
 .this_player_resource_group{
@@ -1029,7 +1029,7 @@ div#trade_bank_trade_silver{
    font-size: x-large;
    grid-row: 1 / 4;
    margin: auto;
-   color:blue;
+   color: blue;
 }
 .player_text_loan {
    position: relative;
@@ -1046,7 +1046,7 @@ div#trade_bank_trade_silver{
    font-size: x-large;
    grid-row: 1 / 4;
    margin: auto;
-   color:blue;
+   color: blue;
 }
 .player_resource_group{
    display: grid;
@@ -1119,6 +1119,7 @@ div#trade_bank_trade_silver{
    height: 20px;
    width: 20px;
    grid-row: 1 / 2;
+   grid-column: 3 / 4;
 }
 .player_loan_offset {
    grid-row: 2 / 3;
@@ -1957,12 +1958,16 @@ div#auction_tile_30 {
    background-position: 87.5% 100%;
    order: 35;
 }
-#first_player_tile { /* First Player */
+.fp_tile { /* First Player */
    background-position: 100% 100%;
-   order:99;
-   /* -webkit-transform: scale(.3, .3);
-   -moz-transform: scale(.3, .3);
-   transform: scale(.3, .3); */
+}
+.fp_icon {
+   -webkit-transform: scale(.25, .25);
+   -moz-transform: scale(.25, .25);
+   transform: scale(.25, .25); 
+   position: absolute;
+   left: 43%;
+   top: -63%;
 }
 /* EXPANSION BUILDINGS */
 .build_tile_36 { /* Purple homestead */
