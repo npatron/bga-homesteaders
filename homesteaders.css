@@ -930,6 +930,9 @@ div#trade_bank_trade_silver{
 .trade_sizing {
    grid-template-columns: repeat(auto-fit, 90px);
 }
+.income_sizing {
+   grid-template-columns: repeat(auto-fit, 110px);
+}
 .this_player_resource_group{
    display: grid;
    grid-template-rows: 20px 19px 20px;
@@ -952,6 +955,7 @@ div#trade_bank_trade_silver{
    grid-column: 2 / 3;
    grid-row: 1 / 4;
    margin: auto;
+   color: blue;
 }
 .player_text_loan {
    position: relative;
@@ -969,6 +973,7 @@ div#trade_bank_trade_silver{
    grid-column: 2 / 3;
    grid-row: 1 / 4;
    margin: auto;
+   color: blue;
 }
 .player_resource_group{
    display: grid;
@@ -1041,6 +1046,7 @@ div#trade_bank_trade_silver{
    height: 20px;
    width: 20px;
    grid-row: 1 / 2;
+   grid-column: 3 / 4;
 }
 .player_loan_offset {
    grid-row: 2 / 3;

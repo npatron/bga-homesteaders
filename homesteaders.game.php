@@ -51,6 +51,7 @@ class homesteaders extends Table
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
             "last_building"     => 19,
+            "b_order"           => 20,
             "show_player_info"  => SHOW_PLAYER_INFO,
         ) );
         
@@ -119,6 +120,7 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building', 0 );
+        $this->setGameStateInitialValue( 'b_order',       0 );
         
         $values = array();
         // set colors
@@ -305,7 +307,7 @@ class homesteaders extends Table
     {
         $p_id = $this->getCurrentPlayerId();
         $this->Resource->collectIncome($p_id);
-        //$this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
+        $this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
     }
 
     /*** Player Bid Phase ***/
@@ -359,8 +361,10 @@ class homesteaders extends Table
 
     public function playerPay($gold) {
         $state = $this->gamestate->state();
-        if ($state['name'] === 'payWorkers' || $state['name'] === 'allocateWorkers'){
+        if ($state['name'] === 'payWorkers'){
             $this->payWorkers($gold);
+        } else if ($state['name'] === 'allocateWorkers'){ 
+            $this->payWorkers($gold, true);
         } else if ($state['name'] === 'payAuction') {
             $this->payAuction($gold);
         } else {
@@ -368,14 +372,18 @@ class homesteaders extends Table
         }
     }
 
-    public function payWorkers($gold) {
+    public function payWorkers($gold, $early=false) {
         $this->checkAction( "done" );
-
+        
         $cur_p_id = $this->getCurrentPlayerId();
         $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
         $cost = max($workers - (5*$gold), 0);
         $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
-        $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
+        if ($early){
+            $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
+        } else {
+            $this->notifyPlayer($cur_p_id, 'workerPaid', "", array());
+        }
     }
 
     public function payAuction($gold) {
@@ -553,8 +561,8 @@ class homesteaders extends Table
 
     function argPayWorkers()
     {
-        $worker_counts = $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
-        return array('worker_counts'=>$worker_counts);
+        $args = $this->getCollectionFromDB("SELECT `player_id`, `workers`, `paid` FROM `resources`");
+        return array('args'=>$args);
     }
 
     function argDummyValidBids() {

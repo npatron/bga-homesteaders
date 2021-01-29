@@ -53,18 +53,18 @@ class HSDBuilding extends APP_GameClass
 
     /**  getAllDatas method */
     function getAllBuildings(){
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` ";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot, `b_order` FROM `buildings` ";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 
     function getAllPlayerBuildings($p_id){
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `stage`, `location`, `player_id` p_id, `worker_slot` w_slot, `b_order` FROM `buildings` WHERE `player_id` = '".$p_id."' ORDER BY `building_type`, `b_key` ASC";
         return ($this->game->getCollectionFromDB( $sql ));
     }
 
     /**** Utility ****/
     function getBuildingFromKey($b_key){ 
-        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `location`, `player_id` p_id, `worker_slot` w_slot FROM `buildings` WHERE `building_key`='$b_key'";
+        $sql = "SELECT `building_key` b_key, `building_id` b_id, `building_type` b_type, `location`, `player_id` p_id, `worker_slot` w_slot, `b_order` FROM `buildings` WHERE `building_key`='$b_key'";
         return ($this->game->getObjectFromDB($sql));
     }
 
@@ -190,9 +190,11 @@ class HSDBuilding extends APP_GameClass
         }
         
         $this->payForBuilding($p_id, $b_cost);
-        $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id' WHERE `building_key`='$b_key'";
+        $b_order = $this->game->incGameStateValue('b_order', 1);
+        $sql = "UPDATE `buildings` SET `location`=".BLD_LOC_PLAYER.", `player_id`='$p_id', `b_order`='$b_order' WHERE `building_key`='$b_key'";
         $message = '${player_name} '._('builds').' ${building_name}';
         $building['p_id'] = $p_id;
+        $building['b_order'] = $b_order;
         $values = array('player_id' => $p_id,
                         'player_name' => $this->game->getPlayerName($p_id),
                         'building' => $building,
