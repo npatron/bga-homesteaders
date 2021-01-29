@@ -43,7 +43,7 @@ $machinestates = array(
         "action" => "stPlaceWorkers",
         "args" => "argPayWorkers",
         "possibleactions" => array( "placeWorker", "hireWorker", "updateGold", "trade", "takeLoan", "done" ),
-        "transitions" => array( "auction" => STATE_BEGIN_AUCTION )
+        "transitions" => array( "auction" => STATE_PAY_WORKERS )
     ),
 
     // removing this and handling it in allocateWorkers.

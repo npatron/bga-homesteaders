@@ -13,10 +13,9 @@
 <div class="anchor">
     <div id="breadcrumbs" class="breadcrumbs wlimit" style="display:block"></div>
 </div>
+<div id="trade_top" class="trade_size noshow">
+</div>
 <div id="main_container" class="container">
-	<div class="anchor">
-        <div id="breadcrumbs" class="breadcrumbs wlimit" style="display:block"></div>
-    </div>
     <div id="currentPlayer" class="noshow"></div>
     <div id ="top">
         <span id="top_texts">
@@ -31,7 +30,6 @@
                 </tr>
             </div>         
         </span>
-        <!-- <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a> -->
         <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
             <span id='auc_future' class="font">{SHOW} </span><span class="font"> {FUTURE_AUCTION}</span>
         </a>
@@ -44,7 +42,7 @@
         <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
             <span id="bld_future" class="font">{SHOW} </span><span class="font"> {FUTURE_BUILDING}</span>
         </a>
-        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
+        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue noshow"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
     </div>
     <!-- Auction Board -->
     <div id="board" class="shadow">
@@ -73,8 +71,7 @@
         <div id="train_bonus_5_vp" class="train_bonus"> </div>
         <div id="passed_bids" class="bid_token_zone"> </div>
     </div>
-    <div id="trade_top" class="trade_size noshow">
-    </div>
+    
 </div>
 <div id='building_location' class='tile_container'>
     <div id='future_auction_container' class='whiteblock border_a1 noshow'>
@@ -111,89 +108,89 @@
     <!-- BEGIN this_player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR}" style="margin-top:4px;">
         <span id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</span>
-        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
-        <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
-        <div class="this_player_resources">
+        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
+        <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red noshow"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
+        <div id="player_resources_{COLOR}" class="this_player_resources">
             <span id="silver_group" class="this_player_resource_group">
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
-                <span id="silver_offset_{COLOR}" class="player_silver_offset offset_text noshow">0</span>
-                <span id="silver_bank_{COLOR}" class="player_silver_buy bank_trade noshow"></span>
-                <span id="silver_new_{COLOR}" class="player_silver_new new_text noshow">0</span>
+                <span id="silver_offset" class="player_silver_offset offset_text noshow">0</span>
+                <span id="silver_bank" class="player_silver_buy bank_trade noshow"></span>
+                <span id="silver_new" class="player_silver_new new_text noshow">0</span>
             </span>
             <span id="trade_group" class="this_player_resource_group">
                 <span id="tradeicon_{COLOR}"  class="score_token player_trade score"></span>
                 <span id="tradecount_{COLOR}" class="player_trade_text player_text">0</span>
-                <span id="trade_offset_{COLOR}" class="player_trade_offset offset_text noshow">0</span>
-                <span id="trade_new_{COLOR}" class="player_trade_new new_text noshow">0</span>
+                <span id="trade_offset" class="player_trade_offset offset_text noshow">0</span>
+                <span id="trade_new" class="player_trade_new new_text noshow">0</span>
             </span>
             <span id="loan_group" class="this_player_resource_group">
                 <span id="loanicon_{COLOR}"   class="player_loan score"></span>
                 <span id="loancount_{COLOR}" class="player_loan_text player_text_loan">0</span>
-                <span id="loan_more_{COLOR}" class="buy_loan take_loan noshow"></span>
-                <span id="loan_offset_{COLOR}" class="player_loan_offset offset_text_loan noshow">0</span>
-                <!--<span id="loan_less_{COLOR}" class="sell_loan sell noshow"></span> -->
-                <span id="loan_new_{COLOR}" class="player_loan_new new_text_loan noshow">0</span>
+                <span id="loan_more" class="buy_loan take_loan noshow"></span>
+                <span id="loan_offset" class="player_loan_offset offset_text_loan noshow">0</span>
+                <span id="loan_new" class="player_loan_new new_text_loan noshow">0</span>
             </span>
             <span id="vp_group" class="this_player_resource_group">
                 <span id="vpicon_{COLOR}"   class="score_token player_vp score"></span>
                 <span id="vpcount_{COLOR}"  class="player_vp_text player_text">0</span>
-                <span id="vp_offset_{COLOR}" class="player_vp_offset offset_text noshow">0</span>
-                <span id="vp_new_{COLOR}" class="player_vp_new new_text noshow">0</span>
+                <span id="vp_offset" class="player_vp_offset offset_text noshow">0</span>
+                <span id="vp_new" class="player_vp_new new_text noshow">0</span>
             </span>
             <span id="wood_group" class="this_player_resource_group">
                 <span id="woodicon_{COLOR}"   class="score_token player_wood score"></span>
                 <span id="woodcount_{COLOR}" class="player_wood_text player_text">0</span>
-                <span id="wood_sell_{COLOR}" class="sell_wood sell noshow"></span>
-                <span id="wood_offset_{COLOR}" class="player_wood_offset offset_text noshow">0</span>
-                <span id="wood_buy_{COLOR}" class="buy_wood buy noshow"></span>
-                <span id="wood_new_{COLOR}" class="player_wood_new new_text noshow">0</span>
+                <span id="wood_sell" class="sell_wood sell noshow"></span>
+                <span id="wood_offset" class="player_wood_offset offset_text noshow">0</span>
+                <span id="wood_buy" class="buy_wood buy noshow"></span>
+                <span id="wood_new" class="player_wood_new new_text noshow">0</span>
             </span>
             <span id="food_group" class="this_player_resource_group">
                 <span id="foodicon_{COLOR}"   class="score_token player_food score"></span>
                 <span id="foodcount_{COLOR}" class="player_food_text player_text">0</span>
-                <span id="food_market_{COLOR}" class="trade_market_food market noshow"></span>
-                <span id="food_buy_{COLOR}" class="buy_food buy noshow"></span>
-                <span id="food_offset_{COLOR}" class="player_food_offset offset_text noshow">0</span>
-                <span id="food_sell_{COLOR}" class="sell_food sell noshow"></span>
-                <span id="food_new_{COLOR}" class="player_food_new new_text noshow">0</span>
+                <span id="food_market" class="trade_market_food market noshow"></span>
+                <span id="food_buy" class="buy_food buy noshow"></span>
+                <span id="food_offset" class="player_food_offset offset_text noshow">0</span>
+                <span id="food_sell" class="sell_food sell noshow"></span>
+                <span id="food_new" class="player_food_new new_text noshow">0</span>
             </span>
             <span id="steel_group" class="this_player_resource_group">
                 <span id="steelicon_{COLOR}"  class="score_token player_steel score"></span>
                 <span id="steelcount_{COLOR}" class="player_steel_text player_text">0</span>
-                <span id="steel_market_{COLOR}" class="trade_market_steel market noshow"></span>
-                <span id="steel_buy_{COLOR}" class="buy_steel buy noshow"></span>
-                <span id="steel_offset_{COLOR}" class="player_steel_offset offset_text noshow">0</span>
-                <span id="steel_sell_{COLOR}" class="sell_steel sell noshow"></span>
-                <span id="steel_new_{COLOR}" class="player_steel_new new_text noshow">0</span>
+                <span id="steel_market" class="trade_market_steel market noshow"></span>
+                <span id="steel_buy" class="buy_steel buy noshow"></span>
+                <span id="steel_offset" class="player_steel_offset offset_text noshow">0</span>
+                <span id="steel_sell" class="sell_steel sell noshow"></span>
+                <span id="steel_new" class="player_steel_new new_text noshow">0</span>
             </span>
             <span id="gold_group" class="this_player_resource_group">
                 <span id="goldicon_{COLOR}"   class="score_token player_gold score"></span>
                 <span id="goldcount_{COLOR}" class="player_gold_text player_text">0</span>
-                <span id="gold_buy_{COLOR}" class="buy_gold buy noshow"></span>
-                <span id="gold_offset_{COLOR}" class="player_gold_offset offset_text noshow">0</span>
-                <span id="gold_sell_{COLOR}" class="sell_gold sell noshow"></span>
-                <span id="gold_new_{COLOR}" class="player_gold_new new_text noshow">0</span>
+                <span id="gold_buy" class="buy_gold buy noshow"></span>
+                <span id="gold_offset" class="player_gold_offset offset_text noshow">0</span>
+                <span id="gold_sell" class="sell_gold sell noshow"></span>
+                <span id="gold_new" class="player_gold_new new_text noshow">0</span>
             </span>
-            <span id="cow_group" class="this_player_resource_group">
+            <span id="cow_group" class="this_player_wider_resource_group">
                 <span id="cowicon_{COLOR}"    class="score_token player_cow score"></span>
                 <span id="cowcount_{COLOR}" class="player_cow_text player_text">0</span>
-                <span id="cow_buy_{COLOR}" class="buy_cow buy noshow"></span>
-                <span id="cow_offset_{COLOR}" class="player_cow_offset offset_text noshow">0</span>
-                <span id="cow_sell_{COLOR}" class="sell_cow sell noshow"></span>
-                <span id="cow_new_{COLOR}" class="player_cow_new new_text noshow">0</span>
+                <span id="cow_buy" class="buy_cow buy noshow"></span>
+                <span id="cow_offset" class="player_cow_offset offset_text noshow">0</span>
+                <span id="cow_sell" class="sell_cow sell noshow"></span>
+                <span id="cow_new" class="player_cow_new new_text noshow">0</span>
             </span>
-            <span id="copper_group" class="this_player_resource_group">
+            <span id="copper_group" class="this_player_wider_resource_group">
                 <span id="coppericon_{COLOR}" class="score_token player_copper score"></span>
                 <span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
-                <span id="copper_buy_{COLOR}" class="buy_copper buy noshow"></span>
-                <span id="copper_offset_{COLOR}" class="player_copper_offset offset_text noshow">0</span>
-                <span id="copper_sell_{COLOR}" class="sell_copper sell noshow"></span>
-                <span id="copper_new_{COLOR}" class="player_copper_new new_text noshow">0</span>
+                <span id="copper_buy" class="buy_copper buy noshow"></span>
+                <span id="copper_offset" class="player_copper_offset offset_text noshow">0</span>
+                <span id="copper_sell" class="sell_copper sell noshow"></span>
+                <span id="copper_new" class="player_copper_new new_text noshow">0</span>
             </span>
+            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
         <div id="token_zone_{COLOR}" class="player_token_zone">
-            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
+            
         </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
@@ -201,20 +198,50 @@
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR}" style="margin-top:4px;">
         <div id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</div>
-        <div class="player_resource_group">
-            <span id="silvericon_{COLOR}" class="score_token player_silver score"></span><span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
-            <span id="tradeicon_{COLOR}"  class="score_token player_trade score"></span><span id="tradecount_{COLOR}" class="player_trade_text player_text">0</span>
-            <span id="loanicon_{COLOR}"   class="player_loan score"></span><span id="loancount_{COLOR}" class="player_loan_text player_text">0</span>            
-            <span id="vpicon_{COLOR}"   class="score_token player_vp score"></span><span id="vpcount_{COLOR}"  class="player_vp_text player_text">0</span>
-            <span id="woodicon_{COLOR}"   class="score_token player_wood score"></span><span id="woodcount_{COLOR}" class="player_wood_text player_text">0</span>
-            <span id="foodicon_{COLOR}"   class="score_token player_food score"></span><span id="foodcount_{COLOR}" class="player_food_text player_text">0</span>
-            <span id="steelicon_{COLOR}"  class="score_token player_steel score"></span><span id="steelcount_{COLOR}" class="player_steel_text player_text">0</span>
-            <span id="goldicon_{COLOR}"   class="score_token player_gold score"></span><span id="goldcount_{COLOR}" class="player_gold_text player_text">0</span>
-            <span id="cowicon_{COLOR}"    class="score_token player_cow score"></span><span id="cowcount_{COLOR}" class="player_cow_text player_text">0</span>
-            <span id="coppericon_{COLOR}" class="score_token player_copper score"></span><span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
+        <div id="player_resources_{COLOR}" class="player_resources">
+            <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
+                <span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
+            </span>
+                <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="tradeicon_{COLOR}"  class="score_token player_trade score"></span>
+            <span id="tradecount_{COLOR}" class="player_trade_text player_text">0</span>
+            </span>
+                <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="loanicon_{COLOR}"   class="player_loan score"></span>
+            <span id="loancount_{COLOR}" class="player_loan_text player_text">0</span>
+            </span>
+                <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="vpicon_{COLOR}"   class="score_token player_vp score"></span>
+            <span id="vpcount_{COLOR}"  class="player_vp_text player_text">0</span>
+            </span>
+                <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="woodicon_{COLOR}"   class="score_token player_wood score"></span>
+            <span id="woodcount_{COLOR}" class="player_wood_text player_text">0</span>
+            </span>
+            <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="foodicon_{COLOR}"   class="score_token player_food score"></span>
+                <span id="foodcount_{COLOR}" class="player_food_text player_text">0</span>
+            </span>
+            <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="steelicon_{COLOR}"  class="score_token player_steel score"></span>
+                <span id="steelcount_{COLOR}" class="player_steel_text player_text">0</span>
+            </span>
+            <span id="silver_group_{COLOR}" class="player_resource_group">
+                <span id="goldicon_{COLOR}"   class="score_token player_gold score"></span>
+                <span id="goldcount_{COLOR}" class="player_gold_text player_text">0</span>
+            </span>
+            <span id="silver_group_{COLOR}" class="player_wider_resource_group">
+                <span id="cowicon_{COLOR}"    class="score_token player_cow score"></span>
+                <span id="cowcount_{COLOR}" class="player_cow_text player_text">0</span>
+            </span>
+            <span id="silver_group_{COLOR}" class="player_wider_resource_group">
+                <span id="coppericon_{COLOR}" class="score_token player_copper score"></span>
+                <span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
+            </span>
+            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
         <div id="token_zone_{COLOR}" class="player_token_zone">
-            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
@@ -284,6 +311,7 @@ var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inl
 var jstpl_resource_log = '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log = '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
 var jptpl_track_log = '<div title = "${type}" class="log_inline_${type}" ></div>';
+var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline"></span>${for}</span>'
 
 </script>  
 

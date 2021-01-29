@@ -51,7 +51,6 @@ class homesteaders extends Table
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
             "last_building"     => 19,
-            "b_order"           => 20,
             "show_player_info"  => SHOW_PLAYER_INFO,
         ) );
         
@@ -120,7 +119,6 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'auction_bonus', 0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building', 0 );
-        $this->setGameStateInitialValue( 'b_order',       0 );
         
         $values = array();
         // set colors
@@ -374,7 +372,7 @@ class homesteaders extends Table
 
     public function payWorkers($gold, $early=false) {
         $this->checkAction( "done" );
-        
+
         $cur_p_id = $this->getCurrentPlayerId();
         $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
         $cost = max($workers - (5*$gold), 0);

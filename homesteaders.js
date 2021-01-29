@@ -76,6 +76,7 @@ function (dojo, declare) {
     // building ID's required for trade
     const BLD_MARKET = 7;
     const BLD_BANK   = 22;
+    const BLD_RODEO  = 26;
 
     // string templates for dynamic assets
     const TPL_BLD_TILE = "building_tile";
@@ -142,7 +143,7 @@ function (dojo, declare) {
             // auction bid zones
             this.bid_zone_divId= [];
             this.auction_zones = [];
-            this.train_token_divId = [];
+            this.train_token_divId = []; // rail adv train token id.
             this.auction_ids = [];
 
             this.goldCounter = new ebg.counter();
@@ -151,6 +152,7 @@ function (dojo, declare) {
 
             //player zones
             this.player_color = []; // indexed by player id
+            this.player_score_zone_id = [];
             this.player_building_zone_id = [];
             this.player_building_zone = [];
                         
@@ -210,6 +212,8 @@ function (dojo, declare) {
             this.isSpectator = true;
             this.playerCount = 0;
             this.show_player_info = gamedatas.show_player_info;
+            this.resource_info = gamedatas.resource_info;
+            this.building_info = gamedatas.building_info;
             console.log(gamedatas);
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
@@ -217,11 +221,11 @@ function (dojo, declare) {
                 const player = gamedatas.players[p_id];
                 this.setupPlayerAssets(player);
             }
+            this.setupPlayerResources(gamedatas.player_resources, gamedatas.resources, gamedatas.resource_info);
             if (!this.isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
                 this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
-                this.setupPlayerResources(gamedatas.player_resources, gamedatas.resources, gamedatas.resource_info);
-                dojo.destroy('useSilver_form');// removing this for now...
+                this.setupTradeButtons();
             } else {
                 // when displaying for a spectator remove the player config checkbox.
                 dojo.destroy('useSilver_form');
@@ -231,9 +235,7 @@ function (dojo, declare) {
                 this.player_color[DUMMY_OPT] = this.player_color[0];
             }
             this.omitImages();
-            this.resource_info = gamedatas.resource_info;
-            this.building_info = gamedatas.building_info;
-
+            
             // Auctions: 
             this.number_auctions = gamedatas.number_auctions;
             this.setupAuctionTiles(gamedatas.auctions, gamedatas.auction_info);
@@ -242,15 +244,14 @@ function (dojo, declare) {
             
             this.setupTracks(gamedatas.tracks);
             
-            dojo.place(FIRST_PLAYER_ID, this.player_building_zone_id[gamedatas.first_player]);
+            dojo.place(FIRST_PLAYER_ID, this.player_score_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
-            this.addTooltip( FIRST_PLAYER_ID, _('First Player'), '' ); 
+            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="useFont">${_('First Bid in Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones();
             this.setupBidTokens(gamedatas.bids);
 
             this.setupRailLines(gamedatas.players);
-            this.setupTradeButtons(gamedatas.can_undo_trades);
             this.setupBonusButtons(gamedatas.resource_info);
             this.setupShowButtons();
             if (gamedatas.round_number ==11){
@@ -276,12 +277,21 @@ function (dojo, declare) {
             if (this.player_id == p_id) {
                 this.isSpectator = false;
             }
+            const player_board_div = 'player_board_'+p_id;
+            this.player_score_zone_id[p_id] = player_board_div;
             if( this.player_id == p_id || this.show_player_info){
-                const player_board_div = 'player_board_'+p_id;
                 dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), player_board_div );
             } 
             this.player_color[p_id] = current_player_color;
-            this.token_divId[p_id]  = 'token_zone_' + current_player_color;
+            if (this.show_player_info || p_id == this.player_id){
+                this.token_divId[p_id]  = `player_resources_${current_player_color}`;
+                dojo.destroy(`token_zone_${current_player_color}`);
+            } else {
+                this.token_divId[p_id]  = 'token_zone_' + current_player_color;  
+                dojo.place(`worker_zone_${current_player_color}`, this.token_divId[p_id]);
+                dojo.destroy(`player_resources_${current_player_color}`, 'noshow');
+            }
+            
             this.token_zone[p_id]   = 'worker_zone_'+ current_player_color;
 
             this.player_building_zone_id[p_id] = TPL_BLD_ZONE + this.player_color[p_id];
@@ -532,24 +542,14 @@ function (dojo, declare) {
         },
 
         /**
-         * connects click actions to buttons for selecting Trade actions (on trade board), 
+         * connects click actions to buttons for selecting Trade actions, 
+         * should only be called if not spectator.
          * 
          * it also will assign click action to the button for approve trade/undo transactions.
-         * it will also unhide the undo transactions buttons if it is possible to take that action.
-         * @param {boolean} can_undo_trades 
          */
-        setupTradeButtons: function(can_undo_trades){
-            //const options = dojo.query(`#${TRADE_BOARD_ID} .trade_option`);
-            /*for(let i in options){
-                if (options[i].id != null){
-                    dojo.connect($(options[i]), 'onclick', this, 'onSelectTradeAction' );
-            }   }*/
-            //dojo.connect($(CONFIRM_TRADE_BTN_ID), 'onclick', this, 'confirmTradeButton' );
-            dojo.addClass(CONFIRM_TRADE_BTN_ID,'noshow');
+        setupTradeButtons: function(){
             dojo.connect($(UNDO_TRADE_BTN_ID), 'onclick', this, 'undoTransactionsButton');
             dojo.connect($(UNDO_LAST_TRADE_BTN_ID), 'onclick', this, 'undoLastTransaction');
-            dojo.addClass(UNDO_TRADE_BTN_ID, 'noshow');
-            dojo.addClass(UNDO_LAST_TRADE_BTN_ID, 'noshow');
             const buyButtons = dojo.query(`.buy`);
             for(let i in buyButtons){
                 if (buyButtons[i].id != null)
@@ -561,18 +561,18 @@ function (dojo, declare) {
                     dojo.connect($(sellButtons[i]) ,'onclick', this, 'onSellResource');
             }
             let color = this.player_color[this.player_id];
-            dojo.connect($(`food_market_${color}`), 'onclick', this, 'onMarketResource');
-            dojo.connect($(`steel_market_${color}`), 'onclick', this, 'onMarketResource');
-            dojo.connect($(`silver_bank_${color}`), 'onclick', this, 'onBankResource');
-            dojo.connect($(`loan_more_${color}`), 'onclick', this, 'onMoreLoan');
-            //dojo.connect($(`loan_less_${color}`), 'onclick', this, 'onLessLoan');
+            dojo.connect($(`food_market`), 'onclick', this, 'onMarketResource');
+            dojo.connect($(`steel_market`), 'onclick', this, 'onMarketResource');
+            dojo.connect($(`silver_bank`), 'onclick', this, 'onBankResource');
+            dojo.connect($(`loan_more`), 'onclick', this, 'onMoreLoan');
+            // create new and offset counters
             for (const [key, value] of Object.entries(this.resource_info)) {
                 if ( key == "workers" || key == "track") continue;
-                let boardResourceId = `${key}_offset_${this.player_color[this.player_id]}`;
+                let boardResourceId = `${key}_offset`;
                 this.offset_resourceCounter[key] = new ebg.counter();
                 this.offset_resourceCounter[key].create(boardResourceId);
                 this.offset_resourceCounter[key].setValue(0);
-                let newResourceId = `${key}_new_${this.player_color[this.player_id]}`;
+                let newResourceId = `${key}_new`;
                 this.new_resourceCounter[key] = new ebg.counter();
                 this.new_resourceCounter[key].create(newResourceId);
                 this.new_resourceCounter[key].setValue(0);
@@ -767,27 +767,22 @@ function (dojo, declare) {
                 switch( stateName )
                 {
                     case 'allocateWorkers':
-                        if (!args.args[this.player_id].paid){// allocate workers
-                            this.last_selected['worker'] ="";
-                            // show workers that are selectable
-                            dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` ).addClass('selectable');
-                            // also make building_slots selectable.
-                            dojo.query( `#${TPL_BLD_ZONE}${this.player_color[current_player_id]} .worker_slot` ).addClass( 'selectable' );
-                            
-                            this.addActionButton( 'btn_done',_('Done'), 'donePlacingWorkers' );
-                            this.showConfirmTrade = true;
-                            this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
-                            this.addTradeLoanButtons();
-                            this.setOffsetForPaymentButtons();
-                            this.setOffsetForIncome();
-                        } else { // pay workers
-                            this.setupPayWorkers();
-                        }
+                        this.last_selected['worker'] ="";
+                        // show workers that are selectable
+                        dojo.query( `#player_zone_${this.player_color[current_player_id]} .token_worker` ).addClass('selectable');
+                        // also make building_slots selectable.
+                        dojo.query( `#${TPL_BLD_ZONE}${this.player_color[current_player_id]} .worker_slot` ).addClass( 'selectable' );
+                        
+                        this.addActionButton( 'btn_done',_('Confirm'), 'donePlacingWorkers' );
+                        this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
+                        this.showConfirmTrade = true;
+                        this.addTradeLoanButtons();
+                        this.setOffsetForIncome();
                     break;
                     case 'payWorkers':
-                        this.silverCost = Number(args.worker_counts[this.player_id].workers);
+                        this.silverCost = this.getPlayerWorkerCount(this.player_id);
                         this.goldAmount = 0;
-                        this.addPaymentButtons();
+                        this.addPaymentButtons(true);
                         this.addTradeLoanButtons();
                         this.setOffsetForPaymentButtons();
                     break;
@@ -924,14 +919,16 @@ function (dojo, declare) {
                         this.showConfirmTrade = true;
                     break;
                 }
-            } else {
-                switch( stateName ){
+            } else if (!this.isSpectator) {
+                switch( stateName ) {
                     case 'allocateWorkers':
-                    this.silverCost = Number(args.worker_counts[this.player_id].workers);
-                    this.goldAmount = 0;
-                    this.addPaymentButtons();
-                    this.addTradeLoanButtons();
-                    this.setOffsetForPaymentButtons();
+                        if (!args.args.paid==1){
+                            this.silverCost = this.getPlayerWorkerCount(this.player_id);
+                            this.goldAmount = 0;
+                            this.addPaymentButtons(true);
+                            this.addTradeLoanButtons();
+                            this.setOffsetForPaymentButtons();
+                        }
                     break;
                 }
             } 
@@ -1210,8 +1207,12 @@ function (dojo, declare) {
         //// Player's action
 
         /***** COMMON ACTIONS (multiple states) *****/
-        addPaymentButtons: function( ){
-            this.addActionButton( 'btn_pay_done', _("Pay : ") +this.format_block("jstpl_pay_button", {}), 'donePay');
+        addPaymentButtons: function( workerState = false ){
+            if (workerState){
+                this.addActionButton( 'btn_pay_done', _("Pay : ") +this.format_block("jstpl_pay_button", {}), 'donePayWorker');
+            } else {
+                this.addActionButton( 'btn_pay_done', _("Pay : ") +this.format_block("jstpl_pay_button", {}), 'donePay');
+            }
 
             this.silverCounter.create('pay_silver');
             this.silverCounter.setValue(this.silverCost);
@@ -1290,6 +1291,11 @@ function (dojo, declare) {
             this.newPosNeg('gold', gold_new);
         },
 
+        createBreadcrumbTrade: function(id, tradeAway, tradeFor){
+            dojo.place(this.format_block( 'jptpl_breadcrumb_trade', 
+            {id: id, away:this.getResourceArrayHtml(tradeAway, true), for:this.getResourceArrayHtml(tradeFor, true)}), `breadcrumbs`, 'last');
+        },
+
         updateIncomeArr: function(){
             this.income_arr = {'silver':0,'trade':0,'loan':0,'vp':0,
             'wood':0,'food':0,'steel':0,'gold':0,'copper':0,'cow':0};
@@ -1297,8 +1303,17 @@ function (dojo, declare) {
             for(let b_id in this.hasBuilding[this.player_id]){
                 // building base income
                 if (this.building_info[b_id].inc != null){
-                    for(let type in this.building_info[b_id].inc){
-                        this.income_arr[type] += this.building_info[b_id].inc[type];
+                    // special income
+                    if (b_id == BLD_RODEO){
+                        this.income_arr.silver += Math.max(5,this.getPlayerWorkerCount());
+                    } else{
+                        for(let type in this.building_info[b_id].inc){
+                            if (type == 'vp2'){
+                                this.income_arr.vp += (2* this.building_info[b_id].inc.vp2);
+                            } else {
+                                this.income_arr[type] += this.building_info[b_id].inc[type];
+                            }
+                        }
                     }
                 }
                 // building worker income
@@ -1315,12 +1330,20 @@ function (dojo, declare) {
                             if (slots[i].id == null) continue;
                             if (slots[i].id.split('_')[2] == 1){
                                 for (type in this.building_info[b_id].s1){
-                                    this.income_arr[type] += this.building_info[b_id].s1[type];
+                                    if (type == 'vp2'){
+                                        this.income_arr.vp += (2* this.building_info[b_id].s1.vp2);
+                                    } else {
+                                        this.income_arr[type] += this.building_info[b_id].s1[type];
+                                    }
                                 }
                             }
                             if (slots[i].id.split('_')[2] == 2){
                                 for (type in this.building_info[b_id].s2){
-                                    this.income_arr[type] += this.building_info[b_id].s2[type];
+                                    if (type == 'vp2'){
+                                        this.income_arr.vp += (2* this.building_info[b_id].s2.vp2);
+                                    } else {
+                                        this.income_arr[type] += this.building_info[b_id].s2[type];
+                                    }
                                 }
                             }
                         }
@@ -1329,8 +1352,7 @@ function (dojo, declare) {
             }
             const tokenZone = this.token_divId[this.player_id];
             // railroad track income
-            let tracks = dojo.query(`#${tokenZone} .token_track`);
-            this.income_arr.silver += tracks.length;
+            this.income_arr.silver += this.getPlayerTrackCount(this.player_id);
         },
         
         setOffsetForIncome: function() {
@@ -1384,7 +1406,7 @@ function (dojo, declare) {
             this.showUndoTransactionsButtonIfPossible();
         },
 
-        addTradeLoanButtons: function(){
+        addTradeLoanButtons: function( ){
             this.addActionButton( TRADE_BUTTON_ID, "<span id='tr_show'>"+_('Show')+"</span> "+_('Trade'), 'tradeActionButton', null, false, 'gray' );
             this.addLoanButtons();
             this.resetTradeVals();
@@ -1434,23 +1456,49 @@ function (dojo, declare) {
             }
         },
 
-        // setupLoanOnly
+        /**  addLoanButtons (for use in payment states)
+         * display all silver/loan/gold
+         * and new loan button
+         * this should interact ok with enable trade which can also be enabled.
+         */
         addLoanButtons: function() {
             dojo.query('.this_player_resources:not(.loan_sizing)').addClass('loan_sizing');
             // hide loan counter
-            dojo.query('.player_loan_text:not(.noshow)').addClass('noshow');
-            // show loan offset, updated, and take button.
-            dojo.query('.take_loan.noshow').removeClass('noshow');
-            dojo.query('.player_loan_offset.noshow').removeClass('noshow');
-            dojo.query('.new_text_loan.noshow').removeClass('noshow');
+            // show (loan, silver, gold) (offset, new), and take loan button.
+            dojo.query('.player_loan_text:not(.noshow)').removeClass('noshow');
+            dojo.query('#loan_more.noshow').removeClass('noshow');
+            dojo.query('#loan_offset.noshow').removeClass('noshow');
+            dojo.query('#loan_new.noshow').removeClass('noshow');
+            // silver
+            dojo.query('.player_silver_text.noshow').removeClass('noshow');
+            dojo.query('#silver_offset.noshow').removeClass('noshow');
+            dojo.query('#silver_new.noshow').removeClass('noshow');
+            // gold
+            dojo.query('.player_gold_text.noshow').removeClass('noshow');
+            dojo.query('#gold_offset.noshow').removeClass('noshow');
+            dojo.query('#gold_new.noshow').removeClass('noshow');
         },
         
+        /** disableLoan (for use when leaving payment states)
+         * undo addLoanButtons 
+         */
         disableLoan: function() {
             dojo.query('.this_player_resources.loan_sizing').removeClass('loan_sizing');
+            // take loan button.
+            dojo.query('#loan_more:not(.noshow)').addClass('noshow');
+            //loan
             dojo.query('.player_loan_text.noshow').removeClass('noshow');
-            dojo.query('.take_loan:not(.noshow)').addClass('noshow');
-            dojo.query('.player_loan_offset:not(.noshow)').addClass('noshow');
-            dojo.query('.new_text_loan:not(.noshow)').addClass('noshow');
+            dojo.query('#loan_offset:not(.noshow)').addClass('noshow');
+            dojo.query('#player_loan_text:not(.noshow)').addClass('noshow');
+
+             // silver
+             dojo.query('.player_silver_text.noshow').removeClass('noshow');
+             dojo.query('#silver_offset:not(.noshow)').addClass('noshow');
+             dojo.query('#silver_offset:not(.noshow)').addClass('noshow');
+             // gold
+             dojo.query('.player_gold_text.noshow').removeClass('noshow');
+             dojo.query('.player_gold_offset:not(.noshow)').addClass('noshow');
+             dojo.query('#silver_offset:not(.noshow)').addClass('noshow');
         },
 
         disableTradeIfPossible: function() {
@@ -1459,7 +1507,7 @@ function (dojo, declare) {
             dojo.query(`.buy:not(.noshow)`).addClass('noshow');
             dojo.query(`.sell:not(.noshow)`).addClass('noshow');
             dojo.query(`.market:not(.noshow)`).addClass('noshow');
-            dojo.query(`.bank_trade:not(.noshow)`).addClass('noshow');
+            dojo.query(`#silver_bank:not(.noshow)`).addClass('noshow');
             dojo.query(`#trade_top:not(.noshow)`).addClass(`noshow`);
             dojo.query('#trade_bottom:not(.trade_size)').addClass( 'trade_size');
             this.moveObjectAndUpdateClass(TRADE_BOARD_ID, 'trade_bottom', true, 'trade_top', 'noshow');
@@ -1500,6 +1548,7 @@ function (dojo, declare) {
         },
 
         showAllOffsetVals: function() {
+            let thisPlayer = `player_zone_${this.player_color[this.player_id]}`;
             dojo.query('.this_player_resources:not(.all_sizing)').addClass('all_sizing');
             // show all values.
             dojo.query(`#${thisPlayer} .offset_text.noshow`).removeClass('noshow');
@@ -1541,7 +1590,8 @@ function (dojo, declare) {
                 lock: true, 
                 trade_action: this.transactionLog.join(',')
              }, this, function( result ) {
-                 this.transactionLog = [];
+                 this.clearTransactionLog();
+                 this.resetTradeVals();
              }, function( is_error) {});
         },
 
@@ -1555,6 +1605,10 @@ function (dojo, declare) {
             return value;
         },
 
+        /**
+         * update the offset & new values to be correct 
+         * (board_resources + offset from transactions in this.transactionLog).
+         */
         resetTradeVals: function() {
             for(let type in this.board_resourceCounters[this.player_id]){
                 this.offset_resourceCounter[type].setValue(this.getOffsetValue(type));
@@ -1583,6 +1637,13 @@ function (dojo, declare) {
             tradeChange.trade = -1;
             if(this.canAddTrade(tradeChange)){
                 this.updateTrade(tradeChange);
+                // add breadcrumb
+                let tradeAway = this.resource_info[type].trade_val;
+                tradeAway.trade = 1;
+                let tradeFor = [];
+                tradeFor[type] = 1;
+                this.createBreadcrumbTrade(this.transactionLog.length, tradeAway, tradeFor);
+
                 this.transactionCost.push(tradeChange);
                 this.transactionLog.push(TRADE_MAP[`buy_${type}`]);
                 this.showUndoTransactionsButtonIfPossible();
@@ -1602,6 +1663,13 @@ function (dojo, declare) {
             tradeChange.vp = 1;  
             if(this.canAddTrade(tradeChange)){
                 this.updateTrade(tradeChange);
+                // add breadcrumb
+                let tradeAway = {trade:1};
+                tradeAway[type] = 1;
+                let tradeFor = this.resource_info[type].trade_val;
+                tradeFor.vp = 1;
+                this.createBreadcrumbTrade(this.transactionLog.length, tradeAway, tradeFor);
+
                 this.transactionCost.push(tradeChange);
                 this.transactionLog.push(TRADE_MAP[`sell_${type}`]);
                 this.showUndoTransactionsButtonIfPossible();
@@ -1614,10 +1682,12 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if(this.canAddTrade({'loan':1, 'silver':2})){
                 this.updateTrade({'loan':1, 'silver':2});
+                // add breadcrumb
+                this.createBreadcrumbTrade(this.transactionLog.length, {loan:1}, {silver:2});
+
                 this.transactionCost.push({'loan':1, 'silver':2});
                 this.transactionLog.push(TRADE_MAP.loan);
                 this.showUndoTransactionsButtonIfPossible();
-                this.enableTradeIfPossible();
                 if (this.showConfirmTrade)
                     this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
             }
@@ -1631,6 +1701,13 @@ function (dojo, declare) {
             tradeChange.trade = -1;
             if(this.canAddTrade(tradeChange)){
                 this.updateTrade(tradeChange);
+                // add breadcrumb
+                let tradeAway = this.invertArray(this.resource_info[type].market);
+                tradeAway.trade = 1;
+                let tradeFor = [];
+                tradeFor[type] =1;
+                this.createBreadcrumbTrade(this.transactionLog.length, tradeAway, tradeFor);
+
                 this.transactionCost.push(tradeChange);
                 this.transactionLog.push(TRADE_MAP[`market_${type}`]);
                 this.showUndoTransactionsButtonIfPossible();
@@ -1644,6 +1721,8 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if(this.canAddTrade({'silver':1, 'trade':-1})){
                 this.updateTrade({'silver':1, 'trade':-1});              
+                this.createBreadcrumbTrade(this.transactionLog.length, _('Bank'), {trade:1}, {silver:1});
+
                 this.transactionCost.push({'silver':1, 'trade':-1});
                 this.transactionLog.push(TRADE_MAP.bank);
                 this.showUndoTransactionsButtonIfPossible();
@@ -1685,6 +1764,7 @@ function (dojo, declare) {
 
         undoLastTransaction: function() {
             if (this.transactionCost.length ==0) return;
+            this.fadeOutAndDestroy(`breadcrumb_${this.transactionCost.length-1}`);
             let cost = this.transactionCost.pop();
             this.transactionLog.pop();
             this.updateTrade(this.invertArray(cost));
@@ -1746,6 +1826,9 @@ function (dojo, declare) {
         },
 
         clearTransactionLog: function() {
+            for(let i in this.transactionLog){
+                this.fadeOutAndDestroy(`breadcrumb_${i}`);
+            }
             this.transactionCost = [];
             this.transactionLog = [];
             // add stuff if we add create transaction Log.
@@ -1842,15 +1925,12 @@ function (dojo, declare) {
             if( this.checkAction( 'done')){
                 this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
                 function( result ) { 
-                    this.disableTradeIfPossible();
                     this.clearSelectable('worker', true); 
                     this.clearSelectable('worker_slot', false);
-                    this.hideUndoTransactionsButtonIfPossible();
+                    this.hideAllOffsetVals();
                     this.hideTradeLoanButtons();
-                    this.removeButtons();
-                    this.setupPayWorkers();
-                }, 
-                    function( is_error) { } );          
+                    this.disableTradeIfPossible();
+                }, function( is_error) { } );
             }
         },
         
@@ -1880,7 +1960,7 @@ function (dojo, declare) {
             { return; }
 
             if (this.last_selected['worker'] == ""){
-                const unassignedWorkers = dojo.query(`#token_zone_${this.player_color[this.player_id]} .token_worker`);// find unassigned workers.
+                const unassignedWorkers = dojo.query(`#worker_zone_${this.player_color[this.player_id]} .token_worker`);// find unassigned workers.
                 if (unassignedWorkers.length == 0){
                 this.showMessage( _("You must select 1 worker"), 'error' );
                     return;
@@ -1916,49 +1996,44 @@ function (dojo, declare) {
             dojo.query(`#generalactions .bgabutton`).destroy();
         },
 
-        setupPayWorkers: function(){
-            //add buttons for payWorkers
-            this.silverCost = this.getPlayerWorkerCount(this.player_id);
-            this.goldAmount = 0;
-            this.addPaymentButtons();
-            this.addTradeLoanButtons();
-            this.setOffsetForPaymentButtons();
+        /***** PAY WORKERS PHASE *****/
+        donePayWorker: function() {
+            this.donePay(!this.isCurrentPlayerActive());
         },
         
         /***** PAY WORKERS or PAY AUCTION PHASE *****/
-        donePay: function(){
+        donePay: function( not_turn= false){
             if( this.checkAction( 'done')){
                 if (!this.validPay()){
                     this.showMessage( _("You can't afford to pay, make trades or take loans"), 'error' );
                     return;
                 }
+                let args = {gold: this.goldAmount, lock: true};
                 if (this.transactionLog.length >0){ // makeTrades first.
                     this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
                         lock: true, 
                         trade_action: this.transactionLog.join(',')
                      }, this, function( result ) {
                         this.clearTransactionLog();
-                        this.ajaxcall( "/homesteaders/homesteaders/donePay.html", {
-                            gold: this.goldAmount, lock: true}, this, 
-                            function( result ) { 
-                                this.resetTradeVals();
-                                this.disableTradeIfPossible();
-                                this.hideUndoTransactionsButtonIfPossible();
-                                this.hideTradeLoanButtons();
-                                 }, 
-                                function( is_error) { } );
+                        this.ajaxCallDonePay(args, not_turn);
                      }, function( is_error) {});    
                 } else { // if no trades, just pay.
-                    this.ajaxcall( "/homesteaders/homesteaders/donePay.html", {
-                        gold: this.goldAmount, lock: true}, this, 
-                        function( result ) { 
-                            this.resetTradeVals();
-                            this.disableTradeIfPossible();
-                            this.hideUndoTransactionsButtonIfPossible();
-                            this.hideTradeLoanButtons(); }, 
-                        function( is_error) { } );
+                    this.ajaxCallDonePay(args, not_turn);
                 }
             }
+        },
+
+        ajaxCallDonePay: function( args, not_turn){
+            this.ajaxcall( "/homesteaders/homesteaders/donePay.html", args , this, 
+                function( result ) { 
+                    this.resetTradeVals();
+                    this.disableTradeIfPossible();
+                    this.hideUndoTransactionsButtonIfPossible();
+                    this.hideTradeLoanButtons();
+                    if (not_turn){
+                        this.onUpdateActionButtons( this.stateName, {args:{args:{paid:true}}});
+                    }
+                }, function( is_error) { } );
         },
 
         validPay:function(){
@@ -2108,6 +2183,7 @@ function (dojo, declare) {
                     this.showMessage( _("You must select 1 building"), 'error' );
                     return;
                 }
+                let args = {building_key: building_key, goldAsCow:this.goldAsCow, goldAsCopper:this.goldAsCopper, lock: true};
                 const building_key = Number(building_divId.split("_")[2]);
                 if (this.transactionLog.length >0){ // makeTrades first.
                     this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
@@ -2115,27 +2191,22 @@ function (dojo, declare) {
                         trade_action: this.transactionLog.join(',')
                      }, this, function( result ) {
                         this.clearTransactionLog();
-                        this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", 
-                            {building_key: building_key, goldAsCow:this.goldAsCow, goldAsCopper:this.goldAsCopper, lock: true}, this, 
-                            function( result ) {
-                                this.resetTradeVals();
-                                this.disableTradeIfPossible();
-                                this.hideUndoTransactionsButtonIfPossible();
-                                this.hideTradeLoanButtons();
-                             }, function( is_error) { } );
+                        this.ajaxCallBuildBuilding( args);
                      }, function( is_error) {});    
                 } else { // if no trades, just pay.
-                    this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", 
-                        {building_key: building_key, goldAsCow:this.goldAsCow, goldAsCopper:this.goldAsCopper, lock: true}, this, 
-                        function( result ) {
-                            this.resetTradeVals();
-                            this.disableTradeIfPossible();
-                            this.hideUndoTransactionsButtonIfPossible();
-                            this.hideTradeLoanButtons();
-                            
-                         }, function( is_error) { } );
+                    this.ajaxCallBuildBuilding( args );
                 }
             }
+        },
+
+        ajaxCallBuildBuilding: function ( args ) {
+            this.ajaxcall( "/homesteaders/homesteaders/buildBuilding.html", args, this, 
+            function( result ) {
+                this.resetTradeVals();
+                this.disableTradeIfPossible();
+                this.hideUndoTransactionsButtonIfPossible();
+                this.hideTradeLoanButtons();
+             }, function( is_error) { } );
         },
 
         toggleGoldAsCopper: function(){
@@ -2430,6 +2501,7 @@ function (dojo, declare) {
                 ['trade', 200],
                 ['updateBuildingStocks', 1000],
                 ['workerMoved', 200],
+                ['workerPaid', 200],
               ];
 
             notifs.forEach(notif => {
@@ -2456,25 +2528,25 @@ function (dojo, declare) {
                         if (typeof (args.type) == "string"){ // not an array just type as string
                             args.typeStr = args.type;
                             args.amount = 1;
-                            args.type = this.getOneResourceAsDiv(args.type);
+                            args.type = this.getOneResourceHtml(args.type, false);
                         } else { // array with {type,amount} values
                             args.typeStr = args.type.type;
                             args.amount = args.type.amount;
-                            args.type = this.getOneResourceAsDiv(args.typeStr, args.amount);
+                            args.type = this.getOneResourceHtml(args.typeStr, args.amount, false);
                         }
                     }
                     // multiple types of resources
                     if (args.tradeAway != null){
                         args.tradeAway_arr = args.tradeAway;
-                        args.tradeAway = this.getResourceArrayAsDiv(args.tradeAway_arr);
+                        args.tradeAway = this.getResourceArrayHtml(args.tradeAway_arr);
                     }
                     if (args.tradeFor != null){
                         args.tradeFor_arr = args.tradeFor;
-                        args.tradeFor = this.getResourceArrayAsDiv(args.tradeFor_arr);
+                        args.tradeFor = this.getResourceArrayHtml(args.tradeFor_arr);
                     }
                     if (args.resources != null){
                         args.resource_arr = args.resources;
-                        args.resources = this.getResourceArrayAsDiv(args.resources);
+                        args.resources = this.getResourceArrayHtml(args.resources);
                     }
                     // end -> resource args
 
@@ -2489,7 +2561,7 @@ function (dojo, declare) {
                         args.loan = this.format_block('jptpl_track_log', {type: 'loan'});
                     }
                     if (args.worker != null && typeof args.worker == 'string'){
-                        args.worker = this.getOneResourceAsDiv('worker')
+                        args.worker = this.getOneResourceHtml('worker')
                     }
                     // handles player_tokens
                     if (args.token != null && typeof (args.null != "string")){
@@ -2545,7 +2617,7 @@ function (dojo, declare) {
                             const color = this.player_color[args.reason_string.player_id];
                             args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
                         } else if (args.reason_string.worker != null) { // worker token
-                            args.reason_string = this.getOneResourceAsDiv('worker');
+                            args.reason_string = this.getOneResourceHtml('worker');
                         } else if (args.reason_string.track != null) { // track 
                             args.reason_string = this.format_block('jptpl_track_log', {type:'track'});
                         }
@@ -2567,7 +2639,7 @@ function (dojo, declare) {
             return you;
         },
 
-        getOneResourceAsDiv: function(type, amount=1){
+        getOneResourceHtml: function(type, amount=1, asSpan = false){
             var resString = '<div class="log_container">';
             if (amount > 0){ 
                 var tokenDiv = this.format_block('jstpl_resource_log', {type : type});
@@ -2578,8 +2650,10 @@ function (dojo, declare) {
             return resString +"</div>";
         },
 
-        getResourceArrayAsDiv: function( array){
+        getResourceArrayHtml: function( array, asSpan = false){
             var aggregateString = '<div class="log_container">';
+            if (asSpan)
+                aggregateString = '<span class="log_container">';
             for (let type in array){
                 let amt = array[type];
                 if (amt > 0){ 
@@ -2589,6 +2663,8 @@ function (dojo, declare) {
                     }
                 }
             }
+            if (asSpan)
+                return aggregateString + "</span>";
             return aggregateString + "</div>";
         },
 
@@ -2627,15 +2703,16 @@ function (dojo, declare) {
                 dojo.connect($(worker_divId),'onclick', this, 'onClickOnWorker');
                 if (this.currentState == "allocateWorkers"){
                     dojo.addClass(worker_divId, 'selectable');
-                    this.silverCost++;
-                    this.silverCounter.setValue(Math.max(0 , this.silverCost));
                     this.resetTradeVals();
                     this.setOffsetForPaymentButtons();
                     this.setOffsetForIncome();
                 }                
-
             }
             this.calculateAndUpdateScore(notif.args.player_id);
+        },
+
+        notif_workerPaid: function( notif ){
+            // I don't think I need to do anything, but leaving this for now.
         },
 
         notif_gainTrack: function( notif ){
@@ -2647,10 +2724,9 @@ function (dojo, declare) {
             this.addTooltipHtml(`token_track_${notif.args.track_key}`, this.resource_info['track']['tt']);
             if (notif.args.tradeAway_arr != null){
                 var destination = this.getTargetFromNotifArgs(notif);
-                const player_zone_divId = `player_board_${p_id}`;
                 for(let type in notif.args.tradeAway_arr){
                     for(let i = 0; i < notif.args.tradeAway_arr[type]; i++){
-                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
+                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo' , this.player_score_zone_id[p_id], destination,  500 , 100*i );
                         if (p_id == this.player_id || this.show_player_info){
                             this.incResCounter(p_id, type, -1);
                         }
@@ -2667,7 +2743,7 @@ function (dojo, declare) {
             const p_id = Number(notif.args.player_id);
             const tile_id = FIRST_PLAYER_ID;
             if (p_id != this.first_player){
-                this.moveObject(tile_id, this.player_building_zone_id[p_id]);
+                this.moveObject(tile_id, this.player_score_zone_id[p_id]);
                 this.first_player = p_id;
             }
         },
@@ -2685,12 +2761,11 @@ function (dojo, declare) {
             this.addBuildingToPlayer(notif.args.building);
             
             var destination = `${TPL_BLD_TILE}_${Number(notif.args.building.b_key)}`; 
-            const player_zone_divId = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', this.player_score_zone_id[p_id], destination , 500 , 100*(delay++) );
                     if (p_id == this.player_id || this.show_player_info){
                         this.incResCounter(p_id, type, -1);
                     }
@@ -2703,9 +2778,8 @@ function (dojo, declare) {
             console.log('notif_playerIncome');
             var start = this.getTargetFromNotifArgs(notif);
             const p_id = notif.args.player_id;
-            const player_zone_divId = `player_board_${p_id}`;
             for(let i = 0; i < notif.args.amount; i++){
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr)}), 'limbo', start , player_zone_divId , 500 , 100*i );
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:String(notif.args.typeStr)}), 'limbo', start , this.player_score_zone_id[p_id] , 500 , 100*i );
             if (p_id == this.player_id || this.show_player_info){
                     if (VP_TOKENS.includes(notif.args.typeStr)){
                         this.incResCounter(p_id, 'vp',Number(notif.args.typeStr.charAt(2)));
@@ -2721,12 +2795,11 @@ function (dojo, declare) {
             console.log('notif_playerIncomeGroup');
             var start = this.getTargetFromNotifArgs(notif);
             const p_id = notif.args.player_id;
-            const player_zone_divId = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', start , player_zone_divId , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', start , this.player_score_zone_id[p_id] , 500 , 100*(delay++) );
                     if (p_id == this.player_id || this.show_player_info){
                         if (VP_TOKENS.includes(notif.args.typeStr)){
                             this.incResCounter(p_id, 'vp', Number(notif.args.typeStr.charAt(2)));    
@@ -2743,9 +2816,8 @@ function (dojo, declare) {
             console.log('notif_playerPayment');
             var destination = this.getTargetFromNotifArgs(notif);
             const p_id = notif.args.player_id;
-            const player_zone_divId = `player_board_${p_id}`;
             for(let i = 0; i < notif.args.amount; i++){
-                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:notif.args.typeStr}), 'limbo' , player_zone_divId, destination,  500 , 100*i );
+                this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:notif.args.typeStr}), 'limbo' , this.player_score_zone_id[p_id], destination,  500 , 100*i );
                 if (p_id == this.player_id || this.show_player_info){
                     this.incResCounter(p_id, notif.args.typeStr, -1);
                 }
@@ -2757,12 +2829,11 @@ function (dojo, declare) {
             console.log('notif_playerPaymentGroup');
             var destination = this.getTargetFromNotifArgs(notif);
             const p_id = notif.args.player_id;
-            const player_zone_divId = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.resource_arr){
                 let amt = notif.args.resource_arr[type];
                     for(let i = 0; i < amt; i++){
-                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone_divId, destination , 500 , 100*(delay++) );
+                        this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', this.player_score_zone_id[p_id], destination , 500 , 100*(delay++) );
                         if (p_id == this.player_id || this.show_player_info){
                             this.incResCounter(p_id, type, -1);
                     }
@@ -2774,12 +2845,11 @@ function (dojo, declare) {
         notif_trade: function( notif ){
             console.log('notif_trade');
             const p_id = notif.args.player_id;
-            const player_zone = `player_board_${p_id}`;
             var delay = 0;
             for(let type in notif.args.tradeAway_arr){
                 let amt = notif.args.tradeAway_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', player_zone,TRADE_BOARD_ID , 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', this.player_score_zone_id[p_id], TRADE_BOARD_ID , 500 , 100*(delay++) );
                     if (p_id == this.player_id || this.show_player_info){
                         this.incResCounter(p_id, type, -1);
                     }
@@ -2788,7 +2858,7 @@ function (dojo, declare) {
             for(let type in notif.args.tradeFor_arr){
                 let amt = notif.args.tradeFor_arr[type];
                 for(let i = 0; i < amt; i++){
-                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', TRADE_BOARD_ID, player_zone, 500 , 100*(delay++) );
+                    this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:type}), 'limbo', TRADE_BOARD_ID, this.player_score_zone_id[p_id], 500 , 100*(delay++) );
                 }   
                 if (p_id == this.player_id || this.show_player_info){
                     if (VP_TOKENS.includes(type)){
@@ -2808,21 +2878,20 @@ function (dojo, declare) {
         notif_loanPaid: function( notif ){
             console.log('notif_loanPaid');
             const p_id = notif.args.player_id;
-            const player_board_div = `player_board_${p_id}`;
             var destination = this.getTargetFromNotifArgs(notif);
-            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , player_board_div, destination,  500 , 0 );
+            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , this.player_score_zone_id[p_id], destination,  500 , 0 );
             if (p_id == this.player_id || this.show_player_info){
                 this.incResCounter(p_id, 'loan', -1);
             }
             if (notif.args.type != null ){
                 if (notif.args.typeStr == 'gold'){
-                    this.slideTemporaryObject( notif.args.type , 'limbo', player_board_div, 'board', 500, 100);
+                    this.slideTemporaryObject( notif.args.type , 'limbo', this.player_score_zone_id[p_id], 'board', 500, 100);
                     if (p_id == this.player_id || this.show_player_info){
                         this.incResCounter(p_id, 'gold', -1);
                     }
                 } else {
                     for (let i = 0; i < 5; i++){
-                        this.slideTemporaryObject( notif.args.type, 'limbo', player_board_div, 'board', 500, 100 +(i*100)); 
+                        this.slideTemporaryObject( notif.args.type, 'limbo', this.player_score_zone_id[p_id], 'board', 500, 100 +(i*100)); 
                     }
                     if (p_id == this.player_id || this.show_player_info){
                         this.incResCounter(p_id, 'silver', -5);
@@ -2834,14 +2903,12 @@ function (dojo, declare) {
         notif_loanTaken: function( notif ){
             console.log('notif_loanTaken');
             const p_id = notif.args.player_id;
-            const player_zone_divId = `player_board_${p_id}`;
-            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', player_zone_divId,  500 , 0 );
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 100);
-            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', player_zone_divId, 500 , 200);
+            this.slideTemporaryObject( `<div class="loan token_loan"></div>`, 'limbo' , 'board', this.player_score_zone_id[p_id],  500 , 0 );
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', this.player_score_zone_id[p_id], 500 , 100);
+            this.slideTemporaryObject( this.format_block('jstpl_resource_log', {type:'silver'}), 'limbo', 'board', this.player_score_zone_id[p_id], 500 , 200);
             if (p_id == this.player_id || this.show_player_info){
                 this.incResCounter(p_id, 'loan', 1);
                 this.incResCounter(p_id, 'silver', 2);
-                //this.showUndoTransactionsButtonIfPossible();
             }
         },
 
@@ -2861,8 +2928,7 @@ function (dojo, declare) {
                 this.displayScoring( `${TPL_BLD_TILE}_${b_key}`, this.player_color[notif.args.player_id], bld_score, 2000 );
                 this.scoreCtrl[p_id].incValue(bld_score);
             } 
-            const player_zone_divId = `player_board_${p_id}`;
-            dojo.place(`<div id="score_grid_${p_id}" class="score_grid"></div>`, player_zone_divId);
+            dojo.place(`<div id="score_grid_${p_id}" class="score_grid"></div>`, this.player_score_zone_id[p_id]);
             for(let type in notif.args.resource){
                 const amt = notif.args.resource[type];
                 this.scoreCtrl[p_id].incValue(amt);
@@ -2873,7 +2939,7 @@ function (dojo, declare) {
             console.log('notif_cancel');
             const p_id = notif.args.player_id;
             const updateResource = (p_id == this.player_id) || this.show_player_info;
-            const player_zone = `player_board_${p_id}`;
+            const player_zone = this.player_score_zone_id[p_id];
             var delay = 0;
             // update values as undone
             for (let i in notif.args.actions){

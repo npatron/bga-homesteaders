@@ -563,7 +563,6 @@ div#train_bonus_5_vp{
 
 /*=============================*
  * Trade Board                 *
- * (and trade Selection Zones) *
  *=============================*/
 div#trade_board {
    background-image: url('img/trade.jpg');
@@ -575,71 +574,6 @@ div#trade_board {
    margin: auto;
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
-}
-.trade_option {
-   height: 19%;
-   width: 15%;
-   position: absolute;
-}
-div#trade_buy_wood{
-   left: 1.5%;
-   top: 16%;
-}
-div#trade_buy_food{
-   left: 18%;
-   top: 16%;
-}
-div#trade_buy_steel{
-   left: 1.5%;
-   top: 38%;
-}
-div#trade_buy_gold{
-   left: 18%;
-   top: 38%;
-}
-div#trade_buy_copper{
-   left: 1.5%;
-   top: 59.5%;
-}
-div#trade_buy_livestock{
-   left: 18%;
-   top: 59.5%;
-}
-div#trade_sell_wood{
-   left: 39.5%;
-   top: 16%;
-}
-div#trade_sell_food{
-   left: 55.8%;
-   top: 16%;
-}
-div#trade_sell_steel{
-   left: 39.5%;
-   top: 38%;
-}
-div#trade_sell_gold{
-   left: 55.8%;
-   top: 38%;
-}
-div#trade_sell_copper{
-   left: 39.5%;
-   top: 59.5%;
-}
-div#trade_sell_livestock{
-   left: 55.8%;
-   top: 59.5%;
-}
-div#trade_market_wood_food{
-   left: 79.5%;
-   top: 23.5%;
-}
-div#trade_market_food_steel{
-   left: 79.5%;
-   top: 45.5%;
-}
-div#trade_bank_trade_silver{
-   left: 79.5%;
-   bottom: 0%;
 }
 .trade_size {
    width: 512px;
@@ -995,23 +929,60 @@ div#trade_bank_trade_silver{
    grid-column: 10 / 11;
    grid-row: 2 / 3;
 }
+
+.player_resources{
+   display: grid;
+   grid-template-columns: repeat(auto-fit, 20px);
+}
+.player_resource_group{
+   display: grid;
+   grid-template-rows: 20px 19px 20px;
+   grid-template-columns: 40px 20px;
+   grid-column: span 3;
+}
+.player_wider_resource_group{
+   display: grid;
+   grid-template-rows: 20px 19px 20px;
+   grid-template-columns: 60px 20px;
+   grid-column: span 4;
+}
 .this_player_resources{
    display: grid;
-   grid-template-columns: repeat(auto-fit, 70px);
-}
-.loan_sizing {
-   grid-template-columns: 70px 70px 90px repeat(auto-fit, 70px);
-}
-.trade_sizing {
-   grid-template-columns: repeat(auto-fit, 90px);
-}
-.income_sizing {
-   grid-template-columns: repeat(auto-fit, 110px);
-}
+   grid-template-columns: repeat(auto-fit, 20px);
+} 
 .this_player_resource_group{
    display: grid;
    grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 50px 20px 20px;
+   grid-template-columns: 40px 20px 20px;
+   grid-column: span 3;
+}
+.loan_sizing #silver_group{
+   grid-column: span 4;
+}
+.loan_sizing #loan_group{
+   grid-column: span 4;
+}
+.loan_sizing #gold_group{
+   grid-column: span 4;
+}
+.trade_sizing .this_player_resource_group{
+   grid-column: span 4;
+}
+.all_sizing .this_player_resource_group{
+   grid-column: span 5;
+}
+
+.this_player_wider_resource_group{
+   display: grid;
+   grid-template-rows: 20px 19px 20px;
+   grid-template-columns: 60px 20px 20px;
+   grid-column: span 4;
+}
+.trade_sizing .this_player_wider_resource_group{
+   grid-column: span 5;
+}
+.all_sizing .this_player_wider_resource_group{
+   grid-column: span 6;
 }
 .offset_text{
    grid-column: 3 / 4;
@@ -1079,6 +1050,7 @@ div#trade_bank_trade_silver{
    height: 20px;
    width: 20px;
 }
+
 .player_silver {
    background-size: 353.5px 111.1px;
    background-position: -86.46px 0px;
@@ -1126,6 +1098,7 @@ div#trade_bank_trade_silver{
 }
 .sell_loan {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 
 .player_vp {
@@ -1157,12 +1130,14 @@ div#trade_bank_trade_silver{
 }
 .buy_wood {
    grid-row: 1 / 2;
+   grid-column: 3 / 4;
 }
 .player_wood_offset {
    grid-row: 2 / 3;
 }
 .sell_wood {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 
 .player_food {
@@ -1234,12 +1209,14 @@ div#trade_bank_trade_silver{
 }
 .buy_gold {
    grid-row: 1 / 2;
+   grid-column: 3 / 4;
 }
 .player_gold_offset {
    grid-row: 2 / 3;
 }
 .sell_gold {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 .player_cow {
    background-size: 460.5px 144.7px;
@@ -1253,12 +1230,14 @@ div#trade_bank_trade_silver{
 }
 .buy_cow {
    grid-row: 1 / 2;
+   grid-column: 3 / 4;
 }
 .player_cow_offset {
    grid-row: 2 / 3;
 }
 .sell_cow {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 .player_copper {
    background-size: 409px 161.8px;
@@ -1272,12 +1251,14 @@ div#trade_bank_trade_silver{
 }
 .buy_copper {
    grid-row: 1 / 2;
+   grid-column: 3 / 4;
 }
 .player_copper_offset {
    grid-row: 2 / 3;
 }
 .sell_copper {
    grid-row: 3 / 4;
+   grid-column: 3 / 4;
 }
 .tt_loan{
    background-image: url('img/rail_debt_85x102.png');
@@ -1392,6 +1373,15 @@ div#trade_bank_trade_silver{
    background-position: -67.23px 0px;
    width: 20.4px;
    height: 20px;
+}
+.log_loan{
+   display: inline-block;
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -87% 30%;
+   top: 4px;
+   height: 21px;
+   width: 31px;
+   background-size: 115px 63px; 
 }
 .log_vp0 {
    background-size: 149.6px 47px;
@@ -1512,10 +1502,10 @@ div#trade_bank_trade_silver{
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 0%;
    height: 102px;
-   width: 85px;
+   width: 80px;
    background-size: 255px 102px;
-   grid-column: span 2;
-   grid-row: span 2;
+   grid-column: span 4;
+   order: 5;
 }
 /*===============*
  * Worker Tokens *
