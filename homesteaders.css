@@ -151,9 +151,9 @@
  * Button css *
  *============*/
  
- #btn_pay_done{
+ /* #btn_pay_done{
    width: 115px;
-}
+} */
 #confirm_trade_btn{
    height: 17px;
    width: 180px;
@@ -272,7 +272,7 @@ button:disabled {
 	line-height: 40px;
 	box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
 	margin-bottom: 10px;
-    overflow: hidden; 
+   overflow: hidden; 
 	background: #b5552b url(img/loc_plan.png);
 	background-position: 0% 50%;
 }
@@ -932,7 +932,7 @@ div#trade_board {
 
 .player_resources{
    display: grid;
-   grid-template-columns: repeat(auto-fit, 20px);
+   grid-template-columns: repeat(auto-fit, 22px);
 }
 .player_resource_group{
    display: grid;
@@ -948,37 +948,30 @@ div#trade_board {
 }
 .this_player_resources{
    display: grid;
-   grid-template-columns: repeat(auto-fit, 20px);
+   grid-template-columns: repeat(auto-fit, 22px);
 } 
 .this_player_resource_group{
    display: grid;
    grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 40px 20px 20px;
+   grid-template-columns: 40px 22px 18px 22px;
    grid-column: span 3;
 }
-.loan_sizing #silver_group{
-   grid-column: span 4;
-}
-.loan_sizing #loan_group{
-   grid-column: span 4;
-}
-.loan_sizing #gold_group{
-   grid-column: span 4;
-}
-.trade_sizing .this_player_resource_group{
-   grid-column: span 4;
-}
-.all_sizing .this_player_resource_group{
-   grid-column: span 5;
-}
-
 .this_player_wider_resource_group{
    display: grid;
    grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 60px 20px 20px;
+   grid-template-columns: 60px 22px 18px 22px;
    grid-column: span 4;
 }
-.trade_sizing .this_player_wider_resource_group{
+.loan_sizing #silver_group{
+   grid-column: span 5;
+}
+.loan_sizing #loan_group{
+   grid-column: span 5;
+}
+.loan_sizing #gold_group{
+   grid-column: span 5;
+}
+.all_sizing .this_player_resource_group{
    grid-column: span 5;
 }
 .all_sizing .this_player_wider_resource_group{
@@ -990,7 +983,7 @@ div#trade_board {
    margin: auto;
 }
 .negative{
-   color: red;
+   color: darkred;
 }
 .positive{
    color: green;
@@ -1000,7 +993,6 @@ div#trade_board {
    font-size: x-large;
    grid-row: 1 / 4;
    margin: auto;
-   color: blue;
 }
 .player_text_loan {
    position: relative;
@@ -1017,10 +1009,6 @@ div#trade_board {
    font-size: x-large;
    grid-row: 1 / 4;
    margin: auto;
-   color: blue;
-}
-.player_resource_group{
-   display: grid;
 }
 .buy{
    background-image: url('img/drawn_tokens_2.png');
@@ -1502,9 +1490,10 @@ div#trade_board {
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 0%;
    height: 102px;
-   width: 80px;
+   width: 84px;
    background-size: 255px 102px;
    grid-column: span 4;
+   grid-row: span 2;
    order: 5;
 }
 /*===============*
