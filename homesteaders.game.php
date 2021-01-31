@@ -51,6 +51,7 @@ class homesteaders extends Table
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
             "last_building"     => 19,
+            "b_order"           => 20,
             "show_player_info"  => SHOW_PLAYER_INFO,
         ) );
         

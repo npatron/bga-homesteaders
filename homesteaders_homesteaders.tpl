@@ -11,12 +11,12 @@
 
 -->
 <div class="anchor">
-    <div id="breadcrumbs" class="breadcrumbs wlimit" style="display:block"></div>
+    <div id="breadcrumbs" class="breadcrumbs wlimit" style="display:block"><span id="breadcrumb_transactions"></span></div>
 </div>
-<div id="trade_top" class="trade_size noshow">
-</div>
+
 <div id="main_container" class="container">
     <div id="currentPlayer" class="noshow"></div>
+    <div id="trade_top" class="trade_size noshow"></div>
     <div id ="top">
         <span id="top_texts">
             <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
@@ -311,8 +311,9 @@ var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inl
 var jstpl_resource_log = '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log = '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
 var jptpl_track_log = '<div title = "${type}" class="log_inline_${type}" ></div>';
-var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline"></span>${for}</span>'
-var jptpl_breadcrumb_income = '<span id="breadcrumb_income" class="breadcrumbs_element"><span class="useFont">${text}</span>${income}</span>'
+var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element"><div class="useFont">${text}</div>${away}<span title ="for" class="log_arrow token_inline"></span>${for}</span>'
+var jptpl_breadcrumb_income = '<span id="breadcrumb_income" class="breadcrumbs_element"><div class="useFont">${text}</div>${income}</span>'
+var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element"><div class="useFont">${text}</div>${cost}</span>'
 
 </script>  
 

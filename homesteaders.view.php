@@ -49,8 +49,8 @@
         $this->tpl['MAIN_BUILDING']    = _("Current Buildings");
         $this->tpl['FUTURE_AUCTION']   = _("Upcoming Auctions");
         $this->tpl['CONFIRM_TRADE']    = _("Confirm Trade");
-        $this->tpl['UNDO_TRADE']       = _("Undo All Trade/Loan");
-        $this->tpl['UNDO_LAST_TRADE']  = _("Undo Last Trade/Loan");
+        $this->tpl['UNDO_TRADE']       = _("Undo All Trade/Dept");
+        $this->tpl['UNDO_LAST_TRADE']  = _("Undo Last Trade/Dept");
         $this->tpl['BUILDING_STOCK']   = _("Main Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Building Discard");
         $this->tpl['FUTURE_BUILDING']  = _("Upcoming Buildings");
