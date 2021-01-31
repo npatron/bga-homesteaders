@@ -13,10 +13,10 @@
 <div class="anchor">
     <div id="breadcrumbs" class="breadcrumbs wlimit" style="display:block"></div>
 </div>
-
+<div id="trade_top" class="trade_size noshow">
+</div>
 <div id="main_container" class="container">
     <div id="currentPlayer" class="noshow"></div>
-    <div id="trade_top" class="trade_size noshow"></div>
     <div id ="top">
         <span id="top_texts">
             <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>

@@ -113,16 +113,12 @@
 }
 
 
-/*================*
- * Main Container *
- *    *
- * wide enough for* 
- *  buttons trade *
- *   --board--    *
- ******************/
+/*===============*
+ * Main Container*
+ *===============*/
 #main_container {
    display: grid;
-   grid-template-columns: 205px auto;
+   grid-template-columns: auto;
    grid-gap: 3px;
 }
 #currentPlayer {
@@ -140,21 +136,24 @@
 }
 #top {
    display: grid;
-   order: 2;
-   grid-column: 1/2;
+   order: 1;
+   grid-column: 1/-1;
    grid-template-columns: repeat(auto-fill, 205px);
    grid-auto-rows: 30px;
    align-items: center;
    grid-gap: 1px;
 }
 #trade_top {
-   order: 1;
+   order: 2;
 }
 
 /*============*
  * Button css *
  *============*/
  
+ /* #btn_pay_done{
+   width: 115px;
+} */
 #confirm_trade_btn{
    height: 17px;
    width: 180px;
@@ -210,14 +209,14 @@ button:disabled {
 }
 /*================*
  * Main Container *
- *  large size    *
+ *  Custom Width  *
  * wide enough for* 
  * buttons trade  *
  * buttons board  *
  ******************/
  @media all and (min-width:1200px){
    #main_container {
-      grid-template-columns: 205px 512px auto;
+      grid-template-columns: 205px 740px auto;
    }
    #top{
       grid-column: 1 / 2;
@@ -230,6 +229,8 @@ button:disabled {
    #trade_top {
       grid-column: 2 / 3;
    }
+   #undo_trades_btn{order: 2;}
+   #confirm_trade_btn{order: 1;}
 }
 
 /*=====================* 
@@ -237,9 +238,9 @@ button:disabled {
  * buttons trade board * 
  * all on the same line* 
  *=====================*/
-@media all and (min-width:1710px){
+@media all and (min-width:1890px){
    #main_container {
-      grid-template-columns: 205px 512px 740px auto;
+      grid-template-columns: 205px 690px 740px auto;
    }
 }
 
@@ -1944,8 +1945,8 @@ div#auction_tile_30 {
    -moz-transform: scale(.25, .25);
    transform: scale(.25, .25); 
    position: absolute;
-   left: 95px;
-   top: -76px;
+   left: 43%;
+   top: -63%;
 }
 /* EXPANSION BUILDINGS */
 .build_tile_36 { /* Purple homestead */
