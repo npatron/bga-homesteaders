@@ -643,6 +643,7 @@ class homesteaders extends Table
         $autoPayPlayers = $this->getCollectionFromDB( "SELECT `player_id`, `use_silver` FROM `player`");
         $pendingPlayers = array();
         foreach($resources as $p_id => $player){
+            if ($resources[$p_id]['paid']==1) continue;
             /* player has no gold/trade or has auto-pay selected and they can afford it with out loans */
             if ($player['silver'] >= $player['workers'] && 
             (($player['gold'] == 0 && $player['trade'] == 0) || $autoPayPlayers[$p_id]['use_silver'] === '1')){
