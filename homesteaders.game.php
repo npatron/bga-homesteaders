@@ -289,13 +289,13 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
         if ($w_owner != $cur_p_id){ throw new BgaUserException(_("This is not your worker."));}
-        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${type} to ${building_name}' ), array(
+        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${worker} to ${building_name}' ), array(
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
             'building_key' => $b_key,
             'building_name' => array('type'=> $this->Building->getBuildingTypeFromKey($b_key) ,'str'=>$this->Building->getBuildingNameFromKey($b_key)),
             'building_slot' => $building_slot, 
-            'type' => 'worker',
+            'worker' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),
         ) );
         $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$w_key."'";
@@ -372,13 +372,17 @@ class homesteaders extends Table
     }
 
     public function payWorkers($gold, $early=false) {
-        $this->checkAction( "done" );
-
+        if (!$early){
+            $this->checkAction( "done" );
+        }
         $cur_p_id = $this->getCurrentPlayerId();
-        $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
-        $cost = max($workers - (5*$gold), 0);
-        $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
-        if ($early){
+        if ($this->Resource->getPaid($cur_p_id) == 0){ // to prevent charging twice.
+            $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
+            $cost = max($workers - (5*$gold), 0);
+            $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
+            $this->Resource->setPaid($cur_p_id);
+        }
+        if (!$early){
             $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
         } else {
             $this->notifyPlayer($cur_p_id, 'workerPaid', "", array());
@@ -621,11 +625,9 @@ class homesteaders extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
     
-    //Example for game state "MyGameState":
-
     function stStartRound() {
         $round_number = $this->getGameStateValue('round_number');
-
+        $this->Resource->clearPaid();
         $this->Building->updateBuildingsForRound($round_number);
         $this->gamestate->nextState( );
     }
@@ -637,7 +639,7 @@ class homesteaders extends Table
 
     function stPayWorkers() 
     {
-        $resources = $this->getCollectionFromDB( "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` " );
+        $resources = $this->getCollectionFromDB( "SELECT `player_id`, `workers`, `gold`, `silver`, `trade`, `paid` FROM `resources` " );
         $autoPayPlayers = $this->getCollectionFromDB( "SELECT `player_id`, `use_silver` FROM `player`");
         $pendingPlayers = array();
         foreach($resources as $p_id => $player){

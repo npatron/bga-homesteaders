@@ -255,7 +255,6 @@ button:disabled {
 	/* text-align: center; */
 	
 	/*** GI : center interface **/
-    max-width: 985px;
     margin: auto;	
     /*** GI (end) **/
     
@@ -272,8 +271,7 @@ button:disabled {
 	box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
 	margin-bottom: 10px;
    overflow: hidden; 
-	background: #b5552b url(img/loc_plan.png);
-	background-position: 0% 50%;
+	background: #b5552b;
 }
 
 .breadcrumbs_element {
@@ -286,7 +284,6 @@ button:disabled {
 	float: left;
 	color: antiquewhite;
 }
-
 
 .breadcrumbs_element:after {
 	content: " ";
@@ -579,6 +576,28 @@ div#trade_board {
    height: 180px;
 }
 
+div#trade_market_wood_food{
+   left: 38px;
+   bottom: 80px;
+   position: absolute;
+   width: 64px;
+   height: 27px;
+}
+div#trade_market_food_steel{
+   left: 38px;
+   bottom: 57px;
+   position: absolute;
+   width: 64px;
+   height: 20px;
+}
+div#trade_bank_trade_silver{
+   left: 38px;
+   bottom: 80px;
+   position: absolute;
+   width: 64px;
+   height: 27px;
+}
+
 /*================*
  * Building Zones *
  *================*/
@@ -786,8 +805,6 @@ div#trade_board {
    height: 30px;
    grid-column: 1 / 2;
    grid-row: 1 / 2;
-   /* left: -6px;
-   top: -5px; */
 }
 .score_silver_text {
    grid-column: 2 / 3;
@@ -800,8 +817,6 @@ div#trade_board {
    height: 30px;
    grid-column: 3 / 4;
    grid-row: 1 / 2;
-   /* left: -3px;
-   top: -4px; */
 }
 .score_trade_text {
    grid-column: 4 / 5;
@@ -829,7 +844,6 @@ div#trade_board {
    height: 30px;
    grid-column: 7 / 8;
    grid-row: 1 / 2;
-   /* left: 2px; */
 }
 .score_food_text {
    grid-column: 8 / 9;
@@ -843,7 +857,6 @@ div#trade_board {
    grid-column: 9 / 10;
    grid-row: 1 / 2;
    left: 2px;
-   /* top: -1px; */
 }
 .score_steel_text {
    grid-column: 10 / 11;
@@ -857,8 +870,6 @@ div#trade_board {
    height: 30px;
    grid-column: 1 / 2;
    grid-row: 2 / 3;
-   /* left: -8px;
-   top: -9px; */
 }
 .score_vp_text {
    grid-column: 2 / 3;
@@ -884,7 +895,6 @@ div#trade_board {
    height: 20px;
    width: 20px;
    background-size: 75px 30px;
-   /* grid-column: 4 / 5; */
 }
 .score_gold{
    background-size: 285.3px 89.7px;
@@ -893,8 +903,6 @@ div#trade_board {
    height: 30px;
    grid-column: 5 / 6;
    grid-row: 2 / 3;
-   /* left: -3px;
-   top: -3px; */
 }
 .score_gold_text {
    grid-column: 6 / 7;
@@ -907,8 +915,6 @@ div#trade_board {
    height: 30px;
    grid-column: 7 / 8;
    grid-row: 2 / 3;
-   /* left: -21px;
-   top: -9px; */
 }
 .score_cow_text {
    grid-column: 8 / 9;
@@ -921,8 +927,6 @@ div#trade_board {
    height: 30px;
    grid-column: 9 / 10;
    grid-row: 2 / 3;
-   /* left: -17px;
-   top: -5px; */
 }
 .score_copper_text {
    grid-column: 10 / 11;
@@ -959,21 +963,19 @@ div#trade_board {
    display: grid;
    grid-template-rows: 20px 19px 20px;
    grid-template-columns: 50px 22px 18px 22px;
-   grid-column: span 8;
+   grid-column: span 7;
 }
-.loan_sizing #silver_group{
-   grid-column: span 10;
-}
-.loan_sizing #loan_group{
-   grid-column: span 10;
-}
-.loan_sizing #gold_group{
-   grid-column: span 10;
-}
+
 .all_sizing .this_player_resource_group{
    grid-column: span 10;
 }
 .all_sizing .this_player_wider_resource_group{
+   grid-column: span 11;
+}
+.this_player_resource_group.expand{
+   grid-column: span 10;
+}
+.this_player_wider_resource_group.expand{
    grid-column: span 11;
 }
 .offset_text{
@@ -1037,7 +1039,9 @@ div#trade_board {
    height: 20px;
    width: 20px;
 }
-
+.pay_sizing #silver_group, .pay_sizing #loan_group{
+   grid-column: span 10;
+}
 .player_silver {
    background-size: 353.5px 111.1px;
    background-position: -86.46px 0px;
@@ -1133,10 +1137,10 @@ div#trade_board {
    width: 36.5px;
    height: 40px;
    grid-row: 1 / 4;
-   /* left: 2px; */
 }
 .player_food_text {
    grid-row: 1 / 4;
+   grid-column: 2 / 3;
 }
 .player_steel_text.show_market{
    grid-row: 2 / 4;
@@ -1159,12 +1163,13 @@ div#trade_board {
 .player_steel {
    background-size: 454.5px 142.9px;
    background-position: -100.26px -92.99px;
-   width: 41.56px;
+   width: 41px;
    height: 40px;
    grid-row: 1 / 4;
 }
 .player_steel_text {
    grid-row: 1 / 4;
+   grid-column: 2 / 3;
 }
 .player_steel_text.show_market{
    grid-row: 2 / 4;
@@ -1278,7 +1283,7 @@ div#trade_board {
 .player_token_zone {
    position: relative;
    display: grid;
-   grid-template-columns: repeat(auto-fill, 42.5px);
+   grid-template-columns: repeat(auto-fill, 11.5px);
    grid-template-rows: repeat(auto-fill, 51px);
 }
 .bid_token_zone {

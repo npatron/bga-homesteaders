@@ -115,7 +115,6 @@
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
                 <span class="player_silver_offset offset_text noshow"><span id="silver_sign">+</span><span id="silver_offset">0</span></span>
-                <span id="silver_bank" class="player_silver_buy bank_trade noshow"></span>
                 <span id="silver_new" class="player_silver_new new_text noshow">0</span>
             </span>
             <span id="trade_group" class="this_player_resource_group">
@@ -140,15 +139,14 @@
             <span id="wood_group" class="this_player_resource_group">
                 <span id="woodicon_{COLOR}"   class="score_token player_wood score"></span>
                 <span id="woodcount_{COLOR}" class="player_wood_text player_text">0</span>
-                <span id="wood_sell" class="sell_wood sell noshow"></span>
-                <span class="player_wood_offset offset_text noshow"><span id="wood_sign">+</span><span id="wood_offset">0</span></span>
                 <span id="wood_buy" class="buy_wood buy noshow"></span>
+                <span class="player_wood_offset offset_text noshow"><span id="wood_sign">+</span><span id="wood_offset">0</span></span>
+                <span id="wood_sell" class="sell_wood sell noshow"></span>
                 <span id="wood_new" class="player_wood_new new_text noshow">0</span>
             </span>
             <span id="food_group" class="this_player_resource_group">
                 <span id="foodicon_{COLOR}"   class="score_token player_food score"></span>
                 <span id="foodcount_{COLOR}" class="player_food_text player_text">0</span>
-                <span id="food_market" class="trade_market_food market noshow"></span>
                 <span id="food_buy" class="buy_food buy noshow"></span>
                 <span class="player_food_offset offset_text noshow"><span id="food_sign">+</span><span id="food_offset">0</span></span>
                 <span id="food_sell" class="sell_food sell noshow"></span>
@@ -157,7 +155,6 @@
             <span id="steel_group" class="this_player_resource_group">
                 <span id="steelicon_{COLOR}"  class="score_token player_steel score"></span>
                 <span id="steelcount_{COLOR}" class="player_steel_text player_text">0</span>
-                <span id="steel_market" class="trade_market_steel market noshow"></span>
                 <span id="steel_buy" class="buy_steel buy noshow"></span>
                 <span class="player_steel_offset offset_text noshow"><span id="steel_sign">+</span><span id="steel_offset">0</span></span>
                 <span id="steel_sell" class="sell_steel sell noshow"></span>
@@ -252,24 +249,6 @@
 <div id ="bottom"> 
     <div id="trade_bottom">
         <div id="trade_board" class="">
-            <!-- Trade Helper Board -->
-            <div id="trade_buy_wood" class="trade_option"> </div>
-            <div id="trade_buy_food" class="trade_option"> </div>
-            <div id="trade_buy_steel" class="trade_option"> </div>
-            <div id="trade_buy_gold" class="trade_option"> </div>
-            <div id="trade_buy_copper" class="trade_option"> </div>
-            <div id="trade_buy_livestock" class="trade_option"> </div>
-
-            <div id="trade_sell_wood" class="trade_option"> </div>
-            <div id="trade_sell_food" class="trade_option"> </div>
-            <div id="trade_sell_steel" class="trade_option"> </div>
-            <div id="trade_sell_gold" class="trade_option"> </div>
-            <div id="trade_sell_copper" class="trade_option"> </div>
-            <div id="trade_sell_livestock" class="trade_option"> </div>
-
-            <div id="trade_market_wood_food" class="trade_option"> </div>
-            <div id="trade_market_food_steel" class="trade_option"> </div>
-            <div id="trade_bank_trade_silver" class="trade_option"> </div>
         </div>
     </div>
 </div>
@@ -311,9 +290,11 @@ var jstpl_resource_inline = '<div title = "${type}" class="log_${type} token_inl
 var jstpl_resource_log = '<div title = "${type}" class="log_${type} log_token"></div>';
 var jstpl_player_token_log = '<div title = "${type}_${color}" class="${type}_${color} log_${type}"></div>';
 var jptpl_track_log = '<div title = "${type}" class="log_inline_${type}" ></div>';
-var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element"><div class="useFont">${text}</div>${away}<span title ="for" class="log_arrow token_inline"></span>${for}</span>'
-var jptpl_breadcrumb_income = '<span id="breadcrumb_income" class="breadcrumbs_element"><div class="useFont">${text}</div>${income}</span>'
-var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element"><div class="useFont">${text}</div>${cost}</span>'
+
+var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 9px;"></span>${for}</span>'
+var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'
+var jptpl_breadcrumb_income = '<span id="breadcrumb_income" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_income_tokens" class="breadcrumbs_element">${income}</span>'
+var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_bldCost" class="breadcrumbs_element">${cost}</span>'
 
 </script>  
 
