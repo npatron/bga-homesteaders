@@ -22,6 +22,7 @@
 ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
 ALTER TABLE `player` ADD `rail_adv`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
 ALTER TABLE `player` ADD `use_silver` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'pay workers with silver 0-true, 1-false';
+ALTER TABLE `player` ADD `paid_work`  INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'has paid workers';
  -- allows showing cancelled/undo actions as crossed out in log.
 ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;
 
@@ -49,11 +50,12 @@ CREATE TABLE IF NOT EXISTS `tracks` (
 CREATE TABLE IF NOT EXISTS `buildings` (
   `building_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
   `building_id`   INT(2) UNSIGNED NOT NULL             COMMENT 'Identity of Building',
-  `building_type` INT(1) UNSIGNED NOT NULL             COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
+  `building_type` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
   `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
+  `b_order`       INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'order built by player',
   PRIMARY KEY (`building_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
@@ -79,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `resources` (
   `loan`       INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `trade`      INT(2) UNSIGNED NOT NULL DEFAULT '0',
   `vp`         INT(3) UNSIGNED NOT NULL DEFAULT '0',
+  `paid`       INT(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`player_id`)
 ) ENGINE=InnoDB;
 

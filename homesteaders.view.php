@@ -36,6 +36,8 @@
   	    // Get players & players number
         $players = $this->game->loadPlayersBasicInfos();
         $players_nbr = count( $players );
+        global $g_user;
+        $current_player_id = $g_user->get_id();
 
         /*********** Place your code below:  ************/
         
@@ -47,20 +49,27 @@
         $this->tpl['MAIN_BUILDING']    = _("Current Buildings");
         $this->tpl['FUTURE_AUCTION']   = _("Upcoming Auctions");
         $this->tpl['CONFIRM_TRADE']    = _("Confirm Trade");
-        $this->tpl['UNDO_TRADE']       = _("Undo Transctions");
+        $this->tpl['UNDO_TRADE']       = _("Undo All Trade/Dept");
+        $this->tpl['UNDO_LAST_TRADE']  = _("Undo Last Trade/Dept");
         $this->tpl['BUILDING_STOCK']   = _("Main Building Stock");
         $this->tpl['BUILDING_DISCARD'] = _("Building Discard");
         $this->tpl['FUTURE_BUILDING']  = _("Upcoming Buildings");
         $this->tpl['PAY']              = _("Auto-pay");
         $this->tpl['WITH']             = _("with");
 
+        $this->page->begin_block( "homesteaders_homesteaders", "this_player_zone" );
         $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
         foreach($players as $p_id=>$player){
-            $color = $this->game->playerColorNames[$player['player_color']];
+          $color = $this->game->playerColorNames[$player['player_color']];
+          if ($current_player_id == $p_id){
+            $this->page->insert_block( "this_player_zone", array(
+              'COLOR' => $color,
+              'NAME' => $player['player_name']) );
+          } else {
             $this->page->insert_block( "player_zone", array(
               'COLOR' => $color,
-              'NAME' => $player['player_name']
-             ) );
+              'NAME' => $player['player_name']) );
+          }
         } 
         
         $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
