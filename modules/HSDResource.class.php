@@ -473,7 +473,7 @@ class HSDresource extends APP_GameClass
             case 'market':
                 $type = $tradeAct_segs[1];//food or steel
                 $building_name = array('str'=>'Market', 'type'=>TYPE_COMMERCIAL);
-                $tradeAway[$type] = array_merge($tradeAway, $this->game->resource_info[$type]['market']);
+                $tradeAway = array_merge($tradeAway, $this->game->resource_info[$type]['market']);
                 $tradeFor[$type] = 1;
             break;
             case 'bank':

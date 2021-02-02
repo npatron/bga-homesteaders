@@ -247,9 +247,11 @@ class homesteaders extends Table
         $this->Resource->takeLoan($this->getCurrentPlayerId());
     }
     
-    public function playerTrade( $tradeAction_csv )
+    public function playerTrade( $tradeAction_csv, $allowTrade =false )
     {
-        $this->checkAction( 'trade' );
+        // allow out of turn trade, only when flag is passed during allocateWorkers State.
+        if (!($allowTrade && $this->gamestate->state()['name'] === "allocateWorkers"))
+            $this->checkAction( 'trade' );
         $tradeAction_arr = explode(',', $tradeAction_csv);
         foreach( $tradeAction_arr as $key=>$val ){
             $tradeAction = $this->trade_map[$val];
