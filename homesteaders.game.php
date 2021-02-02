@@ -902,7 +902,7 @@ class homesteaders extends Table
             self::applyDbUpgradeToAllDB( $sql );
             $sql = "ALTER TABLE DBPREFIX_resources ADD `paid` INT(1) UNSIGNED NOT NULL DEFAULT '0'";
             self::applyDbUpgradeToAllDB( $sql );
-            $sql = "INSERT INTO DBPREFIX_global set (global_id, global_value) VALUES (20,0)";
+            $sql = "INSERT INTO DBPREFIX_global (global_id, global_value) VALUES ('20','0')";
             self::applyDbUpgradeToAllDB( $sql );
         }
         // Example:
