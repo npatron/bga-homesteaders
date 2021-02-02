@@ -281,6 +281,8 @@ button:disabled {
 }
 
 .breadcrumbs {
+   display: flex;
+   flex-wrap: wrap;
 	text-align: center;
 	line-height: 40px;
 	box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
@@ -328,6 +330,15 @@ button:disabled {
 	margin-left: 1px;
 	left: 100%;
 	z-index: 2;
+}
+
+.breadcrumbs_element.font{
+   /* background: #e6d8b1; */
+   background-color: #b5552b;
+}
+   
+.breadcrumbs_element.font:after {
+   border-left-color: #b5552b;
 }
 
 /*====================*
@@ -1054,7 +1065,7 @@ div#trade_bank_trade_silver{
    height: 20px;
    width: 20px;
 }
-.pay_sizing #silver_group, .pay_sizing #loan_group{
+.pay_sizing #loan_group{
    grid-column: span 10;
 }
 .player_silver {

@@ -11,7 +11,7 @@
 
 -->
 <div class="anchor">
-    <div id="breadcrumbs" class="breadcrumbs wlimit" style="display:flex"><span id="breadcrumb_transactions"></span></div>
+    <div id="breadcrumbs" class="breadcrumbs wlimit"><span id="breadcrumb_transactions"></span></div>
 </div>
 
 <div id="main_container" class="container">

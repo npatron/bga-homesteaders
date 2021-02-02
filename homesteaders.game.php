@@ -897,6 +897,14 @@ class homesteaders extends Table
         // For example, if the game was running with a release of your game named "140430-1345",
         // $from_version is equal to 1404301345
         
+        if ( $from_version <= 2101142015 ){
+            $sql = "ALTER TABLE DBPREFIX_buildings ADD `b_order` INT(3) UNSIGNED NOT NULL DEFAULT '0'";
+            self::applyDbUpgradeToAllDB( $sql );
+            $sql = "ALTER TABLE DBPREFIX_resources ADD `paid` INT(1) UNSIGNED NOT NULL DEFAULT '0'";
+            self::applyDbUpgradeToAllDB( $sql );
+            $sql = "INSERT INTO DBPREFIX_global set (global_id, global_value) VALUES (20,0)";
+            self::applyDbUpgradeToAllDB( $sql );
+        }
         // Example:
 //        if( $from_version <= 1404301345 )
 //        {

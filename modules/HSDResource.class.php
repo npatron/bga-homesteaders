@@ -483,6 +483,8 @@ class HSDresource extends APP_GameClass
             case 'loan':
                 $this->takeLoan($p_id);
                 return;
+            case 'payloan':
+                return $this->payOffLoan($p_id, $tradeAct_segs[1] === 'gold');
             default: 
                 throw new BgaVisibleSystemException (_('Invalid TradeAction: ').$tradeAction);
         }
