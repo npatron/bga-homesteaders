@@ -734,6 +734,7 @@ function (dojo, declare) {
                     this.clearSelectable('worker_slot', false);
                     this.disableTradeIfPossible();
                     this.showConfirmTrade = false;
+                    this.destroyIncomeBreadcrumb();
                 case 'payAuction':
                 case 'bonusChoice':
                     this.disableTradeIfPossible();
@@ -741,6 +742,7 @@ function (dojo, declare) {
                 case 'payWorkers':
                     this.disableTradeIfPossible();
                     this.showPay = false;
+                    this.destroyPaymentBreadcrumb();
                     break;
                 case 'endBuildRound':
                     this.clearAuction();
