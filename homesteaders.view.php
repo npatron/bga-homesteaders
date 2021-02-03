@@ -80,20 +80,22 @@
           }
         }
 
-        $this->page->begin_block( "homesteaders_homesteaders", "auction_string" );
         $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );
         $this->page->begin_block( "homesteaders_homesteaders", "future_auction_zones" );
         $auctions = $this->game->getGameStateValue('number_auctions');
         for ($a=1; $a <= $auctions; $a++){
           $this->page->insert_block( "auction_stacks", array('A'=> $a));
-          $string_offset = ($a==1? 2:($a-1)*($auctions==3 ? 33.3333: 50));
-          $this->page->insert_block( "auction_string", array('AUCTION'=>_("Auction"), 'A'=> $a, 'COLOR'=> 'a'.$a, 'OFFSET'=> $string_offset));
-          $this->page->insert_block( "future_auction_zones", array('A'=> $a, 'PCT'=> ($auctions==3 ? 32.3333: 49) ));
+          $this->page->insert_block( "future_auction_zones", array('A'=> $a, 'AUCTION'=>_("Auction"), 'COLOR'=> 'a'.$a));
         }
         
         $this->page->begin_block( "homesteaders_homesteaders", "train_advancement");
         for ($i=0; $i<6; $i++){
           $this->page->insert_block( "train_advancement", array('I'=> $i) ); 
+        }
+
+        $this->page->begin_block( "homesteaders_homesteaders", "trade_option");
+        for ($i=0; $i < 12; $i++){
+          $this->page->insert_block( "trade_option", array('OPTION'=> $this->game->trade_map[$i])); 
         }
         
         /*********** Do not change anything below this line  ************/

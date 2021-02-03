@@ -58,9 +58,8 @@
 { 
    content: "X";
    position: absolute;
-   left: 0px;
+   left: -2px;
    top: -5px;
-   width: 100%;
    height: 133%;
    font-size: 32px;
    text-align: center;
@@ -68,6 +67,12 @@
    overflow: hidden;
    color: black;
    opacity: 42%;
+}
+.log_wood.crossout:before{
+   left: -7px;
+}
+.log_inline_loan.crossout:before{
+   left: 5px;
 }
 
 .res {text-decoration: underline;
@@ -118,6 +123,9 @@
    font-size: 20px;
    font-variant: small-caps;
 }
+.auction_column .auction_string{
+   font-size: 30px;
+}
 .alignleft {float: left;}
 .aligncenter {float: center;}
 .alignright {float: right;}
@@ -136,13 +144,21 @@
  *   --board--    *
  ******************/
 #main_container {
-   display: grid;
-   grid-template-columns: 205px auto;
+   display: flex;
    grid-gap: 3px;
+   flex-wrap: wrap;
 }
-#currentPlayer {
-   grid-column: 1/-1;
+.current_player {
+   margin-top: 4px;
+   flex-grow: 10;
    order: 0;
+   flex-basis: 75%;
+}
+#board_area{
+   order: 4;
+   flex-direction: column;
+   display: flex;
+   flex-grow: 1;
 }
 #board {
    background-image: url('img/auctionBoard.jpg');
@@ -151,19 +167,29 @@
    height: 545px;
    background-size: 740px 545px;
    background-repeat: no-repeat;
-   order: 3;
+   margin:auto;
+   order: 1;
 }
 #top {
-   display: grid;
-   order: 2;
-   grid-column: 1/2;
-   grid-template-columns: repeat(auto-fill, 205px);
-   grid-auto-rows: 30px;
-   align-items: center;
-   grid-gap: 1px;
+   display: flex;
+   order: -1;
+   align-items: stretch;
+   flex-direction: row;
+   column-gap: 1px;
+   flex-wrap: wrap;
 }
 #trade_top {
    order: 1;
+}
+#top_texts {
+   width: 180px;
+}
+.player_zone{
+   margin-top: 4px;
+   flex-grow: 10;
+   order: 10;
+   min-width: 500px;
+   flex-basis: min-content;
 }
 
 /*============*
@@ -175,11 +201,15 @@
    width: 180px;
    order: 8;
 }
+#undo_last_trade_btn{
+   height: 17px;
+   width: 180px;
+   order: 8;
+}
 #undo_trades_btn{
    height: 17px;
    width: 180px;
-   order: 7;
-   margin-left: 20px;
+   order: 8;
 }
 a#tgl_main_bld{
    height: 17px;
@@ -202,17 +232,12 @@ a#tgl_future_bld{
    order: 6;
 }
 #top_texts {
-   margin-top: auto;
-   margin-bottom: auto;
-   grid-row: span 3;
    order: 0;
-   grid-column: 1/2;
-   display: grid;
-   grid-auto-rows: 30px;
 }
 #round_text {
-   order: 1/2;
-   margin: auto;
+   margin-left: 10px;
+   margin-top: auto;
+   margin-bottom: auto;
 }
 #useSilver_form {
    margin: auto;
@@ -230,31 +255,9 @@ button:disabled {
  * buttons trade  *
  * buttons board  *
  ******************/
- @media all and (min-width:1200px){
-   #main_container {
-      grid-template-columns: 205px 512px auto;
-   }
+ @media all and (min-width:1400px){
    #top{
-      grid-column: 1 / 2;
-      grid-row: 2 / 4;
-      grid-template-columns: 205px;
-   }
-   #board {
-      grid-column: 2 / 3;
-   }
-   #trade_top {
-      grid-column: 2 / 3;
-   }
-}
-
-/*=====================* 
- * wide enough for     *
- * buttons trade board * 
- * all on the same line* 
- *=====================*/
-@media all and (min-width:1710px){
-   #main_container {
-      grid-template-columns: 205px 512px 740px auto;
+      flex-direction: column;
    }
 }
 
@@ -624,6 +627,60 @@ div#trade_bank_trade_silver{
    height: 27px;
 }
 
+.trade_option {
+   height: 19%;
+   width: 21%;
+   position: absolute;
+}
+div#trade_buy_wood{
+   left: 2%;
+   top: 16%;
+}
+div#trade_buy_food{
+   left: 24%;
+   top: 16%;
+}
+div#trade_buy_steel{
+   left: 2%;
+   top: 38%;
+}
+div#trade_buy_gold{
+   left: 24%;
+   top: 38%;
+}
+div#trade_buy_copper{
+   left: 2%;
+   top: 59.5%;
+}
+div#trade_buy_cow{
+   left: 24%;
+   top: 59.5%;
+}
+div#trade_sell_wood{
+   left: 52.7%;
+   top: 16%;
+}
+div#trade_sell_food{
+   left: 75%;
+   top: 16%;
+}
+div#trade_sell_steel{
+   left: 52.7%;
+   top: 38%;
+}
+div#trade_sell_gold{
+   left: 75%;
+   top: 38%;
+}
+div#trade_sell_copper{
+   left: 52.7%;
+   top: 59.5%;
+}
+div#trade_sell_cow{
+   left: 75%;
+   top: 59.5%;
+}
+
 /*================*
  * Building Zones *
  *================*/
@@ -648,24 +705,41 @@ div#trade_bank_trade_silver{
 .main_building_zone {
    position: relative;
    display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(144px, auto));
+   grid-template-columns: repeat(auto-fill, minmax(155px, auto));
    grid-template-rows: repeat(auto-fill, minmax(200px, auto));
 }
-#future_auction_container {
-   grid-template-columns: repeat(auto-fill, 132px);
-   grid-template-rows: repeat(auto-fill, 202px);
+#future_auction_container{
+   flex-direction: row;
 }
-.future_auction_zone {
-   display: inline-grid;
+#main_building_container{
+   min-width: 700px;
+}
+.building_container {
+   min-width: 600px;
+   flex-grow: 10;
+   margin-top: 4px;
+   margin-bottom: 4px;
+   order: 8;
+   display: flex;
+   flex-direction: column;
+}
+.auction_column{
+   display: flex;
+   flex-direction: column;
+   flex-grow: 10;
 }
 .auction_string {
-   position: absolute;
+   order: 0;
 }
-
-#player_zones {
+.future_auction_zone {
+   display: grid;
+   order: 2;
+   flex-grow: 10;
+}
+/* #player_zones {
    display: grid;
    grid-template-columns: repeat(auto-fit, minmax(600px, auto));
-}
+} */
 
 /*===============*
  * State classes *
@@ -960,54 +1034,64 @@ div#trade_bank_trade_silver{
 }
 
 .player_resources{
-   display: grid;
-   grid-template-columns: repeat(auto-fit, 22px);
+   display: flex;
+   flex-wrap: wrap;
 }
 .player_resource_group{
-   display: grid;
-   grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 40px 20px;
-   grid-column: span 3;
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
 }
 .player_wider_resource_group{
-   display: grid;
-   grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 60px 20px;
-   grid-column: span 4;
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
 }
 .this_player_resources{
-   display: grid;
-   grid-template-columns: repeat(auto-fit, 11px);
+   display: flex;
+   flex-wrap: wrap;
 } 
 .this_player_resource_group{
-   display: grid;
-   grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 40px 22px 18px 22px;
-   grid-column: span 6;
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
 }
 .this_player_wider_resource_group{
-   display: grid;
-   grid-template-rows: 20px 19px 20px;
-   grid-template-columns: 50px 22px 18px 22px;
-   grid-column: span 7;
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
 }
-
+.building_container .biggerFont{
+   margin-left: auto;
+   margin-right: auto;
+}
 .all_sizing .this_player_resource_group{
-   grid-column: span 10;
+   min-width: 100px;
+   max-width: 120px;
 }
 .all_sizing .this_player_wider_resource_group{
-   grid-column: span 11;
+   min-width: 110px;
+   max-width: 125px;
 }
 .this_player_resource_group.expand{
-   grid-column: span 10;
+   min-width: 100px;
+   max-width: 120px;
 }
 .this_player_wider_resource_group.expand{
-   grid-column: span 11;
+   min-width: 110px;
+   max-width: 125px;
 }
 .offset_text{
-   grid-column: 3 / 4;
-   grid-row: 2 / 3;
-   margin: auto;
+   display: grid;
+   grid-template-rows: repeat(3, 1fr);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
 }
 .negative{
    color: darkred;
@@ -1018,7 +1102,6 @@ div#trade_bank_trade_silver{
 .new_text {
    position: relative;
    font-size: x-large;
-   grid-row: 1 / 4;
    margin: auto;
 }
 .player_text_loan {
@@ -1026,15 +1109,9 @@ div#trade_bank_trade_silver{
    margin: auto;
    font-size: x-large;
 }
-.offset_text_loan{
-   grid-column: 3 / 4;
-   grid-row: 2 / 3;
-   margin: auto;
-}
 .new_text_loan {
    position: relative;
    font-size: x-large;
-   grid-row: 1 / 4;
    margin: auto;
 }
 .buy{
@@ -1043,6 +1120,7 @@ div#trade_bank_trade_silver{
    background-position: -273px -178px;
    height: 20px;
    width: 20px;
+   grid-row: 1 / 2;
 }
 .sell{
    background-image: url('img/drawn_tokens_2.png');
@@ -1050,43 +1128,23 @@ div#trade_bank_trade_silver{
    background-position: -296px -178px;
    height: 20px;
    width: 20px;
-}
-.bank_trade {
-   background-image: url('img/drawn_tokens_2.png');
-   background-size: 260px 98px;
-   background-position: -99px -72px;
-   height: 20px;
-   width: 20px;
-}
-.market {
-   background-image: url('img/drawn_tokens_2.png');
-   background-size: 272px 98px;
-   background-position: -84px -72px;
-   height: 20px;
-   width: 20px;
-}
-.pay_sizing #loan_group{
-   grid-column: span 10;
+   grid-row: 3 / 4;
 }
 .player_silver {
    background-size: 353.5px 111.1px;
    background-position: -86.46px 0px;
    width: 41.21px;
    height: 40px;
-   grid-row: 1 / 4;
 }
-.player_silver_text {
-   grid-row: 1 / 4;
+.signed{
+   margin: auto;
+   grid-row: 2 / 3;
 }
 .player_trade {
    background-size: 353.5px 117px;
    background-position: -127px 0px;
    width: 40px;
    height: 40px;
-   grid-row: 1 / 4;
-}
-.player_trade_text {
-   grid-row: 1 / 4;
 }
 .player_loan {
    background-image: url('img/rail_debt_85x102.png');
@@ -1096,11 +1154,7 @@ div#trade_bank_trade_silver{
    width: 40px;
    position: relative;
    margin: auto;
-   grid-row: 1 / 4;
-}
-.player_loan_text {
-   grid-row: 1 / 4;
-}
+ }
 .take_loan {
    background-image: url('img/drawn_tokens_2.png');
    background-size: 875px 275px;
@@ -1108,175 +1162,48 @@ div#trade_bank_trade_silver{
    height: 20px;
    width: 20px;
    grid-row: 1 / 2;
-   grid-column: 3 / 4;
 }
-.player_loan_offset {
-   grid-row: 2 / 3;
-}
-.sell_loan {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
-}
-
 .player_vp {
    background-size: 299.1px 94px;
    background-position: -140.85px 0px;
    width: 38.29px;
    height: 40px;
-   grid-row: 1 / 4;
 }
-.player_vp_text{
-   grid-row: 1 / 4;
-}
-.player_vp_offset{
-   grid-row: 2 / 3;
-}
-
 .player_wood {
    background-size: 428.9px 134.8px;
    background-position: 0px 0px;
    width: 20.1px;
    height: 50px;
-   -webkit-transform: rotate(45deg);
-   -moz-transform: rotate(45deg);
-   transform: rotate(45deg);
-   grid-row: 1 / 4;
 }
-.player_wood_text {
-   grid-row: 1 / 4;
-}
-.buy_wood {
-   grid-row: 1 / 2;
-   grid-column: 3 / 4;
-}
-.player_wood_offset {
-   grid-row: 2 / 3;
-}
-.sell_wood {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
-}
-
 .player_food {
    background-size: 426px 134.1px;
    background-position: -67px 0px;
    width: 36.5px;
    height: 40px;
-   grid-row: 1 / 4;
-}
-.player_food_text {
-   grid-row: 1 / 4;
-   grid-column: 2 / 3;
-}
-.player_steel_text.show_market{
-   grid-row: 2 / 4;
-}
-.buy_food {
-   grid-row: 1 / 2;
-   grid-column: 3 / 4;
-}
-.player_food_offset {
-   grid-row: 2 / 3;
-}
-.sell_food {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
-}
-.trade_market_food {
-   grid-row: 1 / 2;
-   grid-column: 2 / 3;
 }
 .player_steel {
    background-size: 454.5px 142.9px;
    background-position: -100.26px -92.99px;
    width: 41px;
    height: 40px;
-   grid-row: 1 / 4;
-}
-.player_steel_text {
-   grid-row: 1 / 4;
-   grid-column: 2 / 3;
-}
-.player_steel_text.show_market{
-   grid-row: 2 / 4;
-}
-.buy_steel{
-   grid-row: 1 / 2;
-   grid-column: 3 / 4;
-}
-.player_steel_offset{
-   grid-row: 2 / 3;
-}
-.sell_steel {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
-}
-.trade_market_steel{
-   grid-row: 1 / 2;
-   grid-column: 2 / 3;
 }
 .player_gold{
    background-size: 380px 119.6px;
    background-position: -18px 0px;
    width: 41px;
    height: 40px;
-   grid-row: 1 / 4; 
-}
-.player_gold_text {
-   grid-row: 1 / 4;
-}
-.buy_gold {
-   grid-row: 1 / 2;
-   grid-column: 3 / 4;
-}
-.player_gold_offset {
-   grid-row: 2 / 3;
-}
-.sell_gold {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
 }
 .player_cow {
    background-size: 460.5px 144.7px;
    background-position: -56.84px -53.68px;
    width: 55.26px;
    height: 40px;
-   grid-row: 1 / 4;
-}
-.player_cow_text {
-   grid-row: 1 / 4;
-}
-.buy_cow {
-   grid-row: 1 / 2;
-   grid-column: 3 / 4;
-}
-.player_cow_offset {
-   grid-row: 2 / 3;
-}
-.sell_cow {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
 }
 .player_copper {
    background-size: 409px 161.8px;
    background-position: -101px -62.35px;
    width: 50px;
    height: 40px;
-   grid-row: 1 / 4;
-}
-.player_copper_text {
-   grid-row: 1 / 4;
-}
-.buy_copper {
-   grid-row: 1 / 2;
-   grid-column: 3 / 4;
-}
-.player_copper_offset {
-   grid-row: 2 / 3;
-}
-.sell_copper {
-   grid-row: 3 / 4;
-   grid-column: 3 / 4;
 }
 .tt_loan{
    background-image: url('img/rail_debt_85x102.png');
