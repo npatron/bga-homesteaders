@@ -2143,7 +2143,11 @@ function (dojo, declare) {
                 const tokenZone = this.token_divId[this.player_id];
                 const playerBuildingZone = this.player_building_zone_id[this.player_id];
                 if (dojo.query(`#${tokenZone} .token_worker`).length > 0 && dojo.query(`#${playerBuildingZone} .worker_slot:empty`).length > 0){
-                    this.confirmationDialog( _('You still have workers to assign, Continue?'), dojo.hitch( this, this.ajaxDonePlacingWorkers()));
+                    this.confirmationDialog( _('You still have workers to assign, Continue?'), 
+                    dojo.hitch( this, function() {
+                        this.ajaxDonePlacingWorkers()
+                    } ) );
+                    return;
                 } else {
                     this.ajaxDonePlacingWorkers();
                 }
