@@ -223,12 +223,12 @@ class HSDScore extends APP_GameClass
             }
         }
         $this->game->setStat($vp_b_mult[TYPE_RESIDENTIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_0', $p_id);
-        $this->game->setStat($vp_b_mult[TYPE_COMMERCIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_1', $p_id);
-        $this->game->setStat($vp_b_mult[TYPE_INDUSTRIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_2', $p_id);
-        $this->game->setStat($vp_b_mult[TYPE_SPECIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_3', $p_id);
-        $this->game->setStat($vp_b_mult[VP_B_WORKER] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_4', $p_id);
-        $this->game->setStat($vp_b_mult[VP_B_TRACK] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_5', $p_id);
-        $this->game->setStat($vp_b_mult[VP_B_BUILDING] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_6', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_COMMERCIAL] * $counts[TYPE_COMMERCIAL], 'bonus_vp_1', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_INDUSTRIAL] * $counts[TYPE_INDUSTRIAL], 'bonus_vp_2', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_SPECIAL] * $counts[TYPE_SPECIAL], 'bonus_vp_3', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_WORKER] * $counts[VP_B_WORKER], 'bonus_vp_4', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_TRACK] * $counts[VP_B_TRACK], 'bonus_vp_5', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_BUILDING] * $counts[VP_B_BUILDING], 'bonus_vp_6', $p_id);
         
         return array('vp'=>$vps, 'vp_b'=>$vps_b);
     }
