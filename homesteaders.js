@@ -2140,16 +2140,26 @@ function (dojo, declare) {
         
         donePlacingWorkers: function( ){
             if( this.checkAction( 'done')){
-                this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
-                function( result ) { 
-                    this.clearSelectable('worker', true); 
-                    this.clearSelectable('worker_slot', false);
-                    this.disableTradeBoardActions();
-                    this.destroyIncomeBreadcrumb();
-                    this.income_arr= [];
-                    this.disableTradeIfPossible();
-                }, function( is_error) { } );
+                const tokenZone = this.token_divId[this.player_id];
+                const playerBuildingZone = this.player_building_zone_id[this.player_id];
+                if (dojo.query(`#${tokenZone} .token_worker`).length > 0 && dojo.query(`#${playerBuildingZone} .worker_slot:empty`).length > 0){
+                    this.confirmationDialog( _('You still have workers to assign, Continue?'), dojo.hitch( this, this.ajaxDonePlacingWorkers()));
+                } else {
+                    this.ajaxDonePlacingWorkers();
+                }
             }
+        },
+
+        ajaxDonePlacingWorkers: function(){
+            this.ajaxcall( "/homesteaders/homesteaders/donePlacingWorkers.html", {lock: true}, this, 
+            function( result ) { 
+                this.clearSelectable('worker', true); 
+                this.clearSelectable('worker_slot', false);
+                this.disableTradeBoardActions();
+                this.destroyIncomeBreadcrumb();
+                this.income_arr= [];
+                this.disableTradeIfPossible();
+            }, function( is_error) { } );
         },
         
         onClickOnWorker: function( evt )
