@@ -198,15 +198,9 @@ class HSDScore extends APP_GameClass
         $vps = array('static'=>0,
                      'bonus'=>0,);
         $vps_b = array();
-        $vp_b_type = array(
-            TYPE_RESIDENTIAL=>array('val'=>$counts[TYPE_RESIDENTIAL], 'mult'=>0),
-            TYPE_COMMERCIAL=>array('val'=>$counts[TYPE_COMMERCIAL], 'mult'=>0),
-            TYPE_INDUSTRIAL=>array('val'=>$counts[TYPE_INDUSTRIAL], 'mult'=>0),
-            TYPE_SPECIAL   =>array('val'=>$counts[TYPE_SPECIAL], 'mult'=>0),
-            VP_B_WORKER    =>array('val'=>$counts[VP_B_WORKER], 'mult'=>0),
-            VP_B_TRACK     =>array('val'=>$counts[VP_B_TRACK], 'mult'=>0),
-            VP_B_BUILDING  =>array('val'=>$counts[VP_B_BUILDING], 'mult'=>0),
-        );
+        $vp_b_mult = array(
+            TYPE_RESIDENTIAL=> 0, TYPE_COMMERCIAL => 0, TYPE_INDUSTRIAL => 0, TYPE_SPECIAL    => 0,
+            VP_B_WORKER     => 0, VP_B_TRACK      => 0, VP_B_BUILDING   => 0, ); /* VP_LOAN_PAID=>0 //(expansion)*/
         foreach($p_buildings as $b_key => $building){
             $b_id   = $p_buildings[$b_key]['b_id']; 
             $b_static_vp = (array_key_exists('vp',$this->game->building_info[$b_id])?$this->game->building_info[$b_id]['vp']:0);
@@ -216,25 +210,25 @@ class HSDScore extends APP_GameClass
                 if ($vp_index == VP_B_WRK_TRK){
                     $vps['bonus'] += $counts[VP_B_WORKER];
                     $vps['bonus'] += $counts[VP_B_TRACK];
-                    $vp_b_type[VP_B_WORKER]['mult']++;
-                    $vp_b_type[VP_B_TRACK]['mult']++;
+                    $vp_b_mult[VP_B_WORKER]++;
+                    $vp_b_mult[VP_B_TRACK]++;
                     $vps_b[$b_key] = array('bonus'=>$counts[4]+ $counts[5], 'static'=>$b_static_vp);
                 } else {
                     $vps['bonus'] += $counts[$vp_index];
-                    $vp_b_type[$vp_index]['mult']++;
+                    $vp_b_mult[$vp_index]++;
                     $vps_b[$b_key] = array('bonus'=>$counts[$vp_index], 'static'=>$b_static_vp);
                 }
             } else {
                 $vps_b [$b_key] = array('static'=>$b_static_vp);
             }
         }
-        $this->game->setStat($vp_b_type[TYPE_RESIDENTIAL]['val'] * $vp_b_type[TYPE_RESIDENTIAL]['mult'], 'bonus_vp_0', $p_id);
-        $this->game->setStat($vp_b_type[TYPE_COMMERCIAL]['val'] * $vp_b_type[TYPE_COMMERCIAL]['mult'], 'bonus_vp_1', $p_id);
-        $this->game->setStat($vp_b_type[TYPE_INDUSTRIAL]['val'] * $vp_b_type[TYPE_INDUSTRIAL]['mult'], 'bonus_vp_2', $p_id);
-        $this->game->setStat($vp_b_type[TYPE_SPECIAL]['val'] * $vp_b_type[TYPE_SPECIAL]['mult'], 'bonus_vp_3', $p_id);
-        $this->game->setStat($vp_b_type[VP_B_WORKER]['val'] * $vp_b_type[VP_B_WORKER]['mult'], 'bonus_vp_4', $p_id);
-        $this->game->setStat($vp_b_type[VP_B_TRACK]['val'] * $vp_b_type[VP_B_TRACK]['mult'], 'bonus_vp_5', $p_id);
-        $this->game->setStat($vp_b_type[VP_B_BUILDING]['val'] * $vp_b_type[VP_B_BUILDING]['mult'], 'bonus_vp_6', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_RESIDENTIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_0', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_COMMERCIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_1', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_INDUSTRIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_2', $p_id);
+        $this->game->setStat($vp_b_mult[TYPE_SPECIAL] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_3', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_WORKER] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_4', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_TRACK] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_5', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_BUILDING] * $counts[TYPE_RESIDENTIAL], 'bonus_vp_6', $p_id);
         
         return array('vp'=>$vps, 'vp_b'=>$vps_b);
     }
