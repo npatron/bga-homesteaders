@@ -1118,11 +1118,6 @@ function (dojo, declare) {
 
         formatTooltipBuilding:function (b_info){
             var vp = 'vp'+ ( b_info.vp == null?'0':(Number(b_info.vp)==1)?'':Number(b_info.vp));
-            //var vp = b_info.vp == null? 'vp0' : 'vp'+ (Number(b_info.vp)==1)?'':Number(b_info.vp); 
-            /*if (b_info.vp != null){
-                vp = 'vp'+Number(b_info.vp).toString();
-                if (vp == 'vp1'){ vp = 'vp';}
-            }*/
 
             return this.format_block('jptpl_bld_tt', {
                 type:  ASSET_COLORS[b_info.type],
@@ -1474,7 +1469,7 @@ function (dojo, declare) {
                 id: id, 
                 text:text, 
                 away:this.getResourceArrayHtml(tradeAway, true, "position: relative; top: 9px;"), 
-                for:this.getResourceArrayHtml(tradeFor, true, "position: relative; top: 9px;")}
+                for:this.getResourceArrayHtml(tradeFor, true, "position: relative; top: 2px;")}
                 ), `breadcrumb_transactions`, 'before');
         },
 
@@ -2334,7 +2329,7 @@ function (dojo, declare) {
                     this.last_selected['worker'] = unassignedWorkers[0].id;
             }
         }
-        if (document.querySelector(`#${target_divId} .worker_slot`)){
+        if (document.querySelector(`#${target_divId} .worker_slot:not(empty)`)){
                 if (!target_divId.startsWith('slot_17_3')){
                     this.showMessage(_("You have already assigned a worker there"), 'error');
                     return;

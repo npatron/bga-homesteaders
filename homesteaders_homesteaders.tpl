@@ -18,8 +18,8 @@
     <div id="currentPlayer" class="noshow"></div>
     <!-- BEGIN this_player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR} current_player" style="margin-top:4px;">
+    <div class="break" style="order:3;"></div>
         <div id="player_resources_{COLOR}" class="this_player_resources">
-            <span id="" class="log_token log_inc_arrow"></span>
             <span id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</span>
             <span id="silver_group" class="this_player_resource_group">
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
@@ -228,6 +228,7 @@
         <span class="biggerFont">{FUTURE_BUILDING}</span> 
         <div id='future_building_zone' class="main_building_zone"> </div>
     </div>
+    <div class="break" style="order:9;"></div>
     <div id ='First' class="noshow"> </div> <div id ='Second' class="noshow"> </div> <div id ='Third' class="noshow"> </div> <div id ='Fourth' class="noshow"> </div>
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR} player_zone" style="margin-top:4px;">
@@ -332,7 +333,7 @@ var jstpl_player_token_log = '<span title = "${type}_${color}" class="${type}_${
 var jptpl_track_log = '<span title="${type}" class="log_inline_${type}"></span>';
 var jptpl_x_loan= '<span title="pay dept" class="crossout log_inline_loan"></span>';
 
-var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 9px;"></span>${for}</span>'
+var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 2px;"></span>${for}</span>'
 var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'
 var jptpl_breadcrumb_income = '<span id="breadcrumb_income_${id}" class="breadcrumbs_element font" style="${style}">${text}</span><span id="breadcrumb_income_tokens_${id}" class="breadcrumbs_element" style="${style}">${income}</span>'
 var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_bldCost" class="breadcrumbs_element">${cost}</span>'

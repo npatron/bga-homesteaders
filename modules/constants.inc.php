@@ -188,11 +188,47 @@
 
   // Bid location mapping
   define("NO_BID",     0);
+  define("BID_A1_B3",  1);
+  define("BID_A1_B4",  2);
+  define("BID_A1_B5",  3);
+  define("BID_A1_B6",  4);
+  define("BID_A1_B7",  5);
+  define("BID_A1_B9",  6);
+  define("BID_A1_B12", 7);
+  define("BID_A1_B16", 8);
+  define("BID_A1_B21", 9);
   // A1 bids are 1-9
   define("OUTBID",     10);
+  define("BID_A2_B3",  11);
+  define("BID_A2_B4",  12);
+  define("BID_A2_B5",  13);
+  define("BID_A2_B6",  14);
+  define("BID_A2_B7",  15);
+  define("BID_A2_B9",  16);
+  define("BID_A2_B12", 17);
+  define("BID_A2_B16", 18);
+  define("BID_A2_B21", 19);
   // A2 bids are 11-19
   define("BID_PASS",   20);
+  define("BID_A3_B3",  21);
+  define("BID_A3_B4",  22);
+  define("BID_A3_B5",  23);
+  define("BID_A3_B6",  24);
+  define("BID_A3_B7",  25);
+  define("BID_A3_B9",  26);
+  define("BID_A3_B12", 27);
+  define("BID_A3_B16", 28);
+  define("BID_A3_B21", 29);
   // A3 bids are 21-29 (4players only)
+  define("BID_A4_B3",  31);
+  define("BID_A4_B4",  32);
+  define("BID_A4_B5",  33);
+  define("BID_A4_B6",  34);
+  define("BID_A4_B7",  35);
+  define("BID_A4_B9",  36);
+  define("BID_A4_B12", 37);
+  define("BID_A4_B16", 38);
+  define("BID_A4_B21", 39);
   // A4 bids are 31-39 (5players only)
 
   // phases that caused rail bonus.
