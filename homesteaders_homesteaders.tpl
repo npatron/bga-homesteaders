@@ -19,6 +19,7 @@
     <!-- BEGIN this_player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR} current_player" style="margin-top:4px;">
         <div id="player_resources_{COLOR}" class="this_player_resources">
+            <span id="" class="log_token log_inc_arrow"></span>
             <span id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</span>
             <span id="silver_group" class="this_player_resource_group">
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
@@ -305,18 +306,19 @@ var jptpl_dummy_player_token='<div id="token_${type}_${color}_dummy" class="play
 var jptpl_track='<div id="token_track_${id}" class="token_track border_${color}"> </div>';
 
 var jstpl_player_board = '\<div class="cp_board">\
-    <div class="score_group">\
+    <div class="score_group"><div class="score_flex">\
     <div id="silvericon_p${id}" class="score_token score_silver score"></div><span id="silvercount_${id}" class="score_silver_text score_text">0</span>\
     <div id="tradeicon_p${id}"  class="score_token score_trade score"></div><span id="tradecount_${id}" class="score_trade_text score_text">0</span>\
     <div id="woodicon_p${id}"   class="score_token score_wood score"></div><span id="woodcount_${id}" class="score_wood_text score_text">0</span>\
     <div id="foodicon_p${id}"   class="score_token score_food score"></div><span id="foodcount_${id}" class="score_food_text score_text">0</span>\
     <div id="steelicon_p${id}"  class="score_token score_steel score"></div><span id="steelcount_${id}" class="score_steel_text score_text">0</span>\
+    </div><div class="score_flex">\
     <div id="vpicon_p${id}"     class="score_token score_vp score"></div><span id="vpcount_${id}" class="score_vp_text score_text">0</span>\
     <div id="loanicon_p${id}"   class="score_loan score score"></div><span id="loancount_${id}" class="score_loan_text score_text">0</span>\
     <div id="goldicon_p${id}"   class="score_token score_gold score"></div><span id="goldcount_${id}" class="score_gold_text score_text">0</span>\
     <div id="cowicon_p${id}"    class="score_token score_cow score"></div><span id="cowcount_${id}" class="score_cow_text score_text">0</span>\
     <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="score_copper_text score_text">0</span>\
-</div></div>';
+</div></div></div>';
 
 var jstpl_pay_button = '<span id="pay_gold" class="useFont" style="display:none">0</span> \
  <span id="pay_gold_tkn" class="log_gold token_inline" style="display:none"></span> \
@@ -327,8 +329,8 @@ var jstpl_color_number_log = '<span class="font ${color}" >${string}</span><span
 var jstpl_resource_inline = '<span title = "${type}" class="log_${type} token_inline"></span>';
 var jstpl_resource_log = '<span title = "${type}" class="log_${type} log_token"></span>';
 var jstpl_player_token_log = '<span title = "${type}_${color}" class="${type}_${color} log_${type}"></span>';
-var jptpl_track_log = '<span title ="${type}" class="log_inline_${type}"></span>';
-var jptpl_x_loan= '<span title="pay_loan" class="x_out log_inline_loan"></span>';
+var jptpl_track_log = '<span title="${type}" class="log_inline_${type}"></span>';
+var jptpl_x_loan= '<span title="pay dept" class="crossout log_inline_loan"></span>';
 
 var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 9px;"></span>${for}</span>'
 var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'

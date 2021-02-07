@@ -496,9 +496,9 @@ function (dojo, declare) {
         },
         
         formatWorkerSlotTooltip(b_info, slot_no){
-            var tt = this.getOneResourceAsDiv('worker');
-            if (slot_no == 3) { tt += this.getOneResourceAsDiv('worker'); }
-            tt += _(" Produces ") + this.getResourceArrayAsDiv(b_info['s'+slot_no], true);
+            var tt = this.getOneResourceHtml('worker');
+            if (slot_no == 3) { tt += this.getOneResourceHtml('worker'); }
+            tt += " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info['s'+slot_no], true);
             return tt;
         },
 
@@ -1129,7 +1129,7 @@ function (dojo, declare) {
                 name: b_info.name,
                 vp:   vp,
                 COST: _('Cost:'),
-                cost_vals: this.getResourceArrayAsDiv(b_info.cost, true),
+                cost_vals: this.getResourceArrayHtml(b_info.cost, true),
                 desc: this.formatDescription(b_info),
                 INCOME: _('income: '),
                 inc_vals: this.formatIncome(b_info),
@@ -1139,7 +1139,7 @@ function (dojo, declare) {
         replaceTooltipStrings(inputString){
             let _this = this;
             var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
-                    function(f){ return _this.getOneResourceAsDiv(f.substr(2, f.length -3),1,true);});
+                    function(f){ return _this.getOneResourceHtml(f.substr(2, f.length -3),1,true);});
             updatedString = updatedString.replaceAll(/(\\n)/g, '<br>') + '<br>';
             return updatedString;
         },
@@ -1159,24 +1159,24 @@ function (dojo, declare) {
                         on_build_desc += this.format_block('jptpl_x_loan', {});
                         break;
                     case 2: //BUILD_BONUS_TRADE
-                        on_build_desc += GAIN + this.getOneResourceAsDiv('trade');
+                        on_build_desc += GAIN + this.getOneResourceHtml('trade');
                         break;
                     case 3: //BUILD_BONUS_WORKER
-                        on_build_desc += GAIN + this.getOneResourceAsDiv('worker');
+                        on_build_desc += GAIN + this.getOneResourceHtml('worker');
                         break;
                     case 4: //BUILD_BONUS_RAIL_ADVANCE
                         on_build_desc += _('advance on Railroad track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                        on_build_desc += this.getOneResourceAsDiv('track', 1, true) +'<br>' +
+                        on_build_desc += this.getOneResourceHtml('track', 1, true) +'<br>' +
                         _('You may also build another building of ') ;
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
-                        on_build_desc += this.getOneResourceAsDiv('silver',2);
+                        on_build_desc += this.getOneResourceHtml('silver',2);
                         break;
                     case 7: //BUILD_BONUS_SILVER_WORKERS
-                        const WORKER = this.getOneResourceAsDiv('worker');
-                        const SILVER = this.getOneResourceAsDiv('silver');
+                        const WORKER = this.getOneResourceHtml('worker');
+                        const SILVER = this.getOneResourceHtml('silver');
                         on_build_desc +=  SILVER + _(' per ') + WORKER + '<br>'+ _('When you gain ')+ WORKER +_(' gain ') + SILVER;
                         break;
                     case 8: //BUILD_BONUS_PLACE_RESOURCES
@@ -1186,7 +1186,7 @@ function (dojo, declare) {
             }
             if (b_info.vp_b != null){
                 const END = _("End: ");
-                let vp_b = END + this.getOneResourceAsDiv('vp', 1, true) + PER_STR;
+                let vp_b = END + this.getOneResourceHtml('vp', 1, true) + PER_STR;
                 switch(b_info.vp_b){
                     case 0: //VP_B_RESIDENTIAL
                     case 1: //VP_B_COMMERCIAL
@@ -1196,13 +1196,13 @@ function (dojo, declare) {
                         vp_b += this.format_block('jstpl_color_log', {string: ASSET_STRINGS[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
                         break;
                     case 4: //VP_B_WORKER
-                        vp_b += this.getOneResourceAsDiv('worker') + "<br>";
+                        vp_b += this.getOneResourceHtml('worker') + "<br>";
                         break;
                     case 7: //VP_B_WRK_TRK
-                        vp_b += this.getOneResourceAsDiv('worker') + "<br>";
-                        vp_b += END + this.getOneResourceAsDiv('vp', 1, true) + PER_STR;
+                        vp_b += this.getOneResourceHtml('worker') + "<br>";
+                        vp_b += END + this.getOneResourceHtml('vp', 1, true) + PER_STR;
                     case 5: //VP_B_TRACK
-                        vp_b += this.getOneResourceAsDiv('track', 1, true) + "<br>";
+                        vp_b += this.getOneResourceHtml('track', 1, true) + "<br>";
                         break;
                     case 8: //VP_B_PAID_LOAN (expansion)
                         vp_b += this.format_block('jptpl_track_log', {type: 'loan'}) + "<br>";
@@ -1215,26 +1215,26 @@ function (dojo, declare) {
 
         formatIncome: function(b_info){
             var inc_vals = '';
-            const worker = this.getOneResourceAsDiv('worker', 1, true);
+            const worker = this.getOneResourceHtml('worker', 1, true);
             if (b_info.inc != null){
                 if (b_info.inc.silver =='x'){
-                    inc_vals = this.getOneResourceAsDiv('silver', 1, true) +PER_STR+ worker +_('(max 5)') + '<br>';
+                    inc_vals = this.getOneResourceHtml('silver', 1, true) +PER_STR+ worker +_('(max 5)') + '<br>';
                 } else if (b_info.inc.loan == '-1') {
                     inc_vals = _('Pay off ')+ this.format_block('jptpl_track_log', {type: 'loan'}) + '<br>';
                 } else {
-                    inc_vals = this.getResourceArrayAsDiv(b_info.inc, true) + '<br>';
+                    inc_vals = this.getResourceArrayHtml(b_info.inc, true) + '<br>';
                 }
             }
             if (b_info.slot != null){
                 if (b_info.slot ==1){
-                    inc_vals +=  worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>';
+                    inc_vals +=  worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s1, true) +'<br>';
                 }
                 if (b_info.slot ==2){
-                    inc_vals += worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>' 
-                              + worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s2, true) +'<br>';
+                    inc_vals += worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s1, true) +'<br>' 
+                              + worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s2, true) +'<br>';
                 }
                 if (b_info.slot ==3){
-                    inc_vals += worker + worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s3, true) +'<br>';
+                    inc_vals += worker + worker + " "+ this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s3, true) +'<br>';
                 }
             }
             return inc_vals;
