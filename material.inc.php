@@ -40,10 +40,17 @@ $this->special_resource_map = array(
   'vp8' => array('vp'=>8),
 );
 
+$this->trade_map = array(
+  0=>'buy_wood', 1=>'buy_food', 2=>'buy_steel', 3=>'buy_gold', 4=>'buy_copper', 5=>'buy_cow',
+  6=>'sell_wood', 7=>'sell_food', 8=>'sell_steel', 9=>'sell_gold', 10=>'sell_copper',11=>'sell_cow', 
+  12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan', 16=>'payloan_silver', 17=>'payloan_gold');
+
+
 $this->resource_info = array(
   'silver' => array(
     'name'   => _("Silver"),
     'db_int' => SILVER,
+    'bank'   => array(),
     'tt'     => clienttranslate('${silver}\nSilver:\nUsed to pay ${worker} and to pay for auctions'),
   ),
   'workers' => array(
@@ -59,31 +66,39 @@ $this->resource_info = array(
   'wood' => array(
     'name'   => _("Wood"),
     'db_int' => WOOD,
+    'trade_val' => array('silver'=> 1),
     'tt'     => clienttranslate('${wood}\nWood:\nRequired to build some buildings'),
   ),
   'food' => array(
     'name'   => _("Food"),
     'db_int' => FOOD,
+    'trade_val' => array('silver'=> 2),
+    'market' => array('wood'=>1),
     'tt'     => clienttranslate('${food}\nFood:\nRequired to build some buildings\nUsed to Hire new ${worker}'),
   ),
   'steel' => array(
     'name'   => _("Steel"),
     'db_int' => STEEL,
+    'trade_val' => array('silver'=> 3),
+    'market' => array('food'=>1),
     'tt'     => clienttranslate('${steel}\nSteel:\nRequired to build some buildings'),
   ),
   'gold' => array(
     'name'   => _("Gold"),
     'db_int' => GOLD,
+    'trade_val' => array('silver'=> 4),
     'tt'     => clienttranslate('${gold}\nGold:\nRequired to build some buildings\nCan be used to pay Workers / Auction costs(as 5 silver)\nEnd: Worth ${vp2}'),
   ),
   'copper' => array(
     'name'   => _("Copper"),
     'db_int' => COPPER,
+    'trade_val' => array('gold'=> 1),
     'tt'     => clienttranslate('${copper}\nCopper:\nRequired to build some buildings\nEnd: Worth ${vp2}'),
   ),
   'cow' => array(
     'name'   => _("Livestock"),
     'db_int' => COW,
+    'trade_val' => array('gold'=> 1),
     'tt'     => clienttranslate('${cow}\nLivestock:\nRequired to build some buildings\nEnd: Worth ${vp2}'),
   ),
   'loan' => array(

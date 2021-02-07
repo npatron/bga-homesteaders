@@ -54,6 +54,26 @@
    text-decoration-color: black;
    text-decoration-thickness: 1.5px;
 }
+.crossout:before
+{ 
+   content: "X";
+   position: absolute;
+   left: -2px;
+   top: -5px;
+   height: 133%;
+   font-size: 32px;
+   text-align: center;
+   line-height: 100%;
+   overflow: hidden;
+   color: black;
+   opacity: 42%;
+}
+.log_wood.crossout:before{
+   left: -7px;
+}
+.log_inline_loan.crossout:before{
+   left: 5px;
+}
 
 .res {text-decoration: underline;
    -webkit-text-decoration-color: lightgreen;
@@ -103,6 +123,9 @@
    font-size: 20px;
    font-variant: small-caps;
 }
+.auction_column .auction_string{
+   font-size: 30px;
+}
 .alignleft {float: left;}
 .aligncenter {float: center;}
 .alignright {float: right;}
@@ -113,17 +136,29 @@
 }
 
 
-/*===============*
- * Main Container*
- *===============*/
+/*================*
+ * Main Container *
+ *    *
+ * wide enough for* 
+ *  buttons trade *
+ *   --board--    *
+ ******************/
 #main_container {
-   display: grid;
-   grid-template-columns: auto;
+   display: flex;
    grid-gap: 3px;
+   flex-wrap: wrap;
 }
-#currentPlayer {
-   grid-column: 1/-1;
+.current_player {
+   margin-top: 4px;
+   flex-grow: 10;
    order: 0;
+   flex-basis: 75%;
+}
+#board_area{
+   order: 4;
+   flex-direction: column;
+   display: flex;
+   flex-grow: 1;
 }
 #board {
    background-image: url('img/auctionBoard.jpg');
@@ -132,29 +167,41 @@
    height: 545px;
    background-size: 740px 545px;
    background-repeat: no-repeat;
-   order: 3;
+   margin:auto;
+   order: 1;
 }
 #top {
-   display: grid;
-   order: 1;
-   grid-column: 1/-1;
-   grid-template-columns: repeat(auto-fill, 205px);
-   grid-auto-rows: 30px;
-   align-items: center;
-   grid-gap: 2px;
+   display: flex;
+   order: -1;
+   align-items: stretch;
+   flex-direction: row;
+   column-gap: 1px;
+   flex-wrap: wrap;
 }
 #trade_top {
-   order: 2;
+   order: 1;
+}
+#top_texts {
+   width: 180px;
+}
+.player_zone{
+   margin-top: 4px;
+   flex-grow: 10;
+   order: 10;
+   min-width: 500px;
+   flex-basis: min-content;
 }
 
 /*============*
  * Button css *
  *============*/
  
- #btn_pay_done{
-   width: 115px;
-}
 #confirm_trade_btn{
+   height: 17px;
+   width: 180px;
+   order: 8;
+}
+#undo_last_trade_btn{
    height: 17px;
    width: 180px;
    order: 8;
@@ -162,7 +209,7 @@
 #undo_trades_btn{
    height: 17px;
    width: 180px;
-   order: 7;
+   order: 8;
 }
 a#tgl_main_bld{
    height: 17px;
@@ -185,17 +232,12 @@ a#tgl_future_bld{
    order: 6;
 }
 #top_texts {
-   margin-top: auto;
-   margin-bottom: auto;
-   grid-row: span 3;
    order: 0;
-   grid-column: 1/2;
-   display: grid;
-   grid-auto-rows: 30px;
 }
 #round_text {
-   order: 1/2;
-   margin: auto;
+   margin-left: 10px;
+   margin-top: auto;
+   margin-bottom: auto;
 }
 #useSilver_form {
    margin: auto;
@@ -208,39 +250,98 @@ button:disabled {
 }
 /*================*
  * Main Container *
- *  Custom Width  *
+ *  large size    *
  * wide enough for* 
  * buttons trade  *
  * buttons board  *
  ******************/
- @media all and (min-width:1200px){
-   #main_container {
-      grid-template-columns: 205px 740px auto;
-   }
+ @media all and (min-width:1400px){
    #top{
-      grid-column: 1 / 2;
-      grid-row: 2 / 4;
-      grid-template-columns: 205px;
+      flex-direction: column;
    }
-   #board {
-      grid-column: 2 / 3;
-   }
-   #trade_top {
-      grid-column: 2 / 3;
-   }
-   #undo_trades_btn{order: 2;}
-   #confirm_trade_btn{order: 1;}
 }
 
-/*=====================* 
- * wide enough for     *
- * buttons trade board * 
- * all on the same line* 
- *=====================*/
-@media all and (min-width:1890px){
-   #main_container {
-      grid-template-columns: 205px 690px 740px auto;
-   }
+/*=================* 
+ * BreadCrumbs for *
+ * transaction log * 
+ *=================*/
+ .anchor {
+	position: relative;
+	width: 100%; 
+	overflow-x: auto;
+	overflow-y: hidden;
+	/* text-align: center; */
+	
+	/*** GI : center interface **/
+    margin: auto;	
+    /*** GI (end) **/
+    
+}
+
+.anchor>* {
+	display: inline-block;
+	text-align: left;
+}
+
+.breadcrumbs {
+   display: flex;
+   flex-wrap: wrap;
+	text-align: center;
+	line-height: 40px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, .3);
+	margin-bottom: 10px;
+   overflow: hidden; 
+	background: #b5552b;
+}
+
+.breadcrumbs_element {
+	display: inline-block;
+	height: 40px;
+	padding: 5px 0 5px 35px;
+	background-color: #d5c392;
+	background-color: #813818;
+	position: relative;
+	float: left;
+	color: antiquewhite;
+}
+
+.breadcrumbs_element:after {
+	content: " ";
+	width: 0;
+	height: 0;
+	border-top: 25px solid transparent;
+	/* Go big on the size, and let overflow hide */
+	border-bottom: 25px solid transparent;
+	border-left: 30px solid #813818;
+	position: absolute;
+	top: 50%;
+	margin-top: -25px;
+	left: 100%;
+	z-index: 3;
+}
+
+.breadcrumbs_element:before {
+	content: " ";
+	width: 0;
+	height: 0;
+	border-top: 25px solid transparent;
+	border-bottom: 25px solid transparent;
+	border-left: 30px solid white;
+	position: absolute;
+	top: 50%;
+	margin-top: -25px;
+	margin-left: 1px;
+	left: 100%;
+	z-index: 2;
+}
+
+.breadcrumbs_element.font{
+   /* background: #e6d8b1; */
+   background-color: #b5552b;
+}
+   
+.breadcrumbs_element.font:after {
+   border-left-color: #b5552b;
 }
 
 /*====================*
@@ -487,12 +588,11 @@ div#train_bonus_5_vp{
 
 /*=============================*
  * Trade Board                 *
- * (and trade Selection Zones) *
  *=============================*/
 div#trade_board {
    background-image: url('img/trade.jpg');
    position: relative;
-   width: 690px;
+   width: 512px;
    height: 180px;
    background-size: 690px auto;
    background-repeat: no-repeat;
@@ -500,74 +600,85 @@ div#trade_board {
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
+.trade_size {
+   width: 512px;
+   height: 180px;
+}
+
+div#trade_market_wood_food{
+   left: 38px;
+   bottom: 80px;
+   position: absolute;
+   width: 64px;
+   height: 27px;
+}
+div#trade_market_food_steel{
+   left: 38px;
+   bottom: 57px;
+   position: absolute;
+   width: 64px;
+   height: 20px;
+}
+div#trade_bank_trade_silver{
+   left: 38px;
+   bottom: 80px;
+   position: absolute;
+   width: 64px;
+   height: 27px;
+}
+
 .trade_option {
    height: 19%;
-   width: 15%;
+   width: 21%;
    position: absolute;
 }
 div#trade_buy_wood{
-   left: 1.5%;
+   left: 2%;
    top: 16%;
 }
 div#trade_buy_food{
-   left: 18%;
+   left: 24%;
    top: 16%;
 }
 div#trade_buy_steel{
-   left: 1.5%;
+   left: 2%;
    top: 38%;
 }
 div#trade_buy_gold{
-   left: 18%;
+   left: 24%;
    top: 38%;
 }
 div#trade_buy_copper{
-   left: 1.5%;
+   left: 2%;
    top: 59.5%;
 }
-div#trade_buy_livestock{
-   left: 18%;
+div#trade_buy_cow{
+   left: 24%;
    top: 59.5%;
 }
 div#trade_sell_wood{
-   left: 39.5%;
+   left: 52.7%;
    top: 16%;
 }
 div#trade_sell_food{
-   left: 55.8%;
+   left: 75%;
    top: 16%;
 }
 div#trade_sell_steel{
-   left: 39.5%;
+   left: 52.7%;
    top: 38%;
 }
 div#trade_sell_gold{
-   left: 55.8%;
+   left: 75%;
    top: 38%;
 }
 div#trade_sell_copper{
-   left: 39.5%;
+   left: 52.7%;
    top: 59.5%;
 }
-div#trade_sell_livestock{
-   left: 55.8%;
+div#trade_sell_cow{
+   left: 75%;
    top: 59.5%;
-}
-div#trade_market_wood_food{
-   left: 79.5%;
-   top: 23.5%;
-}
-div#trade_market_food_steel{
-   left: 79.5%;
-   top: 45.5%;
-}
-div#trade_bank_trade_silver{
-   left: 79.5%;
-   bottom: 0%;
-}
-.trade_size {
-   width: 690px;
-   height: 180px;
 }
 
 /*================*
@@ -594,24 +705,41 @@ div#trade_bank_trade_silver{
 .main_building_zone {
    position: relative;
    display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(144px, auto));
+   grid-template-columns: repeat(auto-fill, minmax(155px, auto));
    grid-template-rows: repeat(auto-fill, minmax(200px, auto));
 }
-#future_auction_container {
-   grid-template-columns: repeat(auto-fill, 132px);
-   grid-template-rows: repeat(auto-fill, 202px);
+#future_auction_container{
+   flex-direction: row;
 }
-.future_auction_zone {
-   display: inline-grid;
+#main_building_container{
+   min-width: 700px;
+}
+.building_container {
+   min-width: 600px;
+   flex-grow: 10;
+   margin-top: 4px;
+   margin-bottom: 4px;
+   order: 8;
+   display: flex;
+   flex-direction: column;
+}
+.auction_column{
+   display: flex;
+   flex-direction: column;
+   flex-grow: 10;
 }
 .auction_string {
-   position: absolute;
+   order: 0;
 }
-
-#player_zones {
+.future_auction_zone {
+   display: grid;
+   order: 2;
+   flex-grow: 10;
+}
+/* #player_zones {
    display: grid;
    grid-template-columns: repeat(auto-fit, minmax(600px, auto));
-}
+} */
 
 /*===============*
  * State classes *
@@ -747,6 +875,11 @@ div#trade_bank_trade_silver{
    position: relative;
    margin: auto;
 }
+.player_text {
+   position: relative;
+   margin: auto;
+   font-size: x-large;
+}
 .score_group {
    display: grid;
    grid-template-columns: repeat(2, 35px 12px) repeat(3, 39px 6px);
@@ -761,24 +894,84 @@ div#trade_bank_trade_silver{
    position: relative;
 }
 .score_token {
-   background-image: url('img/drawn_tokens.png');
+   background-image: url('img/drawn_tokens_2.png');
    position: relative;
    margin: auto;
-   background-size: 375px 200px;
 }
+.score_silver{
+   background-size: 265.2px 83.3px;
+   background-position: -64.85px 0px;
+   width: 31.30px;
+   height: 30px;
+   grid-column: 1 / 2;
+   grid-row: 1 / 2;
+}
+.score_silver_text {
+   grid-column: 2 / 3;
+   grid-row: 1 / 2;
+}
+.score_trade{
+   background-size: 279.3px 87.8px;
+   background-position: -100.85px 0px;
+   width: 30.64px;
+   height: 30px;
+   grid-column: 3 / 4;
+   grid-row: 1 / 2;
+}
+.score_trade_text {
+   grid-column: 4 / 5;
+   grid-row: 1 / 2;
+}
+.score_wood{
+   background-size: 257.4px 80.9px;
+   background-position: 0px 0px;
+   width: 12px;
+   height: 30px;
+   grid-column: 5 / 6;
+   grid-row: 1 / 2;
+   -webkit-transform: rotate(45deg);
+   -moz-transform: rotate(45deg);
+   transform: rotate(45deg);
+}
+.score_wood_text {
+   grid-column: 6 / 7;
+   grid-row: 1 / 2;
+}
+.score_food {
+   background-size: 320.1px 100.6px;
+   background-position: -50px 0px;
+   width: 28px;
+   height: 30px;
+   grid-column: 7 / 8;
+   grid-row: 1 / 2;
+}
+.score_food_text {
+   grid-column: 8 / 9;
+   grid-row: 1 / 2;
+}
+.score_steel{
+   background-size: 340.9px 107.1px;
+   background-position: -75.19px -69.74px;
+   width: 31.17px;
+   height: 30px;
+   grid-column: 9 / 10;
+   grid-row: 1 / 2;
+   left: 2px;
+}
+.score_steel_text {
+   grid-column: 10 / 11;
+   grid-row: 1 / 2;
+}
+/* row 2 */
 .score_vp{
-   background-position: -206px 0px;
-   width: 56px;
-   height: 58px;
-   -webkit-transform: scale(.5);
-   -moz-transform: scale(.5);
-   transform: scale(.5);
+   background-size: 224.4px 70.5px;
+   background-position: -105.64px 0px;
+   width: 28.72px;
+   height: 30px;
    grid-column: 1 / 2;
    grid-row: 2 / 3;
-   left: -8px;
-   top: -9px;
 }
-.player_vp {
+.score_vp_text {
    grid-column: 2 / 3;
    grid-row: 2 / 3;
 }
@@ -796,120 +989,221 @@ div#trade_bank_trade_silver{
    left: 12px;
    top: 9px;
 }
-.player_loan {
+.score_loan_text {
    grid-column: 4 / 5;
    grid-row: 2 / 3;
-}
-.score_wood{
-   background-position: 0px 0px;
-   width: 20.5px;
-   height: 51px;
-   -webkit-transform: scale(.7) rotate(45deg);
-   -moz-transform: scale(.7) rotate(45deg);
-   transform: scale(.7) rotate(45deg);
-   grid-column: 5 / 6;
-   grid-row: 1 / 2;
-   top: -4px;
-   left: 3px;
-}
-.player_wood {
-   grid-column: 6 / 7;
-   grid-row: 1 / 2;
-}
-.score_food{
-   background-position: -68.5px 0px;
-   width: 38.5px;
-   height: 41px;
-   -webkit-transform: scale(.7);
-   -moz-transform: scale(.7);
-   transform: scale(.7);
-   grid-column: 7 / 8;
-   grid-row: 1 / 2;
-   left: 2px;
-}
-.player_food {
-   grid-column: 8 / 9;
-   grid-row: 1 / 2;
-}
-.score_steel{
-   background-position: -96.5px -111px;
-   width: 40px;
-   height: 38.5px;
-   -webkit-transform: scale(.7);
-   -moz-transform: scale(.7);
-   transform: scale(.7);
-   grid-column: 9 / 10;
-   grid-row: 1 / 2;
-   left: 2px;
-   top: -1px;
-}
-.player_steel {
-   grid-column: 10 / 11;
-   grid-row: 1 / 2;
-}
-.score_silver{
-   background-position: -107px 0px;
-   width: 51px;
-   height: 49.5px;
-   -webkit-transform: scale(.6);
-   -moz-transform: scale(.6);
-   transform: scale(.6);
-   grid-column: 1 / 2;
-   grid-row: 1 / 2;
-   left: -6px;
-   top: -5px;
-}
-.player_silver {
-   grid-column: 2 / 3;
-   grid-row: 1 / 2;
-}
-.score_trade{
-   background-position: -158px 0px;
-   width: 48px;
-   height: 47px;
-   -webkit-transform: scale(.6);
-   -moz-transform: scale(.6);
-   transform: scale(.6);
-   grid-column: 3 / 4;
-   grid-row: 1 / 2;
-   left: -3px;
-   top: -4px;
-}
-.player_trade {
-   grid-column: 4 / 5;
-   grid-row: 1 / 2;
+   height: 20px;
+   width: 20px;
+   background-size: 75px 30px;
 }
 .score_gold{
-   background-position: -20.5px 0px;
-   width: 47.5px;
-   height: 46px;
-   -webkit-transform: scale(.6);
-   -moz-transform: scale(.6);
-   transform: scale(.6);
+   background-size: 285.3px 89.7px;
+   background-position: -13.37px 0px;
+   width: 31.3px;
+   height: 30px;
    grid-column: 5 / 6;
    grid-row: 2 / 3;
-   left: -3px;
-   top: -3px;
 }
-.player_gold {
+.score_gold_text {
    grid-column: 6 / 7;
    grid-row: 2 / 3;
 }
 .score_cow{
-   background-position: -51.5px -50px;
-   width: 85.5px;
-   height: 61.5px;
-   -webkit-transform: scale(.38, .45);
-   -moz-transform: scale(.38, .45);
-   transform: scale(.38, .45);
+   background-size: 320px 108.6px;
+   background-position: -38px -40px;
+   width: 38px;
+   height: 30px;
    grid-column: 7 / 8;
    grid-row: 2 / 3;
-   left: -21px;
-   top: -9px;
 }
-.player_cow {
+.score_cow_text {
    grid-column: 8 / 9;
    grid-row: 2 / 3;
+}
+.score_copper{
+   background-size: 305px 121.3px;
+   background-position: -73.8px -46.76px;
+   width: 38px;
+   height: 30px;
+   grid-column: 9 / 10;
+   grid-row: 2 / 3;
+}
+.score_copper_text {
+   grid-column: 10 / 11;
+   grid-row: 2 / 3;
+}
+
+.player_resources{
+   display: flex;
+   flex-wrap: wrap;
+}
+.player_resource_group{
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
+}
+.player_wider_resource_group{
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
+}
+.this_player_resources{
+   display: flex;
+   flex-wrap: wrap;
+} 
+.this_player_resource_group{
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
+}
+.this_player_wider_resource_group{
+   display: flex;
+   flex-grow: 1;
+   min-width: 70px;
+   max-width: 90px;
+}
+.building_container .biggerFont{
+   margin-left: auto;
+   margin-right: auto;
+}
+.all_sizing .this_player_resource_group{
+   min-width: 100px;
+   max-width: 120px;
+}
+.all_sizing .this_player_wider_resource_group{
+   min-width: 110px;
+   max-width: 125px;
+}
+.this_player_resource_group.expand{
+   min-width: 100px;
+   max-width: 120px;
+}
+.this_player_wider_resource_group.expand{
+   min-width: 110px;
+   max-width: 125px;
+}
+.offset_text{
+   display: grid;
+   grid-template-rows: repeat(3, 1fr);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+}
+.negative{
+   color: darkred;
+}
+.positive{
+   color: green;
+}
+.new_text {
+   position: relative;
+   font-size: x-large;
+   margin: auto;
+}
+.player_text_loan {
+   position: relative;
+   margin: auto;
+   font-size: x-large;
+}
+.new_text_loan {
+   position: relative;
+   font-size: x-large;
+   margin: auto;
+}
+.buy{
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 875px 275px;
+   background-position: -273px -178px;
+   height: 20px;
+   width: 20px;
+   grid-row: 1 / 2;
+}
+.sell{
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 875px 275px;
+   background-position: -296px -178px;
+   height: 20px;
+   width: 20px;
+   grid-row: 3 / 4;
+}
+.player_silver {
+   background-size: 353.5px 111.1px;
+   background-position: -86.46px 0px;
+   width: 41.21px;
+   height: 40px;
+}
+.signed{
+   margin: auto;
+   grid-row: 2 / 3;
+}
+.player_trade {
+   background-size: 353.5px 117px;
+   background-position: -127px 0px;
+   width: 40px;
+   height: 40px;
+}
+.player_loan {
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -86% 50%;
+   background-size: 150px 60px;
+   height: 40px;
+   width: 40px;
+   position: relative;
+   margin: auto;
+ }
+.take_loan {
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 875px 275px;
+   background-position: -273px -178px;
+   height: 20px;
+   width: 20px;
+   grid-row: 1 / 2;
+}
+.player_vp {
+   background-size: 299.1px 94px;
+   background-position: -140.85px 0px;
+   width: 38.29px;
+   height: 40px;
+}
+.player_wood {
+   background-size: 428.9px 134.8px;
+   background-position: 0px 0px;
+   width: 20.1px;
+   height: 50px;
+}
+.player_food {
+   background-size: 426px 134.1px;
+   background-position: -67px 0px;
+   width: 36.5px;
+   height: 40px;
+}
+.player_steel {
+   background-size: 454.5px 142.9px;
+   background-position: -100.26px -92.99px;
+   width: 41px;
+   height: 40px;
+}
+.player_gold{
+   background-size: 380px 119.6px;
+   background-position: -18px 0px;
+   width: 41px;
+   height: 40px;
+}
+.player_cow {
+   background-size: 460.5px 144.7px;
+   background-position: -56.84px -53.68px;
+   width: 55.26px;
+   height: 40px;
+}
+.player_copper {
+   background-size: 409px 161.8px;
+   background-position: -101px -62.35px;
+   width: 50px;
+   height: 40px;
 }
 .tt_loan{
    background-image: url('img/rail_debt_85x102.png');
@@ -928,21 +1222,13 @@ div#trade_bank_trade_silver{
    display: block;
    float: center;
 }
-.score_copper{
-   background-position: -136.5px -54px;
-   width: 76px;
-   height: 47px;
-   -webkit-transform: scaleX(.42, .55);
-   -moz-transform: scaleX(.42, .55);   
-   transform: scale(.42, .55);
-   grid-column: 9 / 10;
-   grid-row: 2 / 3;
-   left: -17px;
+.bread_track{
+   background-image: url('img/rail_debt_85x102.png');
+   position: relative;
    top: -5px;
-}
-.player_copper {
-   grid-column: 10 / 11;
-   grid-row: 2 / 3;
+   height: 50px;
+   background-size: 123px 51px;
+   width: 40px;
 }
 .tt{
    -webkit-transform: scale(1);
@@ -964,7 +1250,7 @@ div#trade_bank_trade_silver{
 .player_token_zone {
    position: relative;
    display: grid;
-   grid-template-columns: repeat(auto-fill, 42.5px);
+   grid-template-columns: repeat(auto-fill, 11.5px);
    grid-template-rows: repeat(auto-fill, 51px);
 }
 .bid_token_zone {
@@ -1000,12 +1286,12 @@ div#trade_bank_trade_silver{
    flex-direction: row-reverse;
 }
 .token_inline{
-   background-image: url('img/drawn_tokens.png');
+   background-image: url('img/drawn_tokens_2.png');
    position: relative;
    display: inline-block;
 }
 .log_token {
-   background-image: url('img/drawn_tokens.png');
+   background-image: url('img/drawn_tokens_2.png');
    position: relative;
    overflow: hidden;
    flex-direction: row-reverse;
@@ -1015,7 +1301,7 @@ div#trade_bank_trade_silver{
  }
 
 .log_wood{
-   background-size: 147.1px 78.4px;
+   background-size: 175px 53px;;
    background-position: 0px 0px;
    width: 8px;
    height: 20px;
@@ -1024,115 +1310,130 @@ div#trade_bank_trade_silver{
    margin-left: -2px;
  }
 .log_gold{
-   background-size: 157.9px 84.2px;
+   background-size: 190.2px 59.8px;
    background-position: -8.8px 0px;
-   width: 20px;
-   height: 19.4px;
+   width: 20.8px;
+   height: 20px;
 }
 .log_food{
-   background-size: 182.9px 97.6px;
+   background-size: 213.4px 67.1px;
    background-position: -33.4px 0px;
    width: 18.8px;
    height: 20px;
 }
 .log_silver{
-   background-size: 147.1px 78.4px;
-   background-position: -42px 0px;
-   width: 20px;
-   height: 19.6px;
+   background-size: 176.8px 55.6px;
+   background-position: -43.23px 0px;
+   width: 20.6px;
+   height: 20px;
 }
 .log_trade{
-   background-size: 156.3px 83.3px;
-   background-position: -65.8px 0px;
-   width: 20px;
-   height: 19.6px;
+   background-size: 186.2px 58.5px;
+   background-position: -67.23px 0px;
+   width: 20.4px;
+   height: 20px;
+}
+.log_loan{
+   display: inline-block;
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -87% 30%;
+   top: 4px;
+   height: 21px;
+   width: 31px;
+   background-size: 115px 63px; 
 }
 .log_vp0 {
-   background-size: 133.9px 71.4px;
-   background-position: 0px -48.5px;
-   width: 20px;
-   height: 21px;
+   background-size: 149.6px 47px;
+   background-position: -128.21px 0px;
+   width: 19.15px;
+   height: 20px;
 }
 .log_vp{
-   background-size: 133.9px 71.4px;
-   background-position: -74px 0px;
-   width: 19.5px;
-   height: 20.7px;
+   background-size: 149.6px 47px;
+   background-position: -70.43px 0px;
+   width: 19.15px;
+   height: 20px;
 }
 .log_vp2{
-   background-size: 131.6px 70.2px;
-   background-position: -92.8px -0px;
-   width: 19.1px;
-   height: 20.7px;
+   background-size: 149.6px 46.2px;
+   background-position: -88.07px -0px;
+   width: 19.16px;
+   height: 20px;
 }
 .log_vp3{
-   background-size: 128.2px 68.4px;
-   background-position: -109.1px -0px;
-   width: 19.1px;
+   background-size: 149.6px 47px;
+   background-position: -109.06px -0px;
+   width: 19.15px;
    height: 20px;
 }
 .log_vp4{
-   background-size: 126.1px 67.2px;
-   background-position: -71.2px -19.5px;
-   width: 20px;
-   height: 19.7px;
+   background-size: 149.6px 47px;
+   background-position: -69.23px -21.71px;
+   width: 19.15px;
+   height: 20px;
 }
 .log_vp6{
-   background-size: 84.3px 44.9px;
-   background-position: -61.5px -13.1px;
-   width: 20px;
-   height: 20.8px;
+   background-size: 149.6px 47px;
+   background-position: -89.57px -21.71px;
+   width: 19.15px;
+   height: 20px;
 }
 .log_vp8{
-   background-size: 133.9px 71.4px;
-   background-position: -56.8px -35.9px;
-   width: 19.3px;
+   background-size: 149.6px 47px;
+   background-position: -109.06px -21.71px;
+   width: 19.15px;
    height: 20px;
 }
 .log_vp10{
-   background-size: 133.9px 71.4px;
-   background-position: -77.5px -41.6px;
-   width: 19.3px;
+   background-size: 149.6px 47px;
+   background-position: -129.23px -21.71px;
+   width: 19.15px;
    height: 20px;
 }
 .log_worker{
-   background-size: 91.5px 48.8px;
-   background-position: 0px -13.2px;
-   width: 12.2px;
+   background-size: 106.7px 33.5px;
+   background-position: 0px -13.17px;
+   width: 13.17px;
    height: 20px;
 }
 .log_container .log_worker:not(:last-child) {
    margin-left: -8px;
  }
 .log_cow{
-   background-size: 122px 65px;
-   background-position: -16.75px -16.26px;
-   width: 27.8px;
+   background-size: 230.3px 72.4px;
+   background-position: -28.42px -26.84px;
+   width: 27.63px;
    height: 20px;
 }
 .log_copper{
-   background-size: 156.25px 83.3px;
-   background-position: -56.9px -22.5px;
-   width: 31.6px;
+   background-size: 257.4px 80.9px;
+   background-position: -63.24px -31.18px;
+   width: 31.76px;
    height: 20px;
 }
 .log_track{
-   background-size: 194.8px 103.9px;
-   background-position: -29.4px -58.4px;
-   width: 19.5px;
+   background-size: 227.3px 71.4px;
+   background-position: -29.35px -46.49px;
+   width: 19.48px;
    height: 20px;
 }
 .log_steel{
-   background-size: 187.5px 100px;
-   background-position: -48.3px -55.3px;
-   width: 20px;
-   height: 19.3px;
+   background-size: 227.3px 71.4px;
+   background-position: -50.13px -46.49px;
+   width: 20.78px;
+   height: 20px;
 }
 .log_arrow{
-   background-size: 454.5px 242.4px;
-   background-position: -165.5px -135.2px;
+   background-size: 603.4px 189.7px;
+   background-position: -224.14px -72.41px;
+   width: 22.76px;
+   height: 20px;
+}
+.log_inc_arrow{
+   background-size: 546.9px 171.9px;
+   background-position: -173.75px -115.63px;
    width: 20px;
-   height: 17.6px;
+   height: 20px;
 }
 
 .log_inline_track{
@@ -1160,10 +1461,11 @@ div#trade_bank_trade_silver{
    background-image: url('img/rail_debt_85x102.png');
    background-position: 0% 0%;
    height: 102px;
-   width: 85px;
+   width: 84px;
    background-size: 255px 102px;
-   grid-column: span 2;
+   grid-column: span 8;
    grid-row: span 2;
+   order: 5;
 }
 /*===============*
  * Worker Tokens *
@@ -1606,8 +1908,16 @@ div#auction_tile_30 {
    background-position: 87.5% 100%;
    order: 35;
 }
-#first_player_tile { /* First Player */
+.fp_tile { /* First Player */
    background-position: 100% 100%;
+}
+.fp_icon {
+   -webkit-transform: scale(.25, .25);
+   -moz-transform: scale(.25, .25);
+   transform: scale(.25, .25); 
+   position: absolute;
+   left: 95px;
+   top: -76px;
 }
 /* EXPANSION BUILDINGS */
 .build_tile_36 { /* Purple homestead */

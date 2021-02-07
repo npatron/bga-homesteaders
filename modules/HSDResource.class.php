@@ -32,8 +32,20 @@ class HSDresource extends APP_GameClass
      * updating the trackers: bid_loc, rail_adv, 
      */
     function updateResource($p_id, $type, $amount){
-        $sql = "UPDATE `resources` SET `".$type."`=".$type."+".$amount." WHERE `player_id`= '".$p_id."'";
-        $this->game->DbQuery( $sql );
+        $this->game->DbQuery( "UPDATE `resources` SET `$type`=$type + $amount WHERE `player_id`= '$p_id'");
+    }
+
+    // Payment toggles, (for pay worker state).
+    function getPaid($p_id){
+        return $this->game->getUniqueValueFromDB( "SELECT `paid` FROM `resources` WHERE `player_id`='$p_id'" ); 
+    }
+
+    function setPaid($p_id, $val=1){
+        $this->game->DbQuery( "UPDATE `resources` SET `paid`='$val' WHERE `player_id`='$p_id'");
+    }
+
+    function clearPaid(){
+        $this->game->DbQuery( "UPDATE `resources` SET `paid`='0' ");
     }
 
     ////// RESOURCE CLIENT & DB MANIPULATION //////
@@ -341,7 +353,7 @@ class HSDresource extends APP_GameClass
     }
 
     function canPlayerAfford($p_id, $r_arr){
-        $sql = "SELECT * FROM `resources` WHERE `player_id` ='".$p_id."'";
+        $sql = "SELECT `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE `player_id` ='".$p_id."'";
         $p_resources = $this->game->getObjectFromDB($sql);
         $enough = true;
         foreach( $r_arr as $key => $resource){
@@ -352,9 +364,8 @@ class HSDresource extends APP_GameClass
     
     function collectIncome($p_id) 
     {
-        $sql = "SELECT `track` FROM `resources` WHERE `player_id`='".$p_id."'";
-        $p_tracks = $this->game->getUniqueValueFromDB( $sql ); 
-        $this->game->Building->buildingIncomeForPlayer($p_id);
+        $p_tracks = $this->game->getUniqueValueFromDB( "SELECT `track` FROM `resources` WHERE `player_id`='$p_id'" ); 
+        $this->game->Building->buildingIncomeForPlayer( $p_id );
         if($p_tracks > 0) {
             $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, array('track'=>'track'));
         }
@@ -444,81 +455,36 @@ class HSDresource extends APP_GameClass
         $tradeFor = array ();
         $sell = false;
         $building_name = "";
-        switch($tradeAction){
-            case 'buy_wood':
-                $tradeAway['silver'] = 1;
-                $tradeFor['wood'] = 1;
+        $tradeAct_segs = explode('_',$tradeAction);
+        switch($tradeAct_segs[0]){
+            case 'buy':
+                $type = $tradeAct_segs[1];
+                $tradeAway = array_merge($tradeAway, 
+                    $this->game->resource_info[$type]['trade_val']);
+                $tradeFor[$type] = 1;
             break;
-            case 'buy_food':
-                $tradeAway['silver'] = 2;
-                $tradeFor['food'] = 1;
-            break;
-            case 'buy_steel':
-                $tradeAway['silver'] = 3;
-                $tradeFor['steel'] = 1;
-            break;
-            case 'buy_gold':
-                $tradeAway['silver'] = 4;
-                $tradeFor['gold'] = 1;
-            break;
-            case 'buy_copper':
-                $tradeAway['gold'] = 1;
-                $tradeFor['copper'] = 1;
-            break;
-            case 'buy_livestock':
-                $tradeAway['gold'] = 1;
-                $tradeFor['cow'] = 1;
-            break;
-            case 'sell_wood':
-                $tradeAway['wood'] = 1;
-                $tradeFor['silver'] = 1;
+            case 'sell':
+                $type = $tradeAct_segs[1];
+                $tradeAway[$type] = 1;
+                $tradeFor = $this->game->resource_info[$type]['trade_val'];
                 $tradeFor['vp'] = 1;
                 $sell = true;
             break;
-            case 'sell_food':
-                $tradeAway['food'] = 1;
-                $tradeFor['silver'] = 2;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_steel':
-                $tradeAway['steel'] = 1;
-                $tradeFor['silver'] = 3;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_gold':
-                $tradeAway['gold'] = 1;
-                $tradeFor['silver'] = 4;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_copper':
-                $tradeAway['copper'] = 1;
-                $tradeFor['gold'] = 1;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'sell_livestock':
-                $tradeAway['cow'] = 1;
-                $tradeFor['gold'] = 1;
-                $tradeFor['vp'] = 1;
-                $sell = true;
-            break;
-            case 'market_wood_food':
+            case 'market':
+                $type = $tradeAct_segs[1];//food or steel
                 $building_name = array('str'=>'Market', 'type'=>TYPE_COMMERCIAL);
-                $tradeAway['wood'] = 1;
-                $tradeFor['food'] = 1;
+                $tradeAway = array_merge($tradeAway, $this->game->resource_info[$type]['market']);
+                $tradeFor[$type] = 1;
             break;
-            case 'market_food_steel':
-                $building_name = array('str'=>'Market', 'type'=>TYPE_COMMERCIAL);
-                $tradeAway['food'] = 1;
-                $tradeFor['steel'] = 1;
-            break;
-            case 'bank_trade_silver':
+            case 'bank':
                 $building_name = array('str'=>'Bank', 'type'=>TYPE_COMMERCIAL);
                 $tradeFor['silver'] = 1;
             break;
+            case 'loan':
+                $this->takeLoan($p_id);
+                return;
+            case 'payloan':
+                return $this->payOffLoan($p_id, $tradeAct_segs[1] === 'gold');
             default: 
                 throw new BgaVisibleSystemException (_('Invalid TradeAction: ').$tradeAction);
         }
@@ -547,7 +513,6 @@ class HSDresource extends APP_GameClass
         foreach($tradeFor as $type=>$amt){
             $this->updateResource($p_id, $type, $amt);
         }
-        
     }
 
     /**updates an array by setting  */

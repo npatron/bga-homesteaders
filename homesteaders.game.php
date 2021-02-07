@@ -51,6 +51,7 @@ class homesteaders extends Table
             "auction_bonus"     => 17,
             "building_bonus"    => 18,
             "last_building"     => 19,
+            "b_order"           => 20,
             "show_player_info"  => SHOW_PLAYER_INFO,
         ) );
         
@@ -246,10 +247,16 @@ class homesteaders extends Table
         $this->Resource->takeLoan($this->getCurrentPlayerId());
     }
     
-    public function playerTrade( $tradeAction )
+    public function playerTrade( $tradeAction_csv, $allowTrade =false )
     {
-        $this->checkAction( 'trade' );
-        $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
+        // allow out of turn trade, only when flag is passed during allocateWorkers State.
+        if (!($allowTrade && $this->gamestate->state()['name'] === "allocateWorkers"))
+            $this->checkAction( 'trade' );
+        $tradeAction_arr = explode(',', $tradeAction_csv);
+        foreach( $tradeAction_arr as $key=>$val ){
+            $tradeAction = $this->trade_map[$val];
+            $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
+        }
     }
 
     public function playerToggleCheckbox( $enabled ){
@@ -284,13 +291,13 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
         if ($w_owner != $cur_p_id){ throw new BgaUserException(_("This is not your worker."));}
-        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${type} to ${building_name}' ), array(
+        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${worker} to ${building_name}' ), array(
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
             'building_key' => $b_key,
             'building_name' => array('type'=> $this->Building->getBuildingTypeFromKey($b_key) ,'str'=>$this->Building->getBuildingNameFromKey($b_key)),
             'building_slot' => $building_slot, 
-            'type' => 'worker',
+            'worker' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),
         ) );
         $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$w_key."'";
@@ -357,6 +364,8 @@ class homesteaders extends Table
         $state = $this->gamestate->state();
         if ($state['name'] === 'payWorkers'){
             $this->payWorkers($gold);
+        } else if ($state['name'] === 'allocateWorkers'){ 
+            $this->payWorkers($gold, true);
         } else if ($state['name'] === 'payAuction') {
             $this->payAuction($gold);
         } else {
@@ -364,14 +373,22 @@ class homesteaders extends Table
         }
     }
 
-    public function payWorkers($gold) {
-        $this->checkAction( "done" );
-
+    public function payWorkers($gold, $early=false) {
+        if (!$early){
+            $this->checkAction( "done" );
+        }
         $cur_p_id = $this->getCurrentPlayerId();
-        $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
-        $cost = max($workers - (5*$gold), 0);
-        $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
-        $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
+        if ($this->Resource->getPaid($cur_p_id) == 0){ // to prevent charging twice.
+            $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
+            $cost = max($workers - (5*$gold), 0);
+            $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
+            $this->Resource->setPaid($cur_p_id);
+        }
+        if (!$early){
+            $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
+        } else {
+            $this->notifyPlayer($cur_p_id, 'workerPaid', "", array());
+        }
     }
 
     public function payAuction($gold) {
@@ -549,8 +566,8 @@ class homesteaders extends Table
 
     function argPayWorkers()
     {
-        $worker_counts = $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`");
-        return array('worker_counts'=>$worker_counts);
+        $args = $this->getCollectionFromDB("SELECT `player_id`, `workers`, `paid` FROM `resources`");
+        return array('args'=>$args);
     }
 
     function argDummyValidBids() {
@@ -610,11 +627,9 @@ class homesteaders extends Table
         The action method of state X is called everytime the current game state is set to X.
     */
     
-    //Example for game state "MyGameState":
-
     function stStartRound() {
         $round_number = $this->getGameStateValue('round_number');
-
+        $this->Resource->clearPaid();
         $this->Building->updateBuildingsForRound($round_number);
         $this->gamestate->nextState( );
     }
@@ -626,19 +641,15 @@ class homesteaders extends Table
 
     function stPayWorkers() 
     {
-        $resources = $this->getCollectionFromDB( "SELECT `player_id`, `workers`, `gold`, `silver`, `trade` FROM `resources` " );
+        $resources = $this->getCollectionFromDB( "SELECT `player_id`, `workers`, `gold`, `silver`, `trade`, `paid` FROM `resources` " );
         $autoPayPlayers = $this->getCollectionFromDB( "SELECT `player_id`, `use_silver` FROM `player`");
         $pendingPlayers = array();
         foreach($resources as $p_id => $player){
-            if (($player['gold'] == 0 && $player['trade'] == 0) || $autoPayPlayers[$p_id]['use_silver'] === '1'
-                 /* player setting for auto-pay selected */){
-                $silver = $player['silver'];
-                $worker_cost = $player['workers'];
-                while ($silver < $worker_cost){// forced loan.
-                    $silver +=2;
-                    $this->Resource->takeLoan($p_id);
-                }
-                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker'=>'worker'));
+            if ($resources[$p_id]['paid']==1) continue;
+            /* player has no gold/trade or has auto-pay selected and they can afford it with out loans */
+            if ($player['silver'] >= $player['workers'] && 
+            (($player['gold'] == 0 && $player['trade'] == 0) || $autoPayPlayers[$p_id]['use_silver'] === '1')){
+                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker' => 'worker'));
             } else { // ask this player to choose payment.
                 $pendingPlayers[] = $p_id;
                 $this->giveExtraTime($p_id);
@@ -886,6 +897,20 @@ class homesteaders extends Table
         // For example, if the game was running with a release of your game named "140430-1345",
         // $from_version is equal to 1404301345
         
+        if ( $from_version <= 2102021811 ){
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `buildings` LIKE 'b_order'");
+            if(is_null($result)){
+                self::DbQuery("ALTER TABLE buildings ADD b_order INT(3) UNSIGNED NOT NULL DEFAULT '0';");
+            }
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `buildings` LIKE 'b_order'");
+            if(is_null($result)){
+                self::DbQuery("ALTER TABLE resources ADD paid INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+            }
+            $result = self::getCollectionFromDB("SELECT global_id, global_value FROM `global` WHERE global_id='20'");
+            if(count($result)==0){
+                self::DbQuery( "INSERT INTO global (global_id, global_value) VALUES ('20','0');");
+            }
+        }
         // Example:
 //        if( $from_version <= 1404301345 )
 //        {
