@@ -498,8 +498,7 @@ function (dojo, declare) {
         formatWorkerSlotTooltip(b_info, slot_no){
             var tt = this.getOneResourceAsDiv('worker');
             if (slot_no == 3) { tt += this.getOneResourceAsDiv('worker'); }
-            tt += " "+this.format_block('jstpl_resource_inline', {type: 'arrow'}) 
-                + " "+this.getResourceArrayAsDiv(b_info['s'+slot_no], true);
+            tt += _(" Produces ") + this.getResourceArrayAsDiv(b_info['s'+slot_no], true);
             return tt;
         },
 
@@ -1118,12 +1117,12 @@ function (dojo, declare) {
         },
 
         formatTooltipBuilding:function (b_info){
-            var vp = 'vp0';
-
-            if (b_info.vp != null){
+            var vp = 'vp'+ ( b_info.vp == null?'0':(Number(b_info.vp)==1)?'':Number(b_info.vp));
+            //var vp = b_info.vp == null? 'vp0' : 'vp'+ (Number(b_info.vp)==1)?'':Number(b_info.vp); 
+            /*if (b_info.vp != null){
                 vp = 'vp'+Number(b_info.vp).toString();
                 if (vp == 'vp1'){ vp = 'vp';}
-            }
+            }*/
 
             return this.format_block('jptpl_bld_tt', {
                 type:  ASSET_COLORS[b_info.type],
@@ -1228,14 +1227,14 @@ function (dojo, declare) {
             }
             if (b_info.slot != null){
                 if (b_info.slot ==1){
-                    inc_vals +=  worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>';
+                    inc_vals +=  worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>';
                 }
                 if (b_info.slot ==2){
-                    inc_vals += worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>' 
-                              + worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s2, true) +'<br>';
+                    inc_vals += worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s1, true) +'<br>' 
+                              + worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s2, true) +'<br>';
                 }
                 if (b_info.slot ==3){
-                    inc_vals += worker + worker + ' ' + this.format_block('jstpl_resource_inline', {type: 'arrow'})+ ' ' + this.getResourceArrayAsDiv(b_info.s3, true) +'<br>';
+                    inc_vals += worker + worker + _(" Produces ") + this.getResourceArrayAsDiv(b_info.s3, true) +'<br>';
                 }
             }
             return inc_vals;
