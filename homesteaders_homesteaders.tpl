@@ -333,18 +333,18 @@ var jstpl_player_token_log = '<span title = "${type}_${color}" class="${type}_${
 var jptpl_track_log = '<span title="${type}" class="log_inline_${type}"></span>';
 var jptpl_x_loan= '<span title="pay dept" class="crossout log_inline_loan"></span>';
 
-var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 2px;"></span>${for}</span>'
+var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: ${off};"></span>${for}</span>'
 var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'
 var jptpl_breadcrumb_income = '<span id="breadcrumb_income_${id}" class="breadcrumbs_element font" style="${style}">${text}</span><span id="breadcrumb_income_tokens_${id}" class="breadcrumbs_element" style="${style}">${income}</span>'
 var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_bldCost" class="breadcrumbs_element">${cost}</span>'
 
 var jptpl_res_tt = '<div class="tt_container" style="text-align:center;">${value}</br>';
 var jptpl_bld_tt = '<div class="tt_container"><span class="font bold ${type}" style="text-align:left;">${name}</span>\
-    <p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} token_inline"></span></p><br>\
+    <p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} bld_vp token_inline" ></span></p><br>\
     <p class="useFont" style="text-align: left;">${COST} ${cost_vals}</p><hr>\
-    <span class="font">${desc}</span><hr>\
+    <div style="text-align:center;"><span class="font" style="max-width:200px;display:inline-block;">${desc}</span><hr>\
     <span class="income">${INCOME}<br></span>\
-    <div class="font">${inc_vals}</div></div>';
+    <div class="font">${inc_vals}</div></div></div>';
 </script>  
 
 {OVERALL_GAME_FOOTER}
