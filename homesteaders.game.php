@@ -897,12 +897,12 @@ class homesteaders extends Table
         // For example, if the game was running with a release of your game named "140430-1345",
         // $from_version is equal to 1404301345
         
-        if ( $from_version <= 2102021811 ){
+        if ( $from_version <= 2102040920 ){
             $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `buildings` LIKE 'b_order'");
             if(is_null($result)){
                 self::DbQuery("ALTER TABLE buildings ADD b_order INT(3) UNSIGNED NOT NULL DEFAULT '0';");
             }
-            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `buildings` LIKE 'b_order'");
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `resources` LIKE 'paid'");
             if(is_null($result)){
                 self::DbQuery("ALTER TABLE resources ADD paid INT(1) UNSIGNED NOT NULL DEFAULT '0';");
             }
@@ -910,6 +910,7 @@ class homesteaders extends Table
             if(count($result)==0){
                 self::DbQuery( "INSERT INTO global (global_id, global_value) VALUES ('20','0');");
             }
+            self::DbQuery("UPDATE `player` SET `use_silver`='0'");
         }
         // Example:
 //        if( $from_version <= 1404301345 )
