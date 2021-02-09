@@ -260,7 +260,7 @@ function (dojo, declare) {
 
             dojo.place(FIRST_PLAYER_ID, this.player_score_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
-            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="useFont">${_('First Bid in Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
+            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="useFont">${_('First Bid in Next Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones();
             this.setupBidTokens(gamedatas.bids);
@@ -1151,38 +1151,47 @@ function (dojo, declare) {
             }
             tt += title ;
             if (a_info[a_id].build != null){// there is a build
-                var build = _(" Build: ");
-                if (build.length == 4){//any
-                    build += `<span class="font bold">${_("ANY")}</span><hr>`;
+                var build = "";
+                let build_arr = a_info[a_id].build;
+                if (build_arr.length == 4){//any
+                    build += _(" Build: ")+ `<span class="font bold">${_("ANY type")}</span>`;
                 } else {
-                    let build_arr = a_info[a_id].build;
                     let build_html = [];
                     for(let i in build_arr){
                         let b_type = build_arr[i];
-                        build_html[i]= `<span aria="${ASSET_STRINGS[b_type]}" class="font bold ${ASSET_COLORS[b_type]}">${ASSET_STRINGS[b_type]}</span>`;
+                        build_html[i]= _(" Build: ")+ `<span aria="${ASSET_STRINGS[b_type]}" class="font bold ${ASSET_COLORS[b_type]}">${ASSET_STRINGS[b_type]}</span>`;
                     }
-                    build += build_html.join("<br>"+ _("OR ")) + "<hr>";
+                    build += build_html.join(this.format_block('jptpl_tt_break', {text:_("OR")}));
                 }
                 tt += build;
             }
 
             if (a_info[a_id].bonus != null) {// there is a bonus;
                 var bonus_html = "";
+                if (a_info[a_id].build != null){
+                    bonus_html = this.format_block('jptpl_tt_break', {text:_("AND")});
+                }
                 switch (a_info[a_id].bonus){
                     case AUCBONUS_WORKER:
+                        bonus_html += this.replaceTooltipStrings(_("May hire a ${worker} (for free)"));
                     break;
                     case AUCBONUS_WORKER_RAIL_ADV:
+                        bonus_html += this.replaceTooltipStrings(_("May hire a ${worker} (for free)\n-AND-\n Advance on Railroad track"));
                     break;
                     case AUCBONUS_WOOD_FOR_TRACK:
-                        var bonus_html = _(" May pay ")+this.tkn_html['wood'] +_(" for a ")+this.tkn_html['track'];
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${wood} for ${track}(once)"));
                     break;
                     case AUCBONUS_COPPER_FOR_VP:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${copper} for ${vp4}(once)"));
                     break;
                     case AUCBONUS_COW_FOR_VP:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${cow} for ${vp4}(once)"));
                     break;
                     case AUCBONUS_6VP_AND_FOOD_VP:
+                        bonus_html += this.replaceTooltipStrings(_("Gain ${vp6}\n-AND-\n May trade ${food} for ${vp2}(once)"));
                     break;
                     case AUCBONUS_FOOD_FOR_VP:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${food} for ${vp2}(once)"));
                     break;
                 }
                 tt += bonus_html;
@@ -1192,18 +1201,28 @@ function (dojo, declare) {
             return tt + end_div;
         },
 
+        /**
+         * This method will update inputString then return the updated version.
+         * 
+         * Any patterns of `${val}` will be replaced with a html token of type `val`
+         * It will also replace any `\n` in inputString with a newline `<br>`
+         * 
+         * @param {String} inputString 
+         * @returns {String} updatedString
+         */
         replaceTooltipStrings(inputString){
+            // required to allow js functions to access file wide globals (in this case `this.tkn_html`).
             let _this = this;
             var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
-                    function(f){ return _this.getOneResourceHtml(f.substr(2, f.length -3),1,true);});
-            updatedString = updatedString.replaceAll(/(\\n)/g, '<br>') + '<br>';
+                    function(f){ return _this.tkn_html[f.substr(2, f.length -3)];});
+            updatedString = updatedString.replaceAll(/(\\n)/g, '<br>');
             return updatedString;
         },
 
         formatDescription: function(b_info){
             var full_desc = '';
             
-            if (b_info.desc != null){// replaces any ${val} with formatted resource log of type val
+            if (b_info.desc != null){
                 full_desc =  this.replaceTooltipStrings(b_info.desc);
             }
 
@@ -2021,7 +2040,7 @@ function (dojo, declare) {
                 this.updateTrade(tradeChange);
                 // add breadcrumb
                 let tradeAway = this.invertArray(this.resource_info[type].market);
-                tradeAway.trade = 1;
+                tradeAway.trade = -1;
                 let tradeFor = [];
                 tradeFor[type] =1;
                 this.createTradeBreadcrumb(this.transactionLog.length, _("Market"), tradeAway, tradeFor);

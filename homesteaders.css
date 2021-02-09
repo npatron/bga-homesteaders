@@ -1170,6 +1170,17 @@ div#trade_sell_cow{
    /* float: center; */
    /* text-align: center; */
 }
+.tt_break {
+   width: 100%; 
+   text-align: center; 
+   border-bottom: 1px solid #000; 
+   line-height: 0.1em; 
+   margin: 12px 0 10px;
+}
+.tt_break span{
+   background:#fff; 
+   padding: 0 10px;
+}
 
 /*=============*
  * Token Zones *

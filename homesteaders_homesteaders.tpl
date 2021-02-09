@@ -338,6 +338,7 @@ var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs
 var jptpl_breadcrumb_income = '<span id="breadcrumb_income_${id}" class="breadcrumbs_element font" style="${style}">${text}</span><span id="breadcrumb_income_tokens_${id}" class="breadcrumbs_element" style="${style}">${income}</span>'
 var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_bldCost" class="breadcrumbs_element">${cost}</span>'
 
+var jptpl_tt_break = '<div class="tt_break"><span font>${text}</span></div>';
 var jptpl_res_tt = '<div class="tt_container" style="text-align:center;">${value}</br>';
 var jptpl_bld_tt = '<div class="tt_container"><span class="font bold ${type}" style="text-align:left;">${name}</span>\
     <p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} bld_vp token_inline" ></span></p><br>\

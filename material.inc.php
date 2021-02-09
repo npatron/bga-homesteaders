@@ -104,8 +104,8 @@ $this->resource_info = array(
   'loan' => array(
     'name'   => _("Debt"),
     'db_int' => LOAN,
-    'tt'     => clienttranslate('${loan}\nDebt:\n Costs 5 Silver (or 1 Gold) to pay off\nEnd: Worth ${vp2}\n'.
-                'End: Penalty for unpaid Debt:\n${loan} ${arrow} lose ${vp}\n'.
+    'tt'     => clienttranslate('${loan}\nDebt:\n Costs 5 ${silver} (or 1 ${gold}) to pay off\n'.
+                'End: Penalty for unpaid ${loan}:\n${loan} ${arrow} lose ${vp}\n'.
                 '${loan}${loan} ${arrow} lose ${vp3}\n'.
                 '${loan}${loan}${loan} ${arrow} lose ${vp6}\n'.
                 '${loan}${loan}${loan}${loan} ${arrow} lose ${vp10}\n (etc...)'),
@@ -134,9 +134,7 @@ $this->building_info = array_merge(
       'inc'  => array('silver'=>2),
       'slot' => 2,
       's1'   => array('wood'=>1),
-      's1_tt'=> _("Produces ").WOOD_HTML,
       's2'   => array('vp'=>1),
-      's2_tt'=> _("Produces ").VP_HTML,
       'amt'  => 0,
   )),
   array(
@@ -156,9 +154,7 @@ $this->building_info = array_merge(
     'cost' => array('wood'=>1),
     'slot' => 2,
     's1'   => array('silver'=>2,'trade'=>1),
-    's1_tt'=> _("Produces ").TRADE_HTML.SILVER_HTML.SILVER_HTML,
     's2'   => array('food'=>1),
-    's2_tt'=> _("Produces ").FOOD_HTML,
     'amt'  => 3,
    ),
    BLD_MARKET => array(
@@ -171,7 +167,6 @@ $this->building_info = array_merge(
     'inc'  => array('trade'=>1),
     'slot' => 1,
     's1'   => array('silver'=>2),
-    's1_tt'=> _("Produces ").SILVER_HTML.SILVER_HTML,
     'amt'  => 3,
    ),
    BLD_FOUNDRY => array(
@@ -181,7 +176,6 @@ $this->building_info = array_merge(
     'cost' => array(),
     'slot' => 1,
     's1'   => array('steel'=>1),
-    's1_tt'=> _("Produces ").STEEL_HTML,
     'amt'  => 3,
    ),
    BLD_STEEL_MILL => array(
@@ -218,7 +212,6 @@ $this->building_info = array_merge(
     'cost' => array('steel'=>1,'food'=>1,'wood'=>1,),
     'slot' => 1,
     's1'   => array('cow'=>1),
-    's1_tt'=> clienttranslate("Produces ").COW_HTML,
     'amt'  => 2,
     'on_b' => BUILD_BONUS_TRADE,
    ),
@@ -247,7 +240,6 @@ $this->building_info = array_merge(
     'cost' => array('steel'=>1,'wood'=>1,),
     'slot' => 1,
     's1'   => array('gold'=>1),
-    's1_tt'=> _("Produces ").GOLD_HTML,
     'amt'  => 2,
    ),
    BLD_COPPER_MINE => array(
@@ -257,7 +249,6 @@ $this->building_info = array_merge(
     'cost' => array('steel'=>1, 'wood'=>2),
     'slot' => 1,
     's1'   => array('copper'=>1),
-    's1_tt'=> _("Produces ").COPPER_HTML,
     'amt'  => 2,
    ),
    BLD_RIVER_PORT => array(
@@ -268,7 +259,6 @@ $this->building_info = array_merge(
     'cost' => array('wood'=>1),
     'slot' => 3,
     's3'   => array('gold'=>1),
-    's3_tt'=> _("When worked by ").WORKER_HTML.WORKER_HTML._(", Produces ").GOLD_HTML,
     'amt'  => 2,
    ),
    BLD_CHURCH => array(
@@ -328,9 +318,7 @@ $this->building_info = array_merge(
     'vp'   => 2,
     'slot' => 2,
     's1'   => array('vp2'=>1),
-    's1_tt'=> _("Produces ").VP2_HTML,
     's2'   => array('vp2'=>1),
-    's2_tt'=> _("Produces ").VP2_HTML,
     'amt'  => 1,
    ),
    BLD_FORGE => array(
@@ -342,7 +330,6 @@ $this->building_info = array_merge(
     'vp'   => 1,
     'slot' => 1,
     's1'   => array('vp2'=>1),
-    's1_tt'=> _("Produces ").VP2_HTML,
     'amt'  => 2,
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
    ),
@@ -456,7 +443,8 @@ $this->building_info = array_merge(
     'stage'=> STAGE_SETTLEMENT,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array(),
-    'inc'  => array('wood'=>1, 'silver'=>1),
+    'slot' => 1,
+    's1'   => array('wood'=>1, 'silver'=>1),
     'vp'   => 3,
     'amt'  => 2,
    ),
@@ -478,7 +466,6 @@ $this->building_info = array_merge(
     'vp'   => 2,
     'slot' => 1,
     's1'   => array('silver'=>3),
-    's1_tt'=> "Produces ".SILVER_HTML.SILVER_HTML.SILVER_HTML,
     'amt'  => 2,
    ),
    BLD_HOTEL => array(
@@ -490,7 +477,6 @@ $this->building_info = array_merge(
     'on_b' => BUILD_BONUS_SILVER_WORKERS,
     'slot' => 1,
     's1'   => array('vp2'=>1),
-    's1_tt'=> "Produces ".VP2_HTML,
     'vp'   => 3,
     'amt'  => 1,
    ),
