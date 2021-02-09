@@ -50,6 +50,8 @@ function (dojo, declare) {
     const VP       = 10;
     const SILVER   = 11;
     const LOAN     = 12;
+    const RESOURCES = {'wood':WOOD, 'steel':STEEL, 'gold':GOLD, 'copper':COPPER, 'food':FOOD, 'cow':COW,
+        'trade':TRADE, 'track':TRACK, 'worker':WORKER, 'vp':VP, 'silver':SILVER, 'loan':LOAN}
 
     const ZONE_PENDING = -1;
     const ZONE_PASSED = -2;
@@ -112,7 +114,7 @@ function (dojo, declare) {
     const TYPE_SELECTOR = {'bid':'.bid_slot', 'bonus':'.train_bonus', 'worker_slot':'.worker_slot',
     'building':'.building_tile', 'worker':'.token_worker', 'trade':'.trade_option',
     'track':'.token_track'};
-    
+    const PER_STR = _(' per ');
 
     // other Auction Locations are the auction number (1-3).
     const AUCLOC_DISCARD = 0;
@@ -130,8 +132,9 @@ function (dojo, declare) {
     const BUILD_BONUS_WORKER = 3; 
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
-    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe',
+    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 6:'',
                           10:'a4' ,11:'a1',12:'a2',13:'a3'};
+    const ASSET_STRINGS = {0:_('Residential'), 1:_('Commercial'),2:_('Industrial'),3:_('Special'), 6:_('Building')};
     const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8'];
 
     // map of tpl id's  used to place the player_zones in turn order.
@@ -224,7 +227,9 @@ function (dojo, declare) {
             this.playerCount = 0;
             this.show_player_info = gamedatas.show_player_info;
             this.resource_info = gamedatas.resource_info;
+            
             this.building_info = gamedatas.building_info;
+            this.setupResourceTokens();
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
                 this.playerCount++;
@@ -252,17 +257,16 @@ function (dojo, declare) {
             this.showCurrentAuctions(gamedatas.current_auctions);
             this.setupBuildings(gamedatas.buildings, gamedatas.building_info);
             this.setupTracks(gamedatas.tracks);
-            
 
             dojo.place(FIRST_PLAYER_ID, this.player_score_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
-            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="useFont">${_('First Bid in Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
+            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="useFont">${_('First Bid in Next Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones();
             this.setupBidTokens(gamedatas.bids);
 
             this.setupRailLines(gamedatas.players);
-            this.setupBonusButtons(gamedatas.resource_info);
+            this.setupRailAdvanceButtons(gamedatas.resource_info);
             this.setupShowButtons();
             if (gamedatas.round_number ==11){
                 dojo.destroy('#round_number');
@@ -394,22 +398,25 @@ function (dojo, declare) {
             for (const [key, value] of Object.entries(resource)) {
                 //console.log(resource, key, value);
                 if (key == "p_id" || key == "workers" || key == "track") continue;
+                let tooltip_html = this.format_block('jptpl_res_tt', {value:this.replaceTooltipStrings(info[key]['tt'])});
+                
                 let resourceId = `${key}count_${resource.p_id}`;
+                this.addTooltipHtml( resourceId, tooltip_html);
+                let iconId = `${key}icon_p${resource.p_id}`;
+                this.addTooltipHtml( iconId, tooltip_html );
+
                 this.score_resourceCounters[resource.p_id][key] = new ebg.counter();
                 this.score_resourceCounters[resource.p_id][key].create(resourceId);
                 this.score_resourceCounters[resource.p_id][key].setValue(value);
-                this.addTooltipHtml( resourceId, info[key]['tt'] );
-                let iconId = `${key}icon_p${resource.p_id}`;
-                this.addTooltipHtml( iconId, info[key]['tt'] );
 
                 let boardResourceId = `${key}count_${this.player_color[resource.p_id]}`;
+                this.addTooltipHtml( boardResourceId, tooltip_html );
+                let boardIconId = `${key}icon_${this.player_color[resource.p_id]}`;
+                this.addTooltipHtml( boardIconId, tooltip_html );
+
                 this.board_resourceCounters[resource.p_id][key] = new ebg.counter();
                 this.board_resourceCounters[resource.p_id][key].create(boardResourceId);
                 this.board_resourceCounters[resource.p_id][key].setValue(value);
-                this.addTooltipHtml( resourceId, info[key]['tt'] );
-
-                let boardIconId = `${key}icon_${this.player_color[resource.p_id]}`;
-                this.addTooltipHtml( boardIconId, info[key]['tt'] );
             }
         },
 
@@ -440,7 +447,7 @@ function (dojo, declare) {
                 const track = tracks[i];
                 dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: this.player_color[track.p_id]}), this.token_divId[track.p_id]);
             }
-            this.addTooltipHtmlToClass("token_track", this.resource_info['track']['tt']);
+            this.addTooltipHtmlToClass("token_track", `<div style="text-align:center;">${this.replaceTooltipStrings(this.resource_info['track']['tt'])}</div>`);
         },
 
         /**
@@ -462,7 +469,7 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), b_divId);
                 this.building_worker_ids[key] = [];
                 this.building_worker_ids[key][1] = `slot_${key}_1`;
-                this.addTooltipHtml(  this.building_worker_ids[key][1], b_info['s1_tt'] );
+                this.addTooltipHtml( this.building_worker_ids[key][1], this.formatWorkerSlotTooltip(b_info ,1));
                 dojo.connect($(this.building_worker_ids[key][1]), 'onclick', this, 'onClickOnWorkerSlot');
             } else if (b_info.slot == 2){
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 1, key: key, id: id}), b_divId);
@@ -470,8 +477,8 @@ function (dojo, declare) {
                 this.building_worker_ids[key] = [];
                 this.building_worker_ids[key][1] = `slot_${key}_1`;
                 this.building_worker_ids[key][2] = `slot_${key}_2`;
-                this.addTooltipHtml( this.building_worker_ids[key][1], b_info['s1_tt'] );
-                this.addTooltipHtml( this.building_worker_ids[key][2], b_info['s2_tt'] );
+                this.addTooltipHtml( this.building_worker_ids[key][1], this.formatWorkerSlotTooltip(b_info, 1));
+                this.addTooltipHtml( this.building_worker_ids[key][2], this.formatWorkerSlotTooltip(b_info, 2));
                 dojo.connect($(this.building_worker_ids[key][1]), 'onclick', this, 'onClickOnWorkerSlot');
                 dojo.connect($(this.building_worker_ids[key][2]), 'onclick', this, 'onClickOnWorkerSlot');  
             } else if (b_info.slot == 3){
@@ -479,7 +486,7 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jstpl_building_slot', {slot: 3, key: key, id: id}), b_divId);
                 this.building_worker_ids[key] = [];
                 this.building_worker_ids[key][3] = `slot_${key}_3`;
-                this.addTooltipHtml( this.building_worker_ids[key][3], b_info['s3_tt'] );
+                this.addTooltipHtml( this.building_worker_ids[key][3], this.formatWorkerSlotTooltip(b_info, 3));
                 dojo.style(this.building_worker_ids[key][3], 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(this.building_worker_ids[key][3]), 'onclick', this, 'onClickOnWorkerSlot');
             }
@@ -490,6 +497,13 @@ function (dojo, declare) {
             }
         
     
+        },
+        
+        formatWorkerSlotTooltip(b_info, slot_no){
+            var tt = this.getOneResourceHtml('worker');
+            if (slot_no == 3) { tt += this.getOneResourceHtml('worker'); }
+            tt += " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info['s'+slot_no], true);
+            return tt;
         },
 
         /**
@@ -612,7 +626,7 @@ function (dojo, declare) {
          * 
          * @param {*} resource_info 
          */
-        setupBonusButtons: function(resource_info){
+        setupRailAdvanceButtons: function(resource_info){
             const bonus_options = dojo.query('.train_bonus');
             for(let i in bonus_options){
                 if (bonus_options[i].id != null){
@@ -622,6 +636,16 @@ function (dojo, declare) {
                         this.addTooltipHtml(resource_info[type].tt);
                 } 
             }
+        },
+
+        setupResourceTokens(){
+            this.tkn_html = [];
+            for(let type in RESOURCES){
+                this.tkn_html[type] = this.format_block( 'jstpl_resource_inline', {type:type}, );
+            }
+            this.tkn_html['arrow'] = this.format_block( 'jstpl_resource_inline', {type:'arrow'}, );
+            this.tkn_html['vp2'] = this.format_block( 'jstpl_resource_inline', {type:'vp2'}, );
+            this.tkn_html['vp4'] = this.format_block( 'jstpl_resource_inline', {type:'vp4'}, );
         },
 
         /**
@@ -786,17 +810,6 @@ function (dojo, declare) {
         onUpdateActionButtons: function( stateName, args )
         {
             const current_player_id = this.player_id;
-            const tkn_arrow = this.format_block( 'jstpl_resource_inline', {type:'arrow'}, ); 
-            const tkn_copper = this.format_block( 'jstpl_resource_inline', {type:'copper'}, );
-            const tkn_cow  = this.format_block( 'jstpl_resource_inline', {type:'cow'}, );
-            const tkn_food = this.format_block( 'jstpl_resource_inline', {type:'food'}, );     
-            const tkn_gold = this.format_block( 'jstpl_resource_inline', {type:'gold'}); 
-            const tkn_silver = this.format_block( 'jstpl_resource_inline', {type:'silver'});     
-            const tkn_track = this.format_block( 'jstpl_resource_inline', {type:'track'}, ); 
-            const tkn_worker = this.format_block( 'jstpl_resource_inline', {type:'worker'}, );
-            const tkn_wood = this.format_block( 'jstpl_resource_inline', {type:'wood'}, ); 
-            const tkn_vp4 = this.format_block( 'jstpl_resource_inline', {type:'vp4'}, ); 
-            const tkn_vp2 = this.format_block( 'jstpl_resource_inline', {type:'vp2'}, ); 
                      
             if( this.isCurrentPlayerActive() )
             {           
@@ -896,14 +909,14 @@ function (dojo, declare) {
                         dojo.addClass('btn_choose_building' ,'disabled');
                         if (args.riverPort){
                             if (this.goldAsCow){
-                                this.addActionButton( 'btn_gold_cow', tkn_gold +" <span id='cow_as'>"+_('As')+"</span> " + tkn_cow, 'toggleGoldAsCow', null, false, 'blue');
+                                this.addActionButton( 'btn_gold_cow', this.tkn_html['gold'] +" <span id='cow_as'>"+_('As')+"</span> " + this.tkn_html['cow'], 'toggleGoldAsCow', null, false, 'blue');
                             } else {
-                                this.addActionButton( 'btn_gold_cow', tkn_gold +" <span id='cow_as' class='no'>"+_('As')+"</span> " + tkn_cow, 'toggleGoldAsCow', null, false, 'red');
+                                this.addActionButton( 'btn_gold_cow', this.tkn_html['gold'] +" <span id='cow_as' class='no'>"+_('As')+"</span> " + this.tkn_html['cow'], 'toggleGoldAsCow', null, false, 'red');
                             }
                             if (this.goldAsCopper){
-                                this.addActionButton( 'btn_gold_copper', tkn_gold + " <span id='copper_as'>" + _('As') + "</span> " + tkn_copper, 'toggleGoldAsCopper', null, false, 'blue');
+                                this.addActionButton( 'btn_gold_copper', `${this.tkn_html['gold']} <span id='copper_as'>${_('As')}</span> ${this.tkn_html['copper']}`, 'toggleGoldAsCopper', null, false, 'blue');
                             } else {
-                                this.addActionButton( 'btn_gold_copper', tkn_gold + " <span id='copper_as' class='no'>" + _('As') + "</span> " + tkn_copper, 'toggleGoldAsCopper', null, false, 'red');
+                                this.addActionButton( 'btn_gold_copper', this.tkn_html['gold'] + " <span id='copper_as' class='no'>" + _('As') + "</span> " + this.tkn_html['copper'], 'toggleGoldAsCopper', null, false, 'red');
                             }
                         }
                         this.addActionButton( 'btn_do_not_build', _('Do Not Build'), 'doNotBuild', null, false, 'red');
@@ -913,7 +926,7 @@ function (dojo, declare) {
                     break;
                     case 'resolveBuilding':
                         if (args.building_bonus == BUILD_BONUS_WORKER){
-                            this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker, 'workerForFreeBuilding');
+                            this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ this.tkn_html['worker'], 'workerForFreeBuilding');
                             this.addActionButton( 'btn_pass_bonus',   _('Do Not Get Bonus'), 'passBuildingBonus', null, false, 'red');
                             this.addActionButton( 'btn_redo_build_phase', _('Cancel'),  'cancelTurn', null, false, 'red');
                             this.can_cancel = true;
@@ -924,26 +937,26 @@ function (dojo, declare) {
                         switch (option){
                             case AUCBONUS_WORKER:
                             case AUCBONUS_WORKER_RAIL_ADV:
-                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ tkn_worker , 'workerForFree');
+                                this.addActionButton( 'btn_bonus_worker', _('(FREE) Hire ')+ this.tkn_html['worker'] , 'workerForFree');
                             break;
                             case AUCBONUS_WOOD_FOR_TRACK:
-                                this.addActionButton( 'btn_wood_track', `${tkn_wood} ${tkn_arrow} ${tkn_track}`, 'woodForTrack');
+                                this.addActionButton( 'btn_wood_track', `${this.tkn_html['wood']} ${this.tkn_html['arrow']} ${this.tkn_html['track']}`, 'woodForTrack');
                             break;
                             case AUCBONUS_COPPER_FOR_VP:
-                                this.addActionButton( 'btn_copper_vp', `${tkn_copper} ${tkn_arrow} ${tkn_vp4}`, 'copperFor4VP');
+                                this.addActionButton( 'btn_copper_vp', `${this.tkn_html['copper']} ${this.tkn_html['arrow']} ${this.tkn_html['vp4']}`, 'copperFor4VP');
                                 if (args.riverPort){
-                                    this.addActionButton( 'btn_gold_copper', `${tkn_gold} ${tkn_arrow} ${tkn_vp4}`, 'goldFor4VP');
+                                    this.addActionButton( 'btn_gold_copper', `${this.tkn_html['gold']} ${this.tkn_html['arrow']} ${this.tkn_html['vp4']}`, 'goldFor4VP');
                                 }
                                 break;
                             case AUCBONUS_COW_FOR_VP:
-                                this.addActionButton( 'btn_cow_vp', `${tkn_cow} ${tkn_arrow} ${tkn_vp4}`, 'cowFor4VP');
+                                this.addActionButton( 'btn_cow_vp', `${this.tkn_html['cow']} ${this.tkn_html['arrow']} ${this.tkn_html['vp4']}`, 'cowFor4VP');
                                 if (args.riverPort){
-                                    this.addActionButton( 'btn_gold_cow', `${tkn_gold} ${tkn_arrow} ${tkn_vp4}`, 'goldFor4VP');
+                                    this.addActionButton( 'btn_gold_cow', `${this.tkn_html['gold']} ${this.tkn_html['arrow']} ${this.tkn_html['vp4']}`, 'goldFor4VP');
                                 }
                                 break;
                             case AUCBONUS_6VP_AND_FOOD_VP:
                             case AUCBONUS_FOOD_FOR_VP:
-                                this.addActionButton( 'btn_food_vp', `${tkn_food} ${tkn_arrow} ${tkn_vp2}`, 'foodFor2VP');
+                                this.addActionButton( 'btn_food_vp', `${this.tkn_html['food']} ${this.tkn_html['arrow']} ${this.tkn_html['vp2']}`, 'foodFor2VP');
                                 break;
                         }
                         this.addActionButton( 'btn_pass_bonus',       _('Do Not Get Bonus'), 'passBonus', null, false, 'red');
@@ -957,8 +970,8 @@ function (dojo, declare) {
                     break;
                     case 'endGameActions':
                         this.addActionButton( 'btn_done',          _('Done'),                    'doneEndgameActions');    
-                        this.addActionButton( 'btn_pay_loan_silver', _('Pay Loan ') + tkn_silver, 'payLoanSilver', null, false, 'gray');
-                        this.addActionButton( 'btn_pay_loan_gold',   _('Pay Loan ') + tkn_gold,   'payLoanGold',   null, false, 'gray');
+                        this.addActionButton( 'btn_pay_loan_silver', _('Pay Loan ') + this.tkn_html['silver'], 'payLoanSilver', null, false, 'gray');
+                        this.addActionButton( 'btn_pay_loan_gold',   _('Pay Loan ') + this.tkn_html['gold'],   'payLoanGold',   null, false, 'gray');
                         this.addActionButton( 'btn_hire_worker', _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
                         this.addActionButton( 'btn_cancel_button', _('Cancel'), 'cancelUndoTransactions', null, false, 'red');
                         this.addTradeActionButton();
@@ -1029,7 +1042,7 @@ function (dojo, declare) {
                     dojo.place(this.format_block( 'jstpl_auction_tile', {auc: a_id, color:color}), `future_auction_${auction.location}`);
                     dojo.style(`${TPL_AUC_TILE}_${a_id}`, 'order', a_id);
                 }
-                this.addTooltipHtml(`${TPL_AUC_TILE}_${a_id}`, info[a_id]['tt']);
+                this.addTooltipHtml(`${TPL_AUC_TILE}_${a_id}`, this.formatTooltipAuction(info, a_id));
             }
         },
 
@@ -1099,11 +1112,204 @@ function (dojo, declare) {
                 }
             } else { // create it as well;
                 dojo.place(this.format_block( 'jstpl_buildings', {key: b_key, id: b_id}), this.player_building_zone_id[building.p_id]);
-                this.addTooltipHtml( b_divId, b_info['tt'] );
+                this.addTooltipHtml( b_divId, this.formatTooltipBuilding(b_info) );
                 this.addBuildingWorkerSlots(building, b_info);
             }
             dojo.query(`#${b_divId}`).style(`order`,`${building.b_order}`);
             this.updateHasBuilding(building.p_id, b_id); 
+        },
+
+        formatTooltipBuilding:function (b_info){
+            var vp = 'vp'+ ( b_info.vp == null?'0':(Number(b_info.vp)==1)?'':Number(b_info.vp));
+
+            return this.format_block('jptpl_bld_tt', {
+                type:  ASSET_COLORS[b_info.type],
+                name: b_info.name,
+                vp:   vp,
+                COST: _('Cost:'),
+                cost_vals: this.getResourceArrayHtml(b_info.cost, true),
+                desc: this.formatDescription(b_info),
+                INCOME: _('income: '),
+                inc_vals: this.formatIncome(b_info),
+            });
+        },
+
+        formatTooltipAuction: function (a_info, a_id){
+            var tt = '<div style="text-align: center;" class="useFont">';
+            var auction_no = Math.ceil(a_id/10); // (1-10) = 1; (11-20) = 2; etc...
+            if (auction_no== 1) {// order fixed in A-1
+                var title = `<span class="font bold a1">${_("Round")} ${a_id}</span><hr>`;
+            } else { //order by phase in other auctions
+                if ((a_id-1)%10 <4){
+                    var phase = _("Settlement");
+                } else if ((a_id-1)%10 >7){
+                    var phase = _("City");
+                } else {
+                    var phase = _("Town");
+                }
+                var title = `<span class="font bold a${auction_no}">${phase}</span><hr>`
+            }
+            tt += title ;
+            if (a_info[a_id].build != null){// there is a build
+                var build = "";
+                let build_arr = a_info[a_id].build;
+                if (build_arr.length == 4){//any
+                    build += _(" Build: ")+ `<span class="font bold">${_("ANY type")}</span>`;
+                } else {
+                    let build_html = [];
+                    for(let i in build_arr){
+                        let b_type = build_arr[i];
+                        build_html[i]= _(" Build: ")+ `<span aria="${ASSET_STRINGS[b_type]}" class="font bold ${ASSET_COLORS[b_type]}">${ASSET_STRINGS[b_type]}</span>`;
+                    }
+                    build += build_html.join(this.format_block('jptpl_tt_break', {text:_("OR")}));
+                }
+                tt += build;
+            }
+
+            if (a_info[a_id].bonus != null) {// there is a bonus;
+                var bonus_html = "";
+                if (a_info[a_id].build != null){
+                    bonus_html = this.format_block('jptpl_tt_break', {text:_("AND")});
+                }
+                switch (a_info[a_id].bonus){
+                    case AUCBONUS_WORKER:
+                        bonus_html += this.replaceTooltipStrings(_("May hire a ${worker} (for free)"));
+                    break;
+                    case AUCBONUS_WORKER_RAIL_ADV:
+                        bonus_html += this.replaceTooltipStrings(_("May hire a ${worker} (for free)\n-AND-\n Advance on Railroad track"));
+                    break;
+                    case AUCBONUS_WOOD_FOR_TRACK:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${wood} for ${track}(once)"));
+                    break;
+                    case AUCBONUS_COPPER_FOR_VP:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${copper} for ${vp4}(once)"));
+                    break;
+                    case AUCBONUS_COW_FOR_VP:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${cow} for ${vp4}(once)"));
+                    break;
+                    case AUCBONUS_6VP_AND_FOOD_VP:
+                        bonus_html += this.replaceTooltipStrings(_("Gain ${vp6}\n-AND-\n May trade ${food} for ${vp2}(once)"));
+                    break;
+                    case AUCBONUS_FOOD_FOR_VP:
+                        bonus_html += this.replaceTooltipStrings(_("May trade ${food} for ${vp2}(once)"));
+                    break;
+                }
+                tt += bonus_html;
+            }
+
+            var end_div = '</div>';
+            return tt + end_div;
+        },
+
+        /**
+         * This method will update inputString then return the updated version.
+         * 
+         * Any patterns of `${val}` will be replaced with a html token of type `val`
+         * It will also replace any `\n` in inputString with a newline `<br>`
+         * 
+         * @param {String} inputString 
+         * @returns {String} updatedString
+         */
+        replaceTooltipStrings(inputString){
+            // required to allow js functions to access file wide globals (in this case `this.tkn_html`).
+            let _this = this;
+            var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
+                    function(f){ return _this.tkn_html[f.substr(2, f.length -3)];});
+            updatedString = updatedString.replaceAll(/(\\n)/g, '<br>');
+            return updatedString;
+        },
+
+        formatDescription: function(b_info){
+            var full_desc = '';
+            
+            if (b_info.desc != null){
+                full_desc =  this.replaceTooltipStrings(b_info.desc);
+            }
+
+            if (b_info.on_b != null){
+                const GAIN = _(' gain ');
+                var on_build_desc = _("When built: ");
+                switch(b_info.on_b){
+                    case 1: //BUILD_BONUS_PAY_LOAN
+                        on_build_desc += _("Pay off ")+this.tkn_html['loan'];
+                        break;
+                    case 2: //BUILD_BONUS_TRADE
+                        on_build_desc += GAIN + this.tkn_html['trade'];
+                        break;
+                    case 3: //BUILD_BONUS_WORKER
+                        on_build_desc += GAIN + this.tkn_html['worker'];
+                        break;
+                    case 4: //BUILD_BONUS_RAIL_ADVANCE
+                        on_build_desc += _('advance on Railroad track');
+                        break;
+                    case 5: //BUILD_BONUS_TRACK_AND_BUILD
+                        on_build_desc += this.tkn_html['track'] +'<br>' + _('You may also build another building of ') ;
+                        break;
+                    case 6: //BUILD_BONUS_SILVER_SILVER
+                        on_build_desc += this.getOneResourceHtml('silver',2);
+                        break;
+                    case 7: //BUILD_BONUS_SILVER_WORKERS
+                        on_build_desc +=  this.tkn_html['silver'] + _(' per ') + this.tkn_html['worker'] + '<br>'+ _('When you gain ')+ this.tkn_html['worker'] +_(' gain ') + this.tkn_html['silver'];
+                        break;
+                    case 8: //BUILD_BONUS_PLACE_RESOURCES
+
+                }
+                full_desc = on_build_desc +'<br>'+ full_desc;
+            }
+            if (b_info.vp_b != null){
+                const END = _("End: ");
+                let vp_b = END + this.getOneResourceHtml('vp', 1, true) + PER_STR;
+                switch(b_info.vp_b){
+                    case 0: //VP_B_RESIDENTIAL
+                    case 1: //VP_B_COMMERCIAL
+                    case 2: //VP_B_INDUSTRIAL
+                    case 3: //VP_B_SPECIAL
+                    case 6: //VP_B_BUILDING
+                        vp_b += this.format_block('jstpl_color_log', {string: ASSET_STRINGS[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
+                        break;
+                    case 4: //VP_B_WORKER
+                        vp_b += this.getOneResourceHtml('worker') + "<br>";
+                        break;
+                    case 7: //VP_B_WRK_TRK
+                        vp_b += this.getOneResourceHtml('worker') + "<br>";
+                        vp_b += END + this.getOneResourceHtml('vp', 1, true) + PER_STR;
+                    case 5: //VP_B_TRACK
+                        vp_b += this.getOneResourceHtml('track', 1, true) + "<br>";
+                        break;
+                    case 8: //VP_B_PAID_LOAN (expansion)
+                        vp_b += this.format_block('jptpl_track_log', {type: 'loan'}) + "<br>";
+                        break;
+                }
+                full_desc += vp_b;
+            }
+            return full_desc;
+        },
+
+        formatIncome: function(b_info){
+            var inc_vals = '';
+            const worker = this.getOneResourceHtml('worker', 1, true);
+            if (b_info.inc != null){
+                if (b_info.inc.silver =='x'){
+                    inc_vals = this.getOneResourceHtml('silver', 1, true) +PER_STR+ worker +_('(max 5)') + '<br>';
+                } else if (b_info.inc.loan == '-1') {
+                    inc_vals = _('Pay off ')+ this.format_block('jptpl_track_log', {type: 'loan'}) + '<br>';
+                } else {
+                    inc_vals = this.getResourceArrayHtml(b_info.inc, true) + '<br>';
+                }
+            }
+            if (b_info.slot != null){
+                if (b_info.slot ==1){
+                    inc_vals +=  worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s1, true) +'<br>';
+                }
+                if (b_info.slot ==2){
+                    inc_vals += worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s1, true) +'<br>' 
+                              + worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s2, true) +'<br>';
+                }
+                if (b_info.slot ==3){
+                    inc_vals += worker + worker + " "+ this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s3, true) +'<br>';
+                }
+            }
+            return inc_vals;
         },
 
         addBuildingToOffer: function(building, b_info = null){
@@ -1120,7 +1326,7 @@ function (dojo, declare) {
             if ($(b_divId) == null){ //if missing make the building 
                 dojo.place(this.format_block( 'jstpl_buildings', {key: building.b_key, id: building.b_id}), zone_id);
                 this.b_connect_handler[building.b_key] = dojo.connect($(b_divId), 'onclick', this, 'onClickOnBuilding' );
-                this.addTooltipHtml( b_divId, b_info['tt'] );
+                this.addTooltipHtml( b_divId, this.formatTooltipBuilding(b_info) );
                 this.addBuildingWorkerSlots(building, b_info);
                 this.main_building_counts[building.b_id]++;
             }
@@ -1198,23 +1404,6 @@ function (dojo, declare) {
             }
         },
 
-        getResourceTypeAsInt: function( type ){
-            switch (type){
-                case 'wood':   return WOOD;
-                case 'steel':  return STEEL;
-                case 'gold':   return GOLD;
-                case 'copper': return COPPER;
-                case 'food':   return FOOD;
-                case 'cow':    return COW;
-                case 'trade':  return TRADE;
-                case 'track':  return TRACK;
-                case 'worker': return WORKER;
-                case 'vp':     return VP;
-                case 'silver': return SILVER;
-                case 'loan':   return LOAN;
-            }
-        },
-
         /**
          * This will clear the selectable and selected (if true) flags from assets by type.
          * type locators are set in global TYPE_SELECTOR.
@@ -1264,9 +1453,8 @@ function (dojo, declare) {
             this.silverCounter.setValue(this.silverCost);
             this.goldCounter.create('pay_gold');
             this.goldCounter.setValue(this.goldAmount);
-            const tkn_gold = this.format_block( 'jstpl_resource_inline', {type:'gold'}); 
-            this.addActionButton( 'btn_more_gold', _('More ') + tkn_gold, 'raiseGold', null, false, 'gray');
-            this.addActionButton( 'btn_less_gold', _('Less ') + tkn_gold, 'lowerGold', null, false, 'gray');
+            this.addActionButton( 'btn_more_gold', _('More ') + this.tkn_html['gold'], 'raiseGold', null, false, 'gray');
+            this.addActionButton( 'btn_less_gold', _('Less ') + this.tkn_html['gold'], 'lowerGold', null, false, 'gray');
             dojo.style( $('btn_less_gold'), 'display', 'none');
         },
 
@@ -1334,13 +1522,15 @@ function (dojo, declare) {
         },
 
         /***** BREADCRUMB METHODS *****/
-        createTradeBreadcrumb: function(id, text, tradeAway, tradeFor){
+        createTradeBreadcrumb: function(id, text, tradeAway, tradeFor, loan=false){
+            let forOffset = loan?'9px':'2px';
             dojo.place(this.format_block( 'jptpl_breadcrumb_trade', 
             {
                 id: id, 
                 text:text, 
-                away:this.getResourceArrayHtml(tradeAway, true, "position: relative; top: 9px;"), 
-                for:this.getResourceArrayHtml(tradeFor, true, "position: relative; top: 9px;")}
+                away:this.getResourceArrayHtml(tradeAway, true, "position: relative; top: 9px;"),
+                off: forOffset,
+                for:this.getResourceArrayHtml(tradeFor, true, `position: relative; top: ${forOffset};`)}
                 ), `breadcrumb_transactions`, 'before');
         },
 
@@ -1827,7 +2017,7 @@ function (dojo, declare) {
             if(this.canAddTrade({'loan':1, 'silver':2})){
                 this.updateTrade({'loan':1, 'silver':2});
                 // add breadcrumb
-                this.createTradeBreadcrumb(this.transactionLog.length, "Take Dept", {loan:1}, {silver:2});
+                this.createTradeBreadcrumb(this.transactionLog.length, "Take Dept", {loan:1}, {silver:2}, true);
 
                 this.transactionCost.push({'loan':1, 'silver':2});
                 this.transactionLog.push(TRADE_MAP.loan);
@@ -1850,7 +2040,7 @@ function (dojo, declare) {
                 this.updateTrade(tradeChange);
                 // add breadcrumb
                 let tradeAway = this.invertArray(this.resource_info[type].market);
-                tradeAway.trade = 1;
+                tradeAway.trade = -1;
                 let tradeFor = [];
                 tradeFor[type] =1;
                 this.createTradeBreadcrumb(this.transactionLog.length, _("Market"), tradeAway, tradeFor);
@@ -2200,7 +2390,7 @@ function (dojo, declare) {
                     this.last_selected['worker'] = unassignedWorkers[0].id;
             }
         }
-        if (document.querySelector(`#${target_divId} .worker_slot`)){
+        if (document.querySelector(`#${target_divId} .worker_slot:not(empty)`)){
                 if (!target_divId.startsWith('slot_17_3')){
                     this.showMessage(_("You have already assigned a worker there"), 'error');
                     return;
@@ -2383,7 +2573,7 @@ function (dojo, declare) {
                     return;
                  }
                 const type = this.last_selected['bonus'].split('_')[3];
-                const typeNum = this.getResourceTypeAsInt(type);
+                const typeNum = RESOURCES[type];
                 this.ajaxcall( "/homesteaders/homesteaders/doneSelectingBonus.html", {bonus: typeNum, lock: true}, this, 
                     function( result ) { 
                         this.disableTradeIfPossible();
@@ -2970,25 +3160,20 @@ function (dojo, declare) {
         },
 
         getOneResourceHtml: function(type, amount=1, asSpan = false, style=""){
-            var resString = `<div class="log_container" style="${style}">`;
-            if (asSpan){
-                resString = `<span class="log_container" style="${style}">`;
-            }
+            let html_type = asSpan ? 'span': 'div';
+            var resString = `<${html_type} class="log_container" style="${style}">`;
             if (amount > 0){ 
                 var tokenDiv = this.format_block('jstpl_resource_log', {type : type});
                 for(let i=0; i < amount; i++){
                     resString += `${tokenDiv}`;
                 }
             }
-            if (asSpan)
-                return resString +"</span>"; 
-            return resString +"</div>";
+            return resString + `</${html_type}>`;
         },
 
-        getResourceArrayHtml: function( array, asSpan = false, style){
-            var aggregateString = `<div class="log_container" style="${style}">`;
-            if (asSpan)
-                aggregateString = `<span class="log_container" style="${style}">`;
+        getResourceArrayHtml: function( array, asSpan = false, style=""){
+            let html_type = asSpan ? 'span': 'div';
+            var aggregateString = `<${html_type} class="log_container" style="${style}">`;
             for (let type in array){
                 let amt = array[type];
                 if (amt != 0){ 
@@ -3006,9 +3191,7 @@ function (dojo, declare) {
                     }
                 }
             }
-            if (asSpan)
-                return aggregateString + "</span>";
-            return aggregateString + "</div>";
+            return aggregateString + `</${html_type}>`;
         },
 
         notif_autoPay: function (notif){

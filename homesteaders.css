@@ -57,7 +57,6 @@
 .crossout:before
 { 
    content: "X";
-   position: absolute;
    left: -2px;
    top: -5px;
    height: 133%;
@@ -65,14 +64,15 @@
    text-align: center;
    line-height: 100%;
    overflow: hidden;
-   color: black;
-   opacity: 42%;
+   color: darkred;
+   opacity: 90%;
+   position: relative;
 }
 .log_wood.crossout:before{
    left: -7px;
 }
 .log_inline_loan.crossout:before{
-   left: 5px;
+   left: 2px;
 }
 
 .res {text-decoration: underline;
@@ -736,10 +736,10 @@ div#trade_sell_cow{
    order: 2;
    flex-grow: 10;
 }
-/* #player_zones {
-   display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(600px, auto));
-} */
+.break {
+   flex-basis: 100%;
+   height: 0;
+ }
 
 /*===============*
  * State classes *
@@ -874,21 +874,16 @@ div#trade_sell_cow{
 .score_text {
    position: relative;
    margin: auto;
+   flex: 1;
+   text-align: center;
 }
 .player_text {
    position: relative;
    margin: auto;
    font-size: x-large;
 }
-.score_group {
-   display: grid;
-   grid-template-columns: repeat(2, 35px 12px) repeat(3, 39px 6px);
-   grid-template-rows: 40px 40px;
-}
-.score_grid{
-   height: 30px;
-   display: grid;
-   grid-template-columns: repeat(2, 35px 12px) repeat(3, 35px 12px);
+.score_flex {
+   display:flex;
 }
 .scorenumber {
    position: relative;
@@ -897,142 +892,75 @@ div#trade_sell_cow{
    background-image: url('img/drawn_tokens_2.png');
    position: relative;
    margin: auto;
+   filter: drop-shadow(0px 0px 1px #000000);
 }
 .score_silver{
-   background-size: 265.2px 83.3px;
-   background-position: -64.85px 0px;
-   width: 31.30px;
-   height: 30px;
-   grid-column: 1 / 2;
-   grid-row: 1 / 2;
-}
-.score_silver_text {
-   grid-column: 2 / 3;
-   grid-row: 1 / 2;
+   background-size: 275px 85px;
+   background-position: -72px -1px;
+   width: 28px;
+   height: 28px;
 }
 .score_trade{
-   background-size: 279.3px 87.8px;
-   background-position: -100.85px 0px;
-   width: 30.64px;
-   height: 30px;
-   grid-column: 3 / 4;
-   grid-row: 1 / 2;
-}
-.score_trade_text {
-   grid-column: 4 / 5;
-   grid-row: 1 / 2;
+   background-size: 275px 85px;
+   background-position: -104px -1px;
+   width: 26px;
+   height: 27px;
 }
 .score_wood{
-   background-size: 257.4px 80.9px;
-   background-position: 0px 0px;
-   width: 12px;
-   height: 30px;
-   grid-column: 5 / 6;
-   grid-row: 1 / 2;
-   -webkit-transform: rotate(45deg);
-   -moz-transform: rotate(45deg);
-   transform: rotate(45deg);
-}
-.score_wood_text {
-   grid-column: 6 / 7;
-   grid-row: 1 / 2;
+   background-size: 260px 81px;
+   background-position: -1px -1px;
+   width: 11px;
+   height: 28px;
 }
 .score_food {
-   background-size: 320.1px 100.6px;
-   background-position: -50px 0px;
-   width: 28px;
-   height: 30px;
-   grid-column: 7 / 8;
-   grid-row: 1 / 2;
-}
-.score_food_text {
-   grid-column: 8 / 9;
-   grid-row: 1 / 2;
+   background-size: 325px 100px;
+   background-position: -56px -1px;
+   width: 25px;
+   height: 29px;
 }
 .score_steel{
-   background-size: 340.9px 107.1px;
-   background-position: -75.19px -69.74px;
-   width: 31.17px;
-   height: 30px;
-   grid-column: 9 / 10;
-   grid-row: 1 / 2;
-   left: 2px;
-}
-.score_steel_text {
-   grid-column: 10 / 11;
-   grid-row: 1 / 2;
+   background-size: 339px 107px;
+   background-position: -73px -75px;
+   width: 28px;
+   height: 29px;
 }
 /* row 2 */
 .score_vp{
-   background-size: 224.4px 70.5px;
-   background-position: -105.64px 0px;
-   width: 28.72px;
-   height: 30px;
-   grid-column: 1 / 2;
-   grid-row: 2 / 3;
-}
-.score_vp_text {
-   grid-column: 2 / 3;
-   grid-row: 2 / 3;
+   background-size: 225px 70px;
+   background-position: -138px -1px;
+   width: 25px;
+   height: 27px;
 }
 .score_loan {
    background-image: url('img/rail_debt_85x102.png');
-   background-position: -86% 50%;
-   height: 20px;
-   width: 20px;
-   -webkit-transform: scale(1.7);
-   -moz-transform: scale(1.7);
-   transform: scale(1.7);
+   background-position: -100%;
+   height: 30px;
+   width: 25px;
    background-size: 75px 30px;
-   grid-column: 3 / 4;
-   grid-row: 2 / 3;
-   left: 12px;
-   top: 9px;
 }
 .score_loan_text {
-   grid-column: 4 / 5;
-   grid-row: 2 / 3;
    height: 20px;
    width: 20px;
    background-size: 75px 30px;
 }
 .score_gold{
-   background-size: 285.3px 89.7px;
-   background-position: -13.37px 0px;
-   width: 31.3px;
-   height: 30px;
-   grid-column: 5 / 6;
-   grid-row: 2 / 3;
-}
-.score_gold_text {
-   grid-column: 6 / 7;
-   grid-row: 2 / 3;
+   background-size: 285px 90px;
+   background-position: -17px -2px;
+   width: 28px;
+   height: 28px;
 }
 .score_cow{
-   background-size: 320px 108.6px;
-   background-position: -38px -40px;
-   width: 38px;
-   height: 30px;
-   grid-column: 7 / 8;
-   grid-row: 2 / 3;
-}
-.score_cow_text {
-   grid-column: 8 / 9;
-   grid-row: 2 / 3;
+   background-size: 320px 107px;
+   background-position: -38px -42px;
+   width: 33px;
+   height: 28px;
 }
 .score_copper{
-   background-size: 305px 121.3px;
-   background-position: -73.8px -46.76px;
-   width: 38px;
-   height: 30px;
-   grid-column: 9 / 10;
-   grid-row: 2 / 3;
+   background-size: 305px 121px;
+   background-position: -71px -47px;
+   width: 35px;
+   height: 28px;
 }
-.score_copper_text {
-   grid-column: 10 / 11;
-   grid-row: 2 / 3;
-}
-
 .player_resources{
    display: flex;
    flex-wrap: wrap;
@@ -1116,35 +1044,36 @@ div#trade_sell_cow{
 }
 .buy{
    background-image: url('img/drawn_tokens_2.png');
-   background-size: 875px 275px;
-   background-position: -273px -178px;
+   background-size: 1000px 300px;
+   background-position: -312px -216px;
    height: 20px;
    width: 20px;
    grid-row: 1 / 2;
 }
 .sell{
    background-image: url('img/drawn_tokens_2.png');
-   background-size: 875px 275px;
-   background-position: -296px -178px;
+   background-size: 1000px 300px;
+   background-position: -312px -264px;
    height: 20px;
    width: 20px;
    grid-row: 3 / 4;
 }
 .player_silver {
-   background-size: 353.5px 111.1px;
-   background-position: -86.46px 0px;
-   width: 41.21px;
-   height: 40px;
+   background-size: 353px 111px;
+   background-position: -92px -2px;
+   width: 36px;
+   height: 36px;
 }
 .signed{
    margin: auto;
    grid-row: 2 / 3;
 }
 .player_trade {
-   background-size: 353.5px 117px;
-   background-position: -127px 0px;
-   width: 40px;
-   height: 40px;
+   background-size: 353px 117px;
+   background-position: -129px -1px;
+   width: 38px;
+   height: 38px;
+   filter: drop-shadow(0px 0px 1px #000000);
 }
 .player_loan {
    background-image: url('img/rail_debt_85x102.png');
@@ -1154,54 +1083,55 @@ div#trade_sell_cow{
    width: 40px;
    position: relative;
    margin: auto;
+   filter: drop-shadow(0px 0px 1px #000000);
  }
 .take_loan {
    background-image: url('img/drawn_tokens_2.png');
-   background-size: 875px 275px;
-   background-position: -273px -178px;
+   background-size: 1000px 300px;
+   background-position: -312px -216px;
    height: 20px;
    width: 20px;
    grid-row: 1 / 2;
 }
 .player_vp {
-   background-size: 299.1px 94px;
-   background-position: -140.85px 0px;
-   width: 38.29px;
-   height: 40px;
+   background-size: 342px 100px;
+   background-position: -210px -1px;
+   width: 38px;
+   height: 38px;
 }
 .player_wood {
-   background-size: 428.9px 134.8px;
-   background-position: 0px 0px;
-   width: 20.1px;
-   height: 50px;
-}
-.player_food {
-   background-size: 426px 134.1px;
-   background-position: -67px 0px;
-   width: 36.5px;
+   background-size: 392px 117px;
+   background-position: -2px -1px;
+   width: 17px;
    height: 40px;
 }
+.player_food {
+   background-size: 487px 146px;
+   background-position: -83px -6px;
+   width: 37px;
+   height: 38px;
+}
 .player_steel {
-   background-size: 454.5px 142.9px;
-   background-position: -100.26px -92.99px;
+   background-size: 520px 156px;
+   background-position: -113px -113px;
    width: 41px;
    height: 40px;
 }
 .player_gold{
-   background-size: 380px 119.6px;
-   background-position: -18px 0px;
+   background-size: 435px 130.5px;
+   background-position: -26.5px -3.5px;
    width: 41px;
    height: 40px;
 }
 .player_cow {
-   background-size: 460.5px 144.7px;
-   background-position: -56.84px -53.68px;
-   width: 55.26px;
+   background-size: 526px 158px;
+   background-position: -62.6px -63px;
+   width: 55px;
    height: 40px;
 }
 .player_copper {
-   background-size: 409px 161.8px;
-   background-position: -101px -62.35px;
+   background-size: 463px 176px;
+   background-position: -110px -70.6px;
    width: 50px;
    height: 40px;
 }
@@ -1231,11 +1161,25 @@ div#trade_sell_cow{
    width: 40px;
 }
 .tt{
-   -webkit-transform: scale(1);
-   -moz-transform: scale(1); 
-   transform: scale(1);
    display: block;
    float: center;
+}
+.tt_container{
+   min-width: 100px;
+   /* max-width: 200px; */
+   /* float: center; */
+   /* text-align: center; */
+}
+.tt_break {
+   width: 100%; 
+   text-align: center; 
+   border-bottom: 1px solid #000; 
+   line-height: 0.1em; 
+   margin: 12px 0 10px;
+}
+.tt_break span{
+   background:#fff; 
+   padding: 0 10px;
 }
 
 /*=============*
@@ -1289,42 +1233,45 @@ div#trade_sell_cow{
    position: relative;
    overflow: hidden;
    flex-direction: row-reverse;
+   filter: drop-shadow(0px 0px 1px #000000);
 }
 .log_token:not(:last-child) {
    margin-left: -10px;
  }
-
+ .log_wood.log_token:not(:last-child) {
+   margin-left: -3px;
+ }
+.tt_container .log_token:not(:last-child), #breadcrumb_bldCost .log_token:not(:last-child) {
+   margin-left: -0px;
+}
 .log_wood{
-   background-size: 175px 53px;;
-   background-position: 0px 0px;
-   width: 8px;
+   background-size: 200px 60px;
+   background-position: -1px -1px;
+   width: 10px;
    height: 20px;
 }
-.log_wood:not(:last-child) {
-   margin-left: -2px;
- }
 .log_gold{
-   background-size: 190.2px 59.8px;
-   background-position: -8.8px 0px;
+   background-size: 217.4px 65.2px;
+   background-position: -13px -2px;
    width: 20.8px;
    height: 20px;
 }
 .log_food{
-   background-size: 213.4px 67.1px;
-   background-position: -33.4px 0px;
+   background-size: 243.9px 73px;
+   background-position: -41.7px -3px;
    width: 18.8px;
    height: 20px;
 }
 .log_silver{
-   background-size: 176.8px 55.6px;
-   background-position: -43.23px 0px;
-   width: 20.6px;
+   background-size: 202px 61px;
+   background-position: -53px -1px;
+   width: 21px;
    height: 20px;
 }
 .log_trade{
-   background-size: 186.2px 58.5px;
-   background-position: -67.23px 0px;
-   width: 20.4px;
+   background-size: 202px 61px;
+   background-position: -76px -1px;
+   width: 20px;
    height: 20px;
 }
 .log_loan{
@@ -1337,97 +1284,103 @@ div#trade_sell_cow{
    background-size: 115px 63px; 
 }
 .log_vp0 {
-   background-size: 149.6px 47px;
-   background-position: -128.21px 0px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: 55% 3%;
+   width: 20px;
    height: 20px;
 }
 .log_vp{
-   background-size: 149.6px 47px;
-   background-position: -70.43px 0px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: -43.5% 3%;
+   width: 20px;
    height: 20px;
 }
 .log_vp2{
-   background-size: 149.6px 46.2px;
-   background-position: -88.07px -0px;
-   width: 19.16px;
+   background-size: 171px 51px;
+   background-position: -29.5% 3%;
+   width: 20px;
    height: 20px;
 }
 .log_vp3{
-   background-size: 149.6px 47px;
-   background-position: -109.06px -0px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: -15% 3%;
+   width: 20px;
    height: 20px;
 }
 .log_vp4{
-   background-size: 149.6px 47px;
-   background-position: -69.23px -21.71px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: 55% 75%;
+   width: 20px;
    height: 20px;
 }
 .log_vp6{
-   background-size: 149.6px 47px;
-   background-position: -89.57px -21.71px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: -43.5% 75%;
+   width: 20px;
    height: 20px;
 }
 .log_vp8{
-   background-size: 149.6px 47px;
-   background-position: -109.06px -21.71px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: -29.5% 75%;
+   width: 20px;
    height: 20px;
 }
 .log_vp10{
-   background-size: 149.6px 47px;
-   background-position: -129.23px -21.71px;
-   width: 19.15px;
+   background-size: 171px 51px;
+   background-position: -15% 75%;
+   width: 20px;
    height: 20px;
 }
+.bld_vp{
+   background-size: 256px 77px;
+   width: 29px;
+   height: 30px;
+}
 .log_worker{
-   background-size: 106.7px 33.5px;
-   background-position: 0px -13.17px;
-   width: 13.17px;
+   background-size: 122px 36.6px;
+   background-position: 0px -13.9px;
+   width: 13.2px;
    height: 20px;
 }
 .log_container .log_worker:not(:last-child) {
    margin-left: -8px;
  }
 .log_cow{
-   background-size: 230.3px 72.4px;
-   background-position: -28.42px -26.84px;
-   width: 27.63px;
+   background-size: 263px 79px;
+   background-position: -31px -32px;
+   width: 27px;
    height: 20px;
 }
 .log_copper{
-   background-size: 257.4px 80.9px;
-   background-position: -63.24px -31.18px;
-   width: 31.76px;
+   background-size: 275px 88px;
+   background-position: -66px -35px;
+   width: 30px;
    height: 20px;
 }
 .log_track{
-   background-size: 227.3px 71.4px;
-   background-position: -29.35px -46.49px;
-   width: 19.48px;
+   background-size: 259.7px 77.9px;
+   background-position: -33.5px -56px;
+   width: 20px;
    height: 20px;
 }
 .log_steel{
-   background-size: 227.3px 71.4px;
-   background-position: -50.13px -46.49px;
-   width: 20.78px;
+   background-size: 259.7px 77.9px;
+   background-position: -56.6px -56.1px;
+   width: 21px;
    height: 20px;
 }
 .log_arrow{
-   background-size: 603.4px 189.7px;
-   background-position: -224.14px -72.41px;
+   background-size: 689.7px 206.9px;
+   background-position: -249.6px -83.45px;
    width: 22.76px;
    height: 20px;
 }
 .log_inc_arrow{
-   background-size: 546.9px 171.9px;
-   background-position: -173.75px -115.63px;
-   width: 20px;
-   height: 20px;
+   background-size: 517px 155px;
+   background-position: -187px -83px;
+   width: 15px;
+   height: 15px;
+   filter: drop-shadow(0px 0px 1px #000000);
 }
 
 .log_inline_track{
