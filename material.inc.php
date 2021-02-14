@@ -202,7 +202,7 @@ $this->building_info = array_merge(
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>2),
     'vp_b' => VP_B_WRK_TRK,
-    'inc'  => array('trade'=>1, 'silver'=>1),
+    'inc'  => array('silver'=>1,'trade'=>1),
     'amt'  => 1,
    ),
    BLD_RANCH => array(

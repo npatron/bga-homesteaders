@@ -491,9 +491,9 @@ function (dojo, declare) {
                 dojo.connect($(this.building_worker_ids[key][3]), 'onclick', this, 'onClickOnWorkerSlot');
             }
             if (id == BLD_MARKET){
-                dojo.place(`<div id="${MARKET_FOOD_DIVID}" class="trade_option"> </div><div id="${MARKET_STEEL_DIVID}" class="trade_option"> </div>`, b_divId,'last');
-                dojo.connect($(MARKET_FOOD_DIVID), 'onclick', this, 'onMarketResource');
-                dojo.connect($(MARKET_STEEL_DIVID), 'onclick', this, 'onMarketResource');
+                dojo.place(`<div id="${key}_${MARKET_FOOD_DIVID}" class="trade_option"> </div><div id="${key}_${MARKET_STEEL_DIVID}" class="trade_option"> </div>`, b_divId,'last');
+                dojo.connect($(key+"_"+MARKET_FOOD_DIVID), 'onclick', this, 'onMarketResource');
+                dojo.connect($(key+"_"+MARKET_STEEL_DIVID), 'onclick', this, 'onMarketResource');
             }
         
     
@@ -1126,11 +1126,11 @@ function (dojo, declare) {
                 type:  ASSET_COLORS[b_info.type],
                 name: b_info.name,
                 vp:   vp,
-                COST: _('Cost:'),
+                COST: _('cost:'),
                 cost_vals: this.getResourceArrayHtml(b_info.cost, true),
-                desc: this.formatDescription(b_info),
+                desc: this.formatBuildingDescription(b_info),
                 INCOME: _('income: '),
-                inc_vals: this.formatIncome(b_info),
+                inc_vals: this.formatBuildingIncome(b_info),
             });
         },
 
@@ -1219,7 +1219,7 @@ function (dojo, declare) {
             return updatedString;
         },
 
-        formatDescription: function(b_info){
+        formatBuildingDescription: function(b_info){
             var full_desc = '';
             
             if (b_info.desc != null){
@@ -1285,7 +1285,7 @@ function (dojo, declare) {
             return full_desc;
         },
 
-        formatIncome: function(b_info){
+        formatBuildingIncome: function(b_info){
             var inc_vals = '';
             const worker = this.getOneResourceHtml('worker', 1, true);
             if (b_info.inc != null){
@@ -1294,19 +1294,19 @@ function (dojo, declare) {
                 } else if (b_info.inc.loan == '-1') {
                     inc_vals = _('Pay off ')+ this.format_block('jptpl_track_log', {type: 'loan'}) + '<br>';
                 } else {
-                    inc_vals = this.getResourceArrayHtml(b_info.inc, true) + '<br>';
+                    inc_vals = this.getResourceArrayHtmlBigVp(b_info.inc, true) + '<br>';
                 }
             }
             if (b_info.slot != null){
                 if (b_info.slot ==1){
-                    inc_vals +=  worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s1, true) +'<br>';
+                    inc_vals +=  worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtmlBigVp(b_info.s1, true) +'<br>';
                 }
                 if (b_info.slot ==2){
-                    inc_vals += worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s1, true) +'<br>' 
-                              + worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s2, true) +'<br>';
+                    inc_vals += worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtmlBigVp(b_info.s1, true) +'<br>' 
+                              + worker + " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtmlBigVp(b_info.s2, true) +'<br>';
                 }
                 if (b_info.slot ==3){
-                    inc_vals += worker + worker + " "+ this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info.s3, true) +'<br>';
+                    inc_vals += worker + worker + " "+ this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtmlBigVp(b_info.s3, true) +'<br>';
                 }
             }
             return inc_vals;
@@ -2032,7 +2032,7 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
             if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
-            let type = evt.target.id.split('_')[3];
+            let type = evt.target.id.split('_')[4];
             let tradeChange = this.invertArray(this.resource_info[type].market);
             tradeChange.trade = -1;
             tradeChange[type] = 1;
@@ -3171,7 +3171,32 @@ function (dojo, declare) {
             return resString + `</${html_type}>`;
         },
 
-        getResourceArrayHtml: function( array, asSpan = false, style=""){
+        getResourceArrayHtmlBigVp: function (array, asSpan=false) {
+            let html_type = asSpan ? 'span': 'div';
+            var aggregateString = `<${html_type} class="log_container">`;
+            for (let type in array){
+                let amt = array[type];
+                if (amt != 0){ 
+                    let type_no = type;
+                    if (amt < 0){
+                        type_no = type + " crossout";
+                    }
+                    if (type == 'loan' || type == 'track'){
+                        var tokenDiv = this.format_block('jptpl_track_log', {type: type_no});
+                    } else if (type == 'vp' || VP_TOKENS.includes(type)) {
+                        var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type_no + " bld_vp"});
+                    } else {
+                        var tokenDiv = this.format_block('jstpl_resource_log', {"type" : type_no});
+                    }
+                    for(let i=0; i < Math.abs(amt); i++){
+                        aggregateString += `${tokenDiv}`;
+                    }
+                }
+            }
+            return aggregateString + `</${html_type}>`;
+        },
+
+        getResourceArrayHtml: function( array, asSpan=false, style=""){
             let html_type = asSpan ? 'span': 'div';
             var aggregateString = `<${html_type} class="log_container" style="${style}">`;
             for (let type in array){

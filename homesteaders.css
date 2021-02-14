@@ -31,6 +31,7 @@
 .font {
    font-family: 'Old Standard TT';
    font-style: normal;
+   vertical-align: middle;
 }
 .useFont {
    font: normal 20px/1 "Old Standard TT";
@@ -292,6 +293,7 @@ button:disabled {
 	margin-bottom: 10px;
    overflow: hidden; 
 	background: #b5552b;
+   /* background: #b5552b url('img/drawn_homesteaders.jpg'); */
 }
 
 .breadcrumbs_element {
@@ -600,19 +602,39 @@ div#trade_board {
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
+
+div#buy_board {
+   background-image: url('img/trade.jpg');
+   width: 255px;
+   height: 180px;
+   background-repeat: no-repeat;
+   margin: auto;
+   box-shadow: -3px -3px 3px grey inset;
+   border-radius: 6px;
+}
+
+div#sell_board {
+   background-image: url('img/trade.jpg');
+   width: 255px;
+   height: 180px;
+   background-repeat: no-repeat;
+   margin: auto;
+   box-shadow: -3px -3px 3px grey inset;
+   border-radius: 6px;
+}
 .trade_size {
    width: 512px;
    height: 180px;
 }
 
-div#trade_market_wood_food{
+div[id$=trade_market_wood_food]{
    left: 38px;
    bottom: 80px;
    position: absolute;
    width: 64px;
    height: 27px;
 }
-div#trade_market_food_steel{
+div[id$=trade_market_food_steel]{
    left: 38px;
    bottom: 57px;
    position: absolute;
@@ -1418,11 +1440,11 @@ div#trade_sell_cow{
  * Worker Tokens *
  *===============*/
 .token_worker {
-   background-image: url(img/drawn_tokens.png);
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 677px 207px;
    height: 35px;
-   width: 26px;
-   background-position: -204px -188px;
-   background-size: 558.5px 297.9px;
+   width: 24px;
+   background-position: 42.2% 49%;
    z-index: 2;
    filter: drop-shadow(0px 0px 1px #000000);
    position: relative;
@@ -1564,8 +1586,8 @@ div#trade_sell_cow{
    left: 39px;
 }
 .slot_16_1 {
-   bottom: 9px;
-   left: 28px;
+   bottom: 12px;
+   left: 35px;
 }
 .slot_17_3 {
    bottom: 13px;
