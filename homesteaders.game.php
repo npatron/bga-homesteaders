@@ -183,6 +183,7 @@ class homesteaders extends Table
             'resource_info' => $this->resource_info,
             'round_number' => $this->getGameStateValue( 'round_number' ),
             'show_player_info' => $this->getShowPlayerInfo(),
+            'translation_strings' => $this->translation_strings,
             'tracks' => $this->getCollectionFromDb("SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` "),
             'workers' => $this->getCollectionFromDb( "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot FROM `workers`" ),
         );

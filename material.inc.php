@@ -45,6 +45,8 @@ $this->trade_map = array(
   6=>'sell_wood', 7=>'sell_food', 8=>'sell_steel', 9=>'sell_gold', 10=>'sell_copper',11=>'sell_cow', 
   12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan', 16=>'payloan_silver', 17=>'payloan_gold');
 
+$this->translation_strings = array(
+  0=>_('Residential'), 1=>_('Commercial'), 2=>_('Industrial'), 3=>_('Special'), 6=>_('Building'), 7=>_(' per '));
 
 $this->resource_info = array(
   'silver' => array(
