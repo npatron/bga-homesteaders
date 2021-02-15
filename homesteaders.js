@@ -835,7 +835,6 @@ function (dojo, declare) {
                     case 'payWorkers':
                         this.silverCost = this.getPlayerWorkerCount(this.player_id);
                         this.goldAmount = 0;
-                        //this.setupPaymentResourcesAndLoanButton();
                         this.addPaymentButtons(true);
                         this.addTradeActionButton();
                         this.setOffsetForPaymentButtons();
@@ -890,7 +889,6 @@ function (dojo, declare) {
                         this.silverCost = Number(args.auction_cost);
                         this.goldAmount = 0;
                         this.addPaymentButtons();
-                        //this.setupPaymentResourcesAndLoanButton();
                         this.addTradeActionButton();
                         this.setOffsetForPaymentButtons();
                     break;
@@ -985,7 +983,6 @@ function (dojo, declare) {
                             this.allowTrade = true;
                             this.silverCost = this.getPlayerWorkerCount(this.player_id);
                             this.goldAmount = 0;
-                            //this.setupPaymentResourcesAndLoanButton();
                             this.addPaymentButtons(true);
                             this.addTradeActionButton();
                             this.setOffsetForPaymentButtons();
@@ -1780,47 +1777,6 @@ function (dojo, declare) {
             }
         },
 
-        /**  setupPaymentResourcesAndLoanButton (for use in payment states)
-         * display all silver/loan/gold
-         * and new loan button
-         * this should interact ok with enable trade which can also be enabled.
-         */
-        setupPaymentResourcesAndLoanButton: function() {
-            dojo.query('.this_player_resources:not(.pay_sizing)').addClass('pay_sizing');
-            // hide loan counter
-            dojo.query('#loan_more').style('visibility', 'visible');
-            // show (loan, silver) (offset, new), and take loan button.
-            dojo.query('.this_player_resource_group .player_loan_text:not(.noshow)').removeClass('noshow');
-            dojo.query('#loan_mid.noshow').removeClass('noshow');
-            dojo.query('#loan_new.noshow').removeClass('noshow');
-            // silver
-            dojo.query('.this_player_resource_group .player_silver_text.noshow').removeClass('noshow');
-            dojo.query('#silver_mid.noshow').removeClass('noshow');
-            dojo.query('#silver_new.noshow').removeClass('noshow');
-        },
-        
-        /** disableLoan (for use when leaving payment states)
-         * undo setupPaymentResourcesAndLoanButton 
-         */
-        disableLoan: function() {
-            dojo.query('.this_player_resources.pay_sizing').removeClass('pay_sizing');
-            // take loan button.
-            dojo.query('#loan_more').style('visibility', 'hidden');
-            //loan
-            dojo.query('.this_player_resource_group .player_loan_text.noshow').removeClass('noshow');
-            dojo.query('#loan_mid:not(.noshow)').addClass('noshow');
-            dojo.query('#loan_new:not(.noshow)').addClass('noshow');
-
-            // silver
-            dojo.query('.this_player_resource_group .player_silver_text.noshow').removeClass('noshow');
-            dojo.query('#silver_mid:not(.noshow)').addClass('noshow');
-            dojo.query('#silver_new:not(.noshow)').addClass('noshow');
-            // gold
-            dojo.query('.this_player_resource_group .player_gold_text.noshow').removeClass('noshow');
-            dojo.query('#gold_mid:not(.noshow)').addClass('noshow');
-            dojo.query('#gold_new:not(.noshow)').addClass('noshow');
-        },
-
         /** Enable Trade
          * 
          */
@@ -1881,7 +1837,6 @@ function (dojo, declare) {
             if (this.silverCost >0){ hasOffset.silver = true; }
             if (this.goldAmount >0){ hasOffset.gold = true; }
             for(let type in hasOffset){
-                //console.log('offset shown ', type);
                 dojo.query(`#${thisPlayer} .player_${type}_offset.noshow`).removeClass('noshow');
                 dojo.query(`#${thisPlayer} .player_${type}_new.noshow`).removeClass('noshow');
                 dojo.query(`#${thisPlayer} #${type}_group:not(.expand)`).addClass('expand');
@@ -1893,8 +1848,6 @@ function (dojo, declare) {
             dojo.query('.this_player_resources:not(.all_sizing)').addClass('all_sizing');
             // show all values.
             dojo.query(`#${thisPlayer} .offset_text.noshow`).removeClass('noshow');
-            //dojo.query(`#${thisPlayer} .offset_text_loan.noshow`).removeClass('noshow');
-
             dojo.query(`#${thisPlayer} .player_text.noshow`).removeClass('noshow');
             dojo.query(`#${thisPlayer} .player_text_loan.noshow`).removeClass('noshow');
             dojo.query(`#${thisPlayer} .new_text.noshow`).removeClass('noshow');
