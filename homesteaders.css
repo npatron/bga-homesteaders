@@ -28,18 +28,18 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.font {
+.font, .biggerFont, .useFont {
    font-family: 'Old Standard TT';
    font-style: normal;
    vertical-align: middle;
+   font-size: 20px;
 }
 .useFont {
-   font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
 .bold {font-weight: bold;}
 .biggerFont {
-   font: normal 30px/1 "Old Standard TT";
+   font-size: 30px;
    font-variant: small-caps;
 }
 .logFont {
@@ -106,23 +106,15 @@
 }
 .a1 {
    color: lightseagreen;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .a2 {
    color: orange;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .a3 {
    color: hotpink;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .a4 {
    color: purple;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .auction_column .auction_string{
    font-size: 30px;
@@ -271,12 +263,11 @@ button:disabled {
 	width: 100%; 
 	overflow-x: auto;
 	overflow-y: hidden;
-	/* text-align: center; */
-	
+
 	/*** GI : center interface **/
     margin: auto;	
     /*** GI (end) **/
-    
+   
 }
 
 .anchor>* {
@@ -852,17 +843,7 @@ div#trade_sell_cow{
    box-sizing: border-box;
    padding:4px 4px 4px 4px;
 }
-/*======*
- * hide *
- *======*/
-.noshow {
-   visibility:hidden;
-   display: none;
-   grid-area: none;
-}
-.show {
-   visibility:visible;
-}
+
 /*===============*
  * Animate Token *
  *===============*/
@@ -1027,14 +1008,14 @@ div#trade_sell_cow{
    min-width: 110px;
    max-width: 125px;
 }
-.this_player_resource_group.expand{
+/*.this_player_resource_group.expand{
    min-width: 100px;
    max-width: 120px;
 }
 .this_player_wider_resource_group.expand{
    min-width: 110px;
    max-width: 125px;
-}
+}*/
 .offset_text{
    display: grid;
    grid-template-rows: repeat(3, 1fr);
@@ -1043,15 +1024,16 @@ div#trade_sell_cow{
    align-items: center;
    justify-content: center;
 }
-.negative{
+.negative, .neg{
    color: darkred;
 }
-.positive{
+.positive, .pos{
    color: green;
 }
 .new_text {
    position: relative;
    font-size: x-large;
+   font-weight: bold;
    margin: auto;
 }
 .player_text_loan {
@@ -1063,6 +1045,14 @@ div#trade_sell_cow{
    position: relative;
    font-size: x-large;
    margin: auto;
+}
+.horiz{
+   display: flex;
+   flex-direction: row;
+}
+.vert{
+   display: flex;
+   flex-direction: column;
 }
 .buy{
    background-image: url('img/drawn_tokens_2.png');
@@ -1080,6 +1070,7 @@ div#trade_sell_cow{
    width: 20px;
    grid-row: 3 / 4;
 }
+
 .player_silver {
    background-size: 353px 111px;
    background-position: -92px -2px;
@@ -1088,7 +1079,7 @@ div#trade_sell_cow{
 }
 .signed{
    margin: auto;
-   grid-row: 2 / 3;
+   text-decoration: underline;
 }
 .player_trade {
    background-size: 353px 117px;
@@ -1449,6 +1440,18 @@ div#trade_sell_cow{
    filter: drop-shadow(0px 0px 1px #000000);
    position: relative;
    display: inline-block;
+}
+
+/*======*
+ * hide *
+ *======*/
+ .noshow {
+   visibility:hidden;
+   display: none;
+   grid-area: none;
+}
+.show {
+   visibility:visible;
 }
 
 /*===============*

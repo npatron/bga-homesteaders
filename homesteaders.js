@@ -172,7 +172,8 @@ function (dojo, declare) {
             
             // only this.player_id used for trade/loans/etc.
             this.board_resourceCounters = []; 
-            this.offset_resourceCounter = [];
+            this.pos_offset_resourceCounter = [];
+            this.neg_offset_resourceCounter = [];
             this.new_resourceCounter = [];
             this.transactionCost = [];
             this.transactionLog = [];
@@ -608,13 +609,14 @@ function (dojo, declare) {
             // create new and offset counters
             for (const [key, value] of Object.entries(this.resource_info)) {
                 if ( key == "workers" || key == "track") continue;
-                let boardResourceId = `${key}_offset`;
-                this.offset_resourceCounter[key] = new ebg.counter();
-                this.offset_resourceCounter[key].create(boardResourceId);
-                this.offset_resourceCounter[key].setValue(0);
-                let newResourceId = `${key}_new`;
+                this.pos_offset_resourceCounter[key] = new ebg.counter();
+                this.pos_offset_resourceCounter[key].create(`${key}_pos`);
+                this.pos_offset_resourceCounter[key].setValue(0);
+                this.neg_offset_resourceCounter[key] = new ebg.counter();
+                this.neg_offset_resourceCounter[key].create(`${key}_neg`);
+                this.neg_offset_resourceCounter[key].setValue(0);
                 this.new_resourceCounter[key] = new ebg.counter();
-                this.new_resourceCounter[key].create(newResourceId);
+                this.new_resourceCounter[key].create(`${key}_new`);
                 this.new_resourceCounter[key].setValue(0);
             }
             this.resetTradeVals();
@@ -1503,23 +1505,24 @@ function (dojo, declare) {
          * Set offset & New values to include cost & transactions.
          */
         setOffsetForPaymentButtons: function( ) {
-            //console.log('setOffsetForPaymentButtons');
             // silver
-            let silver_offset = this.getOffsetValue('silver');
+            let silver_offset_neg = this.getOffsetNeg('silver');
             if (this.silverCost >0){
-                silver_offset = silver_offset - this.silverCost;
+                silver_offset_neg += this.silverCost;
             } 
-            this.offsetPosNeg('silver', silver_offset);
-            let silver_new = this.board_resourceCounters[this.player_id].silver.getValue() + silver_offset;
+            this.setOffsetNeg('silver', silver_offset_neg);
+            let silver_offset_pos = this.getOffsetPos('silver');
+            let silver_new = this.board_resourceCounters[this.player_id].silver.getValue() - silver_offset_neg + silver_offset_pos;
             this.newPosNeg('silver', silver_new);
 
             // gold
-            let gold_offset = this.getOffsetValue('gold');
+            let gold_offset_neg = this.getOffsetNeg('gold');
+            let gold_offset_pos = this.getOffsetPos('gold');
             if (this.goldAmount >0){
-                gold_offset = gold_offset - this.goldAmount;
+                gold_offset_neg += this.goldAmount;
             }
-            this.offsetPosNeg('gold', gold_offset);
-            let gold_new = this.board_resourceCounters[this.player_id].gold.getValue() + gold_offset;
+            this.setOffsetNeg('gold', gold_offset_neg);
+            let gold_new = this.board_resourceCounters[this.player_id].gold.getValue() - gold_offset_neg + gold_offset_pos;
             this.newPosNeg('gold', gold_new);
             
             this.createPaymentBreadcrumb({'silver':Math.min(0,(-1 *this.silverCost)), 'gold':Math.min(0,(-1 *this.goldAmount))});
@@ -1731,8 +1734,8 @@ function (dojo, declare) {
 
         hideTradeButtons: function( confirmButton = false){
             this.tradeEnabled = false;
-            dojo.query(`.buy`).style('visibility', 'hidden');
-            dojo.query(`.sell`).style('visibility', 'hidden');
+            dojo.query(`.buy:not(.noshow)`).addClass('noshow');
+            dojo.query(`.sell:not(.noshow)`).addClass('noshow');
             
             if (confirmButton){
                 dojo.query(`#${TRADE_BUTTON_ID}`).addClass('noshow');
@@ -1788,7 +1791,7 @@ function (dojo, declare) {
         setupPaymentResourcesAndLoanButton: function() {
             dojo.query('.this_player_resources:not(.pay_sizing)').addClass('pay_sizing');
             // hide loan counter
-            dojo.query('#loan_more').style('visibility', 'visible');
+            dojo.query('#loan_more.noshow').removeClass('noshow');
             // show (loan, silver) (offset, new), and take loan button.
             dojo.query('.this_player_resource_group .player_loan_text:not(.noshow)').removeClass('noshow');
             dojo.query('#loan_mid.noshow').removeClass('noshow');
@@ -1805,7 +1808,7 @@ function (dojo, declare) {
         disableLoan: function() {
             dojo.query('.this_player_resources.pay_sizing').removeClass('pay_sizing');
             // take loan button.
-            dojo.query('#loan_more').style('visibility', 'hidden');
+            dojo.query('#loan_more:not(.noshow)').addClass('noshow');
             //loan
             dojo.query('.this_player_resource_group .player_loan_text.noshow').removeClass('noshow');
             dojo.query('#loan_mid:not(.noshow)').addClass('noshow');
@@ -1833,15 +1836,15 @@ function (dojo, declare) {
             }
             // if player_has trade tokens, 
             this.tradeEnabled = true;
-            dojo.query(`#loan_more`).style('visibility', 'visible');
+            dojo.query(`#loan_more.noshow`).removeClass('noshow');
             dojo.query(`#loan_mid.noshow`).removeClass('noshow');
             dojo.query(`#loan_new.noshow`).removeClass('noshow');
             
-            dojo.query(`.buy`).style('visibility', 'visible');
+            dojo.query(`.buy.noshow`).removeClass('noshow');
             for(let type in this.new_resourceCounter){
                 if (type == 'vp' || type == 'silver' || type == 'loan' || type == 'trade') continue;
                 if (this.new_resourceCounter[type].getValue() >0) 
-                    dojo.query(`.sell_${type}`).style('visibility', 'visible');
+                    dojo.query(`.sell_${type}.noshow`).removeClass('noshow');
             }
         },
 
@@ -1850,8 +1853,8 @@ function (dojo, declare) {
             dojo.query('.all_sizing').removeClass('all_sizing');
             dojo.query('.this_player_resource_group.expand').removeClass('expand');
             
-            dojo.query(`.buy`).style('visibility', 'hidden');
-            dojo.query(`.sell`).style('visibility', 'hidden');    
+            dojo.query(`.buy:not(.noshow)`).addClass('noshow');
+            dojo.query(`.sell:not(.noshow)`).addClass('noshow');
             this.hideResources();
             
         },
@@ -1863,7 +1866,7 @@ function (dojo, declare) {
             dojo.query(`#${thisPlayer} .offset_text:not(.noshow)`).addClass('noshow');
             dojo.query(`#${thisPlayer} .new_text:not(.noshow)`).addClass('noshow');
             if(!this.showPay){
-                dojo.style('loan_more','visibility', 'hidden');
+                dojo.query('#loan_more:not(.noshow)').addClass('noshow');
                 dojo.query(`#${thisPlayer} .offset_text_loan:not(.noshow)`).addClass('noshow');
                 dojo.query(`#${thisPlayer} #loan_new:not(.noshow)`).addClass('noshow');
             } else {
@@ -1912,6 +1915,26 @@ function (dojo, declare) {
              }, function( is_error) {});
         },
 
+        getOffsetNeg: function(type){
+            let value = 0;
+            for(let i in this.transactionCost){
+                if (type in this.transactionCost[i] && this.transactionCost[i][type] < 0){
+                    value += this.transactionCost[i][type];
+                }
+            }
+            return Math.abs(value);
+        },
+        
+        getOffsetPos: function(type){
+            let value = 0;
+            for(let i in this.transactionCost){
+                if (type in this.transactionCost[i] && this.transactionCost[i][type]>0){
+                    value += this.transactionCost[i][type];
+                }
+            }
+            return value;
+        },
+
         getOffsetValue: function(type) {
             let value = 0;
             for(let i in this.transactionCost){
@@ -1928,14 +1951,17 @@ function (dojo, declare) {
          */
         resetTradeVals: function() {
             for(let type in this.board_resourceCounters[this.player_id]){
-                this.offsetPosNeg(type, this.getOffsetValue(type));
-                this.newPosNeg(type, this.board_resourceCounters[this.player_id][type].getValue());
+                let offset = 0;
+                offset -= this.setOffsetNeg(type, this.getOffsetNeg(type));
+                offset += this.setOffsetPos(type, this.getOffsetPos(type));
+
+                this.newPosNeg(type, this.board_resourceCounters[this.player_id][type].getValue() + offset);
                 let val = this.board_resourceCounters[this.player_id][type].getValue();
                 if(val <= 0 && this.tradeEnabled){
-                    dojo.query(`.sell_${type}`).style('visibility', 'hidden');
+                    dojo.query(`.sell_${type}`).addClass('noshow');
                 }
                 if(val >0 && this.tradeEnabled){
-                    dojo.query(`.sell_${type}`).style('visibility', 'visible');
+                    dojo.query(`.sell_${type}`).removeClass('noshow');
                 }
             }
         },
@@ -2089,55 +2115,67 @@ function (dojo, declare) {
          * @param {int} b_id 
          */
         showBuildingCost: function( b_id ) {
+            this.updateTrade(this.buildingCost, true);
             let cost = [];
             if (b_id > 0 && this.building_info[b_id].cost != null){
                 cost = this.invertArray(this.building_info[b_id].cost);
             }
-            // add back previously selected building cost
-            let bld_offset = [];
-            for(let type in this.buildingCost){
-                let key = type;
-                bld_offset = this.addOrSetArrayKey(bld_offset, key, (-1 *this.buildingCost[type]));
-            }
-            let new_cost = [];
-            for(let type in cost){
-                let key = type;
-                if ((type == 'copper' && this.goldAsCopper) ||(type == 'cow' && this.goldAsCow)){
-                    key = 'gold';
-                } 
-                new_cost = this.addOrSetArrayKey(new_cost, key, cost[type]);
-                bld_offset = this.addOrSetArrayKey(bld_offset, key, cost[type]);
-            }
-            this.buildingCost = new_cost;
-            this.updateTrade(bld_offset);
+            this.buildingCost = cost;
+            this.updateTrade(cost);
             if (b_id == 0){
                 this.destroyBuildingBreadcrumb();
             } else {
-                this.createBuildingBreadcrumb(this.building_info[b_id].name, this.building_info[b_id].type, this.invertArray(new_cost));
+                this.createBuildingBreadcrumb(this.building_info[b_id].name, this.building_info[b_id].type, this.invertArray(cost));
             }
         },
 
-        updateTrade: function( change ) {
-            //console.log('updateTrade');
+        /**
+         * change to apply to offsets. if undo is true will instead remove an offset of change.
+         * @param {*} change 
+         * @param {*} undo 
+         */
+        updateTrade: function( change , undo = false) {
+            console.log('updateTrade');
             for (let type in change){
                 let offset = change[type];
-                let offset_value = this.offsetPosNeg(type, offset, true);
+                console.log(type, offset);
+                if (offset > 0){
+                    this.setOffsetPos(type, (undo?(-1 * offset):offset), true);
+                } else {
+                    this.setOffsetNeg(type, (undo?offset:(-1 * offset)), true);
+                }
+                let offset_value = this.pos_offset_resourceCounter[type].getValue() - this.neg_offset_resourceCounter[type].getValue();
                 this.newPosNeg(type, this.board_resourceCounters[this.player_id][type].getValue() + offset_value);
             }
             return true;
         },
 
         showResource: function(type){
-            dojo.query(`#${type}_group:not(.expand)`).addClass('expand');
-            dojo.query(`.player_${type}_offset.noshow`).removeClass("noshow");
-            dojo.query(`#${type}_new.noshow`).removeClass("noshow");
+            let showNew = false;
+            if (this.pos_offset_resourceCounter[type].getValue() != 0){
+                dojo.query(`.${type}.${"pos"}.noshow`).removeClass('noshow');
+                showNew = true;
+            } else {
+                dojo.query(`.${type}.${"pos"}:not(.noshow)`).addClass('noshow');
+            }
+            if (this.neg_offset_resourceCounter[type].getValue() != 0){
+                dojo.query(`.${type}.${"neg"}.noshow`).removeClass('noshow');
+                showNew = true;
+            } else {
+                dojo.query(`.${type}.${"neg"}:not(.noshow)`).addClass('noshow');
+            }
+            if (showNew){
+                dojo.query(`#${type}_new.noshow`).removeClass("noshow");
+            } else {
+                dojo.query(`#${type}_new:not(.noshow)`).addClass("noshow");
+            }         
         },
 
         hideResource: function(type){
             switch(type){
                 case 'loan':
                     if (dojo.query('.all_sizing').length ==0 && dojo.query('.pay_sizing').length ==0){
-                        dojo.query('#loan_more').style('visibility', 'hidden');
+                        dojo.query('#loan_more').addClass('noshow');
                         dojo.query(`.player_${type}_offset:not(.noshow)`).addClass("noshow");
                         dojo.query(`#${type}_new:not(.noshow)`).addClass("noshow");
                     }
@@ -2160,50 +2198,88 @@ function (dojo, declare) {
             dojo.query(`#${type}_group.expand`).removeClass('expand');
         },
 
-        newPosNeg: function(type, new_value, inc =false){   
+        newPosNeg: function(type, new_value, inc= false){   
             if (inc){
                 new_value = this.new_resourceCounter[type].incValue(new_value);
             } else {
                 this.new_resourceCounter[type].setValue(new_value);
             }         
             if(new_value <= 0){
-                dojo.query(`.sell_${type}`).style('visibility', 'hidden')
+                dojo.query(`.sell_${type}`).addClass('noshow');
             }
             if(new_value >0 && this.tradeEnabled){
-                dojo.query(`.sell_${type}`).style('visibility', 'visible');
+                dojo.query(`.sell_${type}`).removeClass('noshow');
             }
             if(new_value < 0){
                 dojo.query(`#${type}_new`).addClass('negative');
             } else {
                 dojo.query(`#${type}_new`).removeClass('negative');
             }
+            this.showResource(type);
             return new_value;
         },
 
-        offsetPosNeg:function(type, offset_value, inc = false){
-            if (inc){
-                offset_value = this.offset_resourceCounter[type].incValue(offset_value);
-            } else {
-                this.offset_resourceCounter[type].setValue(offset_value);
-            }
+        /**
+         * update pos offset counter if offset_value is positive, or 
+         * update neg offset counter if offset_value is negative.
+         * if inc is true, it will increment instead of setting the offset.
+         * @param {*} type 
+         * @param {*} offset_value 
+         * @param {*} inc 
+         */
+        offsetPosNeg: function(type, offset_value, inc= false){
             if (offset_value > 0){
-                dojo.query(`.player_${type}_offset.negative`).removeClass('negative');
-                dojo.query(`.player_${type}_offset:not(.positive)`).addClass('positive');
-                this.showResource(type);
-                $(`${type}_sign`).innerText = "+";
-            } else if (offset_value < 0 ){
-                dojo.query(`.player_${type}_offset.positive`).removeClass('positive');
-                dojo.query(`.player_${type}_offset:not(.negative)`).addClass('negative');
-                this.showResource(type);
-                $(`${type}_sign`).innerText = "";
+                this.setOffset(true, type, offset_value, inc);
             } else {
-                dojo.query(`.player_${type}_offset.positive`).removeClass('positive');
-                dojo.query(`.player_${type}_offset.negative`).removeClass('negative');
-                // may want if- statement here... 
-                this.hideResource(type);
-                dojo.query(`#${type}_group.expand`).removeClass('expand');
-                $(`${type}_sign`).innerText = "+";
+                this.setOffset(false, type, offset_value, inc);
             }
+        },
+
+        /**
+         * update pos offset counter 
+         * if inc is true, it will increment instead of setting the offset.
+         * @param {String} type 
+         * @param {int} offset_value 
+         * @param {Boolean} inc 
+         */
+        setOffsetPos: function(type, offset_value, inc= false){
+            return this.setOffset(true, type, offset_value, inc);
+        },
+
+        /**
+         * update neg offset counter
+         * if inc is true, it will increment instead of setting the offset.
+         * @param {String} type 
+         * @param {int} offset_value 
+         * @param {Boolean} inc 
+         */
+        setOffsetNeg:function(type, offset_value, inc= false){
+            return this.setOffset(false, type, offset_value, inc);
+        },
+        
+        /**
+         * update the offset counter of `type` with `offset_value`  
+         * if inc is true, it will increment instead of setting the offset.
+         * 
+         * if the resulting value is not 0 it will display the counter.
+         * if the resulting value is 0 it will hide the counter.
+         * @param {Boolean} pos
+         * @param {String} type 
+         * @param {int} offset_value 
+         * @param {Boolean} inc 
+         * @returns the new offset value
+         */
+        setOffset:function(pos, type, offset_value, inc= false){
+            let counter = this.neg_offset_resourceCounter[type];
+            if (pos){
+                counter = this.pos_offset_resourceCounter[type];
+            } 
+            if (inc) {
+                offset_value = counter.incValue(offset_value);
+            } else {
+                counter.setValue(offset_value);
+            } 
+            this.showResource(type);
             return offset_value;
         },
         
@@ -2221,9 +2297,8 @@ function (dojo, declare) {
             if (this.transactionCost.length ==0) return;
             while (this.transactionLog.length>0){
                 this.destroyTradeBreadcrumb(this.transactionCost.length-1);
-                let cost = this.transactionCost.pop();
                 this.transactionLog.pop();
-                this.updateTrade(this.invertArray(cost));
+                this.updateTrade(this.transactionCost.pop(), true);
             }
             this.setupUndoTransactionsButtons();
             this.resetTradeButton();
@@ -2232,9 +2307,8 @@ function (dojo, declare) {
         undoLastTransaction: function() {
             if (this.transactionCost.length ==0) return;
             this.destroyTradeBreadcrumb(this.transactionCost.length-1);
-            let cost = this.transactionCost.pop();
             this.transactionLog.pop();
-            this.updateTrade(this.invertArray(cost));
+            this.updateTrade(this.transactionCost.pop(), true);
             this.setupUndoTransactionsButtons();
             this.resetTradeButton();
         },
