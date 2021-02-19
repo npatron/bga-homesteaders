@@ -25,11 +25,9 @@
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silver_num" class="player_numbers vert"><!-- vertical -->
                     <span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
-                    <span id="silver_mid" class="player_silver_offset offset_text horiz"><!-- horiz -->
-                        <span id="silver_offsets" class="vert"><!-- vertical -->
-                            <span class="signed silver pos horiz">+<span id="silver_pos">0</span></span>
-                            <span class="signed silver neg horiz">-<span id="silver_neg">0</span></span>
-                        </span>
+                    <span id="silver_offsets" class="vert"><!-- vertical -->
+                        <span class="signed silver pos horiz">+<span id="silver_pos">0</span></span>
+                        <span class="signed silver neg horiz">-<span id="silver_neg">0</span></span>
                     </span>
                     <span id="silver_new" class="player_silver_new new_text noshow">0</span>
                 </span>
@@ -38,11 +36,9 @@
                 <span id="tradeicon_{COLOR}"  class="score_token player_trade score"></span>
                 <span id="trade_num" class="player_numbers vert"><!-- vertical -->
                     <span id="tradecount_{COLOR}" class="player_trade_text player_text">0</span>
-                    <span id="trade_mid" class="player_trade_offset offset_text horiz"><!-- horiz -->
-                        <span id="trade_offsets" class="vert"><!-- vertical -->
-                            <span class="signed trade pos horiz">+<span id="trade_pos">0</span></span>
-                            <span class="signed trade neg horiz">-<span id="trade_neg">0</span></span>
-                        </span>
+                    <span id="trade_offsets" class="vert"><!-- vertical -->
+                        <span class="signed trade pos horiz">+<span id="trade_pos">0</span></span>
+                        <span class="signed trade neg horiz">-<span id="trade_neg">0</span></span>
                     </span>
                     <span id="trade_new" class="player_trade_new new_text noshow">0</span>
                 </span>
@@ -51,13 +47,9 @@
                 <span id="loanicon_{COLOR}"   class="player_loan score"></span>
                 <span id="loan_num" class="player_numbers vert"><!-- vertical -->
                     <span id="loancount_{COLOR}" class="player_loan_text player_text">0</span>
-                    <span id="loan_mid" class="player_loan_offset offset_text horiz"><!-- horiz -->
-                        <span id="loan_more" class="buy_loan take_loan noshow"></span>
-                        <span id="loan_offsets" class="vert"><!-- vertical -->
-                            <span class="signed loan pos horiz">+<span id="loan_pos">0</span></span>
-                            <span class="signed loan neg horiz">-<span id="loan_neg">0</span></span>
-                        </span>
-                        <span id="loan_space" class="noshow"style="visibility:hidden; height:20px"></span>
+                    <span id="loan_offsets" class="vert"><!-- vertical -->
+                        <span class="signed loan pos horiz">+<span id="loan_pos">0</span></span>
+                        <span class="signed loan neg horiz">-<span id="loan_neg">0</span></span>
                     </span>
                     <span id="loan_new" class="player_loan_new new_text noshow">0</span>
                 </span>
@@ -66,11 +58,9 @@
                 <span id="vpicon_{COLOR}"   class="score_token player_vp score"></span>
                 <span id="vp_num" class="player_numbers vert"><!-- vertical -->
                     <span id="vpcount_{COLOR}" class="player_vp_text player_text">0</span>
-                    <span id="vp_mid" class="player_vp_offset offset_text horiz"><!-- horiz -->
-                        <span id="vp_offsets" class="vert"><!-- vertical -->
-                            <span class="signed vp pos horiz">+<span id="vp_pos">0</span></span>
-                            <span class="signed vp neg horiz">-<span id="vp_neg">0</span></span>
-                        </span>
+                    <span id="vp_offsets" class="vert"><!-- vertical -->
+                        <span class="signed vp pos horiz">+<span id="vp_pos">0</span></span>
+                        <span class="signed vp neg horiz">-<span id="vp_neg">0</span></span>
                     </span>
                     <span id="vp_new" class="player_vp_new new_text noshow">0</span>
                 </span>
@@ -79,14 +69,10 @@
                 <span id="woodicon_{COLOR}"   class="score_token player_wood score"></span>
                 <span id="wood_num" class="player_numbers vert"><!-- vertical -->
                     <span id="woodcount_{COLOR}" class="player_wood_text player_text">0</span>
-                    <span id="wood_mid" class="player_wood_offset offset_text horiz"><!-- horiz -->
-                        <span id="wood_buy" class="buy_wood buy noshow"></span>
-                            <span id="wood_offsets" class="vert"><!-- vertical -->
-                                <span class="signed wood pos horiz">+<span id="wood_pos">0</span></span>
-                                <span class="signed wood neg horiz">-<span id="wood_neg">0</span></span>
-                            </span>
-                        </span>
-                        <span id="wood_sell" class="sell_wood sell noshow"></span>
+                    <span id="wood_offsets" class="vert"><!-- vertical -->
+                        <span class="signed wood pos horiz">+<span id="wood_pos">0</span></span>
+                        <span class="signed wood neg horiz">-<span id="wood_neg">0</span></span>
+                    </span>
                     <span id="wood_new" class="player_wood_new new_text noshow">0</span>
                 </span>
             </span>
@@ -94,14 +80,10 @@
                 <span id="foodicon_{COLOR}"   class="score_token player_food score"></span>
                 <span id="food_num" class="player_numbers vert"><!-- vertical -->
                     <span id="foodcount_{COLOR}" class="player_food_text player_text">0</span>
-                    <span id="food_mid" class="player_food_offset offset_text horiz"><!-- horiz -->
-                        <span id="food_buy" class="buy_food buy noshow"></span>
-                            <span id="food_offsets" class="vert"><!-- vertical -->
-                                <span class="signed food pos horiz">+<span id="food_pos">0</span></span>
-                                <span class="signed food neg horiz">-<span id="food_neg">0</span></span>
-                            </span>
-                        </span>
-                        <span id="food_sell" class="sell_food sell noshow"></span>
+                    <span id="food_offsets" class="vert"><!-- vertical -->
+                        <span class="signed food pos horiz">+<span id="food_pos">0</span></span>
+                        <span class="signed food neg horiz">-<span id="food_neg">0</span></span>
+                    </span>
                     <span id="food_new" class="player_food_new new_text noshow">0</span>
                 </span>
             </span>
@@ -109,14 +91,10 @@
                 <span id="steelicon_{COLOR}"  class="score_token player_steel score"></span>
                 <span id="steel_num" class="player_numbers vert"><!-- vertical -->
                     <span id="steelcount_{COLOR}" class="player_steel_text player_text">0</span>
-                    <span id="steel_mid" class="player_steel_offset offset_text horiz"><!-- horiz -->
-                        <span id="steel_buy" class="buy_steel buy noshow"></span>
-                            <span id="steel_offsets" class="vert"><!-- vertical -->
-                                <span class="signed steel pos horiz">+<span id="steel_pos">0</span></span>
-                                <span class="signed steel neg horiz">-<span id="steel_neg">0</span></span>
-                            </span>
-                        </span>
-                        <span id="steel_sell" class="sell_steel sell noshow"></span>
+                    <span id="steel_offsets" class="vert"><!-- vertical -->
+                        <span class="signed steel pos horiz">+<span id="steel_pos">0</span></span>
+                        <span class="signed steel neg horiz">-<span id="steel_neg">0</span></span>
+                    </span>
                     <span id="steel_new" class="player_steel_new new_text noshow">0</span>
                 </span>
             </span>
@@ -124,44 +102,32 @@
                 <span id="goldicon_{COLOR}"   class="score_token player_gold score"></span>
                 <span id="gold_num" class="player_numbers vert"><!-- vertical -->
                     <span id="goldcount_{COLOR}" class="player_gold_text player_text">0</span>
-                    <span id="gold_mid" class="player_gold_offset offset_text horiz"><!-- horiz -->
-                        <span id="gold_buy" class="buy_gold buy noshow"></span>
-                            <span id="gold_offsets" class="vert"><!-- vertical -->
-                                <span class="signed gold pos horiz">+<span id="gold_pos">0</span></span>
-                                <span class="signed gold neg horiz">-<span id="gold_neg">0</span></span>
-                            </span>
-                        </span>
-                        <span id="gold_sell" class="sell_gold sell noshow"></span>
+                    <span id="gold_offsets" class="vert"><!-- vertical -->
+                        <span class="signed gold pos horiz">+<span id="gold_pos">0</span></span>
+                        <span class="signed gold neg horiz">-<span id="gold_neg">0</span></span>
+                    </span>
                     <span id="gold_new" class="player_gold_new new_text noshow">0</span>
                 </span>
             </span>
-            <span id="cow_group" class="this_player_wider_resource_group">
+            <span id="cow_group" class="this_player_resource_group">
                 <span id="cowicon_{COLOR}"    class="score_token player_cow score"></span>
                 <span id="cow_num" class="player_numbers vert"><!-- vertical -->
                     <span id="cowcount_{COLOR}" class="player_cow_text player_text">0</span>
-                    <span id="cow_mid" class="player_cow_offset offset_text horiz"><!-- horiz -->
-                        <span id="cow_buy" class="buy_cow buy noshow"></span>
-                            <span id="cow_offsets" class="vert"><!-- vertical -->
-                                <span class="signed cow pos horiz">+<span id="cow_pos">0</span></span>
-                                <span class="signed cow neg horiz">-<span id="cow_neg">0</span></span>
-                            </span>
-                        </span>
-                        <span id="cow_sell" class="sell_cow sell noshow"></span>
+                    <span id="cow_offsets" class="vert"><!-- vertical -->
+                        <span class="signed cow pos horiz">+<span id="cow_pos">0</span></span>
+                        <span class="signed cow neg horiz">-<span id="cow_neg">0</span></span>
+                    </span>
                     <span id="cow_new" class="player_cow_new new_text noshow">0</span>
                 </span>
             </span>
-            <span id="copper_group" class="this_player_wider_resource_group">
+            <span id="copper_group" class="this_player_resource_group">
                 <span id="coppericon_{COLOR}" class="score_token player_copper score"></span>
                 <span id="copper_num" class="player_numbers vert"><!-- vertical -->
                     <span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
-                    <span id="copper_mid" class="player_copper_offset offset_text horiz"><!-- horiz -->
-                        <span id="copper_buy" class="buy_copper buy noshow"></span>
-                            <span id="copper_offsets" class="vert"><!-- vertical -->
-                                <span class="signed copper pos horiz">+<span id="copper_pos">0</span></span>
-                                <span class="signed copper neg horiz">-<span id="copper_neg">0</span></span>
-                            </span>
-                        </span>
-                        <span id="copper_sell" class="sell_copper sell noshow"></span>
+                    <span id="copper_offsets" class="vert"><!-- vertical -->
+                        <span class="signed copper pos horiz">+<span id="copper_pos">0</span></span>
+                        <span class="signed copper neg horiz">-<span id="copper_neg">0</span></span>
+                    </span>
                     <span id="copper_new" class="player_copper_new new_text noshow">0</span>
                 </span>
             </span>
@@ -296,11 +262,11 @@
                 <span id="goldicon_{COLOR}"   class="score_token player_gold score"></span>
                 <span id="goldcount_{COLOR}" class="player_gold_text player_text">0</span>
             </span>
-            <span id="cow_group_{COLOR}" class="player_wider_resource_group">
+            <span id="cow_group_{COLOR}" class="player_resource_group">
                 <span id="cowicon_{COLOR}"    class="score_token player_cow score"></span>
                 <span id="cowcount_{COLOR}" class="player_cow_text player_text">0</span>
             </span>
-            <span id="copper_group_{COLOR}" class="player_wider_resource_group">
+            <span id="copper_group_{COLOR}" class="player_resource_group">
                 <span id="coppericon_{COLOR}" class="score_token player_copper score"></span>
                 <span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
             </span>
@@ -362,6 +328,7 @@ var jstpl_resource_log = '<span title = "${type}" class="log_${type} log_token">
 var jstpl_player_token_log = '<span title = "${type}_${color}" class="${type}_${color} log_${type}"></span>';
 var jptpl_track_log = '<span title="${type}" class="log_inline_${type}"></span>';
 var jptpl_x_loan= '<span title="pay dept" class="crossout log_inline_loan"></span>';
+var jptpl_buy_sell_board='<div id="buy_board" class="buy_board"></div><div id="sell_board" class="sell_board"></div>';
 
 var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: ${off};"></span>${for}</span>'
 var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'
