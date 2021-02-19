@@ -708,9 +708,7 @@ class homesteaders extends Table
 
     function stWinAuction()
     {
-        $current_auction = $this->getGameStateValue('current_auction');
-        $bid_cost = $this->Bid->getBidCost($this->getActivePlayerId());
-        $this->Log->winAuction($this->getActivePlayerId(), $current_auction, $bid_cost);
+        
     }
 
     function stBuildingPhase()
@@ -741,8 +739,11 @@ class homesteaders extends Table
                     'first'=>_('First Player'),
                 ));
             }
+            $bid_cost = $this->Bid->getBidCost($auction_winner_id);
+            $this->Log->winAuction($auction_winner_id, $current_auction, $bid_cost);
             $this->gamestate->changeActivePlayer( $auction_winner_id );
             $next_state = "auctionWon";
+            
         }    
         $this->gamestate->nextState( $next_state );
     }
