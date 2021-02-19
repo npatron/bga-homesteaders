@@ -2063,16 +2063,16 @@ function (dojo, declare) {
         showResource: function(type){
             let showNew = false;
             if (this.pos_offset_resourceCounter[type].getValue() != 0){
-                dojo.query(`.${type}.${"pos"}.noshow`).removeClass('noshow');
+                dojo.query(`.${type}.pos.noshow`).removeClass('noshow');
                 showNew = true;
             } else {
-                dojo.query(`.${type}.${"pos"}:not(.noshow)`).addClass('noshow');
+                dojo.query(`.${type}.pos:not(.noshow)`).addClass('noshow');
             }
             if (this.neg_offset_resourceCounter[type].getValue() != 0){
-                dojo.query(`.${type}.${"neg"}.noshow`).removeClass('noshow');
+                dojo.query(`.${type}.neg.noshow`).removeClass('noshow');
                 showNew = true;
             } else {
-                dojo.query(`.${type}.${"neg"}:not(.noshow)`).addClass('noshow');
+                dojo.query(`.${type}.neg:not(.noshow)`).addClass('noshow');
             }
             if (showNew){
                 dojo.query(`#${type}_new.noshow`).removeClass("noshow");
