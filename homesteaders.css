@@ -28,18 +28,19 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.font {
+.font, .biggerFont, .useFont {
    font-family: 'Old Standard TT';
    font-style: normal;
    vertical-align: middle;
+   font-size: 20px;
 }
 .useFont {
-   font: normal 20px/1 "Old Standard TT";
    font-variant: small-caps;
 }
+.bgabutton .font{font-size: 14px;}
 .bold {font-weight: bold;}
 .biggerFont {
-   font: normal 30px/1 "Old Standard TT";
+   font-size: 30px;
    font-variant: small-caps;
 }
 .logFont {
@@ -106,23 +107,15 @@
 }
 .a1 {
    color: lightseagreen;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .a2 {
    color: orange;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .a3 {
    color: hotpink;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .a4 {
    color: purple;
-   font-size: 20px;
-   font-variant: small-caps;
 }
 .auction_column .auction_string{
    font-size: 30px;
@@ -271,12 +264,11 @@ button:disabled {
 	width: 100%; 
 	overflow-x: auto;
 	overflow-y: hidden;
-	/* text-align: center; */
-	
+
 	/*** GI : center interface **/
     margin: auto;	
     /*** GI (end) **/
-    
+   
 }
 
 .anchor>* {
@@ -702,7 +694,88 @@ div#trade_sell_cow{
    left: 75%;
    top: 59.5%;
 }
-
+div#buy_board{
+   background-image: url('img/Buy.jpg');
+   position: relative;
+   width: 290px;
+   height: 200px;
+   background-size: 290px auto;
+   background-repeat: no-repeat;
+   margin: auto;
+   box-shadow: -3px -3px 3px grey inset;
+   grid-column: span 2;
+   border-radius: 6px;
+}
+div#sell_board{
+   background-image: url('img/Sell.jpg');
+   position: relative;
+   width: 290px;
+   height: 200px;
+   background-size: 290px auto;
+   background-repeat: no-repeat;
+   margin: auto;
+   box-shadow: -3px -3px 3px grey inset;
+   grid-column: span 2;
+   border-radius: 6px;
+}
+div#trbuy_buy_wood{
+   right: 50.5%;
+   top: 21%;
+}
+div#trbuy_buy_food{
+   left: 50.5%;
+   top: 21%;
+}
+div#trbuy_buy_steel{
+   right: 50.5%;
+   top: 40.5%;
+}
+div#trbuy_buy_gold{
+   left: 50.5%;
+   top: 40.5%;
+}
+div#trbuy_buy_copper{
+   right: 50.5%;
+   top: 60%;
+}
+div#trbuy_buy_cow{
+   left: 50.5%;
+   top: 60%;
+}
+.buy_option {
+   height: 17%;
+   width: 37%;
+   position: absolute;
+}
+div#trsel_sell_wood{
+   right: 50.5%;
+   top: 21%;
+}
+div#trsel_sell_food{
+   left: 50.5%;
+   top: 21%;
+}
+div#trsel_sell_steel{
+   right: 50.5%;
+   top: 40.5%;
+}
+div#trsel_sell_gold{
+   left: 50.5%;
+   top: 40.5%;
+}
+div#trsel_sell_copper{
+   right: 50.5%;
+   top: 60%;
+}
+div#trsel_sell_cow{
+   left: 50.5%;
+   top: 60%;
+}
+.sell_option{
+   height: 17%;
+   width: 37%;
+   position: absolute;
+}
 /*================*
  * Building Zones *
  *================*/
@@ -852,17 +925,7 @@ div#trade_sell_cow{
    box-sizing: border-box;
    padding:4px 4px 4px 4px;
 }
-/*======*
- * hide *
- *======*/
-.noshow {
-   visibility:hidden;
-   display: none;
-   grid-area: none;
-}
-.show {
-   visibility:visible;
-}
+
 /*===============*
  * Animate Token *
  *===============*/
@@ -992,12 +1055,10 @@ div#trade_sell_cow{
    flex-grow: 1;
    min-width: 70px;
    max-width: 90px;
+   min-height: 45px;
 }
-.player_wider_resource_group{
-   display: flex;
-   flex-grow: 1;
-   min-width: 70px;
-   max-width: 90px;
+.player_numbers{
+   margin: auto;
 }
 .this_player_resources{
    display: flex;
@@ -1008,32 +1069,11 @@ div#trade_sell_cow{
    flex-grow: 1;
    min-width: 70px;
    max-width: 90px;
-}
-.this_player_wider_resource_group{
-   display: flex;
-   flex-grow: 1;
-   min-width: 70px;
-   max-width: 90px;
+   min-height: 45px;
 }
 .building_container .biggerFont{
    margin-left: auto;
    margin-right: auto;
-}
-.all_sizing .this_player_resource_group{
-   min-width: 100px;
-   max-width: 120px;
-}
-.all_sizing .this_player_wider_resource_group{
-   min-width: 110px;
-   max-width: 125px;
-}
-.this_player_resource_group.expand{
-   min-width: 100px;
-   max-width: 120px;
-}
-.this_player_wider_resource_group.expand{
-   min-width: 110px;
-   max-width: 125px;
 }
 .offset_text{
    display: grid;
@@ -1043,15 +1083,16 @@ div#trade_sell_cow{
    align-items: center;
    justify-content: center;
 }
-.negative{
+.negative, .neg{
    color: darkred;
 }
-.positive{
+.positive, .pos{
    color: green;
 }
 .new_text {
    position: relative;
    font-size: x-large;
+   font-weight: bold;
    margin: auto;
 }
 .player_text_loan {
@@ -1063,6 +1104,14 @@ div#trade_sell_cow{
    position: relative;
    font-size: x-large;
    margin: auto;
+}
+.horiz{
+   display: flex;
+   flex-direction: row;
+}
+.vert{
+   display: flex;
+   flex-direction: column;
 }
 .buy{
    background-image: url('img/drawn_tokens_2.png');
@@ -1080,6 +1129,7 @@ div#trade_sell_cow{
    width: 20px;
    grid-row: 3 / 4;
 }
+
 .player_silver {
    background-size: 353px 111px;
    background-position: -92px -2px;
@@ -1088,7 +1138,7 @@ div#trade_sell_cow{
 }
 .signed{
    margin: auto;
-   grid-row: 2 / 3;
+   text-decoration: underline;
 }
 .player_trade {
    background-size: 353px 117px;
@@ -1141,7 +1191,7 @@ div#trade_sell_cow{
 }
 .player_gold{
    background-size: 435px 130.5px;
-   background-position: -26.5px -3.5px;
+   background-position: -27px -3.5px;
    width: 41px;
    height: 40px;
 }
@@ -1275,13 +1325,13 @@ div#trade_sell_cow{
 .log_gold{
    background-size: 217.4px 65.2px;
    background-position: -13px -2px;
-   width: 20.8px;
+   width: 21px;
    height: 20px;
 }
 .log_food{
    background-size: 243.9px 73px;
    background-position: -41.7px -3px;
-   width: 18.8px;
+   width: 19px;
    height: 20px;
 }
 .log_silver{
@@ -1451,6 +1501,18 @@ div#trade_sell_cow{
    display: inline-block;
 }
 
+/*======*
+ * hide *
+ *======*/
+ .noshow {
+   visibility:hidden;
+   display: none;
+   grid-area: none;
+}
+.show {
+   visibility:visible;
+}
+
 /*===============*
  * Player Tokens *
  *===============*/
@@ -1526,8 +1588,8 @@ div#trade_sell_cow{
 .worker_slot{
    position: absolute;
    height: 35px;
-   width: 33px;
-   max-width: 33px;
+   width: 30px;
+   max-width: 30px;
 }
 .slot_1_1 {
    bottom: 10px;
