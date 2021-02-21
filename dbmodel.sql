@@ -59,11 +59,11 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   PRIMARY KEY (`building_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
--- Auction tiles 
+-- Auction tiles and Events 
 CREATE TABLE IF NOT EXISTS `auctions` (
   `auction_id`       INT(2) UNSIGNED NOT NULL COMMENT 'Identity of Auction tile',
   `position`         INT(2) UNSIGNED NOT NULL COMMENT 'position of Auction in Deck (1-10)',
-  `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3',
+  `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3, 4-Auction-4, 5-Events',
   PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB ;
 

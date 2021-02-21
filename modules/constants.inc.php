@@ -2,6 +2,11 @@
 
   // game options.
   define("SHOW_PLAYER_INFO", 100);
+  define("RAIL_NO_BUILD", 101);
+  define("NEW_BEGINNING_BLD", 110);
+  define("NEW_BEGINNING_EVT", 111);
+  define("DISABLED",      0);
+  define("ENABLED",       1);
   // options in show info
   define("SHOW_ALL_RESOURCES", 0);
   define("HIDE_ALL_RESOURCES", 1);
@@ -16,6 +21,7 @@
   define("STATE_PLAYER_BID",         32);
   define("STATE_RAIL_BONUS",         33);
   define("STATE_NEXT_BID",           34);
+  define("STATE_EVENT_PRE_AUCTION",  35);
   define("STATE_NEXT_BUILDING",      40);
   define("STATE_PAY_AUCTION",        41);
   define("STATE_CHOOSE_BUILDING",    42);
@@ -37,6 +43,8 @@
   define("AUC_LOC_1",   1);
   define("AUC_LOC_2",   2);
   define("AUC_LOC_3",   3);
+  define("AUC_LOC_4",   4);
+  define("EVT_LOC",     5);
   
   // Building IDs
   define("BLD_HOMESTEAD_YELLOW", 1);
@@ -158,33 +166,33 @@
   // Town Events #11-20
   // City Events #21-25
   // all_b (bonus for all players) after income, before bids
-  define("EVT_VP_4SILVER",   1);
-  define("EVT_TRADE",        2);
-  define("EVT_LOAN_TRACK",   3);
-  define("EVT_LEAST_WORKER", 4);
-  define("EVT_INTEREST",     5);
-  define("EVT_PAY_LOAN_FOOD",6);
+  define("EVT_VP_4SILVER",         1);
+  define("EVT_TRADE",              2);
+  define("EVT_LOAN_TRACK",         3);
+  define("EVT_LEAST_WORKER",       4);
+  define("EVT_INTEREST",           5);
+  define("EVT_PAY_LOAN_FOOD",      6);
   define("EVT_COPPER_COW_GET_GOLD",7);
-  define("EVT_DEV_TRACK_VP3",8);
-  define("EVT_VP_FOR_WOOD", 9);
-  define("EVT_SELL_NO_TRADE",10);
-  define("EVT_LEAST_BLD_TRACK",11);
-  define("EVT_IND_VP",      12);
-  define("EVT_BLD_TAX_SILVER",13);
-  define("EVT_RES_ADV_TRACK",14);
-
+  define("EVT_DEV_TRACK_VP3",      8);
+  define("EVT_VP_FOR_WOOD",        9);
+  define("EVT_SELL_NO_TRADE",     10);
+  define("EVT_LEAST_BLD_TRACK",   11);
+  define("EVT_IND_VP",            12);
+  define("EVT_BLD_TAX_SILVER",    13);
+  define("EVT_RES_ADV_TRACK",     14);
   // auc_b (auction bonus)
-  define("EVT_AUC_DISCOUNT_1_RES", 1);
-  define("EVT_AUC_NO_AUCTION",     2);
-  define("EVT_AUC_BONUS_WORKER",   3);
-  define("EVT_AUC_2SILVER_TRACK",  4);
-  define("EVT_AUC_BUILD_AGAIN",    5);
-  define("EVT_AUC_TRACK",          6);
-  define("EVT_AUC_STEEL_ANY",      7);
-  define("EVT_AUC_COM_DISCOUNT",   8);
+  define("EVT_AUC_DISCOUNT_1_RES",15);
+  define("EVT_AUC_NO_AUCTION",    16);
+  define("EVT_AUC_BUILD_AGAIN",   17);
+  define("EVT_AUC_BONUS_WORKER",  18);
+  define("EVT_AUC_2SILVER_TRACK", 19);
+  define("EVT_AUC_SECOND_BUILD",  20);
+  define("EVT_AUC_TRACK",         21);
+  define("EVT_AUC_STEEL_ANY",     22);
+  define("EVT_AUC_COM_DISCOUNT",  23);
   // pass_b (bonus when passing)
-  define("EVT_PASS_TRACK",       1);
-  define("EVT_PASS_DEPT_SILVER", 2);
+  define("EVT_PASS_TRACK",        24);
+  define("EVT_PASS_DEPT_SILVER",  25);
 
   // Bid location mapping
   define("NO_BID",     0);

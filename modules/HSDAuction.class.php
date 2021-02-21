@@ -49,7 +49,21 @@ class HSDAuction extends APP_GameClass
                 $values[] = "('".($i+29)."','".$city_position[$i]      ."','".AUC_LOC_3."')";
             }   
         }
-        $sql .= implode( ',', $values ); 
+        if ($playerCount>4){
+            shuffle($settlement_position);
+            shuffle($town_position);
+            shuffle($city_position);
+            for ($i = 0; $i <4; $i++){
+                $values[] = "('".($i+31)."','".$settlement_position[$i]."','".AUC_LOC_4."')";
+            }
+            for ($i = 0; $i <4; $i++){
+                $values[] = "('".($i+35)."','".$town_position[$i]      ."','".AUC_LOC_4."')";
+            }
+            for ($i = 0; $i <2; $i++){
+                $values[] = "('".($i+39)."','".$city_position[$i]      ."','".AUC_LOC_4."')";
+            }   
+        }
+        $sql .= implode( ',', $values );
         $this->game->DbQuery( $sql );
     }
 
@@ -60,7 +74,7 @@ class HSDAuction extends APP_GameClass
 
     function getCurrentRoundAuctions($round_number= null){
         $round_number = ($round_number? :$this->game->getGameStateValue('round_number'));
-        $sql = "SELECT `auction_id` a_id, `location` FROM `auctions` WHERE `location` IN (1,2,3) AND `position`='$round_number'"; 
+        $sql = "SELECT `auction_id` a_id, `location` FROM `auctions` WHERE `location` > 0 AND `position`='$round_number'"; 
         return ($this->game->getCollectionFromDb( $sql ));
     }
 

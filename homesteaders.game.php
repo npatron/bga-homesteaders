@@ -28,7 +28,6 @@ require_once('modules/HSDScore.class.php');
 
 class homesteaders extends Table
 {
-    public $playerColorNames = array("ff0000" =>'red', "008000"=>'green', "0000ff"=>'blue', "ffff00"=> 'yellow', "982fff"=> 'purple');
     
 	function __construct( )
 	{
@@ -53,12 +52,16 @@ class homesteaders extends Table
             "last_building"     => 19,
             "b_order"           => 20,
             "show_player_info"  => SHOW_PLAYER_INFO,
+            "rail_no_build"     => 101,
+            "new_beginning_bld" => 110,
+            "new_beginning_evt" => 111,
         ) );
         
         $this->Log      = new HSDLog($this);
         $this->Bid      = new HSDBid($this);
         $this->Building = new HSDBuilding($this);
         $this->Auction  = new HSDAuction($this);
+        $this->Events   = new HSDEvents($this);
         $this->Resource = new HSDresource($this);
         $this->Score    = new HSDScore($this);
 	}
@@ -109,17 +112,21 @@ class homesteaders extends Table
         if (count($players) == 4){ 
             $number_auctions = 3;
         }
+        if (count($players) == 5){
+            $number_auctions = 4;
+        }
         // Init global values with their initial values
         $this->setGameStateInitialValue( 'round_number', 1 );
         $this->setGameStateInitialValue( 'first_player', 0 );
         $this->setGameStateInitialValue( 'phase',        0 );
         $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
         $this->setGameStateInitialValue( 'current_auction', 1 );
-        $this->setGameStateInitialValue( 'last_bidder', 0 );
+        $this->setGameStateInitialValue( 'last_bidder',    0 );
         $this->setGameStateInitialValue( 'players_passed', 0 );
-        $this->setGameStateInitialValue( 'auction_bonus', 0 );
+        $this->setGameStateInitialValue( 'auction_bonus',  0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
-        $this->setGameStateInitialValue( 'last_building', 0 );
+        $this->setGameStateInitialValue( 'last_building',  0 );
+        $this->setGameStateInitialValue( 'current_event',  0 );
         
         $values = array();
         // set colors
@@ -134,6 +141,9 @@ class homesteaders extends Table
         // create building Tiles (in sql)
         $this->Building->createBuildings($players);
         $this->Auction->createAuctionTiles(count($players));
+        if ($this->getGameStateValue('new_beginning_evt') === ENABLED){
+            $this->Events->createEvents();
+        }
         $this->Bid->setupBidDB($players);
 
         // setup resources table
@@ -175,6 +185,7 @@ class homesteaders extends Table
             'can_undo_trades' => (count($this->Log->getLastTransactions($cur_p_id)) > 0 && $this->checkAction('trade', false)),
             'cancel_move_ids' => $this->Log->getCancelMoveIds(),
             'current_auctions' => $this->Auction->getCurrentRoundAuctions(), 
+            'event_info' => $this->event_info,
             'first_player' => $this->getGameStateValue( 'first_player'),
             'number_auctions' => $this->getGameStateValue( 'number_auctions' ),
             'player_order' => $this->getNextPlayerTable(),
@@ -406,7 +417,6 @@ class homesteaders extends Table
         } else {
             $this->gamestate->nextstate( 'auction_bonus');
         }
-        
     }
 
     public function playerSelectRailBonus($selected_bonus) {
@@ -632,6 +642,7 @@ class homesteaders extends Table
         $round_number = $this->getGameStateValue('round_number');
         $this->Resource->clearPaid();
         $this->Building->updateBuildingsForRound($round_number);
+        $this->Event->updateEvent($round_number);
         $this->gamestate->nextState( );
     }
 

@@ -40,30 +40,41 @@ $game_options = array(
             ),
         ),
     ),
-    /*
-    
-    // note: game variant ID should start at 100 (ie: 100, 101, 102, ...). The maximum is 199.
-    100 => array(
-                'name' => totranslate('my game option'),    
-                'values' => array(
 
-                            // A simple value for this option:
-                            1 => array( 'name' => totranslate('option 1') )
-
-                            // A simple value for this option.
-                            // If this value is chosen, the value of "tmdisplay" is displayed in the game lobby
-                            2 => array( 'name' => totranslate('option 2'), 'tmdisplay' => totranslate('option 2') ),
-
-                            // Another value, with other options:
-                            //  description => this text will be displayed underneath the option when this value is selected to explain what it does
-                            //  beta=true => this option is in beta version right now.
-                            //  nobeginner=true  =>  this option is not recommended for beginners
-                            3 => array( 'name' => totranslate('option 3'), 'description' => totranslate('this option does X'), 'beta' => true, 'nobeginner' => true )
-                        ),
-                'default' => 1
+    101  => array(
+        'name' => totranslate('Recieve Rail Line if No Build'),
+        'values' => array(
+            0 => array('name' => totranslate('normal no-build rule')),
+            1 => array(
+                'name' => totranslate('Recieve a rail line when passing on build building (recommended for 5 player)'),
+                'tmdisplay' => totranslate('Rail line on no-build'),
             ),
+        ),
+    ),
 
-    */
+    110 => array(
+        'name' => totranslate('New Beginnings Buildings'),
+        'values' => array(
+            0 => array('name' => totranslate('do not use expansion buildings')),
+            1 => array(
+                'name' => totranslate('use expansion buildings (recommended for 5 players)'),
+                'tmdisplay' => totranslate('New Beginnings Buildings'),
+                'nobeginner' => true,
+            ),
+        ),
+    ),
+    
+    111 => array(
+        'name' => totranslate('Expansion Events'),
+        'values' => array(
+            0 => array('name' => totranslate('do not use Events')),
+            1 => array(
+                'name' => totranslate('New Beginnings Events'),
+                'tmdisplay' => totranslate('New Beginnings Events'),
+                'nobeginner' => true,
+            ),
+        ),
+    ),
 
 );
 

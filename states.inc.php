@@ -65,9 +65,21 @@ $machinestates = array(
         "action" => "stBeginAuction",
         "updateGameProgression" => true,
         "transitions" => array( "auction" => STATE_PLAYER_BID, 
+                                "events"  => STATE_EVENT_PRE_AUCTION,
                                 "2p_auction" => STATE_2_PLAYER_DUMMY_BID,
                                 "endGame" => STATE_ENDGAME_ACTIONS,)
-    ), 
+    ),
+
+    STATE_EVENT_PRE_AUCTION => array(
+        "name" => "eventPhaseAuction",
+        "description" => '',
+        "type" => "multipleactiveplayer",
+        "action" => "stEventPreAuction",
+        "args" => "argPreAuction",
+        "updateGameProgression" => true,
+        "transitions" => array( "auction" => STATE_PLAYER_BID, 
+                                "2p_auction" => STATE_2_PLAYER_DUMMY_BID,)
+    ),
 
     STATE_2_PLAYER_DUMMY_BID => array(
         "name" => "dummyPlayerBid",

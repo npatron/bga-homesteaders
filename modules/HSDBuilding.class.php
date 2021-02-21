@@ -20,6 +20,10 @@ class HSDBuilding extends APP_GameClass
             $values[] = $this->getHomesteadAsValue($p_id);
         for($b_id = BLD_GRAIN_MILL; $b_id <= BLD_RAIL_YARD; $b_id++) 
             $values[] = $this->getBuildingAsValue($b_id);
+        if($this->game->getGameStateValue('new_begin_bld') == 1){
+            for($b_id = BLD_LUMBERMILL; $b_id <= BLD_POST_OFFICE; $b_id++) 
+                $values[] = $this->getBuildingAsValue($b_id);
+        }
         $sql .= implode( ',', $values ); 
         $this->game->DbQuery( $sql );
     }
@@ -33,6 +37,8 @@ class HSDBuilding extends APP_GameClass
             $b_id = BLD_HOMESTEAD_RED;
         } else if ($player_color === 'green') {
             $b_id = BLD_HOMESTEAD_GREEN;
+        } else if ($player_color === 'purple') {
+            $b_id = BLD_HOMESTEAD_PURPLE;
         } 
         return "('$b_id', 0, 0, 2, '$p_id', 2)";
     }
