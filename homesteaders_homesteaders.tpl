@@ -141,7 +141,7 @@
     <!-- END this_player_zone -->
     <div id ="top"> <!-- Round # and toggle show buttons area -->
         <span id="top_texts">
-            <span id="round_text" class="useFont">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
+            <span id="round_text" class="font caps">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
             <div id='useSilver_form'> 
                 <tr>
                     <input type="checkbox" id="checkbox1"/>
@@ -317,12 +317,12 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div id="coppericon_p${id}" class="score_token score_copper score"></div><span id="coppercount_${id}" class="score_copper_text score_text">0</span>\
 </div></div></div>';
 
-var jstpl_pay_button = '<span id="pay_gold" class="useFont" style="display:none">0</span> \
+var jstpl_pay_button = '<span id="pay_gold" class="font caps" style="display:none">0</span> \
  <span id="pay_gold_tkn" class="log_gold token_inline" style="display:none"></span> \
- <span id="pay_silver" class="useFont">0</span> \
+ <span id="pay_silver" class="font caps">0</span> \
  <span id="pay_silver_tkn" class="log_silver token_inline"></span>';
-var jstpl_color_log = '<span title="${string}" class="useFont ${color}">${string}</span>';
-var jstpl_color_number_log = '<span class="font ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
+var jstpl_colour_log = '<span title="${string}" class="font caps ${color}">${string}</span>';
+var jstpl_colour_number_log = '<span class="font ${color}" >${string}</span><span class="biggerFont bold ${color}">${number}</span>';
 var jstpl_resource_inline = '<span title = "${type}" class="log_${type} token_inline"></span>';
 var jstpl_resource_log = '<span title = "${type}" class="log_${type} log_token"></span>';
 var jstpl_player_token_log = '<span title = "${type}_${color}" class="${type}_${color} log_${type}"></span>';
@@ -339,7 +339,7 @@ var jptpl_tt_break = '<div class="tt_break"><span font>${text}</span></div>';
 var jptpl_res_tt = '<div class="tt_container" style="text-align:center;">${value}</br>';
 var jptpl_bld_tt = '<div class="tt_container"><span class="font bold ${type}" style="text-align:left;">${name}</span>\
     <p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} bld_vp token_inline" ></span></p><br>\
-    <p class="useFont" style="text-align: left;">${COST} ${cost_vals}</p><hr>\
+    <p class="font caps" style="text-align: left;">${COST} ${cost_vals}</p><hr>\
     <div style="text-align:center;"><span class="font" style="max-width:200px;display:inline-block;">${desc}</span><hr>\
     <span class="income">${INCOME}<br></span>\
     <div class="font">${inc_vals}</div></div></div>';

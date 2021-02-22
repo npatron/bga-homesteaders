@@ -262,7 +262,7 @@ function (dojo, declare) {
 
             dojo.place(FIRST_PLAYER_ID, this.player_score_zone_id[gamedatas.first_player]);
             this.first_player = Number(gamedatas.first_player);
-            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="useFont">${_('First Bid in Next Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
+            this.addTooltipHtml( FIRST_PLAYER_ID, `<span class="font caps">${_('First Bid in Next Auction')}</span><span class="fp_tile building_tile" style="display:block"></span>` ); 
             this.setupWorkers(gamedatas.workers);
             this.setupBidZones();
             this.setupBidTokens(gamedatas.bids);
@@ -1122,10 +1122,10 @@ function (dojo, declare) {
         },
 
         formatTooltipAuction: function (a_info, a_id){
-            var tt = '<div style="text-align: center;" class="useFont">';
+            var tt = '<div style="text-align: center;" class="font">';
             var auction_no = Math.ceil(a_id/10); // (1-10) = 1; (11-20) = 2; etc...
             if (auction_no== 1) {// order fixed in A-1
-                var title = `<span class="font bold a1">${_("Round")} ${a_id}</span><hr>`;
+                var title = `<span class="font caps bold a1">${_("Round")} ${a_id}</span><hr>`;
             } else { //order by phase in other auctions
                 if ((a_id-1)%10 <4){
                     var phase = _("Settlement");
@@ -1256,7 +1256,7 @@ function (dojo, declare) {
                     case 2: //VP_B_INDUSTRIAL
                     case 3: //VP_B_SPECIAL
                     case 6: //VP_B_BUILDING
-                        vp_b += this.format_block('jstpl_color_log', {string: this.asset_strings[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
+                        vp_b += this.format_block('jstpl_colour_log', {string: this.asset_strings[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
                         break;
                     case 4: //VP_B_WORKER
                         vp_b += this.getOneResourceHtml('worker') + "<br>";
@@ -1538,7 +1538,7 @@ function (dojo, declare) {
             let name = `<div title="Rail Tracks" class="bread_track"></div>`;
             let order = 1;
             if (id != -1){
-                name = this.format_block('jstpl_color_log', {'string':this.building_info[id].name, 'color':ASSET_COLORS[this.building_info[id].type]});
+                name = this.format_block('jstpl_colour_log', {'string':this.building_info[id].name, 'color':ASSET_COLORS[this.building_info[id].type]});
                 let bld = dojo.query(`#${TPL_BLD_ZONE}${this.player_color[this.player_id]} .${TPL_BLD_CLASS}${id}`);
                 if (bld[0].style != null){
                     order = Number(bld[0].style.order) + 2;
@@ -1581,7 +1581,7 @@ function (dojo, declare) {
         },
 
         createBuildingBreadcrumb: function(b_name, b_type, cost){
-            let b_name_html = this.format_block('jstpl_color_log', {'string':b_name, 'color':ASSET_COLORS[b_type]});
+            let b_name_html = this.format_block('jstpl_colour_log', {'string':b_name, 'color':ASSET_COLORS[b_type]});
             let b_html = this.format_block( 'jptpl_breadcrumb_building', {text:_("Build ")+b_name_html, cost:this.getResourceArrayHtml(this.invertArray(cost), true, "position: relative; top: 9px;")})
             if (dojo.query('#breadcrumb_building').length==1){
                 dojo.destroy('breadcrumb_bldCost');
@@ -1970,7 +1970,10 @@ function (dojo, declare) {
         onMarketResource: function ( evt ){
             //console.log('onMarketResource');
             dojo.stopEvent( evt );
-            if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
+            if (!dojo.hasClass(evt.target.id, "selectable")) { 
+                if (evt.target.parentNode.classList.contains('selectable'))
+                {   return this.onClickOnBuilding(evt, true); }
+                return; }
             if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
             let type = evt.target.id.split('_')[4];
             let tradeChange = this.invertArray(this.resource_info[type].market);
@@ -1996,7 +1999,10 @@ function (dojo, declare) {
         onBankResource: function ( evt ){
             //console.log('onBankResource');
             dojo.stopEvent( evt );
-            if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
+            if (!dojo.hasClass(evt.target.id, "selectable")) { 
+                if (evt.target.parentNode.classList.contains('selectable'))
+                {   return this.onClickOnBuilding(evt, true); }
+                return; }
             if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
             if(this.canAddTrade({'silver':1, 'trade':-1})){
                 this.updateTrade({'silver':1, 'trade':-1});              
@@ -2566,7 +2572,16 @@ function (dojo, declare) {
             }
             this.allowed_building_stack=[];
         },
+
+        makeUnaffordableBuildingsGray: function(){
+
+        },
         
+        /**
+         * Triggered when user clicks on building,
+         * if this is called with the flag 'parent' == true, then the id in the evt is the child of this building.(clicked on worker slot or trade_option).  
+         * If the building is marked as 'selectable' we will attempt to select it, and update the UI accordingly.
+         */
         onClickOnBuilding: function( evt , parent= false){
             evt.preventDefault();
             dojo.stopEvent( evt );
@@ -3085,28 +3100,28 @@ function (dojo, declare) {
                     // format onOff with font (no color)
                     if (args.onOff != null && typeof args.onOff == 'string'){
                         args.onOff_val = (args.onOff == 'on'?true:false);
-                        args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
+                        args.onOff = this.format_block('jstpl_colour_log', {color:'', string:args.onOff});
                     }
                     // format text with font (no color)
                     if (args.text != null && typeof args.text == 'string'){
-                        args.text = this.format_block('jstpl_color_log', {color:'', string:args.text});
+                        args.text = this.format_block('jstpl_colour_log', {color:'', string:args.text});
                     }
                     // formats args.building_name to have the building Color by type
                     if (args.building_name != null && typeof (args.building_name) != "string"){
                         let color = ASSET_COLORS[Number(args.building_name.type)];
-                        args.building_name = this.format_block('jstpl_color_log', {string:args.building_name.str, color:color});
+                        args.building_name = this.format_block('jstpl_colour_log', {string:args.building_name.str, color:color});
                     }
                     if (args.bidVal != null && typeof(args.bidVal) == 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.bidVal = this.format_block('jstpl_color_log', {string:args.bidVal, color:color});
+                        args.bidVal = this.format_block('jstpl_colour_log', {string:args.bidVal, color:color});
                     }
                     // this will always set `args.auction` (allowing it to be used in the Title)
                     if (args.auction != null && typeof (args.auction) != 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.auction = this.format_block('jstpl_color_log', {string:args.auction.str, color:color});
+                        args.auction = this.format_block('jstpl_colour_log', {string:args.auction.str, color:color});
                     } else {
                         let color = ASSET_COLORS[Number(this.current_auction)+10];
-                        args.auction = this.format_block('jstpl_color_number_log', {color:color, string:"AUCTION ", number:this.current_auction});
+                        args.auction = this.format_block('jstpl_colour_number_log', {color:color, string:"AUCTION ", number:this.current_auction});
                     }
                     // end -> add font only args
 
@@ -3114,7 +3129,7 @@ function (dojo, declare) {
                     if (args.reason_string != null && typeof (args.reason_string) != "string"){
                         if (args.reason_string.type != null){ //Building & Auctions
                             let color = ASSET_COLORS[Number(args.reason_string.type)];
-                            args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string.str, color:color});
+                            args.reason_string = this.format_block('jstpl_colour_log', {string:args.reason_string.str, color:color});
                         } else if (args.reason_string.token != null) { // player_tokens (bid/train)
                             const color = this.player_color[args.reason_string.player_id];
                             args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});

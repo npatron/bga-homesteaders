@@ -28,13 +28,13 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.font, .biggerFont, .useFont {
+.font, .biggerFont {
    font-family: 'Old Standard TT';
    font-style: normal;
    vertical-align: middle;
    font-size: 20px;
 }
-.useFont {
+.caps {
    font-variant: small-caps;
 }
 .bgabutton .font{font-size: 14px;}
