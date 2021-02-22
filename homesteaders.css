@@ -661,11 +661,11 @@ div#sell_board{
 }
 #trbuy_buy_wood, #trbuy_buy_steel, #trbuy_buy_copper, 
 #trsel_sell_wood, #trsel_sell_steel, #trsel_sell_copper{
-   left: 50.5%;
+   right: 50.5%;
 }
 #trbuy_buy_food, #trbuy_buy_gold, #trbuy_buy_cow, 
 #trsel_sell_food, #trsel_sell_gold, #trsel_sell_cow{
-   right: 50.5%;
+   left: 50.5%;
 }
 #trade_buy_wood, #trade_buy_steel, #trade_buy_copper{
    left: 5%;
