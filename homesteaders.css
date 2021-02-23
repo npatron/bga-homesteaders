@@ -767,6 +767,26 @@ div#sell_board{
    box-sizing: content-box;
    cursor:pointer;
 }
+.building_tile.selectable{
+   box-sizing: border-box;
+}
+.building_tile.unaffordable:after{
+  content: " ";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  opacity: .4;
+}
+.building_tile.selectable.affordable{
+   border-color:greenyellow;
+}
+.building_tile.selectable.tradeable{
+   border-color:blue;
+}
+.building_tile.selectable.unaffordable{
+   border-color:black;
+}
 /** Player Borders */
 .border_yellow {
    border-color:yellow;
