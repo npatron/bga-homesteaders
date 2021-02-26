@@ -134,7 +134,7 @@ function (dojo, declare) {
     const BUILD_BONUS_WORKER = 3; 
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
-    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 6:'',
+    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 4:'any', 6:'',
                           10:'a4' ,11:'a1',12:'a2',13:'a3'};
     const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8'];
 
@@ -1144,12 +1144,12 @@ function (dojo, declare) {
                 var build = "";
                 let build_arr = a_info[a_id].build;
                 if (build_arr.length == 4){//any
-                    build += _(" Build: ")+ `<span class="font bold">${_("ANY type")}</span>`;
+                    build += _(" Build: ")+ this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]}); _(' type');
                 } else {
                     let build_html = [];
                     for(let i in build_arr){
                         let b_type = build_arr[i];
-                        build_html[i]= _(" Build: ")+ `<span aria="${this.asset_strings[b_type]}" class="font bold ${ASSET_COLORS[b_type]}">${this.asset_strings[b_type]}</span>`;
+                        build_html[i]= _(" Build: ")+ this.format_block('jstpl_color_log', {'string':this.asset_strings[b_type], 'color':ASSET_COLORS[b_type]}); _(' type');
                     }
                     build += build_html.join(this.format_block('jptpl_tt_break', {text:_("OR")}));
                 }
@@ -1237,7 +1237,7 @@ function (dojo, declare) {
                         on_build_desc += _('advance on Railroad track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                        on_build_desc += this.tkn_html['track'] +'<br>' + _('You may also build another building of ') ;
+                        on_build_desc += this.tkn_html['track'] +'<br>' + _('You may also build another building of ') + this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]}); _(' type');
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
                         on_build_desc += this.getOneResourceHtml('silver',2);
@@ -1259,7 +1259,7 @@ function (dojo, declare) {
                     case 2: //VP_B_INDUSTRIAL
                     case 3: //VP_B_SPECIAL
                     case 6: //VP_B_BUILDING
-                        vp_b += this.format_block('jstpl_colour_log', {string: this.asset_strings[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
+                        vp_b += this.format_block('jstpl_color_log', {string: this.asset_strings[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]}) + "<br>";
                         break;
                     case 4: //VP_B_WORKER
                         vp_b += this.getOneResourceHtml('worker') + "<br>";
@@ -1542,7 +1542,7 @@ function (dojo, declare) {
             let name = `<div title="Rail Tracks" class="bread_track"></div>`;
             let order = 1;
             if (id != -1){
-                name = this.format_block('jstpl_colour_log', {'string':this.building_info[id].name, 'color':ASSET_COLORS[this.building_info[id].type]});
+                name = this.format_block('jstpl_color_log', {'string':this.building_info[id].name, 'color':ASSET_COLORS[this.building_info[id].type]});
                 let bld = dojo.query(`#${TPL_BLD_ZONE}${this.player_color[this.player_id]} .${TPL_BLD_CLASS}${id}`);
                 if (bld[0].style != null){
                     order = Number(bld[0].style.order) + 2;
@@ -1585,7 +1585,7 @@ function (dojo, declare) {
         },
 
         createBuildingBreadcrumb: function(b_name, b_type, cost){
-            let b_name_html = this.format_block('jstpl_colour_log', {'string':b_name, 'color':ASSET_COLORS[b_type]});
+            let b_name_html = this.format_block('jstpl_color_log', {'string':b_name, 'color':ASSET_COLORS[b_type]});
             let b_html = this.format_block( 'jptpl_breadcrumb_building', {text:_("Build ")+b_name_html, cost:this.getResourceArrayHtml(this.invertArray(cost), true, "position: relative; top: 9px;")})
             if (dojo.query('#breadcrumb_building').length==1){
                 dojo.destroy('breadcrumb_bldCost');
@@ -3206,28 +3206,28 @@ function (dojo, declare) {
                     // format onOff with font (no color)
                     if (args.onOff != null && typeof args.onOff == 'string'){
                         args.onOff_val = (args.onOff == 'on'?true:false);
-                        args.onOff = this.format_block('jstpl_colour_log', {color:'', string:args.onOff});
+                        args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
                     }
-                    // format text with font (no color)
-                    if (args.text != null && typeof args.text == 'string'){
-                        args.text = this.format_block('jstpl_colour_log', {color:'', string:args.text});
-                    }
+                    // format text with font (no color) this changes the chat log, so disabling it...
+                    /*if (args.text != null && typeof args.text == 'string'){
+                        args.text = this.format_block('jstpl_color_log', {color:'', string:args.text});
+                    }*/
                     // formats args.building_name to have the building Color by type
                     if (args.building_name != null && typeof (args.building_name) != "string"){
                         let color = ASSET_COLORS[Number(args.building_name.type)];
-                        args.building_name = this.format_block('jstpl_colour_log', {string:args.building_name.str, color:color});
+                        args.building_name = this.format_block('jstpl_color_log', {string:args.building_name.str, color:color});
                     }
                     if (args.bidVal != null && typeof(args.bidVal) == 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.bidVal = this.format_block('jstpl_colour_log', {string:args.bidVal, color:color});
+                        args.bidVal = this.format_block('jstpl_color_log', {string:args.bidVal, color:color});
                     }
                     // this will always set `args.auction` (allowing it to be used in the Title)
                     if (args.auction != null && typeof (args.auction) != 'string'){
                         let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.auction = this.format_block('jstpl_colour_log', {string:args.auction.str, color:color});
+                        args.auction = this.format_block('jstpl_color_log', {string:args.auction.str, color:color});
                     } else {
                         let color = ASSET_COLORS[Number(this.current_auction)+10];
-                        args.auction = this.format_block('jstpl_colour_number_log', {color:color, string:"AUCTION ", number:this.current_auction});
+                        args.auction = this.format_block('jstpl_color_number_log', {color:color, string:"AUCTION ", number:this.current_auction});
                     }
                     // end -> add font only args
 
@@ -3235,7 +3235,7 @@ function (dojo, declare) {
                     if (args.reason_string != null && typeof (args.reason_string) != "string"){
                         if (args.reason_string.type != null){ //Building & Auctions
                             let color = ASSET_COLORS[Number(args.reason_string.type)];
-                            args.reason_string = this.format_block('jstpl_colour_log', {string:args.reason_string.str, color:color});
+                            args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string.str, color:color});
                         } else if (args.reason_string.token != null) { // player_tokens (bid/train)
                             const color = this.player_color[args.reason_string.player_id];
                             args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
