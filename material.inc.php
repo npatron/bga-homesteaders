@@ -53,7 +53,7 @@ $this->trade_map = array(
   12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan', 16=>'payloan_silver', 17=>'payloan_gold');
 
 $this->translation_strings = array(
-  0=>_('Residential'), 1=>_('Commercial'), 2=>_('Industrial'), 3=>_('Special'), 6=>_('Building'), 7=>_(' per '));
+  0=>_('Residential'), 1=>_('Commercial'), 2=>_('Industrial'), 3=>_('Special'), 4=>_('Any'), 6=>_('Building'), 7=>_(' per '));
 
 $this->resource_info = array(
   'silver' => array(
@@ -363,7 +363,7 @@ $this->building_info = array_merge(
    ),
    BLD_LAWYER => array(
     'name' => _("Lawyer"),
-    'desc' => clienttranslate('You may overbid others with the same bid value'),
+    'desc' => clienttranslate('You may overbid others with the same bid value').'\n',
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('cow'=>1, 'gold'=>1, 'wood'=>1),
@@ -513,186 +513,102 @@ $this->building_info = array_merge(
 $this->auction_info = array( 
   1 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC1_SPAN._("Round 1").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<br>".
-              _(" OR ").C_HTML."<hr>".END_DIV,
   ),
   2 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC1_SPAN._("Round 2").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   3 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC1_SPAN._("Round 3").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   4 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
-    'tt'    => AUC1_SPAN._("Round 4").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<br>".
-              _(" OR ").I_HTML."<hr>".END_DIV,
   ),
   5 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC1_SPAN._("Round 5").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").C_HTML."<hr>".
-              _(" May Hire ").WORKER_HTML._(" (Free)").END_DIV,
     'bonus' => AUC_BONUS_WORKER,
   ),
   6 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC1_SPAN._("Round 6").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<hr>".
-              _(" May Hire ").WORKER_HTML._(" (Free)").END_DIV,
     'bonus' => AUC_BONUS_WORKER,
   ),
   7 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC1_SPAN._("Round 7").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").I_HTML."<hr>".
-              _(" May Hire ").WORKER_HTML._(" (Free)").END_DIV,
     'bonus' => AUC_BONUS_WORKER,
   ),
   8 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC1_SPAN._("Round 8").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").A_HTML.END_DIV."<hr>",
   ),
   9 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC1_SPAN._("Round 9").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").A_HTML."<hr>".
-              _(" May pay ").COPPER_HTML._(" for ").VP4_HTML.END_DIV,
     'bonus' => AUC_BONUS_COPPER_FOR_VP,
   ),
   10 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC1_SPAN._("Round 10").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").A_HTML."<hr>".
-              _(" May pay ").COW_HTML._(" for ").VP4_HTML.END_DIV,
     'bonus' => AUC_BONUS_COW_FOR_VP,
   ),
   11 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   12 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   13 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").A_HTML."<hr>".END_DIV,
   ),
   14 => array(
-    'tt'    => AUC2_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: None")."<hr>".
-              _("May Hire ").WORKER_HTML._(" (Free) &")."<br>".
-              _("Advance the Railroad Track").END_DIV,
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   15 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<br>".
-              _(" OR ").C_HTML."<hr>".END_DIV,
   ),
   16 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").I_HTML."<br>".
-              _(" OR ").C_HTML."<hr>".END_DIV,
   ),
   17 => array(
     'build' => array(TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").I_HTML."<br>".
-              _(" OR ").S_HTML."<hr>".END_DIV,
   ),
   18 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<br>".
-              _(" OR ").S_HTML."<hr>".
-              _(" May pay ").WOOD_HTML._(" for a Track").END_DIV,
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   19 => array(
     'build' => array(TYPE_COMMERCIAL, TYPE_INDUSTRIAL),
-    'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").C_HTML."<br>".
-              _(" OR ").I_HTML."<hr>".
-              _(" May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   20 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_SPECIAL),
-    'tt'    => AUC2_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<br>".
-              _(" OR ").S_HTML."<hr>".
-              _(" May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   21 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   22 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   23 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").I_HTML."<hr>".END_DIV,
   ),
   24 => array(
-    'tt'    => AUC3_SPAN._("Settlement").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: None.")."<hr>".
-              _("May Hire ").WORKER_HTML._(" (Free) &")."<br>".
-              _("Advance the Railroad Track").END_DIV,
     'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
   ),
   25 => array(
     'build' => array(TYPE_RESIDENTIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-               _(" Build: ").R_HTML."<hr>".END_DIV,
   ),
   26 => array(
     'build' => array(TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-               _(" Build: ").C_HTML."<hr>".END_DIV,
   ),
   27 => array(
     'build' => array(TYPE_INDUSTRIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-               _(" Build: ").I_HTML."<hr>".
-               _("May pay ").WOOD_HTML._(" for a Track").END_DIV,
     'bonus' => AUC_BONUS_WOOD_FOR_TRACK,
   ),
   28 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-    'tt'    => AUC3_SPAN._("Town").END_SPAN."<hr>".CENTER_DIV.
-               _(" Build: ").A_HTML."<hr>".END_DIV,
   ),
   29 => array(
     'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL),
-    'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
-              _(" Build: ").R_HTML."<br>".
-              _(" OR ").C_HTML."<hr>".
-              _("May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_FOOD_FOR_VP,
   ),
   30 => array(
-    'tt'    => AUC3_SPAN._("City").END_SPAN."<hr>".CENTER_DIV.
-            _("Build: None")."<hr>"._("Gain ").VP6_HTML."<br>".
-            _("May pay ").FOOD_HTML._(" for ").VP2_HTML.END_DIV,
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
   ),
   31 => array(

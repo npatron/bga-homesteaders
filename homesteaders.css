@@ -28,13 +28,13 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.font, .biggerFont, .useFont {
+.font, .biggerFont {
    font-family: 'Old Standard TT';
    font-style: normal;
    vertical-align: middle;
    font-size: 20px;
 }
-.useFont {
+.caps {
    font-variant: small-caps;
 }
 .bgabutton .font{font-size: 14px;}
@@ -584,36 +584,17 @@ div#train_bonus_5_vp{
  * Trade Board                 *
  *=============================*/
 div#trade_board {
-   background-image: url('img/trade.jpg');
+   background-image: url('img/trade_2.jpg');
    position: relative;
-   width: 512px;
-   height: 180px;
-   background-size: 690px auto;
+   width: 580px;
+   height: 200px;
+   background-size: 580px auto;
    background-repeat: no-repeat;
    margin: auto;
    box-shadow: -3px -3px 3px grey inset;
    border-radius: 6px;
 }
 
-div#buy_board {
-   background-image: url('img/trade.jpg');
-   width: 255px;
-   height: 180px;
-   background-repeat: no-repeat;
-   margin: auto;
-   box-shadow: -3px -3px 3px grey inset;
-   border-radius: 6px;
-}
-
-div#sell_board {
-   background-image: url('img/trade.jpg');
-   width: 255px;
-   height: 180px;
-   background-repeat: no-repeat;
-   margin: auto;
-   box-shadow: -3px -3px 3px grey inset;
-   border-radius: 6px;
-}
 .trade_size {
    width: 512px;
    height: 180px;
@@ -641,65 +622,12 @@ div#trade_bank_trade_silver{
    height: 27px;
 }
 
-.trade_option {
-   height: 19%;
-   width: 21%;
-   position: absolute;
-}
-div#trade_buy_wood{
-   left: 2%;
-   top: 16%;
-}
-div#trade_buy_food{
-   left: 24%;
-   top: 16%;
-}
-div#trade_buy_steel{
-   left: 2%;
-   top: 38%;
-}
-div#trade_buy_gold{
-   left: 24%;
-   top: 38%;
-}
-div#trade_buy_copper{
-   left: 2%;
-   top: 59.5%;
-}
-div#trade_buy_cow{
-   left: 24%;
-   top: 59.5%;
-}
-div#trade_sell_wood{
-   left: 52.7%;
-   top: 16%;
-}
-div#trade_sell_food{
-   left: 75%;
-   top: 16%;
-}
-div#trade_sell_steel{
-   left: 52.7%;
-   top: 38%;
-}
-div#trade_sell_gold{
-   left: 75%;
-   top: 38%;
-}
-div#trade_sell_copper{
-   left: 52.7%;
-   top: 59.5%;
-}
-div#trade_sell_cow{
-   left: 75%;
-   top: 59.5%;
-}
 div#buy_board{
-   background-image: url('img/Buy.jpg');
+   background-image: url('img/trade_2.jpg');
    position: relative;
    width: 290px;
    height: 200px;
-   background-size: 290px auto;
+   background-size: 580px auto;
    background-repeat: no-repeat;
    margin: auto;
    box-shadow: -3px -3px 3px grey inset;
@@ -707,71 +635,57 @@ div#buy_board{
    border-radius: 6px;
 }
 div#sell_board{
-   background-image: url('img/Sell.jpg');
+   background-image: url('img/trade_2.jpg');
    position: relative;
    width: 290px;
    height: 200px;
-   background-size: 290px auto;
+   background-size: 580px auto;
+   background-position-x: -290px;
    background-repeat: no-repeat;
    margin: auto;
    box-shadow: -3px -3px 3px grey inset;
    grid-column: span 2;
    border-radius: 6px;
 }
-div#trbuy_buy_wood{
-   right: 50.5%;
+#trbuy_buy_wood, #trbuy_buy_food, #trade_buy_wood, #trade_buy_food,
+#trsel_sell_wood, #trsel_sell_food, #trade_sell_wood, #trade_sell_food{
    top: 21%;
 }
-div#trbuy_buy_food{
-   left: 50.5%;
-   top: 21%;
-}
-div#trbuy_buy_steel{
-   right: 50.5%;
+#trbuy_buy_steel, #trbuy_buy_gold, #trade_buy_steel, #trade_buy_gold,
+#trsel_sell_steel, #trsel_sell_gold, #trade_sell_steel, #trade_sell_gold{
    top: 40.5%;
 }
-div#trbuy_buy_gold{
-   left: 50.5%;
-   top: 40.5%;
+#trbuy_buy_copper, #trbuy_buy_cow, #trade_buy_copper, #trade_buy_cow,
+#trsel_sell_copper, #trsel_sell_cow, #trade_sell_copper, #trade_sell_cow{
+   top: 60%;
 }
-div#trbuy_buy_copper{
+#trbuy_buy_wood, #trbuy_buy_steel, #trbuy_buy_copper, 
+#trsel_sell_wood, #trsel_sell_steel, #trsel_sell_copper{
    right: 50.5%;
-   top: 60%;
 }
-div#trbuy_buy_cow{
+#trbuy_buy_food, #trbuy_buy_gold, #trbuy_buy_cow, 
+#trsel_sell_food, #trsel_sell_gold, #trsel_sell_cow{
    left: 50.5%;
-   top: 60%;
 }
-.buy_option {
+#trade_buy_wood, #trade_buy_steel, #trade_buy_copper{
+   left: 5%;
+}
+#trade_buy_food, #trade_buy_gold, #trade_buy_cow{
+   left: 25%;
+}
+#trade_sell_food, #trade_sell_gold, #trade_sell_cow{
+   right: 5%;
+}
+#trade_sell_wood, #trade_sell_steel, #trade_sell_copper{
+   right: 25%;
+}
+
+.trade_option {
    height: 17%;
-   width: 37%;
+   width: 18.5%;
    position: absolute;
 }
-div#trsel_sell_wood{
-   right: 50.5%;
-   top: 21%;
-}
-div#trsel_sell_food{
-   left: 50.5%;
-   top: 21%;
-}
-div#trsel_sell_steel{
-   right: 50.5%;
-   top: 40.5%;
-}
-div#trsel_sell_gold{
-   left: 50.5%;
-   top: 40.5%;
-}
-div#trsel_sell_copper{
-   right: 50.5%;
-   top: 60%;
-}
-div#trsel_sell_cow{
-   left: 50.5%;
-   top: 60%;
-}
-.sell_option{
+.buy_option,.sell_option {
    height: 17%;
    width: 37%;
    position: absolute;
@@ -852,6 +766,26 @@ div#trsel_sell_cow{
    border-width: 2px;
    box-sizing: content-box;
    cursor:pointer;
+}
+.building_tile.selectable{
+   box-sizing: border-box;
+}
+.building_tile.unaffordable:after{
+  content: " ";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  opacity: .4;
+}
+.building_tile.selectable.affordable{
+   border-color:greenyellow;
+}
+.building_tile.selectable.tradeable{
+   border-color:blue;
+}
+.building_tile.selectable.unaffordable{
+   border-color:black;
 }
 /** Player Borders */
 .border_yellow {

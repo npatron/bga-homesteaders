@@ -37,16 +37,21 @@ class HSDScore extends APP_GameClass
     }
 
     function updateEndgameScores(){
+        $vp_html = '<span title = "vp" class="log_vp token_inline"></span>';
+        $cow_html = '<span title = "cow" class="log_cow token_inline"></span>';
+        $gold_html = '<span title = "gold" class="log_gold token_inline"></span>';
+        $copper_html = '<span title = "copper" class="log_copper token_inline"></span>';
+        $loan_html = '<span title = "loan" class="log_loan token_inline"></span>';
         $players = $this->game->loadPlayersBasicInfos();
         $row1 = array( '' );
-        $row2 = array(VP_HTML._('Tokens'));
-        $row3 = array(_('building ').VP_HTML);
-        $row4 = array(_('bonus building ').VP_HTML);
-        $row5 = array(VP_HTML._(' from ').GOLD_HTML);
-        $row6 = array(VP_HTML._(' from ').COW_HTML);
-        $row7 = array(VP_HTML._(' from ').COPPER_HTML);
-        $row8 = array(VP_HTML._(' from ').LOAN_HTML);
-        $row9 = array(_('Total ').VP_HTML);
+        $row2 = array($vp_html._('Tokens'));
+        $row3 = array(_('building ').$vp_html);
+        $row4 = array(_('bonus building ').$vp_html);
+        $row5 = array($vp_html._(' from ').$gold_html);
+        $row6 = array($vp_html._(' from ').$cow_html);
+        $row7 = array($vp_html._(' from ').$copper_html);
+        $row8 = array($vp_html._(' from ').$loan_html);
+        $row9 = array(_('Total ').$vp_html);
         foreach($players as $p_id=>$player){
             $p_score = $this->calculateEndgameScore($p_id);
             $row1[] = array( 'str' => '${player_name}',
