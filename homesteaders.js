@@ -1219,10 +1219,17 @@ function (dojo, declare) {
         replaceTooltipStrings(inputString){
             // required to allow js functions to access file wide globals (in this case `this.tkn_html`).
             let _this = this;
-            var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
-                    function(f){ return _this.tkn_html[f.substr(2, f.length -3)];});
-            updatedString = updatedString.replaceAll(/(\\n)/g, '<br>');
-            return updatedString;
+            try{
+                var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
+                function(f){ return _this.tkn_html[f.substr(2, f.length -3)];});
+                updatedString = updatedString.replaceAll(/(\\n)/g, '<br>');
+                return updatedString;
+            } catch (error){
+                console.error(error);
+                console.log('unable to format tooltip string '+inputString);
+                return inputString;
+            }
+
         },
 
         formatBuildingDescription: function(b_info){
