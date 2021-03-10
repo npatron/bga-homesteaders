@@ -643,6 +643,7 @@ function (dojo, declare) {
                 this.tkn_html[type] = this.format_block( 'jstpl_resource_inline', {type:type}, );
             }
             this.tkn_html['arrow'] = this.format_block( 'jstpl_resource_inline', {type:'arrow'}, );
+            this.tkn_html['inc_arrow'] = this.format_block( 'jstpl_resource_inline', {type:'inc_arrow'}, );
             for (let i in VP_TOKENS){
                 this.tkn_html[VP_TOKENS[i]] = this.format_block( 'jstpl_resource_inline', {type:VP_TOKENS[i]}, );
             }
