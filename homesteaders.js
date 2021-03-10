@@ -647,6 +647,8 @@ function (dojo, declare) {
             for (let i in VP_TOKENS){
                 this.tkn_html[VP_TOKENS[i]] = this.format_block( 'jstpl_resource_inline', {type:VP_TOKENS[i]}, );
             }
+            this.tkn_html.track = this.format_block('jptpl_track_log', {type:'track'});
+            this.tkn_html.loan = this.format_block('jptpl_track_log', {type:'loan'});
             this.tkn_html['and'] = this.format_block('jptpl_tt_break', {text:_("AND")});
             this.tkn_html['or'] = this.format_block('jptpl_tt_break', {text:_("OR")});
         },
@@ -1236,34 +1238,35 @@ function (dojo, declare) {
             var full_desc = '';
             
             if (b_info.desc != null){
-                full_desc =  this.replaceTooltipStrings(b_info.desc);
+                full_desc =  this.replaceTooltipStrings(_(b_info.desc));
             }
 
             if (b_info.on_b != null){
                 switch(b_info.on_b){
                     case 1: //BUILD_BONUS_PAY_LOAN
-                        on_build_desc += this.replaceTooltipStrings(_("When built: Pay off ${loan}"));
+                        var on_build_desc = this.replaceTooltipStrings(_("When built: Pay off ${loan}"));
                         break;
                     case 2: //BUILD_BONUS_TRADE
-                        on_build_desc += dojo.string.substitute(_("When built: Gain ${token}"),{token:this.tkn_html['trade']});
+                        var on_build_desc = dojo.string.substitute(_("When built: Gain ${token}"),{token:this.tkn_html['trade']});
                         break;
                     case 3: //BUILD_BONUS_WORKER
-                        on_build_desc += dojo.string.substitute(_("When built: Gain ${token}"),{token:this.tkn_html['worker']});
+                        var on_build_desc = dojo.string.substitute(_("When built: Gain ${token}"),{token:this.tkn_html['worker']});
                         break;
                     case 4: //BUILD_BONUS_RAIL_ADVANCE
-                        on_build_desc += _('When built: Advance on Railroad Track');
+                        var on_build_desc = _('When built: Advance on Railroad Track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                        on_build_desc += dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.tkn_html[track], any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
+                        var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.tkn_html.track, any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
-                        on_build_desc += this.replaceTooltipStrings(_("When built: ${silver}{silver}"));
+                        var on_build_desc = this.replaceTooltipStrings(_("When built: ${silver}{silver}"));
                         break;
                     case 7: //BUILD_BONUS_SILVER_WORKERS
-                        on_build_desc += this.replaceTooltipStrings(_('When built: Recieve ${silver} per ${worker}<br>When you gain a ${worker} gain a ${silver}'));
+                        var on_build_desc = this.replaceTooltipStrings(_('When built: Recieve ${silver} per ${worker}<br>When you gain a ${worker} gain a ${silver}'));
                         break;
                     case 8: //BUILD_BONUS_PLACE_RESOURCES
-
+                    default:
+                        var on_build_desc = "";
                 }
                 full_desc = on_build_desc +'<br>'+ full_desc;
             }
