@@ -191,11 +191,12 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function toggleCheckbox(){
+  // archiving this as we are removing the checkbox
+  /*public function toggleCheckbox(){
     self::setAjaxMode( );
     $checked = self::getArg( 'checked', AT_bool, true);
     $this->game->playerToggleCheckbox($checked);
     self::ajaxResponse( );
-  }
+  }*/
 
 }

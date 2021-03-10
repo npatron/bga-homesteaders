@@ -260,7 +260,8 @@ class homesteaders extends Table
         }
     }
 
-    public function playerToggleCheckbox( $enabled ){
+    // archiving this as we are no longer allowing player checkbox
+    /*public function playerToggleCheckbox( $enabled ){
         $cur_p_id = $this->getCurrentPlayerId();
         $val = ($enabled?1:0);
         $this->DbQuery( "UPDATE `player` SET use_silver = '$val' WHERE player_id = '$cur_p_id'" );
@@ -269,9 +270,9 @@ class homesteaders extends Table
             'text' =>    'auto-pay',
             'worker'=>   'worker',
             'arrow'=>    'arrow',
-            'onOff'=> ($enabled?_("on"):_("off")),
+            'onOff'=> ($enabled?clienttranslate("on"):clienttranslate("off")),
         ));
-    }
+    }*/
 
     /***  place workers phase ***/
     public function playerHireWorker(){
@@ -279,8 +280,8 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $worker_cost = array('trade'=>1,'food'=>1);
         if (!$this->Resource->canPlayerAfford($cur_p_id, $worker_cost))
-            throw new BgaUserException( _("You cannot afford to hire a worker"));
-        $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, _('Hire Worker'));
+            throw new BgaUserException( clienttranslate("You cannot afford to hire a worker"));
+        $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, clienttranslate('Hire Worker'));
         $this->Log->updateResource($cur_p_id, "trade", -1);
         $this->Log->updateResource($cur_p_id, "food", -1);
         $this->Resource->addWorker($cur_p_id, 'hire');
@@ -291,8 +292,9 @@ class homesteaders extends Table
         $this->checkAction( "placeWorker" );
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
-        if ($w_owner != $cur_p_id){ throw new BgaUserException(_("This is not your worker."));}
+        if ($w_owner != $cur_p_id){ throw new BgaUserException(clienttranslate("The selected worker is not your worker"));}
         $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${worker} to ${building_name}' ), array(
+            'i18n' => array( 'building_name' ),
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
             'building_key' => $b_key,
@@ -370,7 +372,7 @@ class homesteaders extends Table
         } else if ($state['name'] === 'payAuction') {
             $this->payAuction($gold);
         } else {
-            throw new BgaVisibleSystemException ( _("player pay called from wrong state") );
+            throw new BgaVisibleSystemException ( clienttranslate("player pay called from wrong state") );
         }
     }
 
@@ -394,13 +396,15 @@ class homesteaders extends Table
 
     public function payAuction($gold) {
         $this->checkAction( "done" );
-        if ($gold <0){ throw new BgaUserException ( _("cannot have negative gold value"));}
+        if ($gold <0){ 
+            throw new BgaUserException ( clienttranslate("cannot have negative gold value"));
+        }
         $act_p_id = $this->getActivePlayerId();
         
         $bid_cost = $this->Bid->getBidCost($act_p_id);
         $bid_cost = max($bid_cost - 5*$gold, 0);
         $auc_no = $this->getGameStateValue('current_auction');
-        $this->Resource->pay($act_p_id, $bid_cost, $gold, _("auction ").$auc_no, $auc_no);
+        $this->Resource->pay($act_p_id, $bid_cost, $gold, sprintf(clienttranslate("Auction %s"), $auc_no), $auc_no);
         if ($this->Auction->doesCurrentAuctionHaveBuildPhase()){
             $this->gamestate->nextstate( 'build' );
         } else {
@@ -413,7 +417,7 @@ class homesteaders extends Table
         $act_p_id = $this->getActivePlayerId();
         $options = $this->Resource->getRailAdvBonusOptions($act_p_id);
         if (!in_array ($selected_bonus, $options)){
-            throw new BgaUserException( _("invalid bonus option selected.") );
+            throw new BgaUserException( clienttranslate("invalid bonus option selected") );
         } 
         $this->Resource->recieveRailBonus($act_p_id, $selected_bonus);
         $phase = $this->getGameStateValue( 'phase' );
@@ -456,16 +460,16 @@ class homesteaders extends Table
         $act_p_id = $this->getActivePlayerId();
         $auction_bonus = $this->getGameStateValue( 'auction_bonus');
         if ($auction_bonus == AUC_BONUS_WORKER) {
-            $this->Resource->addWorker($act_p_id, _('auction bonus'));
+            $this->Resource->addWorker($act_p_id, clienttranslate('Auction Bonus'));
             $this->gamestate->nextState( 'done' );
         } else if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV){
-            $this->Resource->addWorker($act_p_id, _('auction bonus'));
+            $this->Resource->addWorker($act_p_id, clienttranslate('Auction Bonus'));
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
             $auc_no = $this->getGameStateValue( 'current_auction');
-            $this->Resource->getRailAdv( $act_p_id, _("auction ").$auc_no, 'auction', $auc_no );
+            $this->Resource->getRailAdv( $act_p_id, sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no );
             $this->gamestate->nextState( 'railBonus' );
         } else {
-            throw new BgaVisibleSystemException ( _("Free Hire Worker called, but auction bonus is ").$auction_bonus );
+            throw new BgaVisibleSystemException ( sprintf(clienttranslate("Free Hire Worker called, but auction bonus is %s"),$auction_bonus) );
         }
     }
 
@@ -474,15 +478,15 @@ class homesteaders extends Table
         $act_p_id = $this->getActivePlayerId();
         $tradeAwayType = $this->resource_map[$tradeAway];
         if (!$this->Resource->canPlayerAfford($act_p_id, array($tradeAwayType=> 1))) {
-            throw new BgaUserException( _("You need a ")."<div class='log_${tradeAwayType} token_inline'></div>"._(" to take this action") );
+            throw new BgaUserException( sprintf(clienttranslate("You need a %s to take this action"),"<div class='log_${tradeAwayType} token_inline'></div>") );
         }
         $tradeForType = 'track'; // default is currently track.
         if ($tradeFor == VP){ // determine if vp2 or vp4.
             if ($tradeAway == FOOD) $tradeForType = 'vp2';
             else $tradeForType = 'vp4';
         }
-        $auc = $this->getGameStateValue('current_auction');
-        $this->Resource->specialTrade($act_p_id, array($tradeAwayType=>1), array($tradeForType=>1), _("auction ").$auc, 'auction', $auc);
+        $auc_no = $this->getGameStateValue('current_auction');
+        $this->Resource->specialTrade($act_p_id, array($tradeAwayType=>1), array($tradeForType=>1), sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no);
         
         $this->gamestate->nextState( 'done' );
     }
@@ -498,7 +502,7 @@ class homesteaders extends Table
         if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV) {
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
             $auc_no = $this->getGameStateValue('current_auction');
-            $this->Resource->getRailAdv( $act_p_id, _("auction ").$auc_no, 'auction', $auc_no );
+            $this->Resource->getRailAdv( $act_p_id, sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no );
             $next_state = 'railBonus';
         }
         $this->gamestate->nextState( $next_state );
@@ -522,7 +526,7 @@ class homesteaders extends Table
         $p_id = $this->getCurrentPlayerId();
         $transactions = $this->Log->getLastTransactions($p_id);
         if ($transactions == null) {
-            throw new BgaUserException(_("You have nothing to cancel"));
+            throw new BgaUserException(clienttranslate("You have nothing to cancel"));
         }
 
         // Undo the turn
@@ -724,19 +728,19 @@ class homesteaders extends Table
             if ($current_auction == 1 && $this->getPlayersNumber() == 2){
                 $first_p_id = $this->getPlayerAfter($this->getGameStateValue('first_player'));
                 $this->setGameStateValue('first_player',$first_p_id);
-                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${first}'),array(
+                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate('${player_name} recieves ${first}'),array(
                     'player_id'=>$first_p_id,
                     'player_name'=>$this->getPlayerName($first_p_id),
-                    'first'=>_('First Player')));
+                    'first'=>clienttranslate('First Player')));
             }
             $this->Bid->clearBidForPlayer($auction_winner_id);// for dummy bid case.
         } else {
             if ($current_auction == 1){ // winner of auction 1 gets first player marker.
                 $this->setGameStateValue('first_player', $auction_winner_id);
-                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate( '${player_name} recieves ${first}'),array(
+                $this->notifyAllPlayers("moveFirstPlayer", clienttranslate('${player_name} recieves ${first}'),array(
                     'player_id'=>$auction_winner_id,
                     'player_name'=>$this->getPlayerName($auction_winner_id),
-                    'first'=>_('First Player'),
+                    'first'=>clienttranslate('First Player'),
                 ));
             }
             $bid_cost = $this->Bid->getBidCost($auction_winner_id);

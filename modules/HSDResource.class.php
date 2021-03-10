@@ -260,10 +260,10 @@ class HSDresource extends APP_GameClass
             $amt = 5;
         }
         if (!$this->canPlayerAfford($p_id, array($type=>$amt))){
-            throw new BgaUserException( _("You do not have enough ").$this->game->resource_info[$type]['name'] );
+            throw new BgaUserException( sprintf(clienttranslate("You do not have enough %s"), $this->game->resource_info[$type]['name']) );
         }
         if (!$this->canPlayerAfford($p_id, array('loan'=>1))){
-            throw new BgaUserException( _("You have no DEBT to pay" ) );
+            throw new BgaUserException( clienttranslate("You have no DEBT to pay" ) );
         }
         $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${player_name} pays ${loan} ${arrow} ${type}' ), array(
             'player_id' => $p_id,
@@ -390,7 +390,7 @@ class HSDresource extends APP_GameClass
     function pay($p_id, $silver, $gold, $reason_string, $key=0){
         $cost = array('gold'=>$gold, 'silver'=>$silver);
         if (!$this->canPlayerAfford($p_id, $cost)){
-            throw new BgaUserException( _("Not enough resources. Take loan(s) or trade") );
+            throw new BgaUserException( clienttranslate("Not enough resources. Take loan(s) or trade") );
         }
         if ($key != 0){
             $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string, 'auction', $key);
@@ -486,22 +486,22 @@ class HSDresource extends APP_GameClass
             case 'payloan':
                 return $this->payOffLoan($p_id, $tradeAct_segs[1] === 'gold');
             default: 
-                throw new BgaVisibleSystemException (_('Invalid TradeAction: ').$tradeAction);
+                throw new BgaVisibleSystemException ( sprintf(clienttranslate('Invalid TradeAction: %s'),$tradeAction));
         }
         if (!$this->canPlayerAfford($p_id, $tradeAway)){
-            throw new BgaUserException( _("You cannot afford to make this trade") );
+            throw new BgaUserException( clienttranslate("You cannot afford to make this trade") );
         }
         if ($sell && $this->game->Building->doesPlayerOwnBuilding($p_id, BLD_GENERAL_STORE)){
             $tradeFor = $this->updateKeyOrCreate($tradeFor, 'silver', 1);
         }
-        $buy_sell = ($sell?_('sells'):_("buys"));
+        $buy_sell = ($sell? clienttranslate('sell'): clienttranslate("buy"));
         if ($building_name === ""){
-            $this->game->notifyAllPlayers( "trade", clienttranslate('${player_name} ${buy_sell} ${tradeAway} ${arrow} ${tradeFor}'), 
+            $this->game->notifyAllPlayers( "trade", '${player_name} ${buy_sell} ${tradeAway} ${arrow} ${tradeFor}', 
             array(  'player_id' => $p_id,               'player_name' => $p_name,
                     'tradeAway' => $tradeAway,          'tradeFor' => $tradeFor,
                     'buy_sell'  => $buy_sell,           'arrow' => 'arrow', ) );
         } else {
-            $this->game->notifyAllPlayers( "trade", clienttranslate('${player_name} uses ${building_name} ${tradeAway} ${arrow} ${tradeFor} '), 
+            $this->game->notifyAllPlayers( "trade", clienttranslate('${player_name} trades with ${building_name} ${tradeAway} ${arrow} ${tradeFor} '), 
             array(  'player_id' => $p_id,               'player_name' => $p_name,
                     'tradeAway' => $tradeAway,          'tradeFor' => $tradeFor,
                     'building_name'=> $building_name,   'arrow' => 'arrow', ) );

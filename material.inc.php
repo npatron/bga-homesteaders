@@ -46,82 +46,87 @@ $this->trade_map = array(
   12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan', 16=>'payloan_silver', 17=>'payloan_gold');
 
 $this->translation_strings = array(
-  0=>_('Residential'), 1=>_('Commercial'), 2=>_('Industrial'), 3=>_('Special'), 4=>_('Any'), 6=>_('Building'), 7=>_(' per '));
+  0=> clienttranslate('Residential'), 
+  1=> clienttranslate('Commercial'), 
+  2=> clienttranslate('Industrial'), 
+  3=> clienttranslate('Special'), 
+  4=> clienttranslate('Any'), 
+  6=> clienttranslate('Building'), 
+  7=> clienttranslate(' per ')
+);
 
 $this->resource_info = array(
   'silver' => array(
-    'name'   => _("Silver"),
+    'name'   => clienttranslate("Silver"),
     'db_int' => SILVER,
     'bank'   => array(),
-    'tt'     => clienttranslate('${silver}\nSilver:\nUsed to pay ${worker} and to pay for auctions'),
+    'tt'     => clienttranslate('${silver}<br>Silver:<br>Used to pay ${worker} and to pay for auctions'),
   ),
   'workers' => array(
-    'name'   => _("Worker"),
+    'name'   => clienttranslate("Worker"),
     'db_int' => WORKER,
-    'tt'     => clienttranslate('${worker}\nWorker:\nProduces resources when assigned to buildings'),
+    'tt'     => clienttranslate('${worker}<br>Worker:<br>Produces resources when assigned to buildings'),
   ),   
   'track' => array(
-    'name'   => _("Railroad Track"),
+    'name'   => clienttranslate("Railroad Track"),
     'db_int' => TRACK,
-    'tt'     => clienttranslate('${track}\nRail Track\nProduces ${silver} each round'),
+    'tt'     => clienttranslate('${track}<br>Rail Track<br>Produces ${silver} each round'),
   ),
   'wood' => array(
-    'name'   => _("Wood"),
+    'name'   => clienttranslate("Wood"),
     'db_int' => WOOD,
     'trade_val' => array('silver'=> 1),
-    'tt'     => clienttranslate('${wood}\nWood:\nRequired to build some buildings'),
+    'tt'     => clienttranslate('${wood}<br>Wood:<br>Required to build some buildings'),
   ),
   'food' => array(
-    'name'   => _("Food"),
+    'name'   => clienttranslate("Food"),
     'db_int' => FOOD,
     'trade_val' => array('silver'=> 2),
     'market' => array('wood'=>1),
-    'tt'     => clienttranslate('${food}\nFood:\nRequired to build some buildings\nUsed to Hire new ${worker}'),
+    'tt'     => clienttranslate('${food}<br>Food:<br>Required to build some buildings<br>Used to Hire new ${worker}'),
   ),
   'steel' => array(
-    'name'   => _("Steel"),
+    'name'   => clienttranslate("Steel"),
     'db_int' => STEEL,
     'trade_val' => array('silver'=> 3),
     'market' => array('food'=>1),
-    'tt'     => clienttranslate('${steel}\nSteel:\nRequired to build some buildings'),
+    'tt'     => clienttranslate('${steel}<br>Steel:<br>Required to build some buildings'),
   ),
   'gold' => array(
-    'name'   => _("Gold"),
+    'name'   => clienttranslate("Gold"),
     'db_int' => GOLD,
     'trade_val' => array('silver'=> 4),
-    'tt'     => clienttranslate('${gold}\nGold:\nRequired to build some buildings\nCan be used to pay Workers / Auction costs(as 5 silver)\nEnd: Worth ${vp2}'),
+    'tt'     => clienttranslate('${gold}<br>Gold:<br>Required to build some buildings<br>Can be used to pay Workers / Auction costs(as 5 ${silver})<br>End: Worth ${vp2}'),
   ),
   'copper' => array(
-    'name'   => _("Copper"),
+    'name'   => clienttranslate("Copper"),
     'db_int' => COPPER,
     'trade_val' => array('gold'=> 1),
-    'tt'     => clienttranslate('${copper}\nCopper:\nRequired to build some buildings\nEnd: Worth ${vp2}'),
+    'tt'     => clienttranslate('${copper}<br>Copper:<br>Required to build some buildings<br>End: Worth ${vp2}'),
   ),
   'cow' => array(
-    'name'   => _("Livestock"),
+    'name'   => clienttranslate("Livestock"),
     'db_int' => COW,
     'trade_val' => array('gold'=> 1),
-    'tt'     => clienttranslate('${cow}\nLivestock:\nRequired to build some buildings\nEnd: Worth ${vp2}'),
+    'tt'     => clienttranslate('${cow}<br>Livestock:<br>Required to build some buildings<br>End: Worth ${vp2}'),
   ),
   'loan' => array(
-    'name'   => _("Debt"),
+    'name'   => clienttranslate("Debt"),
     'db_int' => LOAN,
-    'tt'     => clienttranslate('${loan}\nDebt:\n Costs 5 ${silver} (or 1 ${gold}) to pay off\n'.
-                'End: Penalty for unpaid ${loan}:\n${loan} ${arrow} lose ${vp}\n'.
-                '${loan}${loan} ${arrow} lose ${vp3}\n'.
-                '${loan}${loan}${loan} ${arrow} lose ${vp6}\n'.
-                '${loan}${loan}${loan}${loan} ${arrow} lose ${vp10}\n (etc...)'),
+    'tt'     => sprintf(clienttranslate('%s<br>Debt:<br>Costs 5 ${silver} (or 1 ${gold}) to pay off<br>End: Penalty for unpaid %s:<br>'.
+                '%s lose ${vp}<br>%s lose ${vp3}<br>%s lose ${vp6}<br>%s lose ${vp10}<br> (etc...)'), 
+                  '${loan}', '${loan}', '${loan} ${arrow}', '${loan}${loan} ${arrow}', '${loan}${loan}${loan} ${arrow}', '${loan}${loan}${loan}${loan} ${arrow}'),
   ),
   'trade' => array(
-    'name'   => _("Trade Token"),
+    'name'   => clienttranslate("Trade Token"),
     'db_int' => TRADE,
-    'tt'     => clienttranslate('${trade}\nTrade Token:\n Required for any trade\n'.
+    'tt'     => clienttranslate('${trade}<br>Trade Token:<br> Required for any trade'.
                 'Used to Hire new ${worker}'),
   ),
   'vp' => array(
-    'name'   => _("VP Token"),
+    'name'   => clienttranslate("VP Token"),
     'db_int' => VP,
-    'tt'     => clienttranslate('${vp}\nVP Token:\nEnd: Worth 1 VP'),
+    'tt'     => clienttranslate('${vp}<br>VP Token:<br>End: Worth 1 VP'),
   ),
 );
 
@@ -130,7 +135,7 @@ $this->building_info = array_merge(
   array_fill_keys( 
     array(BLD_HOMESTEAD_YELLOW, BLD_HOMESTEAD_RED, BLD_HOMESTEAD_GREEN, BLD_HOMESTEAD_BLUE, BLD_HOMESTEAD_PURPLE), 
     array(
-      'name' => _("Homestead"),
+      'name' => clienttranslate("Homestead"),
       'type' => TYPE_RESIDENTIAL,
       'stage'=> 0,
       'inc'  => array('silver'=>2),
@@ -141,7 +146,7 @@ $this->building_info = array_merge(
   )),
   array(
    BLD_GRAIN_MILL => array(
-    'name' => _("Grain Mill"),
+    'name' => clienttranslate("Grain Mill"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('steel'=>1,'wood'=>1),
@@ -150,7 +155,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_FARM => array(
-    'name' => _("Farm"),
+    'name' => clienttranslate("Farm"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
@@ -160,8 +165,8 @@ $this->building_info = array_merge(
     'amt'  => 3,
    ),
    BLD_MARKET => array(
-    'name' => _("Market"),
-    'desc' => clienttranslate('Allows trades\n ${trade}${wood} ${arrow} ${food}\n${trade}${food} ${arrow} ${steel}'),
+    'name' => clienttranslate("Market"),
+    'desc' => sprintf(clienttranslate('Allows trades %s'), '<br>${trade}${wood} ${arrow} ${food}<br>${trade}${food} ${arrow} ${steel}'),
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
@@ -172,7 +177,7 @@ $this->building_info = array_merge(
     'amt'  => 3,
    ),
    BLD_FOUNDRY => array(
-    'name' => _("Foundry"),
+    'name' => clienttranslate("Foundry"),
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array(),
@@ -181,7 +186,7 @@ $this->building_info = array_merge(
     'amt'  => 3,
    ),
    BLD_STEEL_MILL => array(
-    'name' => _("Steel Mill"),
+    'name' => clienttranslate("Steel Mill"),
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('gold'=>1,'wood'=>2,),
@@ -189,7 +194,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_BOARDING_HOUSE => array(
-    'name' => _("Boarding House"),
+    'name' => clienttranslate("Boarding House"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('wood'=>2),
@@ -199,7 +204,7 @@ $this->building_info = array_merge(
     'on_b' => BUILD_BONUS_PAY_LOAN,
    ),
    BLD_RAILWORKERS_HOUSE => array(
-    'name' => _("Railworkers House"),
+    'name' => clienttranslate("Railworkers House"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>2),
@@ -208,7 +213,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_RANCH => array(
-    'name' => _("Ranch"),
+    'name' => clienttranslate("Ranch"),
     'type' => TYPE_RESIDENTIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>1,'food'=>1,'wood'=>1,),
@@ -218,7 +223,7 @@ $this->building_info = array_merge(
     'on_b' => BUILD_BONUS_TRADE,
    ),
    BLD_TRADING_POST => array(
-    'name' => _("Trading Post"),
+    'name' => clienttranslate("Trading Post"),
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('gold'=>1),
@@ -226,7 +231,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_GENERAL_STORE => array(
-    'name' => _("General Store"),
+    'name' => clienttranslate("General Store"),
     'desc' => clienttranslate('Whenever you Sell, get an additional ${silver}'),
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
@@ -236,7 +241,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_GOLD_MINE => array(
-    'name' => _("Gold Mine"),
+    'name' => clienttranslate("Gold Mine"),
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>1,'wood'=>1,),
@@ -245,7 +250,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_COPPER_MINE => array(
-    'name' => _("Copper Mine"),
+    'name' => clienttranslate("Copper Mine"),
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
     'cost' => array('steel'=>1, 'wood'=>2),
@@ -254,7 +259,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_RIVER_PORT => array(
-    'name' => _("River Port"),
+    'name' => clienttranslate("River Port"),
     'desc' => clienttranslate('You may pay for ${copper} or ${cow} in building costs or auction costs using ${gold} instead'),
     'type' => TYPE_INDUSTRIAL,
     'stage'=> STAGE_SETTLEMENT_TOWN,
@@ -264,7 +269,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_CHURCH => array(
-    'name' => _("Church"),
+    'name' => clienttranslate("Church"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('copper'=>1,'gold'=>1,'steel'=>1,'wood'=>1),
@@ -273,7 +278,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_WORKSHOP => array(
-    'name' => _("Workshop"),
+    'name' => clienttranslate("Workshop"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('steel'=>1),
@@ -283,7 +288,7 @@ $this->building_info = array_merge(
     'on_b' => BUILD_BONUS_WORKER,
    ),
    BLD_DEPOT => array(
-    'name' => _("Depot"),
+    'name' => clienttranslate("Depot"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('steel'=>1,'wood'=>1,),
@@ -293,7 +298,7 @@ $this->building_info = array_merge(
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
    ),
    BLD_STABLES => array(
-    'name' => _("Stables"),
+    'name' => clienttranslate("Stables"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('cow'=>1),
@@ -302,8 +307,8 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_BANK => array(
-    'name' => _("Bank"),
-    'desc' => clienttranslate('Allow trade:\n${trade} ${arrow} ${silver}'),
+    'name' => clienttranslate("Bank"),
+    'desc' => clienttranslate('Allow trade:').'${trade} ${arrow} ${silver}',
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('copper'=>1, 'steel'=>1),
@@ -313,7 +318,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_MEATPACKING_PLANT => array(
-    'name' => _("Meatpacking Plant"),
+    'name' => clienttranslate("Meatpacking Plant"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('cow'=>1, 'wood'=>1,),
@@ -324,7 +329,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_FORGE => array(
-    'name' => _("Forge"),
+    'name' => clienttranslate("Forge"),
     'desc' => clienttranslate('Get ${vp} whenever you build a building (after this one)'),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_INDUSTRIAL,
@@ -336,7 +341,7 @@ $this->building_info = array_merge(
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
    ),
    BLD_FACTORY => array(
-    'name' => _("Factory"),
+    'name' => clienttranslate("Factory"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('copper'=>1, 'steel'=>2),
@@ -346,7 +351,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_RODEO => array(
-    'name' => _("Rodeo"),
+    'name' => clienttranslate("Rodeo"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('cow'=>1, 'food'=>1),
@@ -355,8 +360,8 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_LAWYER => array(
-    'name' => _("Lawyer"),
-    'desc' => clienttranslate('You may overbid others with the same bid value').'\n',
+    'name' => clienttranslate("Lawyer"),
+    'desc' => clienttranslate('You may overbid others with the same bid value'),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('cow'=>1, 'gold'=>1, 'wood'=>1),
@@ -366,7 +371,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_FAIRGROUNDS => array(
-    'name' => _("Fairgrounds"),
+    'name' => clienttranslate("Fairgrounds"),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('cow'=>1, 'copper'=>1, 'wood'=>2,),
@@ -376,7 +381,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_DUDE_RANCH => array(
-    'name' => _("Dude Ranch"),
+    'name' => clienttranslate("Dude Ranch"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('food'=>1,'wood'=>1),
@@ -385,7 +390,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_TOWN_HALL => array(
-    'name' => _("Town Hall"),
+    'name' => clienttranslate("Town Hall"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_RESIDENTIAL,
     'cost' => array('copper'=>1,'wood'=>2,),
@@ -394,7 +399,7 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_TERMINAL => array(
-    'name' => _("Terminal"),
+    'name' => clienttranslate("Terminal"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('steel'=>2),
@@ -403,7 +408,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_RESTARAUNT => array(
-    'name' => _("Restaraunt"),
+    'name' => clienttranslate("Restaraunt"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('cow'=>1,'wood'=>1),
@@ -412,7 +417,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_TRAIN_STATION => array(
-    'name' => _("Train Station"),
+    'name' => clienttranslate("Train Station"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_INDUSTRIAL,
     'cost' => array('copper'=>1,'wood'=>1, ),
@@ -421,7 +426,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_CIRCUS => array(
-    'name' => _("Circus"),
+    'name' => clienttranslate("Circus"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
     'cost' => array('cow'=>1,'food'=>2),
@@ -430,75 +435,13 @@ $this->building_info = array_merge(
     'amt'  => 1,
    ),
    BLD_RAIL_YARD => array(
-    'name' => _("Rail Yard"),
+    'name' => clienttranslate("Rail Yard"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_SPECIAL,
     'cost' => array('copper'=>1,'gold'=>1,'steel'=>2),
     'on_b' => BUILD_BONUS_RAIL_ADVANCE,
     'vp'   => 6,
     'vp_b' => VP_B_BUILDING,
-    'amt'  => 1,
-   ),
-   BLD_LUMBERMILL => array(
-    'name' => _("Lumbermill"),
-    'desc' => clienttranslate('May use ${wood}${vp} in place of ${steel} in building costs'),
-    'stage'=> STAGE_SETTLEMENT,
-    'type' => TYPE_RESIDENTIAL,
-    'cost' => array(),
-    'slot' => 1,
-    's1'   => array('wood'=>1, 'silver'=>1),
-    'vp'   => 3,
-    'amt'  => 2,
-   ),
-   BLD_SALOON => array(
-    'name' => _("Saloon"),
-    'stage'=> STAGE_SETTLEMENT_TOWN,
-    'type' => TYPE_COMMERCIAL,
-    'cost' => array(),
-    'on_b' => BUILD_BONUS_SILVER_SILVER,
-    'vp'   => 1,
-    'amt'  => 2,
-   ),
-   BLD_SILVER_MINE => array(
-    'name' => _("Silver Mine"),
-    'stage'=> STAGE_SETTLEMENT_TOWN,
-    'type' => TYPE_INDUSTRIAL,
-    'cost' => array('wood'=>1),
-    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
-    'vp'   => 2,
-    'slot' => 1,
-    's1'   => array('silver'=>3),
-    'amt'  => 2,
-   ),
-   BLD_HOTEL => array(
-    'name' => _("Hotel"),
-    'desc' => clienttranslate('When you gain ${worker} gain ${silver}'),
-    'stage'=> STAGE_TOWN,
-    'type' => TYPE_RESIDENTIAL,
-    'cost' => array('steel'=>1,'food'=>1),
-    'on_b' => BUILD_BONUS_SILVER_WORKERS,
-    'slot' => 1,
-    's1'   => array('vp2'=>1),
-    'vp'   => 3,
-    'amt'  => 1,
-   ),
-   BLD_WAREHOUSE => array(
-    'name' => _("Warehouse"),
-    'stage'=> STAGE_TOWN,
-    'type' => TYPE_COMMERCIAL,
-    'cost' => array('copper'=>1,'steel'=>1,'wood'=>1),
-    'on_b' => BUILD_BONUS_PLACE_RESOURCES,
-    'vp'   => 3,
-    'inc'  => array('special'=> 1), // This will require special handling by the player, & probably a new state just for this.
-    'amt'  => 1,
-   ),
-   BLD_POST_OFFICE => array(
-    'name' => _("Post Office"),
-    'stage'=> STAGE_CITY,
-    'type' => TYPE_SPECIAL,
-    'cost' => array('cow'=>1,'steel'=>1,'wood'=>2),
-    'vp'   => 8,
-    'vp_b' => VP_B_PAID_LOAN,
     'amt'  => 1,
    ),
 ));
@@ -603,199 +546,5 @@ $this->auction_info = array(
   ),
   30 => array(
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
-  ),
-  31 => array(
-    'build' => array(TYPE_RESIDENTIAL),
-  ),
-  32 => array(
-    'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
-  ),
-  33 => array(
-    'build' => array(TYPE_INDUSTRIAL),
-  ),
-  34 => array(
-    'bonus'=> AUC_BONUS_NONE,
-  ),
-  35 => array(
-    'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
-  ),
-  36 => array(
-    'build' => array(TYPE_COMMERCIAL, TYPE_SPECIAL),
-  ),
-  37 => array(
-    'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
-  ),
-  38 => array(
-    'bonus' => AUC_BONUS_4DEPT_FREE,
-  ),
-  39 => array(
-    'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
-  ),
-  40 => array(
-    'bonus' => AUC_BONUS_3VP_SELL_FREE,
-  ),
-  
-);
-
-  // Events
-  // Settlement Events #1-10
-  // Town Events       #11-20
-  // City Events       #21-25
-$this->events_info = array(
-  1 => array(
-    'name'  => _('Abandoned Stockpile'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('The winner of Auction 1 builds for one resource less (their choice)'),
-    'auc'   => array(1),
-  ),
-  2 => array(
-    'name'  => _('Bureaucratic Error'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('Auction 1 is unavailable this round'),
-    'auc'   => array(1),
-  ),
-  3 => array(
-    'name'  => _('Central Pacific RR'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('Players who pass get a ${track}'),
-    'pass'  => EVT_PASS_TRACK,
-  ),
-  4 => array(
-    'name'  => _('Eager Investors'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('All players who have a ${vp} get 4-${silver}'),
-    'all_b' => EVT_VP_4SILVER,
-  ),
-  5 => array(
-    'name'  => _('Extra Lot'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('Auction 1 also gives build (Any Type)'),
-    'auc'   => array(1),
-  ),
-  6 => array(
-    'name'  => _('Migrant Workers'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('Auction 1 also gives ${worker}'),
-    'auc'   => array(1),
-    'auc_b' => EVT_AUC_BONUS_WORKER,
-  ),
-  7 => array(
-    'name'  => _('Railroad Contracts'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('All auctions also give 2-{silver} ${arrow} ${adv_track}'),
-    'auc'   => array(1,2,3,4),
-    'auc_b' => EVT_AUC_2SILVER_TRACK,
-  ),
-  8 => array(
-    'name'  => _('Rapid Expansion'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('All auctions with bulding opportunities also give a second building opportunity of the same type'),
-    'auc'   => array(1,2,3,4),
-    'auc_b' => EVT_AUC_BUILD_AGAIN,
-  ),
-  9 => array(
-    'name'  => _('Traveling Traders'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('All players get a ${trade}'),
-    'all_b' => EVT_TRADE,
-  ),
-  10 => array(
-    'name'  => _('Union Pacific RR'),
-    'stage' => STAGE_SETTLEMENT,
-    'tt'    => _('Auction 1 also gives ${track}'),
-    'auc'   => array(1),
-    'auc_b' => EVT_AUC_TRACK,
-  ),
-  11 => array(
-    'name'  => _('Bank Favors'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('The player(s) with the least ${loan} gets ${adv_track}'),
-    'all_b' => EVT_LOAN_TRACK,
-  ),
-  12 => array(
-    'name'  => _('Fortune Seeker'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('The player(s) with the fewest ${worker} gets a ${worker}'),
-    'all_b' => EVT_LEAST_WORKER,
-  ),
-  13 => array(
-    'name'  => _('Industrialization'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('All auctions also give ${steel} ${arrow} ${any}'),
-    'auc'   => array(1,2,3,4),
-    'auc_b' => EVT_AUC_STEEL_ANY,
-  ),
-  14 => array(
-    'name' => _('Interest'),
-    'stage' => STAGE_TOWN,
-    'tt' => _('Players must pay ${silver} per ${loan} (${loan} taken to pay the interest does not also need to be paid for)'),
-    'all_b' => EVT_INTEREST,
-  ),
-  15 => array(
-    'name'  => _('Sharecropping'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('players may pay off ${loan} for 1-${food} apiece'),
-    'all_b' => EVT_PAY_LOAN_FOOD,
-  ),
-  16 => array(
-    'name'  => _('State Fair'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('The player(s) with the most ${copper} plus ${cow} (at least one) gets a ${gold}'),
-    'all_b' => EVT_COPPER_COW_GET_GOLD,
-  ),
-  17 => array(
-    'name'  => _('Transcontinental Railroad'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('The player(s) who is farthest advanced on the Railroad Development Track gets ${vp3}'),
-    'all_b' => EVT_DEV_TRACK_VP3,
-  ),
-  18 => array(
-    'name'  => _('Timber Culture Act'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('Players get ${vp} for every ${wood} held'),
-    'all_b' => EVT_VP_FOR_WOOD,
-  ),
-  19 => array(
-    'name'  => _('Wartime Demand'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('Players may sell any number of resources wthout spending ${trade}'),
-    'all_b' => EVT_SELL_NO_TRADE,
-  ),
-  20 => array(
-    'name'  => _('Western Pacific RR'),
-    'stage' => STAGE_TOWN,
-    'tt'    => _('The player(s) with the fewest Buildings get a ${track}'),
-    'all_b' => EVT_LEAST_BLD_TRACK,
-  ),
-  21 => array(
-    'name'  => _('Commercial Dominance'),
-    'stage' => STAGE_CITY,
-    'tt'    => _('The player(s) with the most ${com} buildings only pays half their Auction bid (round down)'),
-    'auc' => array(1,2,3,4),
-    'auc_b' => EVT_AUC_COM_DISCOUNT,
-  ),
-  22 => array(
-    'name'  => _('Industrial Dominance'),
-    'stage' => STAGE_CITY,
-    'tt'    => _('The player(s) with the most ${ind} buildings gets ${vp} for each resource they recieved in income (${wood}, ${food}, ${steel}, ${gold}, ${copper}, ${cow} produced by buildings and not from trade)'),
-    'all_b' => EVT_IND_VP,
-  ),
-  23 => array(
-    'name'  => _('Nelson Act'),
-    'stage' => STAGE_CITY,
-    'tt'    => _('Players who pass may pay off debt for 3-{silver} apiece'),
-    'pass' => EVT_PASS_DEPT_SILVER,
-  ),
-  24 => array(
-    'name'  => _('Property Taxes'),
-    'stage' => STAGE_CITY,
-    'tt'    => _('Players must pay ${silver} per Building they have'),
-    'all_b' => EVT_BLD_TAX_SILVER,
-  ),
-  25 => array(
-    'name'  => _('Residential Dominance'),
-    'stage' => STAGE_CITY,
-    'tt'    => _('The player(s) with the most ${res} buildings gets ${adv_track}'),
-    'all_b' => EVT_RES_ADV_TRACK,
   ),
 );

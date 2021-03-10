@@ -31,7 +31,6 @@
 .font, .biggerFont {
    font-family: 'Old Standard TT';
    font-style: normal;
-   vertical-align: middle;
    font-size: 20px;
 }
 .caps {
@@ -701,7 +700,6 @@ div#sell_board{
    position: relative;
    display: grid;
    grid-template-columns: repeat(auto-fill, 145px);
-   grid-template-rows: repeat(auto-fill, 198px);
 }
 .building_zone_diag .building_tile:nth-child(2) {
    margin-left: 10px;
@@ -1173,9 +1171,7 @@ div#sell_board{
 }
 .tt_container{
    min-width: 100px;
-   /* max-width: 200px; */
-   /* float: center; */
-   /* text-align: center; */
+   pointer-events: none
 }
 .tt_break {
    width: 100%; 
