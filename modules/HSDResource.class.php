@@ -418,6 +418,7 @@ class HSDresource extends APP_GameClass
             $this->game->notifyAllPlayers( "gainTrack", 
                     clienttranslate('${player_name} trades ${tradeAway} ${arrow} ${track} from ${reason_string}'), $values);
             $this->updateResource($p_id, 'track', 1);
+            $this->game->Log->addTrack($p_id, $track_key);
             foreach ($cost_arr as $type=>$amt){
                 $this->updateResource($p_id, $type, -$amt);
                 $this->game->Log->updateResource($p_id, $type, -$amt);
