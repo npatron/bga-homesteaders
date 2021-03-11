@@ -406,7 +406,7 @@ class HSDresource extends APP_GameClass
         if (array_key_exists('track', $income_arr)){
             $this->game->DbQuery( "INSERT INTO `tracks` (`player_id`) VALUES ($p_id)" );
             $p_tracks = $this->game->getObjectListFromDB( "SELECT `rail_key` FROM `tracks` WHERE `player_id`='$p_id'" );
-            $track_key = $p_tracks[count($p_tracks)-1];
+            $track_key = $p_tracks[count($p_tracks)-1]['rail_key'];
             $values = array('player_id' => $p_id,
                     'player_name' => $this->game->getPlayerName($p_id),
                     'track' => 'track',

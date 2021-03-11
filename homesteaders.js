@@ -143,7 +143,7 @@ function (dojo, declare) {
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
     const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 4:'any', 6:'',
                           10:'a4' ,11:'a1',12:'a2',13:'a3'};
-    const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8'];
+    const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8','vp10'];
 
     // map of tpl id's  used to place the player_zones in turn order.
     const PLAYER_ORDER = ['currentPlayer','First', 'Second', 'Third', 'Fourth',];
