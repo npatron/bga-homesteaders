@@ -327,27 +327,35 @@ class HSDresource extends APP_GameClass
             break;
             case TRADE:
                 $this->updateAndNotifyIncome($p_id, 'trade', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'trade', 1 );
             break;
             case WOOD:
                 $this->updateAndNotifyIncome($p_id, 'wood', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'wood', 1 );
             break;
             case FOOD:
                 $this->updateAndNotifyIncome($p_id, 'food', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'food', 1 );
             break;
             case STEEL:
                 $this->updateAndNotifyIncome($p_id, 'steel', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'steel', 1 );
             break;
             case GOLD:
                 $this->updateAndNotifyIncome($p_id, 'gold', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'gold', 1 );
             break;
             case COPPER:
                 $this->updateAndNotifyIncome($p_id, 'copper', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'copper', 1 );
             break;
             case COW:
                 $this->updateAndNotifyIncome($p_id, 'cow', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'cow', 1 );
             break;
             case VP:
                 $this->updateAndNotifyIncome($p_id, 'vp3', 1, $rail_bonus_arr, 'train');
+                $this->game->Log->updateResource($p_id, 'vp3', 1 );
             break;
         }
     }
