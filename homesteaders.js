@@ -895,6 +895,7 @@ function (dojo, declare) {
                         this.addActionButton( 'btn_choose_bonus', _('Choose Bonus'), 'doneSelectingBonus');
                     break;
                     case 'payAuction':
+                        this.showPay = true;
                         this.silverCost = Number(args.auction_cost);
                         this.goldAmount = 0;
                         this.addPaymentButtons();
@@ -1874,6 +1875,9 @@ function (dojo, declare) {
                  this.clearTransactionLog();
                  this.resetTradeVals();
                  this.can_cancel = true;
+                 if (this.currentState == 'allocateWorkers'){
+                    this.setOffsetForIncome();
+                 }
              }, function( is_error) {});
         },
 
@@ -3095,6 +3099,9 @@ function (dojo, declare) {
                 function( result ) {
                 this.resetTradeVals();
                 this.disableTradeIfPossible();
+                if (this.currentState == 'allocateWorkers'){
+                    this.setOffsetForIncome();
+                }
                 }, function( is_error) { } );
             }
         },
