@@ -1126,8 +1126,8 @@ function (dojo, declare) {
             } else { // create it as well;
                 this.createBuildingTile(building, b_info, this.player_building_zone_id[building.p_id]);
             }
-            dojo.query(`#${b_divId}:has(.affordable)`).removeClass('affordable');
-            dojo.query(`#${b_divId}:has(.unaffordable)`).removeClass('unaffordable');
+            // remove any afford-ability flags
+            dojo.query(`#${b_divId}`).removeClass('affordable').removeClass('tradeable').removeClass('unaffordable');
             dojo.query(`#${b_divId}`).style(`order`,`${building.b_order}`);
             this.updateHasBuilding(building.p_id, b_id); 
         },
@@ -2566,6 +2566,7 @@ function (dojo, declare) {
             if( this.checkAction( 'undo' )){
                 this.ajaxcall( "/homesteaders/homesteaders/cancelTurn.html", {lock: true}, this, 
                 function( result ) {
+                    this.showPay = true;
                     this.resetTradeVals();
                 }, function( is_error) { } ); 
             }
