@@ -701,19 +701,22 @@ div#sell_board{
    display: grid;
    grid-template-columns: repeat(auto-fill, 145px);
 }
-.building_zone_diag .building_tile:nth-child(2) {
-   margin-left: 10px;
-   margin-top: -186px;
- }
- .building_zone_diag .building_tile:nth-child(3) {
-   margin-left: 20px;
-   margin-top: -186px;
+.building_zone_diag {
+   min-height: 200px;
+   display: flex;
+   flex-direction: row-reverse;
+   min-width: 150px;
+   max-width: 170px;
+}
+.building_zone_diag .building_tile:not(:last-child) {
+   margin-left: -154px;
+   margin-top: 10px;
 }
 .main_building_zone {
    position: relative;
    display: grid;
    grid-template-columns: repeat(auto-fill, minmax(155px, auto));
-   grid-template-rows: repeat(auto-fill, minmax(200px, auto));
+   /* grid-template-rows: repeat(auto-fill, minmax(200px, auto)); */
 }
 #future_auction_container{
    flex-direction: row;
@@ -1007,6 +1010,7 @@ div#sell_board{
 .building_container .biggerFont{
    margin-left: auto;
    margin-right: auto;
+   margin-bottom: 10px;
 }
 .offset_text{
    display: grid;
