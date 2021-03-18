@@ -332,8 +332,8 @@ var jptpl_tt_break = '<div class="tt_break"><span font>${text}</span></div>';
 var jptpl_res_tt = '<div class="tt_container" style="text-align:center;">${value}</br>';
 var jptpl_bld_tt = '<div class="tt_container"><span class="font bold ${type}" style="text-align:left;">${name}</span>\
     <p class="alignright"><span aria="${vp}" title="${vp}" class="log_${vp} bld_vp token_inline" ></span></p><br>\
-    <p class="font caps" style="text-align: left;">${COST} ${cost_vals}</p><hr>\
-    <div style="text-align:center;"><span class="font" style="max-width:200px;display:inline-block;">${desc}</span><hr>\
+    <p class="font caps" style="text-align: left;">${COST} ${cost_vals}</p>${hr}\
+    <div style="text-align:center;"><span class="font" style="max-width:200px;display:inline-block;">${desc}</span>${hr}\
     <span class="income">${INCOME}<br></span>\
     <div class="font">${inc_vals}</div></div></div>';
 </script>  

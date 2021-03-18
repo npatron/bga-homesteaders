@@ -1188,8 +1188,9 @@ div#sell_board{
    background:#fff; 
    padding: 0 10px;
 }
-.auction_card .tt_break span{
+.auction_card .tt_break span, .building_card .tt_break span {
    background:linen; 
+   padding: 0 5px;
 }
 
 /*=============*

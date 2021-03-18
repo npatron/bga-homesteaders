@@ -308,7 +308,7 @@ $this->building_info = array_merge(
    ),
    BLD_BANK => array(
     'name' => clienttranslate("Bank"),
-    'desc' => clienttranslate('Allows trades <br>${trade} ${arrow} ${silver}'),
+    'desc' => clienttranslate('Allows trades <br>${trade} ${arrow} ${silver}<br>'),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('copper'=>1, 'steel'=>1),
@@ -361,7 +361,7 @@ $this->building_info = array_merge(
    ),
    BLD_LAWYER => array(
     'name' => clienttranslate("Lawyer"),
-    'desc' => clienttranslate('You may overbid others with the same bid value'),
+    'desc' => clienttranslate('You may overbid others with the same bid value<br>'),
     'stage'=> STAGE_TOWN,
     'type' => TYPE_SPECIAL,
     'cost' => array('cow'=>1, 'gold'=>1, 'wood'=>1),

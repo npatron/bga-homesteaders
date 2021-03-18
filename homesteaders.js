@@ -141,7 +141,7 @@ function (dojo, declare) {
     const BUILD_BONUS_WORKER = 3; 
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
-    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 4:'any', 6:'',
+    const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 4:'any', 6:'any',
                           10:'a4' ,11:'a1',12:'a2',13:'a3'};
     const VP_TOKENS = ['vp2', 'vp3', 'vp4','vp6','vp8','vp10'];
 
@@ -651,6 +651,7 @@ function (dojo, declare) {
             this.tkn_html.loan = this.format_block('jptpl_track_log', {type:'loan'});
             this.tkn_html['and'] = this.format_block('jptpl_tt_break', {text:_("AND")});
             this.tkn_html['or'] = this.format_block('jptpl_tt_break', {text:_("OR")});
+            this.tkn_html['hr'] = this.format_block('jptpl_tt_break', {text:"•"});
         },
 
         /**
@@ -1145,6 +1146,7 @@ function (dojo, declare) {
                 desc: _(this.formatBuildingDescription(b_info)),
                 INCOME: _('income: '),
                 inc_vals: this.formatBuildingIncome(b_info),
+                hr: this.tkn_html.hr,
             });
         },
 
@@ -1218,7 +1220,6 @@ function (dojo, declare) {
          * This method will update inputString then return the updated version.
          * 
          * Any patterns of `${val}` will be replaced with a html token of type `val`
-         * It will also replace any `\n` in inputString with a newline `<br>`
          * 
          * @param {String} inputString 
          * @returns {String} updatedString
@@ -1226,10 +1227,9 @@ function (dojo, declare) {
         replaceTooltipStrings(inputString){
             // required to allow js functions to access file wide globals (in this case `this.tkn_html`).
             let _this = this;
-            try{
+            try{ // this will detect ${var} and replace it with this.tkn_html[var];
                 var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
                 function(f){ return _this.tkn_html[f.substr(2, f.length -3)];});
-                updatedString = updatedString.replaceAll(/(\\n)/g, '<br>');
                 return updatedString;
             } catch (error){
                 console.error(error);
@@ -1261,7 +1261,7 @@ function (dojo, declare) {
                         var on_build_desc = _('When built: Advance on Railroad Track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                        var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.tkn_html.track, any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
+                        var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.getOneResourceHtml('track', 1, true), any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
                         var on_build_desc = this.replaceTooltipStrings(_("When built: ${silver}{silver}"));
@@ -1276,27 +1276,27 @@ function (dojo, declare) {
                 full_desc = on_build_desc +'<br>'+ full_desc;
             }
             if (b_info.vp_b != null){
-                const END = _("End: ");
-                //let vp_b = END + this.getOneResourceHtml('vp', 1, true) + this.asset_strings[7];
+                const END = _("End: ${vp} per ${type}");
                 switch(b_info.vp_b){
                     case 0: //VP_B_RESIDENTIAL
                     case 1: //VP_B_COMMERCIAL
                     case 2: //VP_B_INDUSTRIAL
                     case 3: //VP_B_SPECIAL
                     case 6: //VP_B_BUILDING
-                        var vp_b = dojo.string.substitute(_("End: ${vp} per ${type}"), {vp:this.tkn_html.vp, type:this.format_block('jstpl_color_log', {string: this.asset_strings[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]} )} );
+                        var vp_b = dojo.string.substitute(END, {vp:this.tkn_html.vp, type:this.format_block('jstpl_color_log', {string: this.asset_strings[b_info.vp_b], color:ASSET_COLORS[b_info.vp_b]} )} );
                         break;
                     case 4: //VP_B_WORKER
-                        var vp_b = dojo.string.substitute(_("End: ${vp} per ${type}"), {vp:this.tkn_html.vp, type:this.tkn_html.worker} );
+                        var vp_b = dojo.string.substitute(END, {vp:this.tkn_html.vp, type:this.tkn_html.worker} );
+                        break;
+                    case 5: //VP_B_TRACK
+                        var vp_b = dojo.string.substitute(END, {vp:this.tkn_html.vp, type:this.getOneResourceHtml('track', 1, true)} );
                         break;
                     case 7: //VP_B_WRK_TRK
-                        var vp_b = dojo.string.substitute(_("End: ${vp} per ${type}")+'<br>', {vp:this.tkn_html.vp, type:this.tkn_html.worker} );
-                        vp_b += dojo.string.substitute(_("End: ${vp} per ${type}"), {vp:this.tkn_html.vp, type:this.asset_strings[7]} );
-                    case 5: //VP_B_TRACK
-                        var vp_b = dojo.string.substitute(_("End: ${vp} per ${type}"), {vp:this.tkn_html.vp, type:this.getOneResourceHtml('track', 1, true)} );
+                        var vp_b = dojo.string.substitute(END, {vp:this.tkn_html.vp, type:this.tkn_html.worker} ) + '<br>' 
+                                 + dojo.string.substitute(END, {vp:this.tkn_html.vp, type:this.getOneResourceHtml('track', 1, true)} );
                         break;
                     case 8: //VP_B_PAID_LOAN (expansion)
-                        var vp_b = dojo.string.substitute(_("End: ${vp} per ${loan} paid (at game end)"), {vp:this.tkn_html.vp, loan:this.format_block('jptpl_track_log', {type: 'loan'})} );
+                        var vp_b = dojo.string.substitute(_("End: ${vp} per ${loan} paid off (during endgame actions, loans paid during game are ignored)"), {vp:this.tkn_html.vp, loan:this.format_block('jptpl_track_log', {type: 'loan'})} );
                         break;
                 }
                 full_desc += vp_b +'<br>';
@@ -1306,6 +1306,9 @@ function (dojo, declare) {
 
         formatBuildingIncome: function(b_info){
             var inc_vals = '';
+            if (b_info.inc == null && b_info.slot == null){
+                inc_vals = this.format_block('jstpl_color_log', {string:_("none"), color:''});
+            }
             if (b_info.inc != null){
                 if (b_info.inc.silver =='x'){
                     inc_vals = this.replaceTooltipStrings(_('${silver} per ${worker} (max 5)'));
