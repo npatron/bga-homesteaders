@@ -599,26 +599,47 @@ div#trade_board {
    height: 180px;
 }
 
+.building_card div[id$=trade_market_wood_food]{
+   left: 31px;
+   top: 95px;
+   position: absolute;
+   width: 79px;
+   height: 26px;
+}
 div[id$=trade_market_wood_food]{
    left: 38px;
-   bottom: 80px;
+   top: 84px;
    position: absolute;
    width: 64px;
    height: 27px;
 }
+.building_card div[id$=trade_market_food_steel]{
+   left: 23px;
+   top: 124px;
+   position: absolute;
+   width: 95px;
+   height: 20px;
+}
 div[id$=trade_market_food_steel]{
    left: 38px;
-   bottom: 57px;
+   top: 114px;
    position: absolute;
    width: 64px;
    height: 20px;
 }
 div#trade_bank_trade_silver{
    left: 38px;
-   bottom: 80px;
+   top: 88px;
    position: absolute;
    width: 64px;
    height: 27px;
+}
+.building_card div#trade_bank_trade_silver{
+   left: 33px;
+   top: 98px;
+   position: absolute;
+   width: 78px;
+   height: 26px;
 }
 
 div#buy_board{

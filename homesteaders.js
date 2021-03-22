@@ -313,6 +313,7 @@ function (dojo, declare) {
             } else {
                 this.token_divId[p_id]  = 'token_zone_' + current_player_color;  
                 dojo.place(`worker_zone_${current_player_color}`, this.token_divId[p_id]);
+                dojo.place(`player_name_${current_player_color}`, this.token_divId[p_id], 'before');
                 dojo.destroy(`player_resources_${current_player_color}`, 'noshow');
             }
             
@@ -3068,9 +3069,6 @@ function (dojo, declare) {
                 if (this.showConfirmTrade){}   
                     this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
                 }
-            /*  this.ajaxcall( "/homesteaders/homesteaders/payLoan.html", {lock: true, gold:false}, this, 
-                function( result ) { }, 
-                function( is_error) { } );*/
         },
 
         payLoanGold: function () {
@@ -3090,9 +3088,6 @@ function (dojo, declare) {
                     this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
                 }
             }
-            /*  this.ajaxcall( "/homesteaders/homesteaders/payLoan.html", {lock: true, gold:true}, this, 
-                function( result ) {}, 
-                function( is_error) { } );*/
         },
 
         cancelUndoTransactions: function () {
@@ -3153,25 +3148,25 @@ function (dojo, declare) {
         {
             var notifs = [
                 ['autoPay', 50],
-                ['buildBuilding', 1000],
+                ['buildBuilding', 500],
                 ['cancel', 500],
                 ['clearAllBids', 250],
-                ['gainWorker', 200],
-                ['gainTrack', 200],
+                ['gainWorker', 20],
+                ['gainTrack', 20],
                 ['loanPaid', 500],
                 ['loanTaken', 500],
                 ['moveBid', 250],
                 ['moveFirstPlayer', 100],
-                ['playerIncome', 200],
-                ['playerIncomeGroup', 500],
-                ['playerPayment', 200],
-                ['playerPaymentGroup', 500],
-                ['railAdv', 250],
+                ['playerIncome', 20],
+                ['playerIncomeGroup', 50],
+                ['playerPayment', 20],
+                ['playerPaymentGroup', 50],
+                ['railAdv', 25],
                 ['score', 2000],
-                ['trade', 200],
-                ['updateBuildingStocks', 1000],
-                ['workerMoved', 200],
-                ['workerPaid', 200],
+                ['trade', 20],
+                ['updateBuildingStocks', 100],
+                ['workerMoved', 5],
+                ['workerPaid', 20],
               ];
 
             notifs.forEach(notif => {
@@ -3428,7 +3423,7 @@ function (dojo, declare) {
             dojo.place(this.format_block( 'jptpl_track', 
                     {id: Number(notif.args.track_key), color: this.player_color[Number(notif.args.player_id)]}),
                     this.token_divId[p_id]);
-            this.addTooltipHtml(`token_track_${notif.args.track_key}`, this.resource_info['track']['tt']);
+            this.addTooltipHtml(`token_track_${notif.args.track_key}`, `<div style="text-align:center;">${this.replaceTooltipStrings(this.resource_info['track']['tt'])}</div>`);
             if (notif.args.tradeAway_arr != null){
                 var destination = this.getTargetFromNotifArgs(notif);
                 for(let type in notif.args.tradeAway_arr){
