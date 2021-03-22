@@ -924,6 +924,10 @@ div#sell_board{
    margin: auto;
    font-size: x-large;
 }
+.boardheader {
+   margin-top:auto;
+   margin-bottom: auto;
+}
 .score_flex {
    display:flex;
 }

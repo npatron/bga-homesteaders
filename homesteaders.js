@@ -739,7 +739,9 @@ function (dojo, declare) {
                 case 'chooseBuildingToBuild':
                 case 'auctionBonus':
                 case 'bonusChoice':
-                    dojo.style(TRADE_BOARD_ID, 'order', 4);
+                    if (!this.isSpectator){
+                        dojo.style(TRADE_BOARD_ID, 'order', 2);
+                    }
                 case 'endRound':
                     break;
             }
@@ -2776,7 +2778,7 @@ function (dojo, declare) {
                         trade_action: this.transactionLog.join(',')
                      }, this, function( result ) {
                         this.clearTransactionLog();
-                        this.ajaxCallBuildBuilding( args);
+                        this.ajaxCallBuildBuilding( args );
                      }, function( is_error) {});    
                 } else { // if no trades, just pay.
                     this.ajaxCallBuildBuilding( args );
@@ -2792,6 +2794,7 @@ function (dojo, declare) {
                 this.disableTradeIfPossible();
                 this.disableTradeBoardActions();
                 this.destroyBuildingBreadcrumb();
+                dojo.query(`#${TPL_BLD_TILE}_${args.building_key}`).removeClass('affordable').removeClass('unaffordable').removeClass('tradeable');
              }, function( is_error) { } );
         },
 

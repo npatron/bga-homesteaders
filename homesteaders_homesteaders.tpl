@@ -20,7 +20,7 @@
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR} current_player" style="margin-top:4px;">
     <div class="break" style="order:3;"></div>
         <div id="player_resources_{COLOR}" class="this_player_resources">
-            <span id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};margin: auto;">{NAME}</span>
+            <span id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</span>
             <span id="silver_group" class="this_player_resource_group"><!-- horiz -->
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silver_num" class="player_numbers vert"><!-- vertical -->
@@ -220,7 +220,7 @@
     <!-- BEGIN player_zone -->
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR} player_zone" style="margin-top:4px;">
         <div id="player_resources_{COLOR}" class="player_resources">
-            <div id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};margin: auto;">{NAME}</div>
+            <div id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</div>
             <span id="silver_group_{COLOR}" class="player_resource_group">
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
