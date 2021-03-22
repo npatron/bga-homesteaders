@@ -355,7 +355,7 @@ class HSDresource extends APP_GameClass
             break;
             case VP:
                 $this->updateAndNotifyIncome($p_id, 'vp3', 1, $rail_bonus_arr, 'train');
-                $this->game->Log->updateResource($p_id, 'vp3', 1 );
+                $this->game->Log->updateResource($p_id, 'vp', 3 );
             break;
         }
     }
