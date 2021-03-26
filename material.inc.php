@@ -52,7 +52,10 @@ $this->translation_strings = array(
   3=> clienttranslate('Special'), 
   4=> clienttranslate('Any'), 
   6=> clienttranslate('Building'), 
-  7=> clienttranslate(' per ')
+  9=> clienttranslate('You have already built this building'),
+  10=> clienttranslate('You can not afford to build this building'),
+  11=> clienttranslate('You can afford to build this building (trades required)'),
+  12=> clienttranslate('You can afford to build this building'),
 );
 
 $this->resource_info = array(
