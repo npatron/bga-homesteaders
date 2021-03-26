@@ -801,18 +801,13 @@ div#sell_board{
   opacity: .4;
   top: 0px;
 }
-.building_container .building_tile {
-   border-style: solid;
-   border-width: 1px;
-   box-sizing: content-box;
+.building_tile.selectable.affordable{
+   border-color:greenyellow;
 }
-.building_tile.affordable{
-   border-color:green;
-}
-.building_tile.tradeable{
+.building_tile.selectable.tradeable{
    border-color:blue;
 }
-.building_tile.unaffordable{
+.building_tile.selectable.unaffordable{
    border-color:black;
 }
 /** Player Borders */
@@ -1381,12 +1376,6 @@ div#sell_board{
    background-size: 122px 36.6px;
    background-position: 0px -13.9px;
    width: 13.2px;
-   height: 20px;
-}
-.log_worker_zone{
-   background-size: 122px 36.6px;
-   background-position: 0px -13.9px;
-   width: 15px;
    height: 20px;
 }
 .log_container .log_worker:not(:last-child) {
