@@ -88,24 +88,25 @@ function (dojo, declare) {
     const BLD_RODEO  = 26;
 
     // string templates for dynamic assets
-    const TPL_BLD_TILE = "building_tile";
+    const TPL_BLD_TILE  = "building_tile";
     const TPL_BLD_STACK = "building_stack_";
-    const TPL_BLD_ZONE = "building_zone_";
+    const TPL_BLD_ZONE  = "building_zone_";
     const TPL_BLD_CLASS ="build_tile_";
-    const TPL_AUC_TILE = "auction_tile";
-    const TPL_AUC_ZONE = "auction_tile_zone_";
+    const TPL_AUC_TILE  = "auction_tile";
+    const TPL_AUC_ZONE  = "auction_tile_zone_";
 
-    const FIRST_PLAYER_ID = 'first_player_tile';
-    const CONFIRM_TRADE_BTN_ID = 'confirm_trade_btn';
-    const UNDO_TRADE_BTN_ID = 'undo_trades_btn';
-    const UNDO_LAST_TRADE_BTN_ID = 'undo_last_trade_btn';
-    const TRADE_BUTTON_ID = 'btn_trade';
+    const FIRST_PLAYER_ID       = 'first_player_tile';
+    const CONFIRM_TRADE_BTN_ID  = 'confirm_trade_btn';
+    const UNDO_TRADE_BTN_ID     = 'undo_trades_btn';
+    const UNDO_LAST_TRADE_BTN_ID= 'undo_last_trade_btn';
+    const TRADE_BUTTON_ID       = 'btn_trade';
+    
 
     // arrays for the map between toggle buttons and show/hide zones 
     const TOGGLE_BTN_ID     = ['tgl_future_bld', 'tgl_main_bld', 'tgl_future_auc', 'tgl_past_bld'];
     const TOGGLE_BTN_STR_ID = ['bld_future', 'bld_main', 'auc_future', 'bld_discard'];
-    const TOGGLE_SHOW_STRING = ['Show Upcoming Buildings', 'Show Current Buildings', 'Show Upcoming Auctions', 'Show Building Discard'];
-    const TOGGLE_HIDE_STRING = ['Hide Upcoming Buildings', 'Hide Current Buildings', 'Hide Upcoming Auctions', 'Hide Building Discard'];
+    const TOGGLE_SHOW_STRING= ['Show Upcoming Buildings', 'Show Current Buildings', 'Show Upcoming Auctions', 'Show Building Discard'];
+    const TOGGLE_HIDE_STRING= ['Hide Upcoming Buildings', 'Hide Current Buildings', 'Hide Upcoming Auctions', 'Hide Building Discard'];
     const TILE_CONTAINER_ID = ['future_building_container', 'main_building_container', 'future_auction_container', 'past_building_container'];
     const TILE_ZONE_DIVID   = ['future_building_zone', 'main_building_zone', 'future_auction_1', 'past_building_zone'];
     
@@ -113,9 +114,9 @@ function (dojo, declare) {
                        'sell_wood':6, 'sell_food':7, 'sell_steel':8, 'sell_gold':9, 'sell_copper':10, 'sell_cow':11, 
                        'market_food':12, 'market_steel':13, 'bank':14, 'loan':15, 'payloan_silver':16, 'payloan_gold':17};
     
-    const MARKET_FOOD_DIVID = 'trade_market_wood_food';
-    const MARKET_STEEL_DIVID ='trade_market_food_steel';
-    const BANK_DIVID = 'trade_bank_trade_silver';
+    const MARKET_FOOD_DIVID  = 'trade_market_wood_food';
+    const MARKET_STEEL_DIVID = 'trade_market_food_steel';
+    const BANK_DIVID         = 'trade_bank_trade_silver';
 
     const TRADE_BOARD_ID = 'trade_board';
     const BUY_BOARD_ID = 'buy_board';
@@ -216,7 +217,6 @@ function (dojo, declare) {
             this.income_arr = [];
 
             this.b_connect_handler = [];
-            this.t_slot_connect_handler = [];
             this.hasBuilding = []; 
             this.last_selected = [];
             this.show_player_info = false;
@@ -479,8 +479,10 @@ function (dojo, declare) {
             const id = building.b_id;
             const b_divId = `${TPL_BLD_TILE}_${key}`;
             if (id == BLD_BANK){
-                dojo.place(`<div id="${BANK_DIVID}" class="trade_option"></div>`, b_divId,'last');
-                this.t_slot_connect_handler[key] = [dojo.connect($(BANK_DIVID), 'onclick', this, 'onClickOnBankTrade')];
+                if (this.prefs[USE_ART_USER_PREF].value == ENABLED_USER_PREF){ // use art needs to add the trade-areas
+                    dojo.place(`<div id="${BANK_DIVID}" class="bank trade_option"></div>`, b_divId,'last');
+                }
+                dojo.connect($(BANK_DIVID), 'onclick', this, 'onClickOnBankTrade');
             }
             if (!(b_info.hasOwnProperty('slot'))) return;
             if (b_info.slot == 1){
@@ -509,10 +511,11 @@ function (dojo, declare) {
                 dojo.connect($(this.building_worker_ids[key][3]), 'onclick', this, 'onClickOnWorkerSlot');
             }
             if (id == BLD_MARKET){
-                dojo.place(`<div id="${key}_${MARKET_FOOD_DIVID}" class="trade_option"> </div><div id="${key}_${MARKET_STEEL_DIVID}" class="trade_option"> </div>`, b_divId,'last');
-                this.t_slot_connect_handler[key] = [];
-                this.t_slot_connect_handler[key][0] = dojo.connect($(key+"_"+MARKET_FOOD_DIVID), 'onclick', this, 'onClickOnMarketTrade');
-                this.t_slot_connect_handler[key][1] = dojo.connect($(key+"_"+MARKET_STEEL_DIVID), 'onclick', this, 'onClickOnMarketTrade');
+                if (this.prefs[USE_ART_USER_PREF].value == ENABLED_USER_PREF){ // use art needs to add the trade-areas
+                    dojo.place(`<div id="${key}_${MARKET_FOOD_DIVID}" class="market_food trade_option"> </div><div id="${key}_${MARKET_STEEL_DIVID}" class="market_steel trade_option"> </div>`, b_divId,'last');
+                }
+                dojo.connect($(key+"_"+MARKET_FOOD_DIVID), 'onclick', this, 'onClickOnMarketTrade');
+                dojo.connect($(key+"_"+MARKET_STEEL_DIVID), 'onclick', this, 'onClickOnMarketTrade');
             }
         },
         
@@ -1264,6 +1267,29 @@ function (dojo, declare) {
             
             if (b_info.desc != null){
                 full_desc =  this.replaceTooltipStrings(_(b_info.desc));
+            } 
+            if (b_info.trade != null){
+                switch(b_info.trade){
+                    case 1: //MARKET
+                        full_desc += _("Allows trades:") + dojo.string.substitute("${start}${trade}${wood} ${arrow}${food} ${trade}${food} ${arrow} ${steel}", 
+                        {start: `<div id="${MARKET_FOOD_DIVID}" class="trade_option">`,
+                         mid:   `</div><br><div id="${MARKET_STEEL_DIVID}" class="trade_option">`,
+                         end:   "</div>",
+                         trade: this.tkn_html.trade, 
+                         wood:  this.tkn_html.wood, 
+                         arrow: this.tkn_html.arrow, 
+                         food:  this.tkn_html.food,
+                         steel: this.tkn_html.steel,});
+                    break;
+                    case 2: //BANK
+                        full_desc += _("Allows trades:") + dojo.string.substitute("${start}${trade} ${arrow} ${silver}${end}", 
+                        {start:  `<div id="${BANK_DIVID}" class="trade_option">`,
+                         end:    "</div>",
+                         trade:  this.tkn_html.trade,
+                         arrow:  this.tkn_html.arrow, 
+                         silver: this.tkn_html.silver,});
+                    break;
+                }
             }
 
             if (b_info.on_b != null){
@@ -1792,6 +1818,8 @@ function (dojo, declare) {
         addTradeActionButton: function( ){
             this.addActionButton( 'btn_take_loan', _('Take Debt'), 'onClickOnTakeDebtButton', null, false, 'gray' );
             this.addActionButton( TRADE_BUTTON_ID, _("Show Trade"),'tradeActionButton', null, false, 'gray' );
+            this.addActionButton( CONFIRM_TRADE_BTN_ID, _("Confirm Trade"),'confirmTradeButton', null, false, 'blue' );
+            dojo.addclass(CONFIRM_TRADE_BTN_ID, 'noshow');
             dojo.style(TRADE_BOARD_ID, 'order', 2);
             this.resetTradeVals();
             if (this.board_resourceCounters[this.player_id].trade.getValue() ==0) {
@@ -1820,18 +1848,9 @@ function (dojo, declare) {
          * hide trade 
          *  - if trade buttons already displayed, but no trades selected
          *  - bgabutton_red
-         * Confirm Trade (only if this.showConfirmTrade = true;)
-         *  - If trade is selected.
-         *  - bgabutton_blue
          */
         tradeActionButton: function( evt){
             if( this.checkAction( 'trade' ) ){
-                if (dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_blue`).length > 0){// confirm
-                    // confirm trade
-                    this.confirmTrades( evt );
-                    this.setTradeButtonTo( TRADE_BUTTON_HIDE );
-                    return;
-                }
                 if (dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_red`).length > 0){// hide
                     this.disableTradeIfPossible();
                     this.setTradeButtonTo( TRADE_BUTTON_SHOW );
@@ -1842,7 +1861,7 @@ function (dojo, declare) {
                 this.setTradeButtonTo( TRADE_BUTTON_HIDE );
             }
         },
-        
+       
         /** Enable Trade
          * 
          */
@@ -1866,6 +1885,15 @@ function (dojo, declare) {
             }
             if(dojo.query(`#${SELL_BOARD_ID}`).length >0){
                 dojo.destroy($(SELL_BOARD_ID));
+            }
+        },
+
+        confirmTradeButton: function ( evt ){
+            if( this.checkAction( 'trade' ) ){
+                // confirm trade
+                this.confirmTrades( evt );
+                this.updateConfirmTradeButton( TRADE_BUTTON_HIDE );
+                return;
             }
         },
 
@@ -1985,8 +2013,7 @@ function (dojo, declare) {
                 this.transactionLog.push(TRADE_MAP[`buy_${type}`]);
                 this.updateBuildingAffordability();
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade)
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
             }
         },
 
@@ -2021,8 +2048,7 @@ function (dojo, declare) {
                 this.transactionLog.push(TRADE_MAP[`sell_${type}`]);
                 this.updateBuildingAffordability();
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade)
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
             }
         },
 
@@ -2038,8 +2064,7 @@ function (dojo, declare) {
                 this.transactionLog.push(TRADE_MAP.loan);
                 this.updateBuildingAffordability();
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade)
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
             }
         },
 
@@ -2068,8 +2093,7 @@ function (dojo, declare) {
                 this.transactionLog.push(TRADE_MAP[`market_${type}`]);
                 this.updateBuildingAffordability();
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade)
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
             }
         },
 
@@ -2089,8 +2113,7 @@ function (dojo, declare) {
                 this.transactionLog.push(TRADE_MAP.bank);
                 this.updateBuildingAffordability();
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade)
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
             }
         },
 
@@ -2285,6 +2308,11 @@ function (dojo, declare) {
                 } else {
                     this.setTradeButtonTo(TRADE_BUTTON_SHOW);
                 }
+                if (this.transactionLog.length >0){
+                    this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
+                } else {
+                    this.updateConfirmTradeButton(TRADE_BUTTON_HIDE);
+                }
             }
         },
 
@@ -2293,20 +2321,23 @@ function (dojo, declare) {
                 case TRADE_BUTTON_SHOW:
                     dojo.addClass(TRADE_BUTTON_ID,'bgabutton_gray');
                     dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_red`).removeClass('bgabutton_red');
-                    dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_blue`).removeClass('bgabutton_blue');
                     $(TRADE_BUTTON_ID).innerText= _('Show Trade');
                     break;
                 case TRADE_BUTTON_HIDE:
                     dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_gray`).removeClass('bgabutton_gray');
-                    dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_blue`).removeClass('bgabutton_blue');
                     dojo.addClass(TRADE_BUTTON_ID,'bgabutton_red');
                     $(TRADE_BUTTON_ID).innerText= _('Hide Trade');
                     break;
-                case TRADE_BUTTON_CONFIRM:
-                    dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_gray`).removeClass('bgabutton_gray');
-                    dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_red`).removeClass('bgabutton_red');
-                    dojo.addClass(TRADE_BUTTON_ID,'bgabutton_blue');
-                    $(TRADE_BUTTON_ID).innerText= _('Confirm Trade');
+            }
+        },
+
+        updateConfirmTradeButton: function( show){
+            switch(show){
+                case TRADE_BUTTON_SHOW:
+                    dojo.query(`#${CONFIRM_TRADE_BTN_ID}`).removeClass('noshow');
+                    break;
+                case TRADE_BUTTON_HIDE:
+                    dojo.query(`#${CONFIRM_TRADE_BTN_ID}`).addClass('noshow');
                     break;
             }
         },
@@ -3107,9 +3138,8 @@ function (dojo, declare) {
                 this.transactionCost.push(tradeChange);
                 this.transactionLog.push(TRADE_MAP.payloan_silver);
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade){}   
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
-                }
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
+            }
         },
 
         payLoanGold: function () {
@@ -3125,9 +3155,7 @@ function (dojo, declare) {
                 this.transactionCost.push(tradeChange);
                 this.transactionLog.push(TRADE_MAP.payloan_gold);
                 this.setupUndoTransactionsButtons();
-                if (this.showConfirmTrade){
-                    this.setTradeButtonTo(TRADE_BUTTON_CONFIRM);
-                }
+                this.updateConfirmTradeButton(TRADE_BUTTON_SHOW);
             }
         },
 

@@ -169,7 +169,7 @@ $this->building_info = array_merge(
    ),
    BLD_MARKET => array(
     'name' => clienttranslate("Market"),
-    'desc' => clienttranslate('Allows trades <br>${trade}${wood} ${arrow}${food}<br>${trade}${food} ${arrow} ${steel}'),
+    'trade'=> 1,
     'type' => TYPE_COMMERCIAL,
     'stage'=> STAGE_SETTLEMENT,
     'cost' => array('wood'=>1),
@@ -311,7 +311,7 @@ $this->building_info = array_merge(
    ),
    BLD_BANK => array(
     'name' => clienttranslate("Bank"),
-    'desc' => clienttranslate('Allows trades <br>${trade} ${arrow} ${silver}<br>'),
+    'trade'=> 2,
     'stage'=> STAGE_TOWN,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('copper'=>1, 'steel'=>1),
