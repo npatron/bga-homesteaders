@@ -599,12 +599,14 @@ div#trade_board {
    height: 180px;
 }
 
-.building_card div[id$=trade_market_wood_food]{
-   left: 31px;
-   top: 95px;
-   position: absolute;
-   width: 79px;
+.tt_container div[id$=trade_market_wood_food]{
+   width: auto;
+   min-width: 79px;
+   max-width: 83px;
    height: 26px;
+   position: unset;
+   margin-left: auto;
+   margin-right: auto;
 }
 div[id$=trade_market_wood_food]{
    left: 38px;
@@ -613,12 +615,14 @@ div[id$=trade_market_wood_food]{
    width: 64px;
    height: 27px;
 }
-.building_card div[id$=trade_market_food_steel]{
-   left: 23px;
-   top: 124px;
-   position: absolute;
-   width: 95px;
+.tt_container div[id$=trade_market_food_steel]{
+   width: auto;
+   min-width: 95px;
+   max-width: 100px;
    height: 20px;
+   position: unset;
+   margin-left: auto;
+   margin-right: auto;
 }
 div[id$=trade_market_food_steel]{
    left: 38px;
@@ -634,12 +638,12 @@ div#trade_bank_trade_silver{
    width: 64px;
    height: 27px;
 }
-.building_card div#trade_bank_trade_silver{
-   left: 33px;
-   top: 98px;
-   position: absolute;
+.tt_container div#trade_bank_trade_silver{
    width: 78px;
    height: 26px;
+   position: unset;
+   margin-left: auto;
+   margin-right: auto;
 }
 
 div#buy_board{
@@ -729,10 +733,27 @@ div#sell_board{
    min-width: 150px;
    max-width: 170px;
 }
-.building_zone_diag .building_tile:not(:last-child) {
+/* 1 building in zone */
+.building_zone_diag .building_tile:nth-child(1):nth-last-child(1){
+   margin-right: 10px;
+}
+/* 2 buildings in zone */
+.building_zone_diag .building_tile:nth-child(1):nth-last-child(2) {
+   margin-left: -154px;
+   margin-top: 10px;
+   margin-right: 15px;
+}
+/* 3 buildings in zone */
+.building_zone_diag .building_tile:nth-child(1):nth-last-child(3) {
+   margin-left: -154px;
+   margin-top: 20px;
+   margin-right: 20px;
+}
+.building_zone_diag .building_tile:nth-child(2):nth-last-child(2) {
    margin-left: -154px;
    margin-top: 10px;
 }
+
 .main_building_zone {
    position: relative;
    display: grid;
@@ -786,13 +807,10 @@ div#sell_board{
    border-style: solid;
    border-color:red;
    border-width: 2px;
-   box-sizing: content-box;
+   box-sizing: border-box;
    cursor:pointer;
 }
-.building_tile.selectable{
-   box-sizing: border-box;
-}
-.building_tile.unaffordable:after{
+.building_container .building_tile.unaffordable:after{
   content: " ";
   position: absolute;
   width: 100%;
@@ -802,18 +820,27 @@ div#sell_board{
   top: 0px;
 }
 .building_container .building_tile {
-   border-style: solid;
+   border-style: dashed;
    border-width: 1px;
-   box-sizing: content-box;
+   box-sizing: border-box;
 }
-.building_tile.affordable{
+.building_container .building_tile.affordable{
    border-color:green;
 }
-.building_tile.tradeable{
+.building_container .building_tile.tradeable{
    border-color:blue;
 }
-.building_tile.unaffordable{
+.building_container .building_tile.unaffordable{
    border-color:black;
+}
+.building_tile.selectable{
+   border-style: dotted;
+   border-width: 3px;
+}
+.building_tile.selected {
+   border-style: solid;
+   border-color:red;
+   border-width: 2px;
 }
 /** Player Borders */
 .border_yellow {
@@ -915,6 +942,9 @@ div#sell_board{
 /*==============*
  * Player board *
  *==============*/
+ .cp_board {
+   margin-top: 5px;
+ }
 .score {
    position: relative;
 }
@@ -935,6 +965,13 @@ div#sell_board{
 }
 .score_flex {
    display:flex;
+   flex-wrap: wrap;
+}
+.score_flex_item {
+   flex: 1 0 17%;
+   display: flex;
+   flex-direction: column;
+   border-style: groove;
 }
 .scorenumber {
    position: relative;
@@ -988,6 +1025,7 @@ div#sell_board{
    height: 30px;
    width: 25px;
    background-size: 75px 30px;
+   margin: auto;
 }
 .score_loan_text {
    height: 20px;
@@ -1207,18 +1245,38 @@ div#sell_board{
    min-width: 100px;
    pointer-events: none
 }
-.tt_break {
+.tt_top{
+   min-width: 150px;
+   max-width: 200px;
+   width: auto;
+   text-align: center;
+}
+.tt_left {
+   text-align: left;
+   max-width:200px;
+}
+.tt_center{
+   text-align:center;
+   max-width:200px;
+}
+.tt_container .font:not(.bold){
+   font-size: 15px;
+}
+.tt_break, .tt_dot {
    width: 100%; 
    text-align: center; 
    border-bottom: 1px solid #000; 
    line-height: 0.1em; 
    margin: 12px 0 10px;
 }
-.tt_break span{
+.tt_dot {
+   margin: 12px 0 5px;
+}
+.tt_break span, .tt_dot span{
    background:#fff; 
    padding: 0 10px;
 }
-.auction_card .tt_break span, .building_card .tt_break span {
+.auction_card .tt_break span, .building_card .tt_break span, .building_card .tt_dot span {
    background:linen; 
    padding: 0 5px;
 }
@@ -1291,11 +1349,23 @@ div#sell_board{
    width: 10px;
    height: 20px;
 }
+.log_big_wood{
+   background-size: 400px 120px;
+   background-position: -2px -2px;
+   width: 20px;
+   height: 40px;
+}
 .log_gold{
    background-size: 217.4px 65.2px;
    background-position: -13px -2px;
    width: 21px;
    height: 20px;
+}
+.log_big_gold{
+   background-size: 434.8px 130.4px;
+   background-position: -26px -4px;
+   width: 42px;
+   height: 40px;
 }
 .log_food{
    background-size: 243.9px 73px;
@@ -1303,17 +1373,35 @@ div#sell_board{
    width: 19px;
    height: 20px;
 }
+.log_big_food{
+   background-size: 487.8px 146px;
+   background-position: -83.4px -6px;
+   width: 40px;
+   height: 40px;
+}
 .log_silver{
    background-size: 202px 61px;
    background-position: -53px -1px;
    width: 21px;
    height: 20px;
 }
+.log_big_silver{
+   background-size: 404px 122px;
+   background-position: -106px -2px;
+   width: 42px;
+   height: 40px;
+}
 .log_trade{
    background-size: 202px 61px;
    background-position: -76px -1px;
    width: 20px;
    height: 20px;
+}
+.log_big_trade{
+   background-size: 404px 122px;
+   background-position: -152px -2px;
+   width: 40px;
+   height: 40px;
 }
 .log_loan{
    display: inline-block;
@@ -1323,6 +1411,14 @@ div#sell_board{
    height: 21px;
    width: 31px;
    background-size: 115px 63px; 
+}
+.log_loan{
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: -87% 30%;
+   top: 8px;
+   height: 42px;
+   width: 62px;
+   background-size: 230px 126px; 
 }
 .log_vp0 {
    background-size: 171px 51px;
@@ -1335,6 +1431,12 @@ div#sell_board{
    background-position: -43.5% 3%;
    width: 20px;
    height: 20px;
+}
+.log_big_vp{
+   background-size: 342px 102px;
+   background-position: -43.5% 3%;
+   width: 40px;
+   height: 40px;
 }
 .log_vp2{
    background-size: 171px 51px;
@@ -1384,10 +1486,10 @@ div#sell_board{
    height: 20px;
 }
 .log_worker_zone{
-   background-size: 122px 36.6px;
-   background-position: 0px -13.9px;
-   width: 15px;
-   height: 20px;
+   background-size: 361px 108.2px;
+   background-position: -125px -73px;
+   width: 33px;
+   height: 35px;
 }
 .log_container .log_worker:not(:last-child) {
    margin-left: -8px;
@@ -1398,11 +1500,23 @@ div#sell_board{
    width: 27px;
    height: 20px;
 }
+.log_big_cow{
+   background-size: 526px 158px;
+   background-position: -61px -64px;
+   width: 54px;
+   height: 40px;
+}
 .log_copper{
    background-size: 275px 88px;
    background-position: -66px -35px;
    width: 30px;
    height: 20px;
+}
+.log_big_copper{
+   background-size: 550px 176px;
+   background-position: -132px -70px;
+   width: 60px;
+   height: 40px;
 }
 .log_track{
    background-size: 259.7px 77.9px;
@@ -1410,11 +1524,23 @@ div#sell_board{
    width: 20px;
    height: 20px;
 }
+.log_big_track{
+   background-size: 520px 156px;
+   background-position: -67px -132px;
+   width: 40px;
+   height: 40px;
+}
 .log_steel{
    background-size: 259.7px 77.9px;
    background-position: -56.6px -56.1px;
    width: 21px;
    height: 20px;
+}
+.log_big_steel{
+   background-size: 520px 156px;
+   background-position: -103.2px -112.2px;
+   width: 42px;
+   height: 40px;
 }
 .log_arrow{
    background-size: 689.7px 206.9px;
@@ -1474,6 +1600,7 @@ div#sell_board{
    filter: drop-shadow(0px 0px 1px #000000);
    position: relative;
    display: inline-block;
+   margin: auto;
 }
 
 /*======*
@@ -1567,6 +1694,27 @@ div#sell_board{
    width: 30px;
    max-width: 30px;
 }
+.w_slot {
+   display: flex;
+   justify-content: center;
+}
+.w_slot span{
+   margin-top: auto;
+   margin-bottom: auto;
+   margin-left: 2px;
+}
+.tt_container .worker_slot{
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 361px 108.2px;
+   background-position: -125px -73px;
+   width: 33px;
+   height: 35px;
+   position: unset;
+   left: unset;
+   bottom: unset;
+   max-width: unset;
+   display: inline-flex;
+}
 .slot_1_1 {
    bottom: 10px;
    left: 14px;
@@ -1599,53 +1747,25 @@ div#sell_board{
    bottom: 8px;
    left: 64px;
 }
-.building_card .slot_0_1, .building_card .slot_1_1, .building_card .slot_2_1, .building_card .slot_3_1, .building_card .slot_4_1 {
-   bottom: 42px;
-   left: 31px;
-}
-.building_card .slot_0_2, .building_card .slot_1_2, .building_card .slot_2_2, .building_card .slot_3_2, .building_card .slot_4_2 {
-   bottom: 0px;
-   left: 29px;
-}
 .slot_6_1 {
    bottom: 45px;
    left: 22px;
-}
-.building_card .slot_6_1 {
-   bottom: 58px;
-   left: 12px;
 }
 .slot_6_2 {
    bottom: 11px;
    left: 37px;
 }
-.building_card .slot_6_2 {
-   bottom: 29px;
-   left: 26px;
-}
 .slot_7_1 {
    bottom: 11px;
    left: 51px;
-}
-.building_card .slot_7_1 {
-   bottom: 1px;
-   left: 21px;
 }
 .slot_8_1 {
    bottom: 15px;
    left: 39px;
 }
-.building_card .slot_8_1 {
-   bottom: 60px;
-   left: 32px;
-}
 .slot_12_1 {
    bottom: 14px;
    left: 33px;
-}
-.building_card .slot_12_1 {
-   bottom: 14px;
-   left: 30px;
 }
 .slot_15_1 {
    bottom: 14px;
@@ -1655,10 +1775,6 @@ div#sell_board{
    bottom: 12px;
    left: 35px;
 }
-.building_card .slot_15_1, .building_card .slot_16_1 {
-   bottom: 58px;
-   left: 30px;
-}
 .slot_17_3 {
    bottom: 13px;
    left: 28px;
@@ -1666,24 +1782,20 @@ div#sell_board{
    display: grid;
    grid-template-columns: 20px 20px;
 }
-.building_card .slot_17_3 {
-   bottom: 0px;
+.w_slot .slot_17_3{
+   width: 25px;
+}
+.w_slot .slot_17_3:last-child{
+   pointer-events: none;
+   background-position: -132px -73px;
 }
 .slot_23_1 {
    bottom: 48px;
    left: 39px;
 }
-.building_card .slot_23_1 {
-   bottom: 39px;
-   left: 31px;
-}
 .slot_23_2 {
    bottom: 10px;
    left: 39px;
-}
-.building_card .slot_23_2, .building_card .slot_24_1 {
-   bottom: 0px;
-   left: 31px;
 }
 .slot_24_1 {
    bottom: 13px;
