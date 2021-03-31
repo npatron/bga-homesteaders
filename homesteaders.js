@@ -931,6 +931,7 @@ function (dojo, declare) {
                         this.showTileZone(BLD_LOC_OFFER);
                         this.orderZone(BLD_LOC_OFFER, 0);
                         this.last_selected['building']="";
+                        this.createBuildingBreadcrumb();
                         //mark buildings as selectable
                         this.makeBuildingsSelectable(args.allowed_buildings);
                         this.addActionButton( 'btn_choose_building', dojo.string.substitute(_('Build ${building_name}'), {building_name:'<span id="bld_name"></span>'}), 'chooseBuilding');
@@ -1166,7 +1167,7 @@ function (dojo, declare) {
             var vp = 'vp'+ ( b_info.vp == null?'0':(Number(b_info.vp)==1)?'':Number(b_info.vp));
 
             var msg = (msg_id == null? "": 
-                `<div class="tt tt_top" style="color:${COLOR_MAP[msg_id]};">${_(this.asset_strings[msg_id])}</div><hr>`);
+                `<div class="tt_flex"><span class="tt tt_top" style="color:${COLOR_MAP[msg_id]};">${_(this.asset_strings[msg_id])}</span></div><hr>`);
             return this.format_block('jptpl_bld_tt', {
                 msg:   msg,
                 type:  ASSET_COLORS[b_info.type],
@@ -1458,6 +1459,7 @@ function (dojo, declare) {
         cancelBuild: function(building){
             //console.log('cancelBuild', building.p_id);
             const b_divId = `${TPL_BLD_TILE}_${building.b_key}`;
+            dojo.removeAttr( $(b_divId), 'style');
             building.location=BLD_LOC_OFFER;
             this.createBuildingZoneIfMissing(building);
             this.moveObject(b_divId, `${TPL_BLD_STACK}${building.b_id}`);
@@ -1699,7 +1701,7 @@ function (dojo, declare) {
             }
         },
 
-        createBuildingBreadcrumb: function(b_name, b_type, cost){
+        createBuildingBreadcrumb: function(b_name=_("???"), b_type=4, cost={}){ // defaults are ??? building with no cost.
             let b_name_html = this.format_block('jstpl_color_log', {'string':_(b_name), 'color':ASSET_COLORS[b_type]});
             let b_html = this.format_block( 'jptpl_breadcrumb_building', {text:dojo.string.substitute(_("Build ${building_name}"),{building_name:b_name_html}), cost:this.getResourceArrayHtml(this.invertArray(cost), true, "position: relative; top: 9px;")})
             if (dojo.query('#breadcrumb_building').length==1){
@@ -2174,6 +2176,7 @@ function (dojo, declare) {
             this.updateTrade(cost);
             if (b_id == 0){
                 this.destroyBuildingBreadcrumb();
+                this.createBuildingBreadcrumb();
             } else {
                 this.createBuildingBreadcrumb(_(this.building_info[b_id].name), this.building_info[b_id].type, this.invertArray(cost));
             }
@@ -3763,6 +3766,7 @@ function (dojo, declare) {
                                 }   
                             }
                         }
+                        this.updateBuildingAffordability();
                     break;
                     case 'gainWorker':
                         this.fadeOutAndDestroy(`token_worker_${log.w_key}`);
