@@ -922,6 +922,16 @@ div#sell_board{
    display: flex;
    flex-direction: column;
    border-style: groove;
+   border-width: 0px;
+}
+.score_flex_item.score_top {
+   border-bottom-width: 2px;
+}
+.score_flex_item.score_bot {
+   border-bottom-width: 0px;
+}
+.score_flex_item:not(.score_right) {
+   border-right-width: 2px;
 }
 .scorenumber {
    position: relative;
