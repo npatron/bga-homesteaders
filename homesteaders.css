@@ -652,13 +652,13 @@ div#sell_board{
 }
 
 .trade_option {
-   height: 17%;
-   width: 18.5%;
+   height: 20%;
+   width: 20%;
    position: absolute;
 }
 .buy_option,.sell_option {
-   height: 17%;
-   width: 37%;
+   height: 20%;
+   width: 40%;
    position: absolute;
 }
 /*================*
@@ -749,6 +749,9 @@ div#sell_board{
    border-width: 3px;
    box-sizing: border-box;
    cursor:pointer;
+}
+.selectable:active, .selectable:focus {
+   border:4px solid #00c;
 }
 .selected {
    border-style: solid;
@@ -1034,6 +1037,12 @@ div#sell_board{
    min-width: 70px;
    max-width: 90px;
    min-height: 45px;
+   border-right-style: solid;
+   border-right-color: black;
+   border-right-width: 1px;
+}
+.this_player_resource_group:last-child{
+   border-right: none;
 }
 .building_container .biggerFont{
    margin-left: auto;
@@ -1059,11 +1068,6 @@ div#sell_board{
    font-size: x-large;
    font-weight: bold;
    margin: auto;
-}
-.player_text_loan {
-   position: relative;
-   margin: auto;
-   font-size: x-large;
 }
 .new_text_loan {
    position: relative;
