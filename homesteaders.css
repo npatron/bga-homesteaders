@@ -358,33 +358,33 @@ div#passed_bids{
    display: grid;
    grid-template-columns: 25px 25px;
    position: absolute;
-   height: 8.7%;
-   width: 6.3%;
+   height: 9.7%;
+   width: 7.1%;
 }
-div[id^=bid_slot_][id$="9"], div[id^=bid_slot_][id$="12"],
-div[id^=bid_slot_][id$="16"],div[id^=bid_slot_][id$="21"]{
+div[id^=bid_slot_][id$="_9"], div[id^=bid_slot_][id$="_12"],
+div[id^=bid_slot_][id$="_16"],div[id^=bid_slot_][id$="_21"]{
    top: 8.45%;
 }
-div[id^=bid_slot_][id$="7"]{
+div[id^=bid_slot_][id$="_7"]{
    top: 17.8%;
 }
-div[id^=bid_slot_][id$="6"]{
+div[id^=bid_slot_][id$="_6"]{
    top: 27%;
 }
-div[id^=bid_slot_][id$="5"]{
+div[id^=bid_slot_][id$="_5"]{
    top: 36.2%;
 }
-div[id^=bid_slot_][id$="4"]{
+div[id^=bid_slot_][id$="_4"]{
    top: 45.3%;
 }
-div[id^=bid_slot_][id$="3"]{
+div[id^=bid_slot_][id$="_3"]{
    top: 54.6%;
 }
 div[id^=bid_slot_1_]{
-   left: 6.25%;
+   left: 6%;
 }
 div#bid_slot_1_12{
-   left: 13.05%;
+   left: 13%;
 }
 div#bid_slot_1_16{
    left: 19.7%;
