@@ -138,12 +138,6 @@ function (dojo, declare) {
     const AUCBONUS_6VP_AND_FOOD_VP = 6;
     const AUCBONUS_FOOD_FOR_VP     = 7;
 
-    const ALREADY_BUILT = 9;
-    const UNAFFORDABLE = 10;
-    const TRADEABLE    = 11;
-    const AFFORDABLE   = 12;
-    const COLOR_MAP = {9:'black', 10:'black', 11:'blue', 12:'darkgreen'};
-
     // only one with player action required
     const BUILD_BONUS_WORKER = 3; 
 
@@ -518,6 +512,7 @@ function (dojo, declare) {
                 this.addTooltipHtml( this.building_worker_ids[b_key][3], this.formatWorkerSlotTooltip(b_info, 3));
                 dojo.style(this.building_worker_ids[b_key][3], 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(this.building_worker_ids[b_key][3]), 'onclick', this, 'onClickOnWorkerSlot');
+
             }
         },
         
@@ -614,7 +609,7 @@ function (dojo, declare) {
             const options = dojo.query(`#${TRADE_BOARD_ID} .trade_option`);
             for(let i in options){
                 if (options[i].id != null){
-                    dojo.connect($(options[i]), 'onclick', this, 'onClickOnTradeBoardAction' );
+                    dojo.connect($(options[i]), 'onclick', this, 'onSelectTradeAction' );
             }   }
             // create new and offset counters
             for (const [key, value] of Object.entries(this.resource_info)) {
@@ -655,11 +650,8 @@ function (dojo, declare) {
                 this.tkn_html[type] = this.format_block( 'jstpl_resource_inline', {type:type}, );
                 this.tkn_html["big_"+type] = this.format_block( 'jstpl_resource_inline', {type:"big_"+type}, );
             }
-            let types = ['worker_zone', 'arrow', 'inc_arrow'];
-            for(let i in types){
-                this.tkn_html[types[i]] = this.format_block( 'jstpl_resource_inline', {type:types[i]}, );
-            }
-
+            this.tkn_html['arrow'] = this.format_block( 'jstpl_resource_inline', {type:'arrow'}, );
+            this.tkn_html['inc_arrow'] = this.format_block( 'jstpl_resource_inline', {type:'inc_arrow'}, );
             for (let i in VP_TOKENS){
                 this.tkn_html[VP_TOKENS[i]] = this.format_block( 'jstpl_resource_inline', {type:VP_TOKENS[i]}, );
             }
@@ -743,7 +735,6 @@ function (dojo, declare) {
                 case 'dummyPlayerBid':
                     const dummy_bid_id = this.bid_token_divId[DUMMY_BID];
                     dojo.addClass(dummy_bid_id, 'animated');
-                    dojo.style(TRADE_BOARD_ID, 'order', 4);
                 break;
                 case 'playerBid':
                     const active_bid_id = this.bid_token_divId[this.getActivePlayerId()];
@@ -1074,7 +1065,7 @@ function (dojo, declare) {
 
         createAuctionTile: function (a_id, location, info){
             let color = ASSET_COLORS[10+Number(location)];
-            if (this.prefs[USE_ART_USER_PREF].value == ENABLED_USER_PREF){ // use art (default case)
+            if (this.prefs[100].value == ENABLED_USER_PREF){ // use art (default case)
                 dojo.place(this.format_block( 'jstpl_auction_tile', {auc: a_id, color:color}), `future_auction_${location}`);
                 this.addTooltipHtml(`${TPL_AUC_TILE}_${a_id}`, this.formatTooltipAuction(info, a_id));
             } else {
@@ -1169,7 +1160,6 @@ function (dojo, declare) {
             var msg = (msg_id == null? "": 
                 `<div class="tt_flex"><span class="tt tt_top" style="color:${COLOR_MAP[msg_id]};">${_(this.asset_strings[msg_id])}</span></div><hr>`);
             return this.format_block('jptpl_bld_tt', {
-                msg:   msg,
                 type:  ASSET_COLORS[b_info.type],
                 name: _(b_info.name),
                 vp:   vp,
@@ -1850,7 +1840,7 @@ function (dojo, declare) {
         },
 
         addTradeActionButton: function( ){
-            this.addActionButton( 'btn_take_loan', _('Take Debt'), 'onClickOnTakeDebtButton', null, false, 'gray' );
+            this.addActionButton( 'btn_take_loan', _('Take Debt'), 'onMoreLoan', null, false, 'gray' );
             this.addActionButton( TRADE_BUTTON_ID, _("Show Trade"),'tradeActionButton', null, false, 'gray' );
             this.addActionButton( CONFIRM_TRADE_BTN_ID, _("Confirm Trade"),'confirmTradeButton', null, false, 'blue' );
             dojo.addClass(CONFIRM_TRADE_BTN_ID, 'noshow');
@@ -1906,7 +1896,7 @@ function (dojo, declare) {
                     let buy_sell = (i<6?'buy':'sell');
                     let id = `tr${buy_sell.substr(0,3)}_${Object.keys(TRADE_MAP).find(key => TRADE_MAP[key] === i)}`;
                     dojo.place(`<div id="${id}" class="${buy_sell}_option selectable"></div>`, `${buy_sell}_board`, 'last');
-                    dojo.connect($(id),'onclick', this, 'onClickOnTradeBoardAction');
+                    dojo.connect($(id),'onclick', this, 'onSelectTradeAction');
                 }
             }
             this.tradeEnabled = true;
@@ -2010,19 +2000,19 @@ function (dojo, declare) {
             }
         },
 
-        onClickOnTradeBoardAction: function( evt ){
+        onSelectTradeAction: function( evt ){
             dojo.stopEvent( evt );
             if ( !dojo.hasClass (evt.target.id, 'selectable')) { return; }
             var tradeAction = evt.target.id.substring(6);
             if (TRADE_MAP[tradeAction] < 6){ //buy
-                this.onClickOnBuyResource ( evt , evt.target.id.substring(10));
+                this.onBuyResource ( evt , evt.target.id.substring(10));
             } else { //sell
-                this.onClickOnSellResource( evt , evt.target.id.substring(11));
+                this.onSellResource( evt , evt.target.id.substring(11));
             }
         },
 
-        onClickOnBuyResource: function ( evt , type = ""){
-            //console.log('onClickOnBuyResource');
+        onBuyResource: function ( evt , type = ""){
+            //console.log('onBuyResource');
             dojo.stopEvent( evt );
             if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
             if (type == ""){
@@ -2051,8 +2041,8 @@ function (dojo, declare) {
             }
         },
 
-        onClickOnSellResource: function ( evt , type = "" ){
-            //console.log('onClickOnSellResource');
+        onSellResource: function ( evt , type = "" ){
+            //console.log('onSellResource');
             dojo.stopEvent( evt );
             if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
             if (type == ""){
@@ -2086,7 +2076,7 @@ function (dojo, declare) {
             }
         },
 
-        onClickOnTakeDebtButton: function ( evt ){
+        onMoreLoan: function ( evt ){
             dojo.stopEvent( evt );
             if ( !this.allowTrade && !this.checkAction( 'trade' )) { return; }
             if(this.canAddTrade({'loan':1, 'silver':2})){
@@ -2102,8 +2092,8 @@ function (dojo, declare) {
             }
         },
 
-        onClickOnMarketTrade: function ( evt ){
-            //console.log('onClickOnMarketTrade');
+        onMarketResource: function ( evt ){
+            //console.log('onMarketResource');
             dojo.stopEvent( evt );
             if (!dojo.hasClass(evt.target.id, "selectable")) { 
                 if (evt.target.parentNode.classList.contains('selectable'))
@@ -2131,8 +2121,8 @@ function (dojo, declare) {
             }
         },
 
-        onClickOnBankTrade: function ( evt ){
-            //console.log('onClickOnBankTrade');
+        onBankResource: function ( evt ){
+            //console.log('onBankResource');
             dojo.stopEvent( evt );
             if (!dojo.hasClass(evt.target.id, "selectable")) { 
                 if (evt.target.parentNode.classList.contains('selectable'))
@@ -2151,7 +2141,6 @@ function (dojo, declare) {
             }
         },
 
-        // checks if player can afford to make trade.
         canAddTrade: function( change){
             let can_afford = true;
             for (let type in change){
@@ -2846,7 +2835,7 @@ function (dojo, declare) {
             } else if (target_id.startsWith('slot_')){
                 return this.onClickOnWorkerSlot( evt ); 
             } else if (target_id.startsWith('trade_')){
-                return this.onClickOnTradeBoardAction( evt ); 
+                return this.onSelectTradeAction( evt ); 
             }
             if( !dojo.hasClass(target_id, 'selectable')){ return; }
             if( this.checkAction( 'buildBuilding' )) {
@@ -3253,7 +3242,7 @@ function (dojo, declare) {
         {
             var notifs = [
                 ['autoPay', 50],
-                ['buildBuilding', 500],
+                ['buildBuilding', 1000],
                 ['cancel', 500],
                 ['clearAllBids', 250],
                 ['gainWorker', 20],
