@@ -189,11 +189,6 @@
  * Button css *
  *============*/
  
-#confirm_trade_btn{
-   height: 17px;
-   width: 180px;
-   order: 8;
-}
 #undo_last_trade_btn{
    height: 17px;
    width: 180px;
@@ -554,11 +549,13 @@ div#trade_board {
    position: unset;
    margin-left: auto;
    margin-right: auto;
+   pointer-events: auto;
 }
 div[id$=trade_market_wood_food]{
    left: 38px;
    top: 84px;
    position: absolute;
+   box-sizing: content-box;
    width: 64px;
    height: 27px;
 }
@@ -570,11 +567,13 @@ div[id$=trade_market_wood_food]{
    position: unset;
    margin-left: auto;
    margin-right: auto;
+   pointer-events: auto;
 }
 div[id$=trade_market_food_steel]{
    left: 38px;
    top: 114px;
    position: absolute;
+   box-sizing: content-box;
    width: 64px;
    height: 20px;
 }
@@ -582,6 +581,7 @@ div#trade_bank_trade_silver{
    left: 38px;
    top: 88px;
    position: absolute;
+   box-sizing: content-box;
    width: 64px;
    height: 27px;
 }
@@ -653,7 +653,7 @@ div#sell_board{
 
 .trade_option {
    height: 20%;
-   width: 20%;
+   width: 19.5%;
    position: absolute;
 }
 .buy_option,.sell_option {
@@ -774,10 +774,16 @@ div#sell_board{
    border-width: 1px;
    box-sizing: border-box;
 }
-.building_container .building_tile.affordable{
+.trade_board .trade_option.selectable, .buy_option.selectable, .sell_option.selectable{
+   border-width: 4px;
+}
+.building_container .building_tile.affordable, 
+.trade_option.affordable, .buy_option.affordable, .sell_option.affordable{
    border-color:green;
 }
-.building_container .building_tile.tradeable{
+.building_container .building_tile.tradeable, 
+.trade_option.tradeable, .buy_option.tradeable, .sell_option.tradeable 
+.trade_option.unaffordable, .buy_option.unaffordable, .buy_option.unaffordable{
    border-color:blue;
 }
 .building_container .building_tile.unaffordable{
@@ -788,7 +794,7 @@ div#sell_board{
 }
 .building_tile.selectable{
    border-style: dotted;
-   border-width: 3px;
+   border-width: 4px;
 }
 .building_tile.selected {
    border-style: solid;
