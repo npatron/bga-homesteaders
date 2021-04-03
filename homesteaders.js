@@ -2969,10 +2969,12 @@ function (dojo, declare) {
                 return this.onClickOnWorker( evt ); 
             } else if (target_id.startsWith('slot_')){
                 return this.onClickOnWorkerSlot( evt ); 
+            } else if (target_id.endsWith('trade_market_food_steel') || target_id.endsWith('trade_market_wood_food')){
+                return this.onClickOnMarketTrade( evt ); 
             } else if (target_id.startsWith('trade_')){
-                return this.onSelectTradeAction( evt ); 
+                return this.onClickOnMarketTrade( evt ); 
             }
-            if( !dojo.hasClass(target_id, 'selectable')){ return; }
+            if( !evt.target.classList.contains( 'selectable')){ return; }
             if( this.checkAction( 'buildBuilding' )) {
                 let b_id = $(target_id).className.split(' ')[1].split('_')[2];
                 if (dojo.hasClass(target_id, 'selected')){

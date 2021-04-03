@@ -540,6 +540,9 @@ div#trade_board {
    width: 512px;
    height: 180px;
 }
+.tt_container .selectable{
+   pointer-events: auto;
+}
 
 .tt_container div[id$=trade_market_wood_food]{
    width: auto;
@@ -770,7 +773,6 @@ div#sell_board{
 .building_container .building_tile {
    border-style: dashed;
    border-width: 1px;
-   box-sizing: border-box;
 }
 .trade_board .trade_option.selectable, .buy_option.selectable, .sell_option.selectable{
    border-width: 4px;
@@ -1211,6 +1213,7 @@ div#sell_board{
 }
 .tt_container{
    min-width: 100px;
+   pointer-events: none;
 }
 .tt_top{
    word-wrap: break-word;
@@ -1296,6 +1299,7 @@ div#sell_board{
    background-image: url('img/drawn_tokens_2.png');
    position: relative;
    display: inline-block;
+   pointer-events: none;
 }
 .log_token {
    background-image: url('img/drawn_tokens_2.png');
