@@ -549,7 +549,6 @@ div#trade_board {
    position: unset;
    margin-left: auto;
    margin-right: auto;
-   pointer-events: auto;
 }
 div[id$=trade_market_wood_food]{
    left: 38px;
@@ -567,7 +566,6 @@ div[id$=trade_market_wood_food]{
    position: unset;
    margin-left: auto;
    margin-right: auto;
-   pointer-events: auto;
 }
 div[id$=trade_market_food_steel]{
    left: 38px;
@@ -1213,7 +1211,6 @@ div#sell_board{
 }
 .tt_container{
    min-width: 100px;
-   pointer-events: none
 }
 .tt_top{
    word-wrap: break-word;
