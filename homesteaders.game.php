@@ -293,7 +293,7 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
         if ($w_owner != $cur_p_id){ throw new BgaUserException(clienttranslate("The selected worker is not your worker"));}
-        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${worker} to ${building_name}' ), array(
+        $this->notifyAllPlayers( "workerMoved", "", array(
             'i18n' => array( 'building_name' ),
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,

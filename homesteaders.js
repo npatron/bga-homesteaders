@@ -56,7 +56,7 @@ function (dojo, declare) {
     const SILVER   = 11;
     const LOAN     = 12;
     const RESOURCES = {'wood':WOOD, 'steel':STEEL, 'gold':GOLD, 'copper':COPPER, 'food':FOOD, 'cow':COW,
-        'trade':TRADE, 'track':TRACK, 'worker':WORKER, 'vp':VP, 'silver':SILVER, 'loan':LOAN}
+        'trade':TRADE, 'track':TRACK, 'worker':WORKER, 'vp':VP, 'silver':SILVER, 'loan':LOAN};
 
     const ZONE_PENDING = -1;
     const ZONE_PASSED = -2;
@@ -514,10 +514,11 @@ function (dojo, declare) {
                 dojo.connect($(this.building_worker_ids[b_key][1]), 'onclick', this, 'onClickOnWorkerSlot');
                 dojo.connect($(this.building_worker_ids[b_key][2]), 'onclick', this, 'onClickOnWorkerSlot');  
             } else if (b_slot == 3){
-                this.building_worker_ids[b_key] = [];
-                this.building_worker_ids[b_key][3] = `slot_${b_key}_3`;
+                this.building_worker_ids[b_key] = {1:`slot_${b_key}_3`, 2:`slot_${b_key}_3`, 3:`slot_${b_key}_3`};
                 this.addTooltipHtml( this.building_worker_ids[b_key][3], this.formatWorkerSlotTooltip(b_info, 3));
-                dojo.style(this.building_worker_ids[b_key][3], 'max-width', `${(this.worker_width*1.5)}px`);
+                if (this.prefs[USE_ART_USER_PREF].value == ENABLED_USER_PREF){
+                    dojo.style(this.building_worker_ids[b_key][3], 'max-width', `${(this.worker_width*1.5)}px`);
+                }
                 dojo.connect($(this.building_worker_ids[b_key][3]), 'onclick', this, 'onClickOnWorkerSlot');
             }
         },
@@ -539,6 +540,7 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jptpl_worker', {id: w_key.toString()}), 
                         this.token_divId[worker.p_id] );
                 const worker_divId = `token_worker_${w_key}`;
+                console.log(worker.b_key, worker.b_slot, this.building_worker_ids);
                 if (worker.b_key != 0 ){ 
                     dojo.place(worker_divId, this.building_worker_ids[worker.b_key][worker.b_slot]);
                 } else {
@@ -1396,11 +1398,11 @@ function (dojo, declare) {
                 }
                 if (b_info.slot ==3){
                     inc_vals += dojo.string.substitute("${start}${worker1}${worker2}${mid} ${inc_arrow} ${income}${end}", 
-                    {   start:`<div class="w_slot"><span id="slot_${b_key}_3">`,
+                    {   start:`<div class="w_slot"><span id="slot_${b_key}_3" class="worker_slot">`,
                         mid:  '</span>',
                         end:  '</div>',
-                        worker1:this.format_block('jstpl_tt_building_slot', {key:b_key, id:b_id, slot:1}),
-                        worker2:this.format_block('jstpl_tt_building_slot', {key:b_key, id:b_id, slot:2}),
+                        worker1:this.format_block('jstpl_tt_building_slot_3', {key:b_key, id:b_id, slot:1}),
+                        worker2:this.format_block('jstpl_tt_building_slot_3', {key:b_key, id:b_id, slot:2}),
                         inc_arrow:this.tkn_html.inc_arrow, 
                         income:this.getResourceArrayHtmlBigVp(b_info.s3, true)
                     });
@@ -2213,7 +2215,16 @@ function (dojo, declare) {
                 this.destroyBuildingBreadcrumb();
                 this.createBuildingBreadcrumb();
             } else {
-                this.createBuildingBreadcrumb(_(this.building_info[b_id].name), this.building_info[b_id].type, this.invertArray(cost));
+                    cost = this.invertArray(cost);
+                    if (this.goldAsCopper && ('copper' in cost)){
+                        this.addOrSetArrayKey(cost, 'gold', cost.copper);
+                        delete cost.copper;
+                    } 
+                    if (this.goldAsCow && ('cow' in cost)){
+                        this.addOrSetArrayKey(cost, 'gold', cost.cow);
+                        delete cost.cow;
+                    }
+                    this.createBuildingBreadcrumb(_(this.building_info[b_id].name), this.building_info[b_id].type, cost);
             }
         },
 
@@ -2533,18 +2544,18 @@ function (dojo, declare) {
             if (this.last_selected['worker'] == ""){
                 const unassignedWorkers = dojo.query(`#worker_zone_${this.player_color[this.player_id]} .token_worker`);// find unassigned workers.
                 if (unassignedWorkers.length == 0){
-                this.showMessage( _("You must select a worker"), 'error' );
+                    this.showMessage( _("You must select a worker"), 'error' );
                     return;
                 } else {
                     this.last_selected['worker'] = unassignedWorkers[0].id;
-            }
-        }
-        if (document.querySelector(`#${target_divId} .worker_slot:not(empty)`)){
-                if (!target_divId.startsWith('slot_17_3')){
-                    this.showMessage(_("You have already assigned a worker there"), 'error');
-                    return;
                 }
             }
+            console.log(target_divId);
+            let target_workers = dojo.query(`#${target_divId} .token_worker`).length;
+            if (target_workers ==1 && !target_divId.endsWith('_3') || target_workers ==2 && target_divId.endsWith('_3') ){
+                this.showMessage(_("You cannot place additional workers there"), 'error');
+                return;
+            } 
             const building_key = Number(target_divId.split('_')[1]);
             const building_slot = Number(target_divId.split('_')[2]);
 
