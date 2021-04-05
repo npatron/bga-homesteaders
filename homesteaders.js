@@ -519,7 +519,6 @@ function (dojo, declare) {
                 this.addTooltipHtml( this.building_worker_ids[b_key][3], this.formatWorkerSlotTooltip(b_info, 3));
                 dojo.style(this.building_worker_ids[b_key][3], 'max-width', `${(this.worker_width*1.5)}px`);
                 dojo.connect($(this.building_worker_ids[b_key][3]), 'onclick', this, 'onClickOnWorkerSlot');
-
             }
         },
         
@@ -1396,11 +1395,12 @@ function (dojo, declare) {
                     });
                 }
                 if (b_info.slot ==3){
-                    inc_vals += dojo.string.substitute("${start}${worker}${worker}${mid} ${inc_arrow} ${income}${end}", 
-                    {   start:'<div class="w_slot"><span>',
+                    inc_vals += dojo.string.substitute("${start}${worker1}${worker2}${mid} ${inc_arrow} ${income}${end}", 
+                    {   start:`<div class="w_slot"><span id="slot_${b_key}_3">`,
                         mid:  '</span>',
                         end:  '</div>',
-                        worker:this.format_block('jstpl_tt_building_slot', {key:b_key, id:b_id, slot:3}),
+                        worker1:this.format_block('jstpl_tt_building_slot', {key:b_key, id:b_id, slot:1}),
+                        worker2:this.format_block('jstpl_tt_building_slot', {key:b_key, id:b_id, slot:2}),
                         inc_arrow:this.tkn_html.inc_arrow, 
                         income:this.getResourceArrayHtmlBigVp(b_info.s3, true)
                     });
@@ -1885,7 +1885,7 @@ function (dojo, declare) {
          *  - bgabutton_red
          */
         tradeActionButton: function( evt){
-            if( this.checkAction( 'trade' ) ){
+            if(  (this.currentState=='allocateWorkers' && this.allowTrade) || this.checkAction( 'trade' ) ){
                 if (dojo.query(`#${TRADE_BUTTON_ID}.bgabutton_red`).length > 0){// hide
                     this.disableTradeIfPossible();
                     this.setTradeButtonTo( TRADE_BUTTON_SHOW );
@@ -1924,10 +1924,14 @@ function (dojo, declare) {
             }
         },
 
-        confirmTradeButton: function ( evt ){
-            if( this.checkAction( 'trade' ) ){
+        confirmTradeButton: function ( ){
+            if((this.currentState=='allocateWorkers' && !this.isCurrentPlayerActive())){
                 // confirm trade
-                this.confirmTrades( evt );
+                this.confirmTrades( true );
+                this.updateConfirmTradeButton( TRADE_BUTTON_HIDE );
+                return;
+            } else if (this.checkAction( 'trade' )) {
+                this.confirmTrades( false );
                 this.updateConfirmTradeButton( TRADE_BUTTON_HIDE );
                 return;
             }
@@ -1953,16 +1957,17 @@ function (dojo, declare) {
             }
         },
 
-        confirmTrades: function ( evt ){
+        confirmTrades: function ( notActive ){
             if (this.transactionLog.length == 0) { return; }
             this.ajaxcall( "/homesteaders/homesteaders/trade.html", { 
                 lock: true, 
-                trade_action: this.transactionLog.join(',')
+                trade_action: this.transactionLog.join(','),
+                notActive: notActive,
              }, this, function( result ) {
                  this.clearTransactionLog();
                  this.resetTradeVals();
                  this.can_cancel = true;
-                 if (this.currentState == 'allocateWorkers'){
+                 if (this.currentState == 'allocateWorkers' && !notActive){
                     this.setOffsetForIncome();
                  }
              }, function( is_error) {});
@@ -2633,7 +2638,7 @@ function (dojo, declare) {
         {
             if( this.checkAction( 'dummy' )){
                 if (this.last_selected['bid'] == ""){
-                    this.showMessage( _("You must select a bid_slot"), 'error' );
+                    this.showMessage( _("You must select a bid"), 'error' );
                     return;
                 }
                 const bid_loc = this.getBidNoFromSlotId(this.last_selected['bid']);

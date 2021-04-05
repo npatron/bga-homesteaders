@@ -1754,10 +1754,10 @@ div#sell_board{
    display: grid;
    grid-template-columns: 20px 20px;
 }
-.w_slot .slot_17_3{
+.w_slot .slot_17_1{
    width: 25px;
 }
-.w_slot .slot_17_3:last-child{
+.w_slot .slot_17_2{
    pointer-events: none;
    background-position: -132px -73px;
 }
