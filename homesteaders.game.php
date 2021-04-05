@@ -248,10 +248,10 @@ class homesteaders extends Table
         $this->Resource->takeLoan($this->getCurrentPlayerId());
     }
     
-    public function playerTrade( $tradeAction_csv, $allowTrade =false )
+    public function playerTrade( $tradeAction_csv, $notActive =false )
     {
         // allow out of turn trade, only when flag is passed during allocateWorkers State.
-        if (!($allowTrade && $this->gamestate->state()['name'] === "allocateWorkers"))
+        if (!($notActive && $this->gamestate->state()['name'] === "allocateWorkers"))
             $this->checkAction( 'trade' );
         $tradeAction_arr = explode(',', $tradeAction_csv);
         foreach( $tradeAction_arr as $key=>$val ){
@@ -293,7 +293,7 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $w_owner = $this->getUniqueValueFromDB("SELECT `player_id` FROM `workers` WHERE `worker_key`='$w_key'");
         if ($w_owner != $cur_p_id){ throw new BgaUserException(clienttranslate("The selected worker is not your worker"));}
-        $this->notifyAllPlayers( "workerMoved", clienttranslate( '${player_name} moves ${worker} to ${building_name}' ), array(
+        $this->notifyAllPlayers( "workerMoved", "", array(
             'i18n' => array( 'building_name' ),
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
@@ -635,6 +635,7 @@ class homesteaders extends Table
     function stStartRound() {
         $round_number = $this->getGameStateValue('round_number');
         $this->Resource->clearPaid();
+        $this->Resource->clearIncomePaid();
         $this->Building->updateBuildingsForRound($round_number);
         $this->gamestate->nextState( );
     }

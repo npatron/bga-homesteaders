@@ -189,11 +189,6 @@
  * Button css *
  *============*/
  
-#confirm_trade_btn{
-   height: 17px;
-   width: 180px;
-   order: 8;
-}
 #undo_last_trade_btn{
    height: 17px;
    width: 180px;
@@ -545,6 +540,9 @@ div#trade_board {
    width: 512px;
    height: 180px;
 }
+.tt_container .selectable{
+   pointer-events: auto;
+}
 
 .tt_container div[id$=trade_market_wood_food]{
    width: auto;
@@ -559,6 +557,7 @@ div[id$=trade_market_wood_food]{
    left: 38px;
    top: 84px;
    position: absolute;
+   box-sizing: content-box;
    width: 64px;
    height: 27px;
 }
@@ -575,6 +574,7 @@ div[id$=trade_market_food_steel]{
    left: 38px;
    top: 114px;
    position: absolute;
+   box-sizing: content-box;
    width: 64px;
    height: 20px;
 }
@@ -582,6 +582,7 @@ div#trade_bank_trade_silver{
    left: 38px;
    top: 88px;
    position: absolute;
+   box-sizing: content-box;
    width: 64px;
    height: 27px;
 }
@@ -653,7 +654,7 @@ div#sell_board{
 
 .trade_option {
    height: 20%;
-   width: 20%;
+   width: 19.5%;
    position: absolute;
 }
 .buy_option,.sell_option {
@@ -772,12 +773,17 @@ div#sell_board{
 .building_container .building_tile {
    border-style: dashed;
    border-width: 1px;
-   box-sizing: border-box;
 }
-.building_container .building_tile.affordable{
+.trade_board .trade_option.selectable, .buy_option.selectable, .sell_option.selectable{
+   border-width: 4px;
+}
+.building_container .building_tile.affordable, 
+.trade_option.affordable, .buy_option.affordable, .sell_option.affordable{
    border-color:green;
 }
-.building_container .building_tile.tradeable{
+.building_container .building_tile.tradeable, 
+.trade_option.tradeable, .buy_option.tradeable, .sell_option.tradeable 
+.trade_option.unaffordable, .buy_option.unaffordable, .buy_option.unaffordable{
    border-color:blue;
 }
 .building_container .building_tile.unaffordable{
@@ -788,7 +794,7 @@ div#sell_board{
 }
 .building_tile.selectable{
    border-style: dotted;
-   border-width: 3px;
+   border-width: 4px;
 }
 .building_tile.selected {
    border-style: solid;
@@ -1207,7 +1213,7 @@ div#sell_board{
 }
 .tt_container{
    min-width: 100px;
-   pointer-events: none
+   pointer-events: none;
 }
 .tt_top{
    word-wrap: break-word;
@@ -1293,6 +1299,7 @@ div#sell_board{
    background-image: url('img/drawn_tokens_2.png');
    position: relative;
    display: inline-block;
+   pointer-events: none;
 }
 .log_token {
    background-image: url('img/drawn_tokens_2.png');
@@ -1667,6 +1674,7 @@ div#sell_board{
    margin-top: auto;
    margin-bottom: auto;
    margin-left: 2px;
+   max-height: 33px;
 }
 .tt_container .worker_slot{
    background-image: url('img/drawn_tokens_2.png');
@@ -1747,12 +1755,28 @@ div#sell_board{
    display: grid;
    grid-template-columns: 20px 20px;
 }
-.w_slot .slot_17_3{
-   width: 25px;
-}
-.w_slot .slot_17_3:last-child{
+.w_slot .slot_17_1, .w_slot .slot_17_2 {
    pointer-events: none;
+   border-width: 0px;
+}
+.w_slot .slot_17_1{
+   width: 33px;
+}
+.w_slot .slot_17_2{
    background-position: -132px -73px;
+   width: 33px;
+}
+.w_slot [id^="slot_"][id$="_3"] {
+   width: 65px;
+   background-image: none;
+}
+.w_slot [id^="slot_"][id$="_3"] .token_worker{
+   left: 24px;
+   position: absolute;
+}
+.w_slot [id^="slot_"][id$="_3"] .token_worker:nth-child(4){
+   left: 50px;
+   position: absolute;
 }
 .slot_23_1 {
    bottom: 48px;
