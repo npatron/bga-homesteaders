@@ -148,6 +148,7 @@ class HSDBuilding extends APP_GameClass
             $sql = "UPDATE buildings SET location = '".BLD_LOC_DISCARD."' WHERE `location` = '".BLD_LOC_OFFER."';";
             $this->game->DbQuery( $sql );
             $this->updateClientBuildings(clienttranslate('Final'));
+            $this->game->Resource->updateClientResources();
         }
     }
 

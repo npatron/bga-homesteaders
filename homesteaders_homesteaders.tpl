@@ -146,7 +146,7 @@
             <span id='auc_future' class="font">{FUTURE_AUCTION}</span>
         </a>
         <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_main" class="font">{MAIN_BUILDING}</span>
+            <span id="bld_main" class="font">{BUILDING_STOCK}</span>
         </a>
         <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
             <span id="bld_discard" class="font">{BUILDING_DISCARD}</span>
@@ -193,7 +193,7 @@
         </div>
     </div>
     <div id="main_building_container" class="whiteblock building_container border_black">
-        <span class="biggerFont">{BUILDING_STOCK}</span>
+        <span class="biggerFont">{MAIN_BUILDING}</span>
         <div id="main_building_zone" class="main_building_zone"> </div>
     </div>
     <div id='future_auction_container' class='whiteblock border_a1 building_container noshow'>

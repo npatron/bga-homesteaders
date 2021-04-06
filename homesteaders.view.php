@@ -49,7 +49,7 @@
         $this->tpl['UNDO_TRADE']       = clienttranslate("Undo All Trade/Dept");
         $this->tpl['UNDO_LAST_TRADE']  = clienttranslate("Undo Last Trade/Dept");
         $this->tpl['FUTURE_AUCTION']   = clienttranslate("Show Upcoming Auctions");
-        $this->tpl['BUILDING_STOCK']   = clienttranslate("Show Current Buildings");
+        $this->tpl['BUILDING_STOCK']   = clienttranslate("Hide Current Buildings");
         $this->tpl['BUILDING_DISCARD'] = clienttranslate("Show Building Discard");
         $this->tpl['FUTURE_BUILDING']  = clienttranslate('Show Upcoming Buildings');
 

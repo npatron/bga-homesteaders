@@ -91,7 +91,7 @@ function (dojo, declare) {
     const TPL_BLD_TILE  = "building_tile";
     const TPL_BLD_STACK = "building_stack_";
     const TPL_BLD_ZONE  = "building_zone_";
-    const TPL_BLD_CLASS ="build_tile_";
+    const TPL_BLD_CLASS = "build_tile_";
     const TPL_AUC_TILE  = "auction_tile";
     const TPL_AUC_ZONE  = "auction_tile_zone_";
 
@@ -254,7 +254,7 @@ function (dojo, declare) {
                 const player = gamedatas.players[p_id];
                 this.setupPlayerAssets(player);
             }
-            this.setupPlayerResources(gamedatas.player_resources, gamedatas.resources, gamedatas.resource_info);
+            this.setupPlayerResources(gamedatas.player_resources, gamedatas.resources);
             if (!this.isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
                 //this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
@@ -293,7 +293,8 @@ function (dojo, declare) {
                 this.roundCounter.create('round_number');
                 this.roundCounter.setValue(gamedatas.round_number);
             }
-            
+            this.showScoreTooltips(gamedatas.players);
+
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications(gamedatas.cancel_move_ids);
             this.updateBuildingAffordability();
@@ -387,13 +388,13 @@ function (dojo, declare) {
          * @param {*} resources        - otherwise use this to fill all resources.
          * @param {*} info 
          */
-        setupPlayerResources: function (player_resources, resources, info){
+        setupPlayerResources: function (player_resources, resources){
             if (this.show_player_info){
                 for (let player_res in resources){
-                    this.setupOnePlayerResources(resources[player_res], info);
+                    this.setupOnePlayerResources(resources[player_res]);
                 }
             } else if (!this.isSpectator){
-                this.setupOnePlayerResources(player_resources, info);
+                this.setupOnePlayerResources(player_resources);
             }
         },
 
@@ -405,15 +406,15 @@ function (dojo, declare) {
         /**
          * Resource array for this person.
          * @param {array} resource 
-         * @param {*} info 
          */
-        setupOnePlayerResources: function (resource, info) {
+        setupOnePlayerResources: function (resource) {
+            console.log('setupOnePlayerResources');
             this.board_resourceCounters[resource.p_id] = [];
             this.score_resourceCounters[resource.p_id] = [];
             for (const [key, value] of Object.entries(resource)) {
-                //console.log(resource, key, value);
+                console.log('setup', key, value);
                 if (key == "p_id" || key == "workers" || key == "track") continue;
-                let tooltip_html = this.format_block('jptpl_res_tt', {value:this.replaceTooltipStrings(info[key]['tt'])});
+                let tooltip_html = this.format_block('jptpl_res_tt', {value:this.replaceTooltipStrings(this.resource_info[key]['tt'])});
                 
                 let resourceId = `${key}count_${resource.p_id}`;
                 this.addTooltipHtml( resourceId, tooltip_html);
@@ -605,6 +606,12 @@ function (dojo, declare) {
             }
         },
 
+        showScoreTooltips: function(players) {
+            for(let p_id in players){
+                this.calculateAndUpdateScore(p_id, true);
+            }
+        },
+
         /**
          * connects click actions to buttons for selecting Trade actions, 
          * should only be called if not spectator.
@@ -689,13 +696,13 @@ function (dojo, declare) {
         },
 
         showHideToggleButton: function(index, tileId = TPL_BLD_TILE){
-            let tile_count = dojo.query(`#${TILE_ZONE_DIVID[index]} .${tileId}`);
-            //console.log(`showHideToggleButton`, tile_count);
-            if (tile_count.length == 0){
+            let tile_count = dojo.query(`#${TILE_ZONE_DIVID[index]} .${tileId}`).length;
+            if (tile_count == 0){
                 dojo.addClass(TOGGLE_BTN_ID[index], 'noshow');
-            } else if (dojo.hasClass(TOGGLE_BTN_ID[index], 'noshow')){
+                dojo.query(`#${TILE_CONTAINER_ID[index]}`).addClass('noshow');
+            } else {
                 dojo.removeClass(TOGGLE_BTN_ID[index], 'noshow');
-                dojo.query(`#${TILE_CONTAINER_ID[index]}:not(.noshow)`).addClass('noshow');
+
             }
         },
 
@@ -1041,7 +1048,7 @@ function (dojo, declare) {
             if (round_number == 11){
                 dojo.destroy('#round_number');
                 $("round_text").innerHTML=_('Final Income and Scoring Round');
-                dojo.query(`#${TILE_ZONE_DIVID[BLD_LOC_OFFER]}`).addClass('noshow')
+                dojo.query(`#${TILE_CONTAINER_ID[BLD_LOC_OFFER]}`).addClass('noshow')
             } else {
                 this.roundCounter.setValue(round_number);
             }
@@ -2426,7 +2433,7 @@ function (dojo, declare) {
         },
 
         /** Show/Hide Tile Zones */
-        toggleShowButton: function (index){
+        toggleShowButton: function (index, show = null){
             if(dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
                 this.showTileZone(index);
             } else {
@@ -3102,21 +3109,62 @@ function (dojo, declare) {
             this.scoreCtrl[p_id].setValue(score);
         },
 
-        calculateAndUpdateScore: function(p_id) {
-            var score = this.calculateBuildingScore(p_id);
-            if (this.show_player_info){
-                score += this.board_resourceCounters[p_id]['vp'].getValue();
+        calculateAndUpdateScore: function(p_id, tt_only = false) {
+            let score = 0;
+            var bld_score = this.calculateBuildingScore(p_id);
+            score += bld_score.static + bld_score.bonus;
+            let row_1 = this.replaceTooltipStrings(_("# of ${vp} tokens:"));
+            let row_2 = this.replaceTooltipStrings(_("# of ${vp} from buildings (static)"));
+            let row_3 = this.replaceTooltipStrings(_("# of ${vp} from buildings (bonus)"));
+            let row_4 = this.replaceTooltipStrings(_("# of ${vp} from ${gold}${cow}${copper}")); 
+            let row_5 = this.replaceTooltipStrings(_("# of ${vp} from ${loan}"));
+
+            if (p_id == this.player_id || this.show_player_info){
+                let vp_pts     = this.board_resourceCounters[p_id]['vp'].getValue();
+                let gold_pts   = this.board_resourceCounters[p_id]['gold'].getValue() * 2;
+                let cow_pts    = this.board_resourceCounters[p_id]['cow'].getValue()  * 2;
+                let copper_pts = this.board_resourceCounters[p_id]['copper'].getValue() * 2;
+                let row_4_pts = gold_pts + cow_pts + copper_pts;
+                let loan_count = this.board_resourceCounters[p_id]['loan'].getValue();
+                let loan_pts = 0;
+                for (let i =1; i <= loan_count; i++){
+                    loan_pts -= (i);
+                }
+                score += vp_pts + gold_pts + cow_pts + copper_pts + loan_pts;
+                let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
+                '<tr><td>${row_3}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr></table></div>',{   
+                    row_1:row_1, val_1:vp_pts,
+                    row_2:row_2, val_2:bld_score.static,
+                    row_3:row_3, val_3:bld_score.bonus,
+                    row_4:row_4, val_4:row_4_pts,
+                    row_5:row_5, val_5:loan_pts,});
+                console.log(tt);
+                this.addTooltipHtml(`player_score_${p_id}`, tt);
+            } else {
+                let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
+                '<tr><td>${row_3}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr></table></div>',{   
+                    row_1:row_1, val_1:_("???"),
+                    row_2:row_2, val_2:bld_score.static,
+                    row_3:row_3, val_3:bld_score.bonus,
+                    row_4:row_4, val_4:_("???"),
+                    row_5:row_5, val_5:_("???"),});
+                console.log(tt);
+                this.addTooltipHtml(`player_score_${p_id}`, tt);
             }
-            this.updateScore(p_id,score);
+            if (!tt_only){
+                this.updateScore(p_id,score);
+            }
         },
 
         calculateBuildingScore: function(p_id) {
-            let score = 0;
+            let static = 0;
             let bld_type = [0,0,0,0,0,0,0];// count of bld of types: [res,com,ind,spe]
             let vp_b =     [0,0,0,0,0,0,0];//vp_b [Res, Com, Ind, Spe, Wrk, Trk, Bld]
             for(let b_id in this.hasBuilding[p_id]){
                 if (this.building_info[b_id].vp != null){
-                    score += this.building_info[b_id].vp;
+                    static += this.building_info[b_id].vp;
                 }
                 if (this.building_info[b_id].vp_b != null){
                     if (this.building_info[b_id].vp_b == VP_B_WRK_TRK){
@@ -3132,11 +3180,11 @@ function (dojo, declare) {
             
             bld_type[VP_B_WORKER] = this.getPlayerWorkerCount(p_id);
             bld_type[VP_B_TRACK] = this.getPlayerTrackCount(p_id);
+            let bonus = 0;
             for (let i in vp_b){
-                score += (bld_type[i] * vp_b[i]);
+                bonus += (bld_type[i] * vp_b[i]);
             }
-            
-            return score;
+            return {static:static, bonus:bonus};
         },
 
         getPlayerWorkerCount:function(p_id){
@@ -3410,6 +3458,7 @@ function (dojo, declare) {
                 ['playerPaymentGroup', 50],
                 ['railAdv', 25],
                 ['score', 2000],
+                ['showResources', 25],
                 ['trade', 20],
                 ['updateBuildingStocks', 100],
                 ['workerMoved', 5],
@@ -3883,6 +3932,21 @@ function (dojo, declare) {
             for(let type in notif.args.resource){
                 const amt = notif.args.resource[type];
                 this.scoreCtrl[p_id].incValue(amt);
+            }
+        },
+
+        notif_showResources: function( notif ){
+            console.log('notif_showResources');
+            console.log(notif);
+            if (this.show_player_info) return;// already showing player resources.
+            this.show_player_info = true;
+            for(let p_id in notif.args.resources){
+                if (this.isSpectator || (this.player_id != p_id)){
+                    dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), this.player_score_zone_id[p_id] );
+                    dojo.query(`#player_resources_${this.player_color[p_id]} .player_resource_group`).removeClass('noshow');
+                    this.setupOnePlayerResources(notif.args.resources[p_id]);
+                }
+                this.calculateAndUpdateScore(p_id);
             }
         },
 

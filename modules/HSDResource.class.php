@@ -19,8 +19,7 @@ class HSDresource extends APP_GameClass
     }
 
     function getResources(){
-        $show_player_info = $this->game->getGameStateValue('show_player_info');
-        if ($show_player_info == SHOW_ALL_RESOURCES){
+        if ($this->game->getShowPlayerInfo()){
             return $this->game->getCollectionFromDB( "SELECT `player_id` p_id, `workers`, `track`, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources`" );
         } else {
             return $this->game->getCollectionFromDB("SELECT `player_id` p_id, `workers`, `track` FROM `resources` " );
@@ -234,6 +233,10 @@ class HSDresource extends APP_GameClass
             $values['reason_string'] = array('type'=>(10+$key),'str'=>$values['reason_string'] );
         }
         return $values;
+    }
+
+    function updateClientResources() {
+        $this->game->notifyAllPlayers( "showResources", "", array( 'resources' => $this->getResources()));
     }
 
     /** 

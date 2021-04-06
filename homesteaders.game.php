@@ -179,7 +179,7 @@ class homesteaders extends Table
             'number_auctions' => $this->getGameStateValue( 'number_auctions' ),
             'player_order' => $this->getNextPlayerTable(),
             'player_resources' => $this->getObjectFromDb( "SELECT `player_id` p_id, `silver`, `wood`, `food`, `steel`, `gold`, `copper`, `cow`, `loan`, `trade`, `vp` FROM `resources` WHERE player_id = '$cur_p_id'" ),
-            'resources' => $this->Resource->getResources($cur_p_id),
+            'resources' => $this->Resource->getResources(),
             'resource_info' => $this->resource_info,
             'round_number' => $this->getGameStateValue( 'round_number' ),
             'show_player_info' => $this->getShowPlayerInfo(),
@@ -224,11 +224,11 @@ class homesteaders extends Table
      * getGameStateValue('show_player_info' );
      */
     function getShowPlayerInfo(){
-        try {
-            return ($this->getGameStateValue( 'show_player_info' ) == 0);
-        } catch (Exception $e) {
-            return false;
+        if ($this->getGameStateValue('round_number') == 11){
+            return true;
         }
+        return ($this->getGameStateValue( 'show_player_info' ) == 0);
+
     }
     
     
