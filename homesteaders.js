@@ -540,7 +540,7 @@ function (dojo, declare) {
                 dojo.place(this.format_block( 'jptpl_worker', {id: w_key.toString()}), 
                         this.token_divId[worker.p_id] );
                 const worker_divId = `token_worker_${w_key}`;
-                console.log(worker.b_key, worker.b_slot, this.building_worker_ids);
+                //console.log(worker.b_key, worker.b_slot, this.building_worker_ids);
                 if (worker.b_key != 0 ){ 
                     dojo.place(worker_divId, this.building_worker_ids[worker.b_key][worker.b_slot]);
                 } else {
@@ -2550,7 +2550,7 @@ function (dojo, declare) {
                     this.last_selected['worker'] = unassignedWorkers[0].id;
                 }
             }
-            console.log(target_divId);
+            //console.log(target_divId);
             let target_workers = dojo.query(`#${target_divId} .token_worker`).length;
             if (target_workers ==1 && !target_divId.endsWith('_3') || target_workers ==2 && target_divId.endsWith('_3') ){
                 this.showMessage(_("You cannot place additional workers there"), 'error');
