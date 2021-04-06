@@ -519,7 +519,7 @@ function (dojo, declare) {
         },
         
         formatWorkerSlotTooltip(b_info, slot_no){
-            var tt = this.getOneResourceHtml('worker_slot');
+            var tt = '<span class="worker_slot"></span>';
             if (slot_no == 3) { tt += this.getOneResourceHtml('worker_slot'); }
             tt += " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info['s'+slot_no], true);
             return tt;
@@ -1293,7 +1293,7 @@ function (dojo, declare) {
                         var on_build_desc = _('When built: Advance on Railroad Track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                    var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.tkn_html[track], any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
+                    var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.getOneResourceHtml('track', 1, true), any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
                         var on_build_desc = this.replaceTooltipStrings(_("When built: ${silver}{silver}"));
