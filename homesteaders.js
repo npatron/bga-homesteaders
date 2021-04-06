@@ -408,7 +408,7 @@ function (dojo, declare) {
          * @param {array} resource 
          */
         setupOnePlayerResources: function (resource) {
-            console.log('setupOnePlayerResources');
+            //console.log('setupOnePlayerResources');
             this.board_resourceCounters[resource.p_id] = [];
             this.score_resourceCounters[resource.p_id] = [];
             for (const [key, value] of Object.entries(resource)) {
@@ -2824,7 +2824,7 @@ function (dojo, declare) {
             }
             // bank 
             if (this.hasBuilding[this.player_id][BLD_BANK]){
-                let node_loc =  `#trade_sell_${type}`;
+                let node_loc =  `#${BANK_DIVID}`;
                 if (this.canAddTrade({trade:-1})){ // can afford
                     this.updateAffordability(node_loc, AFFORDABLE);
                 } else {// can not afford
@@ -3139,7 +3139,7 @@ function (dojo, declare) {
                     row_3:row_3, val_3:bld_score.bonus,
                     row_4:row_4, val_4:row_4_pts,
                     row_5:row_5, val_5:loan_pts,});
-                console.log(tt);
+                //console.log(tt);
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
             } else {
                 let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
@@ -3150,7 +3150,7 @@ function (dojo, declare) {
                     row_3:row_3, val_3:bld_score.bonus,
                     row_4:row_4, val_4:_("???"),
                     row_5:row_5, val_5:_("???"),});
-                console.log(tt);
+                //console.log(tt);
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
             }
             if (!tt_only){
@@ -3936,8 +3936,8 @@ function (dojo, declare) {
         },
 
         notif_showResources: function( notif ){
-            console.log('notif_showResources');
-            console.log(notif);
+            //console.log('notif_showResources');
+            //console.log(notif);
             if (this.show_player_info) return;// already showing player resources.
             this.show_player_info = true;
             for(let p_id in notif.args.resources){
