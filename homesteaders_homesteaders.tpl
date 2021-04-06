@@ -3,7 +3,7 @@
 <!-- 
 --------
 -- BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
--- homesteaderstb implementation : © Nick Patron <nick.theboot@gmail.com>
+-- homesteaders implementation : © Nick Patron <nick.theboot@gmail.com>
 -- 
 -- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -132,6 +132,10 @@
                     <span id="copper_new" class="player_copper_new new_text noshow">0</span>
                 </span>
             </span>
+            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
+        </div>
+        <div id="token_zone_{COLOR}" class="player_token_zone">
+
         </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
@@ -139,6 +143,15 @@
     <div id ="top"> <!-- Round # and toggle show buttons area -->
         <span id="top_texts">
             <span id="round_text" class="font caps">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
+            <div id='useSilver_form'> 
+                <tr>
+                    <input type="checkbox" id="checkbox1"/>
+                    <label for="checkbox1" name="checkbox1_lbl" class="font bold">
+                        {PAY} <span aria="worker" title="worker" class="log_worker token_inline"></span>
+                        {WITH} <span aria="silver" title="silver" class="log_silver token_inline"></span>
+                    </label>
+                </tr>
+            </div>  
         </span>
         <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red noshow"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
         <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
@@ -259,6 +272,7 @@
                 <span id="coppericon_{COLOR}" class="score_token player_copper score"></span>
                 <span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
             </span>
+            
         </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>

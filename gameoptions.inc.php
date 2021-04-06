@@ -35,7 +35,8 @@ $game_options = array(
             ),
             1 => array(//HIDE_ALL_RESOURCES
                 'name' => totranslate('hide resources from other players'),
-                'description' => totranslate('hide player resources'),
+                'description' => totranslate('hide player resources from other players'),
+                'tmdisplay' => totranslate('hide other player resources'),
                 'nobeginner'=>true,
             ),
         ),
@@ -53,4 +54,3 @@ $game_preferences = array(
 			)
 	)
 );
-

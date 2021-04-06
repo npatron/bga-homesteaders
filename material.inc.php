@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * homesteaderstb implementation : © Nick Patron <nick.theboot@gmail.com>
+ * homesteaders implementation : © Nick Patron <nick.theboot@gmail.com>
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -39,6 +39,13 @@ $this->special_resource_map = array(
   'vp6' => array('vp'=>6),
   'vp8' => array('vp'=>8),
 );
+
+$this->playerColorNames = array(
+  "ff0000" =>'red', 
+  "008000"=>'green', 
+  "0000ff"=>'blue', 
+  "ffff00"=> 'yellow', 
+  "982fff"=> 'purple');    
 
 $this->trade_map = array(
   0=>'buy_wood', 1=>'buy_food', 2=>'buy_steel', 3=>'buy_gold', 4=>'buy_copper', 5=>'buy_cow',

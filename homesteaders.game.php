@@ -2,7 +2,7 @@
  /**
   *------
   * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
-  * homesteaderstb implementation : © Nick Patron <nick.theboot@gmail.com>
+  * homesteaders implementation : © Nick Patron <nick.theboot@gmail.com>
   * 
   * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
   * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -228,7 +228,6 @@ class homesteaders extends Table
             return true;
         }
         return ($this->getGameStateValue( 'show_player_info' ) == 0);
-
     }
     
     
@@ -259,20 +258,6 @@ class homesteaders extends Table
             $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
         }
     }
-
-    // archiving this as we are no longer allowing player checkbox
-    /*public function playerToggleCheckbox( $enabled ){
-        $cur_p_id = $this->getCurrentPlayerId();
-        $val = ($enabled?1:0);
-        $this->DbQuery( "UPDATE `player` SET use_silver = '$val' WHERE player_id = '$cur_p_id'" );
-        $this->notifyPlayer($cur_p_id, 'autoPay', clienttranslate('${You} set ${text} ${worker} ${arrow} ${onOff}'), array(
-            'player_id'=>$cur_p_id,
-            'text' =>    'auto-pay',
-            'worker'=>   'worker',
-            'arrow'=>    'arrow',
-            'onOff'=> ($enabled?clienttranslate("on"):clienttranslate("off")),
-        ));
-    }*/
 
     /***  place workers phase ***/
     public function playerHireWorker(){
@@ -307,8 +292,7 @@ class homesteaders extends Table
         $this->DbQuery( $sql );
     }
 
-    public function playerDonePlacingWorkers ()
-    {
+    public function playerDonePlacingWorkers (){
         $p_id = $this->getCurrentPlayerId();
         $this->Resource->collectIncome($p_id);
         $this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
@@ -410,7 +394,6 @@ class homesteaders extends Table
         } else {
             $this->gamestate->nextstate( 'auction_bonus');
         }
-        
     }
 
     public function playerSelectRailBonus($selected_bonus) {
@@ -672,7 +655,7 @@ class homesteaders extends Table
         $round_number = $this->getGameStateValue('round_number');
         if ($round_number == 11){
             $this->gamestate->nextState( 'endGame');
-        } else{
+        } else {
             $this->Bid->clearBids( );
             $first_player = $this->getGameStateValue('first_player');
             $this->gamestate->changeActivePlayer( $first_player );

@@ -331,12 +331,6 @@ function (dojo, declare) {
             dojo.connect($('checkbox1'), 'change', this, 'toggleCheckbox');
         },
 
-        toggleCheckbox: function(event) {
-            this.ajaxcall( "/homesteaders/homesteaders/toggleCheckbox.html", {lock: true, checked:(event.target.checked)}, this, 
-                function( result ) { }, 
-                function( is_error) { } );
-        },
-
         /**
          * should only be called when not spectator, 
          * This will orient the player zones by player order (with this.player_id first)
@@ -412,7 +406,7 @@ function (dojo, declare) {
             this.board_resourceCounters[resource.p_id] = [];
             this.score_resourceCounters[resource.p_id] = [];
             for (const [key, value] of Object.entries(resource)) {
-                console.log('setup', key, value);
+                //console.log(resource, key, value);
                 if (key == "p_id" || key == "workers" || key == "track") continue;
                 let tooltip_html = this.format_block('jptpl_res_tt', {value:this.replaceTooltipStrings(this.resource_info[key]['tt'])});
                 
@@ -1048,7 +1042,7 @@ function (dojo, declare) {
             if (round_number == 11){
                 dojo.destroy('#round_number');
                 $("round_text").innerHTML=_('Final Income and Scoring Round');
-                dojo.query(`#${TILE_CONTAINER_ID[BLD_LOC_OFFER]}`).addClass('noshow')
+                dojo.query(`#${TILE_CONTAINER_ID[BLD_LOC_OFFER]}`).addClass('noshow');
             } else {
                 this.roundCounter.setValue(round_number);
             }
@@ -1215,7 +1209,7 @@ function (dojo, declare) {
                         let b_type = build_arr[i];
                         build_html[i]= dojo.string.substitute(_(" Build: ${building_type}"), {building_type:this.format_block('jstpl_color_log', {'string':this.asset_strings[b_type], 'color':ASSET_COLORS[b_type]})} );
                     }
-                    build += build_html.join(this.tkn_html['or']);
+                    build += build_html.join(this.tkn_html.or);
                 }
                 tt += build;
             }
@@ -1274,7 +1268,6 @@ function (dojo, declare) {
                 console.log('unable to format tooltip string '+inputString);
                 return inputString;
             }
-
         },
 
         formatBuildingDescription: function(b_id, b_key){
@@ -1300,7 +1293,7 @@ function (dojo, declare) {
                         var on_build_desc = _('When built: Advance on Railroad Track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                        var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.getOneResourceHtml('track', 1, true), any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
+                    var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.tkn_html[track], any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
                         var on_build_desc = this.replaceTooltipStrings(_("When built: ${silver}{silver}"));
@@ -1309,6 +1302,8 @@ function (dojo, declare) {
                         var on_build_desc = this.replaceTooltipStrings(_('When built: Recieve ${silver} per ${worker}<br>When you gain a ${worker} gain a ${silver}'));
                         break;
                     case 8: //BUILD_BONUS_PLACE_RESOURCES
+                        var on_build_desc = this.replaceTooltipStrings(_('When built: place ${wood}${food}${steel}${gold}${copper}${cow} on Warehouse'));
+                        break;
                     default:
                         var on_build_desc = "";
                 }
@@ -1366,7 +1361,7 @@ function (dojo, declare) {
             return full_desc;
         },
 
-        formatBuildingIncome: function(b_id, b_key, ascard = null){
+        formatBuildingIncome: function(b_id, b_key){
             let b_info = this.building_info[b_id];
             var inc_vals = '';
             if (b_info.inc == null && b_info.slot == null){
@@ -2420,7 +2415,6 @@ function (dojo, declare) {
                     break;
             }
         },
-
         updateConfirmTradeButton: function( show){
             switch(show){
                 case TRADE_BUTTON_SHOW:
@@ -2433,7 +2427,7 @@ function (dojo, declare) {
         },
 
         /** Show/Hide Tile Zones */
-        toggleShowButton: function (index, show = null){
+        toggleShowButton: function (index){
             if(dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
                 this.showTileZone(index);
             } else {
