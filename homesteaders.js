@@ -2493,7 +2493,7 @@ function (dojo, declare) {
                 if (dojo.query(`#${tokenZone} .token_worker`).length > 0 && dojo.query(`#${playerBuildingZone} .worker_slot:empty`).length > 0){
                     this.confirmationDialog( _('You still have workers to assign, Continue?'), 
                     dojo.hitch( this, function() {
-                        this.ajaxDonePlacingWorkers()
+                        this.ajaxDonePlacingWorkers();
                     } ) );
                     return;
                 } else {
@@ -3086,16 +3086,13 @@ function (dojo, declare) {
 
         doNotBuild: function () {
             if (this.checkAction( 'doNotBuild' )){
-                this.confirmationDialog( _('Are you sure you want to not build?'), dojo.hitch( this, function() {
-                    this.ajaxcall( "/homesteaders/homesteaders/doNotBuild.html", {lock: true}, this, 
-                    function( result ) { 
-                        this.clearSelectable('building', true); 
-                        this.disableTradeIfPossible();
-                        this.disableTradeBoardActions();
-                        this.setupUndoTransactionsButtons();
-                    }, function( is_error) { } );
-                } ) ); 
-                return; 
+                this.ajaxcall( "/homesteaders/homesteaders/doNotBuild.html", {lock: true}, this, 
+                function( result ) { 
+                    this.clearSelectable('building', true); 
+                    this.disableTradeIfPossible();
+                    this.disableTradeBoardActions();
+                    this.setupUndoTransactionsButtons();
+                }, function( is_error) { } );
             }
         },
 
@@ -3204,11 +3201,9 @@ function (dojo, declare) {
         
         passBuildingBonus: function (){
             if (this.checkAction( 'buildBonus' )){
-                this.confirmationDialog( _('Are you sure you want to pass on bonus?'), dojo.hitch( this, function() {
-                    this.ajaxcall( "/homesteaders/homesteaders/passBuildingBonus.html", {lock: true}, this, 
-                    function( result ) { }, 
-                    function( is_error) { } );
-                } ) );
+                this.ajaxcall( "/homesteaders/homesteaders/passBuildingBonus.html", {lock: true}, this, 
+                function( result ) { }, 
+                function( is_error) { } );
             } 
         },
         
@@ -3321,16 +3316,14 @@ function (dojo, declare) {
 
         passBonus: function() {
             if (this.checkAction( 'auctionBonus' )){
-                this.confirmationDialog( _('Are you sure you want to pass on bonus?'), dojo.hitch( this, function() {
-                    this.ajaxcall( "/homesteaders/homesteaders/passAuctionBonus.html", {lock: true}, this, 
-                    function( result ) { 
-                        this.clearTransactionLog();
-                        this.disableTradeIfPossible();
-                        this.resetTradeVals();
-                        this.disableTradeBoardActions();
-                        this.setupUndoTransactionsButtons(); }, 
-                    function( is_error) { } );
-                } ) ); 
+                this.ajaxcall( "/homesteaders/homesteaders/passAuctionBonus.html", {lock: true}, this, 
+                function( result ) { 
+                    this.clearTransactionLog();
+                    this.disableTradeIfPossible();
+                    this.resetTradeVals();
+                    this.disableTradeBoardActions();
+                    this.setupUndoTransactionsButtons(); }, 
+                function( is_error) { } ); 
             }
         },
 
