@@ -257,12 +257,10 @@ function (dojo, declare) {
             this.setupPlayerResources(gamedatas.player_resources, gamedatas.resources);
             if (!this.isSpectator){
                 this.orientPlayerZones(gamedatas.player_order);
-                //this.setupUseSilverCheckbox(gamedatas.players[this.player_id]['use_silver']);
                 this.setupTradeButtons();
             } else {
                 this.spectatorFormatting();
             }
-            dojo.destroy('useSilver_form');
             if (this.playerCount == 2){
                 this.player_color[DUMMY_BID] = this.getAvailableColor();
                 this.player_color[DUMMY_OPT] = this.player_color[0];
@@ -3104,11 +3102,12 @@ function (dojo, declare) {
             let score = 0;
             var bld_score = this.calculateBuildingScore(p_id);
             score += bld_score.static + bld_score.bonus;
-            let row_1 = this.replaceTooltipStrings(_("# of ${vp} tokens:"));
-            let row_2 = this.replaceTooltipStrings(_("# of ${vp} from buildings (static)"));
-            let row_3 = this.replaceTooltipStrings(_("# of ${vp} from buildings (bonus)"));
-            let row_4 = this.replaceTooltipStrings(_("# of ${vp} from ${gold}${cow}${copper}")); 
-            let row_5 = this.replaceTooltipStrings(_("# of ${vp} from ${loan}"));
+            let row_1 = this.replaceTooltipStrings(_("${vp} tokens:"));
+            let row_2 = this.replaceTooltipStrings(_("${vp} from buildings (static)"));
+            let row_3 = this.replaceTooltipStrings(_("${vp} from buildings (bonus)"));
+            let row_4 = this.replaceTooltipStrings(_("${vp} from ${gold}${cow}${copper}")); 
+            let row_5 = this.replaceTooltipStrings(_("${vp} from ${loan}"));
+            
 
             if (p_id == this.player_id || this.show_player_info){
                 let vp_pts     = this.board_resourceCounters[p_id]['vp'].getValue();
@@ -3117,33 +3116,39 @@ function (dojo, declare) {
                 let copper_pts = this.board_resourceCounters[p_id]['copper'].getValue() * 2;
                 let row_4_pts = gold_pts + cow_pts + copper_pts;
                 let loan_count = this.board_resourceCounters[p_id]['loan'].getValue();
+                let row_6 = this.replaceTooltipStrings(_("Total ${vp}"));
                 let loan_pts = 0;
                 for (let i =1; i <= loan_count; i++){
                     loan_pts -= (i);
                 }
-                score += vp_pts + gold_pts + cow_pts + copper_pts + loan_pts;
+                let total_pts = score + vp_pts + gold_pts + cow_pts + copper_pts + loan_pts;
                 let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
-                '<tr><td>${row_3}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
-                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr></table></div>',{   
+                '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr>'+
+                '<tr><th>${row_6}</th><th>${val_6}</th></tr></table></div>',{   
                     row_1:row_1, val_1:vp_pts,
                     row_2:row_2, val_2:bld_score.static,
                     row_3:row_3, val_3:bld_score.bonus,
                     row_4:row_4, val_4:row_4_pts,
-                    row_5:row_5, val_5:loan_pts,});
-                //console.log(tt);
+                    row_5:row_5, val_5:loan_pts,
+                    row_6:row_6, val_6:total_pts,
+                });
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
+                if (this.show_player_info){
+                    score += total_pts;
+                }
             } else {
                 let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
-                '<tr><td>${row_3}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
                 '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr></table></div>',{   
                     row_1:row_1, val_1:_("???"),
                     row_2:row_2, val_2:bld_score.static,
                     row_3:row_3, val_3:bld_score.bonus,
                     row_4:row_4, val_4:_("???"),
                     row_5:row_5, val_5:_("???"),});
-                //console.log(tt);
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
             }
+            
             if (!tt_only){
                 this.updateScore(p_id,score);
             }
@@ -3949,7 +3954,6 @@ function (dojo, declare) {
                 switch (log.action){
                     case 'build':
                         this.cancelBuild(log.building);
-                        this.updateScore(p_id, log.score);
                         if (updateResource){
                             for(let type in log.cost){
                                 let amt = log.cost[type];

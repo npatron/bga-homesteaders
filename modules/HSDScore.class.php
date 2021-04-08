@@ -168,16 +168,10 @@ class HSDScore extends APP_GameClass
             $vp_res = $this->getPlayerVPFromResources($p_id);
             $vp = $this->game->Resource->getPlayerResourceAmount($p_id, 'vp');
             $vp_loan = $this->getScoreFromLoans($p_id);
-            $total = 
-                $bld_score['vp']['static'] + 
-                $bld_score['vp']['bonus'] + 
-                $vp + 
-                $vp_res['gold'] + $vp_res['copper'] + $vp_res['cow'] +
-                $vp_loan;
+            $total = $bld_score['vp']['static'] + $bld_score['vp']['bonus'] + 
+                $vp + $vp_res['gold'] + $vp_res['copper'] + $vp_res['cow'] + $vp_loan;
         } else {
-            $total = 
-                $bld_score['vp']['static'] + 
-                $bld_score['vp']['bonus'];
+            $total = $bld_score['vp']['static'] + $bld_score['vp']['bonus'];
         }
         $this->dbSetScore($p_id, $total); 
         return array(
