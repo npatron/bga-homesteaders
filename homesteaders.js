@@ -3107,7 +3107,6 @@ function (dojo, declare) {
             let row_3 = this.replaceTooltipStrings(_("${vp} from buildings (bonus)"));
             let row_4 = this.replaceTooltipStrings(_("${vp} from ${gold}${cow}${copper}")); 
             let row_5 = this.replaceTooltipStrings(_("${vp} from ${loan}"));
-            
 
             if (p_id == this.player_id || this.show_player_info){
                 let vp_pts     = this.board_resourceCounters[p_id]['vp'].getValue();
@@ -3135,7 +3134,7 @@ function (dojo, declare) {
                 });
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
                 if (this.show_player_info){
-                    score += total_pts;
+                    score = total_pts;
                 }
             } else {
                 let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
@@ -3148,7 +3147,6 @@ function (dojo, declare) {
                     row_5:row_5, val_5:_("???"),});
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
             }
-            
             if (!tt_only){
                 this.updateScore(p_id,score);
             }
