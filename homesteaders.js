@@ -193,6 +193,8 @@ function (dojo, declare) {
             this.pos_offset_resourceCounter = [];
             this.neg_offset_resourceCounter = [];
             this.new_resourceCounter = [];
+            this.score_Counter = [];
+            this.score_wLoanCounter = [];
             this.transactionCost = [];
             this.transactionLog = [];
             this.buildingCost = [];
@@ -426,6 +428,21 @@ function (dojo, declare) {
                 this.board_resourceCounters[resource.p_id][key].create(boardResourceId);
                 this.board_resourceCounters[resource.p_id][key].setValue(value);
             }
+
+            let old_score_id = `player_score_${resource.p_id}`;
+            dojo.query(`#${old_score_id}`).addClass('noshow');
+
+            let new_score_id = `p_score_${resource.p_id}`;
+            dojo.place(`<span id="${new_score_id}" class="player_score_value">0</span>`, old_score_id, 'after');
+            this.score_Counter[resource.p_id] = new ebg.counter();
+            this.score_Counter[resource.p_id].create(new_score_id);
+            this.score_Counter[resource.p_id].setValue(0);
+
+            let scoreLoanId = `player_total_score_${resource.p_id}`;
+            dojo.place(`<span id="${scoreLoanId}" class="player_score_value_loan">0</span>`, new_score_id, 'after');
+            this.score_wLoanCounter[resource.p_id] = new ebg.counter();
+            this.score_wLoanCounter[resource.p_id].create(scoreLoanId);
+            this.score_wLoanCounter[resource.p_id].setValue(0);
         },
 
         /**
@@ -600,7 +617,7 @@ function (dojo, declare) {
 
         showScoreTooltips: function(players) {
             for(let p_id in players){
-                this.calculateAndUpdateScore(p_id, true);
+                this.calculateAndUpdateScore(p_id);
             }
         },
 
@@ -1291,7 +1308,7 @@ function (dojo, declare) {
                         var on_build_desc = _('When built: Advance on Railroad Track');
                         break;
                     case 5: //BUILD_BONUS_TRACK_AND_BUILD
-                    var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.getOneResourceHtml('track', 1, true), any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
+                        var on_build_desc = dojo.string.substitute(_('When built: Recieve ${track}<br>You may also build another building of ${any} type'), {track:this.getOneResourceHtml('track', 1, true), any:this.format_block('jstpl_color_log', {'string':this.asset_strings[4], 'color':ASSET_COLORS[4]})});
                         break;
                     case 6: //BUILD_BONUS_SILVER_SILVER
                         var on_build_desc = this.replaceTooltipStrings(_("When built: ${silver}{silver}"));
@@ -2692,7 +2709,7 @@ function (dojo, declare) {
         {
             if( this.checkAction( 'confirmBid')){
                 if (this.last_selected['bid'] == ""){
-                    this.showMessage( _("You must select a bid slot"), 'error' );
+                    this.showMessage( _("You must select a bid"), 'error' );
                     return;
                 }
                 const bid_loc = this.getBidNoFromSlotId(this.last_selected['bid']);
@@ -3094,62 +3111,110 @@ function (dojo, declare) {
             }
         },
 
-        updateScore: function (p_id, score) {
-            this.scoreCtrl[p_id].setValue(score);
+        updateScore: function (p_id, score, score_loan) {
+            if (p_id in this.score_Counter){
+                this.score_Counter[p_id].setValue(score);
+            } else if (this.scoreCtrl[p_id] != undefined){
+                this.scoreCtrl[p_id].setValue(score);
+            }
+            if (score_loan!=null){
+                this.score_wLoanCounter[p_id].setValue(score_loan);
+            }
         },
 
-        calculateAndUpdateScore: function(p_id, tt_only = false) {
+        calculateAndUpdateScore: function(p_id) {
             let score = 0;
             var bld_score = this.calculateBuildingScore(p_id);
+            var total_score = null;
             score += bld_score.static + bld_score.bonus;
-            let row_1 = this.replaceTooltipStrings(_("${vp} tokens:"));
-            let row_2 = this.replaceTooltipStrings(_("${vp} from buildings (static)"));
-            let row_3 = this.replaceTooltipStrings(_("${vp} from buildings (bonus)"));
-            let row_4 = this.replaceTooltipStrings(_("${vp} from ${gold}${cow}${copper}")); 
-            let row_5 = this.replaceTooltipStrings(_("${vp} from ${loan}"));
+            let row_Vp = this.replaceTooltipStrings(_("${vp} tokens:"));
+            let row_BldSt = this.replaceTooltipStrings(_("${vp} from buildings (static)"));
+            let row_BldBo = this.replaceTooltipStrings(_("${vp} from buildings (bonus)"));
+            let row_GlCwCp = this.replaceTooltipStrings(_("${vp} from ${gold}${cow}${copper}")); 
+            let row_loan = this.replaceTooltipStrings(_("${vp} from ${loan}"));
+            let row_total = this.replaceTooltipStrings(_("${vp} Total"));
+            let row_subTotal = this.replaceTooltipStrings(_("${vp} Subtotal"));
 
-            if (p_id == this.player_id || this.show_player_info){
+            if (this.show_player_info || p_id == this.player_id){
                 let vp_pts     = this.board_resourceCounters[p_id]['vp'].getValue();
                 let gold_pts   = this.board_resourceCounters[p_id]['gold'].getValue() * 2;
                 let cow_pts    = this.board_resourceCounters[p_id]['cow'].getValue()  * 2;
                 let copper_pts = this.board_resourceCounters[p_id]['copper'].getValue() * 2;
-                let row_4_pts = gold_pts + cow_pts + copper_pts;
+                let glCwCp_pts = gold_pts + cow_pts + copper_pts;
                 let loan_count = this.board_resourceCounters[p_id]['loan'].getValue();
-                let row_6 = this.replaceTooltipStrings(_("Total ${vp}"));
+               
                 let loan_pts = 0;
                 for (let i =1; i <= loan_count; i++){
                     loan_pts -= (i);
                 }
-                let total_pts = score + vp_pts + gold_pts + cow_pts + copper_pts + loan_pts;
-                let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
-                '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
-                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr>'+
-                '<tr><th>${row_6}</th><th>${val_6}</th></tr></table></div>',{   
-                    row_1:row_1, val_1:vp_pts,
-                    row_2:row_2, val_2:bld_score.static,
-                    row_3:row_3, val_3:bld_score.bonus,
-                    row_4:row_4, val_4:row_4_pts,
-                    row_5:row_5, val_5:loan_pts,
-                    row_6:row_6, val_6:total_pts,
-                });
-                this.addTooltipHtml(`player_score_${p_id}`, tt);
+                let score_noLoan = score + vp_pts + gold_pts + cow_pts + copper_pts;
+                total_score = score_noLoan + loan_pts;
                 if (this.show_player_info){
-                    score = total_pts;
+                    var tt_left = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
+                    '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                    '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr>'+
+                    '<tr><th>${row_6}</th><th>${val_6}</th></tr></table></div>',{   
+                        row_1:row_Vp,     val_1:vp_pts,
+                        row_2:row_BldSt,  val_2:bld_score.static,
+                        row_3:row_BldBo,  val_3:bld_score.bonus,
+                        row_4:row_GlCwCp, val_4:glCwCp_pts,
+                        row_5:row_loan,   val_5:loan_pts,
+                        row_6:row_total,  val_6:total_score,
+                    });
+                    var tt_right = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
+                    '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                    '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><th>${row_5}</th><th>${val_5}</th></tr>'+
+                    '<tr><td>${row_6}</td><td>${val_6}</td></tr><tr><th>${row_7}</th><th>${val_7}</th></tr></table></div>',{
+                        row_1:row_Vp,       val_1:vp_pts,
+                        row_2:row_BldSt,    val_2:bld_score.static,
+                        row_3:row_BldBo,    val_3:bld_score.bonus,
+                        row_4:row_GlCwCp,   val_4:glCwCp_pts,
+                        row_5:row_subTotal, val_5:score_noLoan,
+                        row_6:row_loan,     val_6:loan_pts,
+                        row_7:row_total,    val_7:total_score,
+                    });
+                } else { //this player in don't show resources game.
+                    var tt_left = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
+                    '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><th>${row_3}</th><th>${val_3}</th></tr>'+
+                    '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr>'+
+                    '<tr><th>${row_6}</th><th>${val_6}</th></tr></table></div>',{   
+                        row_1:row_BldSt,    val_1:bld_score.static,
+                        row_2:row_BldBo,    val_2:bld_score.bonus,
+                        row_3:row_subTotal, val_3:score,
+                        row_4:row_Vp,       val_4:vp_pts,
+                        row_4:row_GlCwCp,   val_4:glCwCp_pts,
+                        row_5:row_loan,     val_5:loan_pts,
+                        row_6:row_total,    val_6:total_score,
+                    });
+                    var tt_right = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
+                    '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
+                    '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr>'+
+                    '<tr><th>${row_6}</th><th>${val_6}</th></tr></table></div>',{
+                        row_1:row_BldSt,    val_1:bld_score.static,
+                        row_2:row_BldBo,    val_2:bld_score.bonus,
+                        row_3:row_Vp,       val_3:vp_pts,
+                        row_4:row_GlCwCp,   val_4:glCwCp_pts,
+                        row_5:row_loan,     val_5:loan_pts,
+                        row_6:row_total,    val_6:total_score,
+                    });
+                    
                 }
+                this.addTooltipHtml(`p_score_${p_id}`, tt_left);
+                this.addTooltipHtml(`player_total_score_${p_id}`, tt_right); 
             } else {
                 let tt = dojo.string.substitute('<div class="tt_table"> <table><tr><td>${row_1}</td><td>${val_1}</td></tr>'+
-                '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><td>${row_3}</td><td>${val_3}</td></tr>'+
-                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr></table></div>',{   
-                    row_1:row_1, val_1:_("???"),
-                    row_2:row_2, val_2:bld_score.static,
-                    row_3:row_3, val_3:bld_score.bonus,
-                    row_4:row_4, val_4:_("???"),
-                    row_5:row_5, val_5:_("???"),});
+                '<tr><td>${row_2}</td><td>${val_2}</td></tr><tr><th>${row_3}</th><th>${val_3}</th></tr>'+
+                '<tr><td>${row_4}</td><td>${val_4}</td></tr><tr><td>${row_5}</td><td>${val_5}</td></tr>'+ 
+                '<tr><td>${row_6}</td><td>${val_6}</td></tr></table></div>',{
+                    row_1:row_BldSt,    val_1:bld_score.static,
+                    row_2:row_BldBo,    val_2:bld_score.bonus,
+                    row_3:row_subTotal, val_3:score,
+                    row_4:row_Vp,       val_4:_("???"),
+                    row_5:row_GlCwCp,   val_5:_("???"),
+                    row_6:row_loan,     val_6:_("???"),});
                 this.addTooltipHtml(`player_score_${p_id}`, tt);
             }
-            if (!tt_only){
-                this.updateScore(p_id,score);
-            }
+            this.updateScore(p_id, score, total_score);
         },
 
         calculateBuildingScore: function(p_id) {
