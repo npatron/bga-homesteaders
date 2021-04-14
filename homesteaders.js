@@ -3140,7 +3140,7 @@ function (dojo, declare) {
                 let gold_pts   = this.board_resourceCounters[p_id]['gold'].getValue() * 2;
                 let cow_pts    = this.board_resourceCounters[p_id]['cow'].getValue()  * 2;
                 let copper_pts = this.board_resourceCounters[p_id]['copper'].getValue() * 2;
-                let GlCwCp_pts = gold_pts + cow_pts + copper_pts;
+                let glCwCp_pts = gold_pts + cow_pts + copper_pts;
                 let loan_count = this.board_resourceCounters[p_id]['loan'].getValue();
                
                 let loan_pts = 0;
@@ -3157,7 +3157,7 @@ function (dojo, declare) {
                         row_1:row_Vp,     val_1:vp_pts,
                         row_2:row_BldSt,  val_2:bld_score.static,
                         row_3:row_BldBo,  val_3:bld_score.bonus,
-                        row_4:row_GlCwCp, val_4:GlCwCp_pts,
+                        row_4:row_GlCwCp, val_4:glCwCp_pts,
                         row_5:row_loan,   val_5:loan_pts,
                         row_6:row_total,  val_6:total_score,
                     });
@@ -3168,7 +3168,7 @@ function (dojo, declare) {
                         row_1:row_Vp,       val_1:vp_pts,
                         row_2:row_BldSt,    val_2:bld_score.static,
                         row_3:row_BldBo,    val_3:bld_score.bonus,
-                        row_4:row_GlCwCp,   val_4:GlCwCp_pts,
+                        row_4:row_GlCwCp,   val_4:glCwCp_pts,
                         row_5:row_subTotal, val_5:score_noLoan,
                         row_6:row_loan,     val_6:loan_pts,
                         row_7:row_total,    val_7:total_score,
@@ -3182,7 +3182,7 @@ function (dojo, declare) {
                         row_2:row_BldBo,    val_2:bld_score.bonus,
                         row_3:row_subTotal, val_3:score,
                         row_4:row_Vp,       val_4:vp_pts,
-                        row_4:row_GlCwCp,   val_4:GlCwCp_pts,
+                        row_4:row_GlCwCp,   val_4:glCwCp_pts,
                         row_5:row_loan,     val_5:loan_pts,
                         row_6:row_total,    val_6:total_score,
                     });
@@ -3193,7 +3193,7 @@ function (dojo, declare) {
                         row_1:row_BldSt,    val_1:bld_score.static,
                         row_2:row_BldBo,    val_2:bld_score.bonus,
                         row_3:row_Vp,       val_3:vp_pts,
-                        row_4:row_GlCwCp,   val_4:GlCwCp_pts,
+                        row_4:row_GlCwCp,   val_4:glCwCp_pts,
                         row_5:row_loan,     val_5:loan_pts,
                         row_6:row_total,    val_6:total_score,
                     });
