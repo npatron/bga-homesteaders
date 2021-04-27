@@ -3,7 +3,7 @@
 /*
  * HSDBuilding: a class that handles building related actions.
  */
-class HSDresource extends APP_GameClass
+class HSDResource extends APP_GameClass
 {
     
     public $game;

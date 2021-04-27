@@ -2,6 +2,9 @@
 
   // game options.
   define("SHOW_PLAYER_INFO", 100);
+  // statuses
+  define("DISABLED",      0);
+  define("ENABLED",       1);
   // options in show info
   define("SHOW_ALL_RESOURCES", 0);
   define("HIDE_ALL_RESOURCES", 1);
@@ -26,6 +29,7 @@
   define("STATE_CONFIRM_AUCTION",    52);
   define("STATE_END_BUILD",          53);
   define("STATE_END_ROUND",          59);
+
   define("STATE_ENDGAME_ACTIONS",    60);
   define("STATE_UPDATE_SCORES",      61);
   define("STATE_END_GAME",           99);
@@ -75,18 +79,18 @@
   define("BLD_DUDE_RANCH",    29);
   define("BLD_TOWN_HALL",     30);
   define("BLD_TERMINAL",      31);
-  define("BLD_RESTARAUNT",    32);
+  define("BLD_RESTAURANT",    32);
   define("BLD_TRAIN_STATION", 33);
   define("BLD_CIRCUS",        34);
   define("BLD_RAIL_YARD",     35);  
 
   // expansion
-  define("BLD_LUMBERMILL",  37);
-  define("BLD_SALOON",      38);
-  define("BLD_SILVER_MINE", 39);
-  define("BLD_HOTEL",       40);
-  define("BLD_WAREHOUSE",   41);
-  define("BLD_POST_OFFICE", 42);
+  define("BLD_LUMBER_MILL",  36);
+  define("BLD_SALOON",      37);
+  define("BLD_SILVER_MINE", 38);
+  define("BLD_HOTEL",       39);
+  define("BLD_WAREHOUSE",   40);
+  define("BLD_POST_OFFICE", 41);
   
   // building location mapping
   define("BLD_LOC_FUTURE",  0);
@@ -138,7 +142,7 @@
   define("BUILD_BONUS_WORKER",          3);
   define("BUILD_BONUS_RAIL_ADVANCE",    4);
   define("BUILD_BONUS_TRACK_AND_BUILD", 5);
-  define("BUILD_BONUS_SILVER_SILVER",   6);
+  define("BUILD_BONUS_TRADE_TRADE",     6);
   define("BUILD_BONUS_SILVER_WORKERS",  7);
   define("BUILD_BONUS_PLACE_RESOURCES", 8);
 
@@ -150,41 +154,14 @@
   define("AUC_BONUS_COW_FOR_VP",      5);
   define("AUC_BONUS_6VP_AND_FOOD_VP", 6);
   define("AUC_BONUS_FOOD_FOR_VP",     7);
-  define("AUC_BONUS_4DEPT_FREE",      8);
-  define("AUC_BONUS_3VP_SELL_FREE",   9);
+  
+  // new beginnings auctions events.
+  define("AUC_BONUS_NO_AUCTION",      8);
+  define("AUC_BONUS_TRACK_RAIL_ADV",  9);
+  define("AUC_BONUS_4DEPT_FREE",     10);
+  define("AUC_BONUS_3VP_SELL_FREE",  11);
 
-  // Events
-  // Settlement Events #1-10
-  // Town Events #11-20
-  // City Events #21-25
-  // all_b (bonus for all players) after income, before bids
-  define("EVT_VP_4SILVER",   1);
-  define("EVT_TRADE",        2);
-  define("EVT_LOAN_TRACK",   3);
-  define("EVT_LEAST_WORKER", 4);
-  define("EVT_INTEREST",     5);
-  define("EVT_PAY_LOAN_FOOD",6);
-  define("EVT_COPPER_COW_GET_GOLD",7);
-  define("EVT_DEV_TRACK_VP3",8);
-  define("EVT_VP_FOR_WOOD", 9);
-  define("EVT_SELL_NO_TRADE",10);
-  define("EVT_LEAST_BLD_TRACK",11);
-  define("EVT_IND_VP",      12);
-  define("EVT_BLD_TAX_SILVER",13);
-  define("EVT_RES_ADV_TRACK",14);
-
-  // auc_b (auction bonus)
-  define("EVT_AUC_DISCOUNT_1_RES", 1);
-  define("EVT_AUC_NO_AUCTION",     2);
-  define("EVT_AUC_BONUS_WORKER",   3);
-  define("EVT_AUC_2SILVER_TRACK",  4);
-  define("EVT_AUC_BUILD_AGAIN",    5);
-  define("EVT_AUC_TRACK",          6);
-  define("EVT_AUC_STEEL_ANY",      7);
-  define("EVT_AUC_COM_DISCOUNT",   8);
-  // pass_b (bonus when passing)
-  define("EVT_PASS_TRACK",       1);
-  define("EVT_PASS_DEPT_SILVER", 2);
+ ]
 
   // Bid location mapping
   define("NO_BID",     0);

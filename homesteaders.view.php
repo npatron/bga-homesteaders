@@ -53,8 +53,8 @@
         $this->tpl['BUILDING_DISCARD'] = clienttranslate("Show Building Discard");
         $this->tpl['FUTURE_BUILDING']  = clienttranslate('Show Upcoming Buildings');
 
-        $this->page->begin_block( "homesteaders_homesteaders", "this_player_zone" );
-        $this->page->begin_block( "homesteaders_homesteaders", "player_zone" );
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "this_player_zone" );
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "player_zone" );
         foreach($players as $p_id=>$player){
           $color = $this->game->playerColorNames[$player['player_color']];
           if ($current_player_id == $p_id){
@@ -68,7 +68,7 @@
           }
         } 
         
-        $this->page->begin_block( "homesteaders_homesteaders", "bid_slot" );
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "bid_slot" );
         
         for ($a=1; $a <= 3; $a++){
           for ($bid=1; $bid < 10; $bid++){          
@@ -76,20 +76,20 @@
           }
         }
 
-        $this->page->begin_block( "homesteaders_homesteaders", "auction_stacks" );
-        $this->page->begin_block( "homesteaders_homesteaders", "future_auction_zones" );
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "auction_stacks" );
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "future_auction_zones" );
         $auctions = $this->game->getGameStateValue('number_auctions');
         for ($a=1; $a <= $auctions; $a++){
           $this->page->insert_block( "auction_stacks", array('A'=> $a));
           $this->page->insert_block( "future_auction_zones", array('A'=> $a, 'AUCTION'=>clienttranslate("Auction"), 'COLOR'=> 'a'.$a));
         }
         
-        $this->page->begin_block( "homesteaders_homesteaders", "train_advancement");
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "train_advancement");
         for ($i=0; $i<6; $i++){
           $this->page->insert_block( "train_advancement", array('I'=> $i) ); 
         }
 
-        $this->page->begin_block( "homesteaders_homesteaders", "trade_option");
+        $this->page->begin_block( $this->getGameName()."_"+$this->getGameName(), "trade_option");
         for ($i=0; $i < 12; $i++){
           $this->page->insert_block( "trade_option", array('OPTION'=> $this->game->trade_map[$i])); 
         }

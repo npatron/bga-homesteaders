@@ -164,13 +164,20 @@ class HSDBid extends APP_GameClass
     }
 
     function getValidBids($p_id) {
+        $bid_start = 1;
+        $bid_end = 19;
         $player_count = $this->game->getPlayersNumber();
-        if ($player_count == 4){
-            $valid_bids = range(1,29);
-        } else {
-            $valid_bids = range(1,19);
+        if ($player_count == 5){
+            if ($this->game->Auction->isAuctionInCurrentAuctions(BID_A4_B6)){
+                $bid_end = 29;// "no auction" auction.
+            } else {
+                $bid_end = 39;    
+            }
+        } else if ($player_count == 4){
+            $bid_end = 29;
         }
-        $valid_bids = \array_diff($valid_bids, [OUTBID, BID_PASS]); // remove outbid & pass
+        $valid_bids = range($bid_start, $bid_end);
+        $valid_bids = \array_diff($valid_bids, [OUTBID, BID_PASS, 30]); // remove outbid & pass
         $bids = $this->game->getObjectListFromDB( "SELECT `bid_loc` FROM `bids`" );
         $offset = 0;
         if ($this->game->Building->doesPlayerOwnBuilding($p_id, BLD_LAWYER)){

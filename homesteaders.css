@@ -123,24 +123,16 @@
    color: purple;
 }
 .auc1{
-   text-decoration: underline 3px;
-   -webkit-text-decoration-color: lightseagreen;
-   text-decoration-color: lightseagreen;
+   text-decoration: underline lightseagreen 3px;
 }
 .auc2{
-   text-decoration: underline 3px;
-   -webkit-text-decoration-color: orange;
-   text-decoration-color: orange;
+   text-decoration: underline orange 3px;
 }
 .auc3{
-   text-decoration: underline 3px;
-   -webkit-text-decoration-color: hotpink;
-   text-decoration-color: hotpink;
+   text-decoration: underline hotpink 3px;
 }
 .auc4{
-   text-decoration: underline 3px;
-   -webkit-text-decoration-color: purple;
-   text-decoration-color: purple;
+   text-decoration: underline purple 3px;
 }
 .auction_column .auction_string{
    font-size: 30px;
@@ -645,24 +637,19 @@ div#sell_board{
    grid-column: span 2;
    border-radius: 6px;
 }
-#trbuy_buy_wood, #trbuy_buy_food, #trade_buy_wood, #trade_buy_food,
-#trsel_sell_wood, #trsel_sell_food, #trade_sell_wood, #trade_sell_food{
+[id^=tr][id$=_wood], [id^=tr][id$=_food]{
    top: 21%;
 }
-#trbuy_buy_steel, #trbuy_buy_gold, #trade_buy_steel, #trade_buy_gold,
-#trsel_sell_steel, #trsel_sell_gold, #trade_sell_steel, #trade_sell_gold{
+[id^=tr][id$=_steel], [id^=tr][id$=_gold]{
    top: 40.5%;
 }
-#trbuy_buy_copper, #trbuy_buy_cow, #trade_buy_copper, #trade_buy_cow,
-#trsel_sell_copper, #trsel_sell_cow, #trade_sell_copper, #trade_sell_cow{
+[id^=tr][id$=_copper], [id^=tr][id$=_cow]{
    top: 60%;
 }
-#trbuy_buy_wood, #trbuy_buy_steel, #trbuy_buy_copper, 
-#trsel_sell_wood, #trsel_sell_steel, #trsel_sell_copper{
+[id^=tr][id$=_wood], [id^=tr][id$=_steel], [id^=tr][id$=_copper]{
    right: 50.5%;
 }
-#trbuy_buy_food, #trbuy_buy_gold, #trbuy_buy_cow, 
-#trsel_sell_food, #trsel_sell_gold, #trsel_sell_cow{
+[id^=tr][id$=_food], [id^=tr][id$=_gold],[id^=tr][id$=_cow]{
    left: 50.5%;
 }
 #trade_buy_wood, #trade_buy_steel, #trade_buy_copper{
@@ -829,69 +816,69 @@ div#sell_board{
 /** Player Borders */
 .border_yellow {
    border-color:yellow;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_blue {
    border-color:blue;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_green {
    border-color:green;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_red {
    border-color: red;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_purple {
    border-color:purple;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 /* TileZone Borders */
 .border_black {
    border-color:black;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_gray {
    border-color: gray;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_white {
    border-color: white;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 /* auction borders */
 .border_a1{
    border-color:lightseagreen;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_a2{
    border-color:orange;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_a3{
    border-color:hotpink;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 .border_a4{
    border-color:purple;
-   border-radius: 2px;
+   border-radius: 6px;
    border-style: solid;
 }
 
 .tile_tip {
-   border-radius:4px;
+   border-radius: 6px;
    width:200px;
    border-style: solid;
    border-width: 3px;
@@ -1259,6 +1246,9 @@ div#sell_board{
 }
 .tt_container .font:not(.bold){
    font-size: 15px;
+}
+.tt_container .font:not(.bold):not(:last-child){
+   margin-bottom: 0px;
 }
 .tt_break, .tt_dot {
    width: 100%; 
@@ -1660,10 +1650,22 @@ div#sell_board{
 }
 .tt_container .worker_slot{
    background-image: url('img/drawn_tokens_2.png');
-   background-size: 361px 108.2px;
-   background-position: -125px -73px;
+   background-size: 1100%;
+   background-position: 38% 98%;
    width: 33px;
    height: 35px;
+   position: unset;
+   left: unset;
+   bottom: unset;
+   max-width: unset;
+   display: inline-flex;
+}
+.dijitTooltipContainer .worker_slot {
+   background-image: url('img/drawn_tokens_2.png');
+   background-size: 1100%;
+   background-position: 38% 98%;
+   width: 20px;
+   height: 25px;
    position: unset;
    left: unset;
    bottom: unset;
@@ -1742,11 +1744,12 @@ div#sell_board{
    border-width: 0px;
 }
 .w_slot .slot_17_1{
-   width: 33px;
+   background-position: 37% 99%;
+   width: 32px;
 }
 .w_slot .slot_17_2{
-   background-position: -132px -73px;
-   width: 33px;
+   background-position: 40% 99%;
+   width: 32px;
 }
 .w_slot [id^="slot_"][id$="_3"] {
    width: 65px;

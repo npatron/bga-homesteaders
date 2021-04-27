@@ -102,6 +102,12 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
+  public function actionCancel() {
+    self::setAjaxMode();
+    $this->game->playerActionCancel();
+    self::ajaxResponse();
+  }
+
   // bid actions
   public function confirmBid (){
     self::setAjaxMode( );
