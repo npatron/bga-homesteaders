@@ -63,6 +63,14 @@ $this->translation_strings = array(
   10=> clienttranslate('You can not afford to build this building'),
   11=> clienttranslate('You can afford to build this building (trades required)'),
   12=> clienttranslate('You can afford to build this building'),
+  15=> clienttranslate('Show Upcoming Buildings'), 
+  16=> clienttranslate('Show Current Buildings'),
+  17=> clienttranslate('Show Upcoming Auctions'), 
+  18=> clienttranslate('Show Building Discard'),
+  20=> clienttranslate('Hide Upcoming Buildings'), 
+  21=> clienttranslate('Hide Current Buildings'),
+  22=> clienttranslate('Hide Upcoming Auctions'), 
+  23=> clienttranslate('Hide Building Discard'),
 );
 
 $this->resource_info = array(
@@ -416,7 +424,7 @@ $this->building_info = array_merge(
     'vp_b' => VP_B_TRACK,
     'amt'  => 2,
    ),
-   BLD_RESTARAUNT => array(
+   BLD_RESTAURANT => array(
     'name' => clienttranslate("Restaraunt"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,

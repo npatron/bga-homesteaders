@@ -646,10 +646,14 @@ div#sell_board{
 [id^=tr][id$=_copper], [id^=tr][id$=_cow]{
    top: 60%;
 }
-[id^=tr][id$=_wood], [id^=tr][id$=_steel], [id^=tr][id$=_copper]{
+[id^=tr][id$=_wood]:not([id^=trade]),
+[id^=tr][id$=_steel]:not([id^=trade]),
+[id^=tr][id$=_copper]:not([id^=trade]){
    right: 50.5%;
 }
-[id^=tr][id$=_food], [id^=tr][id$=_gold],[id^=tr][id$=_cow]{
+[id^=tr][id$=_food]:not([id^=trade]), 
+[id^=tr][id$=_gold]:not([id^=trade]),
+[id^=tr][id$=_cow] :not([id^=trade]){
    left: 50.5%;
 }
 #trade_buy_wood, #trade_buy_steel, #trade_buy_copper{
@@ -746,7 +750,7 @@ div#sell_board{
 .future_auction_zone {
    display: grid;
    order: 2;
-   flex-grow: 10;
+   /* flex-grow: 10; */
 }
 .break {
    flex-basis: 100%;
@@ -781,6 +785,7 @@ div#sell_board{
   background-color: gray;
   opacity: .4;
   top: 0px;
+  border-radius: 6px;
 }
 .building_container .building_tile {
    border-style: dashed;
@@ -1171,10 +1176,16 @@ div#sell_board{
    height: 38px;
 }
 .player_steel, .log_big_steel {
-   background-size: 520px 156px;
-   background-position: -113px -113px;
-   width: 41px;
+   width: 40px;
    height: 40px;
+}
+.log_steel{
+   width: 20px;
+   height: 20px;
+}
+.log_steel, .log_big_steel, .player_steel{
+   background-size: 1200%;
+   background-position: 23.5% -38%;
 }
 .player_gold, .log_big_gold{
    background-size: 435px 130.5px;
@@ -1340,14 +1351,15 @@ div#sell_board{
    flex-direction: row-reverse;
    filter: drop-shadow(0px 0px 1px #000000);
 }
-.log_token:not(:last-child) {
+.log_token:not(:last-child), .log_container .token_inline:not(:last-child) {
    margin-left: -10px;
  }
- .log_wood.log_token:not(:last-child) {
+ .log_wood.log_token:not(:last-child), .log_container .log_wood.token_inline:not(:last-child) {
    margin-left: -3px;
  }
-.tt_container .log_token:not(:last-child), #breadcrumb_bldCost .log_token:not(:last-child) {
-   margin-left: -0px;
+ .tt_container .log_token:not(:last-child), #breadcrumb_bldCost .log_token:not(:last-child), 
+ .tt_container .token_inline:not(:last-child), #breadcrumb_bldCost .log_token:not(:last-child) {
+       margin-left: -0px;
 }
 .log_wood{
    background-size: 200px 60px;
@@ -1468,23 +1480,18 @@ div#sell_board{
    width: 30px;
    height: 20px;
 }
+.log_track, .log_big_track{
+   background-position: -94.5% -37%;
+}
 .log_track{
    background-size: 259.7px 77.9px;
-   background-position: -33.5px -56px;
    width: 20px;
    height: 20px;
 }
 .log_big_track{
-   background-size: 520px 156px;
-   background-position: -67px -132px;
+   background-size: 520px 156px;;
    width: 40px;
    height: 40px;
-}
-.log_steel{
-   background-size: 259.7px 77.9px;
-   background-position: -56.6px -56.1px;
-   width: 21px;
-   height: 20px;
 }
 .log_arrow{
    background-size: 689.7px 206.9px;

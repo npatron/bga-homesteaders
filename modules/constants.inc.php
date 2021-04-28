@@ -2,6 +2,7 @@
 
   // game options.
   define("SHOW_PLAYER_INFO", 100);
+  define("RAIL_NO_BUILD", 101);
   // statuses
   define("DISABLED",      0);
   define("ENABLED",       1);
@@ -160,8 +161,6 @@
   define("AUC_BONUS_TRACK_RAIL_ADV",  9);
   define("AUC_BONUS_4DEPT_FREE",     10);
   define("AUC_BONUS_3VP_SELL_FREE",  11);
-
- ]
 
   // Bid location mapping
   define("NO_BID",     0);
