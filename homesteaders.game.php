@@ -754,6 +754,7 @@ class homesteaders extends Table
                 $this->Resource->updateAndNotifyIncome($active_p_id, 'trade', 1, $b_name, 'building', $b_key);
                 $this->Log->updateResource($active_p_id, 'trade', 1);
                 $this->gamestate->nextState("auction_bonus");
+            break;
             case BUILD_BONUS_RAIL_ADVANCE:
                 $this->Resource->getRailAdv($active_p_id, $b_name, 'building', $b_key);
                 $this->setGameStateValue('phase', PHASE_BLD_BONUS);
