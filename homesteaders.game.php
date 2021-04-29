@@ -292,6 +292,7 @@ class homesteaders extends Table
 
     public function playerDonePlacingWorkers (){
         $p_id = $this->getCurrentPlayerId();
+        $this->Log->donePlacing($p_id);
         $this->Resource->collectIncome($p_id);
         $this->gamestate->setPlayerNonMultiactive( $p_id , 'auction' );
     }
@@ -312,7 +313,6 @@ class homesteaders extends Table
     public function playerPassBid(){
         $this->checkAction( "pass" );
         $this->Bid->passBid();
-        $this->Log->passBid($this->getActivePlayerId());
         $this->setGameStateValue('phase', PHASE_BID_PASS );
         $this->gamestate->nextState( "rail" );
     }
@@ -358,9 +358,23 @@ class homesteaders extends Table
         }
     }
 
+    /**
+     * used for playerPay to handle pay workers.
+     * it will check if player has already paid, 
+     * then if not it will deduct the cost from them, 
+     * then it will either 
+     * - set them nonMultiactive (pay_workers state)
+     * - or update the client, so the pay button will be hidden.
+     *  (setPaid will prevent it from being shown on refresh)
+     * @var gold  represents amount of gold player wishes to use to pay (may be 0)
+     * @var early represents if this is being called while still in allocate workers state (as flow is different)
+     */
     public function payWorkers($gold, $early=false) {
         if (!$early){
             $this->checkAction( "done" );
+        }
+        if ($gold <0){ 
+            throw new BgaUserException ( clienttranslate("cannot have negative gold value"));
         }
         $cur_p_id = $this->getCurrentPlayerId();
         if ($this->Resource->getPaid($cur_p_id) == 0){ // to prevent charging twice.
@@ -375,7 +389,8 @@ class homesteaders extends Table
             $this->notifyPlayer($cur_p_id, 'workerPaid', "", array());
         }
     }
-
+    
+    /** used for playerPay */
     public function payAuction($gold) {
         $this->checkAction( "done" );
         $act_p_id = $this->getActivePlayerId();
@@ -489,6 +504,22 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
+    public function playerActionCancel() {
+        $this->gamestate->checkPossibleAction('actionCancel');
+        $p_id = $this->getCurrentPlayerId();
+        $this->gamestate->setPlayersMultiactive(array ($p_id), 'error', false);
+        $this->Log->cancelWorkerIncomePhase($p_id);
+        $this->Resource->setIncomePaid($p_id, 0);
+        $this->Resource->setPaid($p_id, 0);
+    }
+
+    public function playerCancelBidPass () {
+        $this->checkAction('undo');
+        $this->Bid->cancelPass();
+        $this->Log->cancelPass();
+        $this->gamestate->nextState('undoPass');
+    }
+
     /*
      * restartTurn: called when a player decide to go back at the beginning of the player build phase
      */
@@ -569,7 +600,8 @@ class homesteaders extends Table
 
     function argRailBonus() {
         $rail_options= $this->Resource->getRailAdvBonusOptions($this->getActivePlayerId());
-        return array("rail_options"=>$rail_options);
+        $can_undo = ($this->getGameStateValue('phase') == PHASE_BID_PASS);
+        return array("rail_options"=>$rail_options, "can_undo"=>$can_undo);
     }
 
     function argAuctionCost() {

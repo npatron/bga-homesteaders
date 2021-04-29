@@ -153,6 +153,12 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
+  public function cancelBidPass() {
+    self::setAjaxMode();
+    $this->game->playerCancelBidPass( );
+    self::ajaxResponse( );
+  }
+
   public function passBuildingBonus() {
     self::setAjaxMode( );
     $this->game->playerPassBuildingBonus( );

@@ -55,8 +55,8 @@ function (dojo, declare) {
     const VP       = 10;
     const SILVER   = 11;
     const LOAN     = 12;
-    const RESOURCES = {'wood':WOOD, 'steel':STEEL, 'gold':GOLD, 'copper':COPPER, 'food':FOOD, 'cow':COW,
-        'trade':TRADE, 'track':TRACK, 'worker':WORKER, 'vp':VP, 'silver':SILVER, 'loan':LOAN};
+    const RESOURCES = {'wood':1, 'steel':2, 'gold':3, 'copper':4, 'food':5, 'cow':6,
+        'trade':7, 'track':8, 'worker':9, 'vp':10, 'silver':11, 'loan':12};
 
     const ZONE_PENDING = -1;
     const ZONE_PASSED = -2;
@@ -117,6 +117,9 @@ function (dojo, declare) {
     const MARKET_FOOD_DIVID  = 'trade_market_wood_food';
     const MARKET_STEEL_DIVID = 'trade_market_food_steel';
     const BANK_DIVID         = 'trade_bank_trade_silver';
+    const BONUS_OPTIONS = { 7:'train_bonus_1_trade', 8:'train_bonus_2_track', 9:'train_bonus_3_worker',
+        1:'train_bonus_4_wood', 5:'train_bonus_4_food', 2:'train_bonus_4_steel', 3:'train_bonus_4_gold',
+        4:'train_bonus_4_copper', 6:'train_bonus_4_cow', 10:'train_bonus_5_vp'};
 
     const TRADE_BOARD_ID = 'trade_board';
     const BUY_BOARD_ID = 'buy_board';
@@ -224,6 +227,7 @@ function (dojo, declare) {
             this.show_player_info = false;
             this.goldAsCopper = false;
             this.goldAsCow = false;
+            this.undoPay = false;
         },
         
         /*
@@ -533,7 +537,7 @@ function (dojo, declare) {
         
         formatWorkerSlotTooltip(b_info, slot_no){
             var tt = '<span class="worker_slot"></span>';
-            if (slot_no == 3) { tt += this.getOneResourceHtml('worker_slot'); }
+            if (slot_no == 3) { tt += '<span class="worker_slot"></span>'; }
             tt += " " + this.getOneResourceHtml('inc_arrow',1,true) + " " + this.getResourceArrayHtml(b_info['s'+slot_no], true);
             return tt;
         },
@@ -881,7 +885,6 @@ function (dojo, declare) {
             } else if (!this.isSpectator) {
                 switch( stateName ) {
                     case 'allocateWorkers':
-                //  case '':
                         var methodName = "onUpdateActionButtons_" + stateName + "_notActive";
                         console.log('Calling ' + methodName, args);
                         this[methodName](args);
@@ -910,7 +913,7 @@ function (dojo, declare) {
         },
         // -non-active-
         onUpdateActionButtons_allocateWorkers_notActive(args){
-            if (args.paid[this.player_id].has_paid==0 && this.showPay){
+            if ((args.paid[this.player_id].has_paid==0 || this.undoPay) && this.showPay){
                 this.allowTrade = true;
                 this.silverCost = this.getPlayerWorkerCount(this.player_id);
                 this.goldAmount = 0;
@@ -918,10 +921,10 @@ function (dojo, declare) {
                 this.addTradeActionButton();
                 this.setOffsetForPaymentButtons();
             } 
-            /*if (!(dojo.query( `#button_unpass`).length == 1)){
-                this.addActionButton('button_unpass', _('undo'), 'onUnPass');
-                dojo.place('button_unpass', 'generalactions', 'first');    
-            }*/
+            if (dojo.query('#button_unpass').length !=1){
+                this.addActionButton('button_unpass', _('undo'), 'onUnPass', null, false, 'red');
+                dojo.place('button_unpass', 'generalactions', 'first');
+            }
         },
 
         onUpdateActionButtons_payWorkers: function(){
@@ -950,33 +953,23 @@ function (dojo, declare) {
             this.addActionButton( 'btn_pass',    _('Pass'),    'passBidButton', null, false, 'red' );
         },
         onUpdateActionButtons_getRailBonus: function(args){
-            this.last_selected['bonus']  ="";
-            const bonus_ids = new Array();
-            bonus_ids.push('train_bonus_1_trade');
-            if (args.rail_options.includes(TRACK)){
-                bonus_ids.push('train_bonus_2_track');
-            } if (args.rail_options.includes(WORKER)){
-                bonus_ids.push('train_bonus_3_worker');
-            } if (args.rail_options.includes(WOOD)){
-                bonus_ids.push('train_bonus_4_wood');
-            } if (args.rail_options.includes(FOOD)){
-                bonus_ids.push('train_bonus_4_food');
-            } if (args.rail_options.includes(STEEL)){
-                bonus_ids.push('train_bonus_4_steel');
-            } if (args.rail_options.includes(GOLD)){
-                bonus_ids.push('train_bonus_4_gold');
-            } if (args.rail_options.includes(COPPER)){
-                bonus_ids.push('train_bonus_4_copper');
-            } if (args.rail_options.includes(COW)){
-                bonus_ids.push('train_bonus_4_cow');
-            } if (args.rail_options.includes(VP)){
-                bonus_ids.push('train_bonus_5_vp');
+            if (args.can_undo){
+                this.addActionButton( 'btn_undo_pass', _('undo'), 'onUndoBidPass', null, false, 'red');
             }
-            for(let i in bonus_ids){
-                const id = bonus_ids[i];
-                dojo.addClass(id,'selectable');
+            this.last_selected.bonus  ="";
+            for(let i in args.rail_options){
+                let type = this.getKeyByValue(RESOURCES, args.rail_options[i]);
+                const id = BONUS_OPTIONS[args.rail_options[i]];
+                dojo.addClass(id, 'selectable');
+                if (type == 'vp'){
+                    this.addActionButton( `btn_bonus_${type}`, this.tkn_html.vp3, 'selectBonusButton', null, false, 'gray');
+                } else {
+                    this.addActionButton( `btn_bonus_${type}`, this.tkn_html[type], 'selectBonusButton', null, false, 'gray');
+                }
+                
             }
             this.addActionButton( 'btn_choose_bonus', _('Choose Bonus'), 'doneSelectingBonus');
+            dojo.addClass('btn_choose_bonus', 'noshow');
         },
         onUpdateActionButtons_payAuction: function(args){
             this.showPay = true;
@@ -2584,8 +2577,20 @@ function (dojo, declare) {
             }, function( is_error) { } );
         },
         
-        onUnPass: function () {
-            this.ajaxcall("/" + this.game_name + "/" +  this.game_name + "/actionCancel.html", {}, this); // no checkAction!
+        onUnPass: function (evt) {
+            this.ajaxcall("/" + this.game_name + "/" +  this.game_name + "/actionCancel.html", {}, this, function( result ) {
+                this.showPay = true;
+                this.undoPay = true;
+            }); 
+            // no checkAction! (because player is not active)
+        },
+
+        onUndoBidPass: function (evt) {
+            this.undoTransactionsButton();
+            if( this.checkAction( 'undo' )){
+                this.ajaxcall( "/" + this.game_name + "/" +  this.game_name + "/cancelBidPass.html", {lock: true}, this, 
+                function( result ) {}, function( is_error) { } ); 
+            }
         },
 
         onClickOnWorker: function( evt )
@@ -2648,7 +2653,10 @@ function (dojo, declare) {
          * be careful...
          */
         removeButtons: function () {
-            dojo.query(`#generalactions .bgabutton`).destroy();
+            let buttons = dojo.query(`#generalactions .bgabutton`);
+            for (let i in buttons){
+                this.fadeOutAndDestroy(buttons[i].id);
+            }
         },
 
         /***** PAY WORKERS PHASE *****/
@@ -2658,7 +2666,7 @@ function (dojo, declare) {
         
         /***** PAY WORKERS or PAY AUCTION PHASE *****/
         donePay: function( ){
-            if (this.allowTrade){
+            if (this.allowTrade || this.checkAction( 'done')){
                 if (!this.validPay()){
                     this.showMessage( _("You can't afford to pay, make trades or take loans"), 'error' );
                     return;
@@ -2667,24 +2675,7 @@ function (dojo, declare) {
                 if (this.transactionLog.length >0){ // makeTrades first.
                     this.ajaxcall( "/" + this.game_name + "/" +  this.game_name + "/trade.html", { 
                         lock: true, 
-                        allowTrade:true,
-                        trade_action: this.transactionLog.join(',')
-                     }, this, function( result ) {
-                        this.clearTransactionLog();
-                        this.ajaxCallDonePay(args);
-                     }, function( is_error) {});    
-                } else { // if no trades, just pay.
-                    this.ajaxCallDonePay(args);
-                }
-            } else if (this.checkAction( 'done')){
-                if (!this.validPay()){
-                    this.showMessage( _("You can't afford to pay, make trades or take loans"), 'error' );
-                    return;
-                }
-                let args = {gold: this.goldAmount, lock: true};
-                if (this.transactionLog.length >0){ // makeTrades first.
-                    this.ajaxcall( "/" + this.game_name + "/" +  this.game_name + "/trade.html", { 
-                        lock: true, 
+                        allowTrade:this.allowTrade,
                         trade_action: this.transactionLog.join(',')
                      }, this, function( result ) {
                         this.clearTransactionLog();
@@ -2707,6 +2698,10 @@ function (dojo, declare) {
                     this.goldAmount = 0;
                     this.disableTradeIfPossible();
                     this.allowTrade = false;
+                    if (this.currentState == "allocateWorkers"){
+                        this.addActionButton('button_unpass', _('undo'), 'onUnPass', null, false, 'red');
+                        dojo.place('button_unpass', 'generalactions', 'first');
+                    }
                 }, function( is_error) { } );
         },
 
@@ -2790,11 +2785,13 @@ function (dojo, declare) {
 
         /***** CHOOSE BONUS OPTION *****/
         onSelectBonusOption: function( evt ){
+            //console.log('onSelectBonusOption', evt);
             evt.preventDefault();
             dojo.stopEvent( evt );
             if( !dojo.hasClass(evt.target.id,'selectable')){ return; }
             if( this.checkAction( 'chooseBonus' )) {
-                this.updateSelected('bonus', evt.target.id);
+                let type = evt.target.id.split('_')[3];
+                this.updateSelectedBonus(type);
             }
         },
 
@@ -2813,6 +2810,37 @@ function (dojo, declare) {
                         this.clearSelectable('bonus', true);}, 
                     function( is_error) { } ); 
             }
+        },
+
+        selectBonusButton: function( evt ) {
+            //console.log('selectBonusButton', evt);
+            if (this.checkAction( 'chooseBonus' )){
+                let target_id = (evt.target.id?evt.target.id:evt.target.parentNode.id);
+                let type = target_id.split("_")[2];
+                this.updateSelectedBonus(type);
+            }
+        },
+         
+        updateSelectedBonus: function(type){
+            //console.log(type);
+            let btn_id = `btn_bonus_${type}`;
+            let option_id = BONUS_OPTIONS[RESOURCES[type]];
+            if (this.last_selected.bonus ==''){
+                dojo.addClass(btn_id, 'bgabutton_blue');
+                dojo.removeClass(btn_id, 'bgabutton_gray');
+                dojo.removeClass('btn_choose_bonus', 'noshow');
+            } else if (this.last_selected.bonus == option_id) { //this was selected
+                dojo.removeClass(btn_id, 'bgabutton_blue');
+                dojo.addClass(btn_id, 'bgabutton_gray');
+                dojo.addClass('btn_choose_bonus', 'noshow');
+            } else { //other thing was selected.
+                let lastSelected_id =  `btn_bonus_${this.last_selected.bonus.split('_')[3]}`;
+                dojo.removeClass(lastSelected_id, 'bgabutton_blue');
+                dojo.addClass(lastSelected_id, 'bgabutton_gray');
+                dojo.addClass(btn_id, 'bgabutton_blue');
+                dojo.removeClass(btn_id, 'bgabutton_gray');
+            }
+            this.updateSelected('bonus', option_id);
         },
 
         /***** BUILD BUILDING PHASE *****/
@@ -4067,7 +4095,6 @@ function (dojo, declare) {
         },
 
         notif_cancel: function( notif ){
-            //console.log('notif_cancel');
             const p_id = notif.args.player_id;
             const updateResource = (p_id == this.player_id) || this.show_player_info;
             const player_zone = this.player_score_zone_id[p_id];
@@ -4159,6 +4186,9 @@ function (dojo, declare) {
                                 }
                             }
                         }
+                    break;
+                    case 'passBid':
+                        this.moveBid(p_id, log.last_bid);
                     break;
                 }
             }
