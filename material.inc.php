@@ -425,7 +425,7 @@ $this->building_info = array_merge(
     'amt'  => 2,
    ),
    BLD_RESTAURANT => array(
-    'name' => clienttranslate("Restaraunt"),
+    'name' => clienttranslate("Restaurant"),
     'stage'=> STAGE_CITY,
     'type' => TYPE_COMMERCIAL,
     'cost' => array('cow'=>1,'wood'=>1),

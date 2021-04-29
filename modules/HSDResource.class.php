@@ -34,7 +34,7 @@ class HSDResource extends APP_GameClass
         $this->game->DbQuery( "UPDATE `resources` SET `$type`=$type + $amount WHERE `player_id`= '$p_id'");
     }
 
-    // Payment toggles, (for pay worker state).
+    // Payment toggles, (for pay states).
     function getPaid($p_id){
         return $this->game->getUniqueValueFromDB( "SELECT `paid` FROM `resources` WHERE `player_id`='$p_id'" ); 
     }

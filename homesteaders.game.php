@@ -662,7 +662,6 @@ class homesteaders extends Table
     function stPayWorkers() 
     {
         $resources = $this->getCollectionFromDB( "SELECT `player_id`, `workers`, `gold`, `silver`, `trade`, `paid` FROM `resources` " );
-        $autoPayPlayers = $this->getCollectionFromDB( "SELECT `player_id`, `use_silver` FROM `player`");
         $pendingPlayers = array();
         foreach($resources as $p_id => $player){
             if ($this->Resource->getPaid($p_id)) continue;
