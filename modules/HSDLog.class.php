@@ -238,7 +238,7 @@ class HSDLog extends APP_GameClass
   // BID Actions
   public function passBid($p_id, $last_bid)
   {
-    $this->insert($p_id, 0, 'passBid', array('last_bid'=>$last_bid));
+    $this->insert($p_id, $last_bid, 'passBid');
   }
 
   public function outbidPlayer($outbid_p_id, $outbidding_p_id)

@@ -953,12 +953,15 @@ function (dojo, declare) {
             this.addActionButton( 'btn_pass',    _('Pass'),    'passBidButton', null, false, 'red' );
         },
         onUpdateActionButtons_getRailBonus: function(args){
+            if (args.can_undo){
+                this.addActionButton( 'btn_undo_pass', _('undo'), 'onUndoBidPass', null, false, 'red');
+            }
             this.last_selected.bonus  ="";
             for(let i in args.rail_options){
                 let type = this.getKeyByValue(RESOURCES, args.rail_options[i]);
                 const id = BONUS_OPTIONS[args.rail_options[i]];
                 dojo.addClass(id, 'selectable');
-                if (type == VP){
+                if (type == 'vp'){
                     this.addActionButton( `btn_bonus_${type}`, this.tkn_html.vp3, 'selectBonusButton', null, false, 'gray');
                 } else {
                     this.addActionButton( `btn_bonus_${type}`, this.tkn_html[type], 'selectBonusButton', null, false, 'gray');
@@ -967,9 +970,6 @@ function (dojo, declare) {
             }
             this.addActionButton( 'btn_choose_bonus', _('Choose Bonus'), 'doneSelectingBonus');
             dojo.addClass('btn_choose_bonus', 'noshow');
-            if (args.can_undo){
-                this.addActionButton( 'btn_undo_pass', _('undo'), 'onUndoBidPass', null, false, 'red');
-            }
         },
         onUpdateActionButtons_payAuction: function(args){
             this.showPay = true;
@@ -2785,7 +2785,7 @@ function (dojo, declare) {
 
         /***** CHOOSE BONUS OPTION *****/
         onSelectBonusOption: function( evt ){
-            console.log('onSelectBonusOption', evt);
+            //console.log('onSelectBonusOption', evt);
             evt.preventDefault();
             dojo.stopEvent( evt );
             if( !dojo.hasClass(evt.target.id,'selectable')){ return; }
@@ -2813,7 +2813,7 @@ function (dojo, declare) {
         },
 
         selectBonusButton: function( evt ) {
-            console.log('selectBonusButton', evt);
+            //console.log('selectBonusButton', evt);
             if (this.checkAction( 'chooseBonus' )){
                 let target_id = (evt.target.id?evt.target.id:evt.target.parentNode.id);
                 let type = target_id.split("_")[2];
@@ -2822,7 +2822,7 @@ function (dojo, declare) {
         },
          
         updateSelectedBonus: function(type){
-            console.log(type);
+            //console.log(type);
             let btn_id = `btn_bonus_${type}`;
             let option_id = BONUS_OPTIONS[RESOURCES[type]];
             if (this.last_selected.bonus ==''){
@@ -4095,7 +4095,6 @@ function (dojo, declare) {
         },
 
         notif_cancel: function( notif ){
-            console.log('notif_cancel', notif);
             const p_id = notif.args.player_id;
             const updateResource = (p_id == this.player_id) || this.show_player_info;
             const player_zone = this.player_score_zone_id[p_id];
@@ -4189,7 +4188,7 @@ function (dojo, declare) {
                         }
                     break;
                     case 'passBid':
-                        this.moveBid(p_id, NO_BID);
+                        this.moveBid(p_id, log.last_bid);
                     break;
                 }
             }
