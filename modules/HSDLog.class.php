@@ -268,7 +268,7 @@ class HSDLog extends APP_GameClass
    *   for undo auctionBuild undo:   afterAction = 'winAuction' 
    *   for undo after worker income: afterAction = 'donePlacing'
    */
-  public function getLastActions($p_id, $actions = ['build', 'trade', 'loan', 'gainTrack', 'gainWorker', 'railAdv', 'updateResource'], $afterAction = 'winAuction')
+  public function getLastActions($p_id, $actions = ['build', 'trade', 'loan', 'gainTrack', 'gainWorker', 'railAdv', 'updateResource', 'loanPaid'], $afterAction = 'winAuction')
   {
     $actionsNames = "'" . implode("','", $actions) . "'";
     $sql = "SELECT * FROM `log` WHERE `action` IN ($actionsNames) AND `player_id` = '$p_id' AND log_id >= (SELECT `log_id` FROM `log` WHERE `player_id` = '$p_id' AND `action` = '$afterAction' ORDER BY log_id DESC LIMIT 1) ORDER BY `log_id` DESC";
@@ -318,7 +318,7 @@ class HSDLog extends APP_GameClass
    */
   public function cancelWorkerIncomePhase($p_id)
   {
-    $logs = $this->getLastActions($p_id, ['updateResource','donePlacing'], 'donePlacing');
+    $logs = $this->getLastActions($p_id, ['updateResource','donePlacing', 'loanPaid'], 'donePlacing');
     $transactions = $this->cancelLogs($p_id, $logs);
     $this->game->notifyAllPlayers('cancel', clienttranslate('${player_name} un-does income'), array(
       'player_name' => $this->game->getPlayerName($p_id),
@@ -330,7 +330,7 @@ class HSDLog extends APP_GameClass
   public function cancelPass()
   {
     $p_id = $this->game->getActivePlayerId();
-    $logs = $this->getLastActions($p_id, ['railAdv', 'gainTrack', 'updateResource', 'passBid'], 'passBid');
+    $logs = $this->getLastActions($p_id, ['railAdv', 'gainTrack', 'updateResource', 'loanPaid', 'passBid'], 'passBid');
     $transactions = $this->cancelLogs($p_id, $logs);
     $this->game->notifyAllPlayers('cancel', '', array(
       'actions' => $transactions['action'],

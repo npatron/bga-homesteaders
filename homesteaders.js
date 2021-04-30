@@ -1790,10 +1790,10 @@ function (dojo, declare) {
                     if (b_id == BLD_RODEO){
                         this.income_arr[b_id].silver = Math.min(5, this.getPlayerWorkerCount(this.player_id));
                     } else if (b_id == BLD_BANK){
-                        if (this.board_resourceCounters[this.player_id][loan].getValue() == 0){
-                            this.income_arr[b_id].silver = 2;
+                        if (this.board_resourceCounters[this.player_id].loan.getValue() == 0){
+                            this.addOrSetArrayKey(this.income_arr[b_id], 'silver', 2);
                         } else {
-                            this.income_arr[b_id].loan = -1;
+                            this.addOrSetArrayKey(this.income_arr[b_id], 'loan', -1);
                         }
                     } else {
                         for(let type in this.building_info[b_id].inc){
@@ -2579,6 +2579,12 @@ function (dojo, declare) {
         
         onUnPass: function (evt) {
             this.ajaxcall("/" + this.game_name + "/" +  this.game_name + "/actionCancel.html", {}, this, function( result ) {
+                this.income_arr= [];
+                this.clearOffset();
+                this.clearTransactionLog();
+                this.resetTradeValues();
+                this.destroyPaymentBreadcrumb();
+                this.setOffsetForIncome();
                 this.showPay = true;
                 this.undoPay = true;
             }); 
@@ -4095,6 +4101,7 @@ function (dojo, declare) {
         },
 
         notif_cancel: function( notif ){
+            console.log('notif_cancel', notif);
             const p_id = notif.args.player_id;
             const updateResource = (p_id == this.player_id) || this.show_player_info;
             const player_zone = this.player_score_zone_id[p_id];

@@ -526,7 +526,6 @@ class homesteaders extends Table
     public function playerCancelPhase () {
         $this->checkAction('undo');
         // undo all actions since beginning of STATE_PAY_AUCTION
-
         $this->Log->cancelPhase();
         $this->gamestate->nextState('undoTurn');
     }
@@ -537,7 +536,7 @@ class homesteaders extends Table
 
         $p_id = $this->getCurrentPlayerId();
         $transactions = $this->Log->getLastTransactions($p_id);
-        if ($transactions == null) {
+        if (is_null($transactions)) {
             throw new BgaUserException(clienttranslate("You have nothing to cancel"));
         }
 
@@ -564,7 +563,6 @@ class homesteaders extends Table
         $cur_p_id = $this->getCurrentPlayerId();
         $this->gamestate->setPlayerNonMultiactive($cur_p_id, "" );
     }
-    
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
 ////////////

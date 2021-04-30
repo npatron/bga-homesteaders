@@ -244,7 +244,11 @@ class HSDBuilding extends APP_GameClass
             $name = $income['name'];
             $b_key = $income['key'];
             $income = array_diff_key($income, array_flip(['name','key']));
-            $this->game->Resource->updateAndNotifyIncomeGroup($p_id, $income, $name, 'building', $b_key);
+            if (array_key_exists('loan', $income) && $income['loan'] == -1){
+                $this->game->Resource->freePayOffLoan($p_id, $name, 'building', $b_key);
+            } else {
+                $this->game->Resource->updateAndNotifyIncomeGroup($p_id, $income, $name, 'building', $b_key);
+            }
         }
     }
 

@@ -257,7 +257,6 @@ class HSDResource extends APP_GameClass
             $this->updateAndNotifyIncome($p_id, 'silver', 2, $reason_string, $origin, $key);
         } else {
             $this->freePayOffLoan($p_id, $reason_string, $origin, $key);
-            $this->updateResource ($p_id, 'loan', -1);
         }
         $this->game->Score->updatePlayerScore($p_id);
     }
@@ -303,12 +302,14 @@ class HSDResource extends APP_GameClass
 
     function freePayOffLoan($p_id, $reason, $origin ="", $key =0)
     {
+        $this->updateResource ($p_id, 'loan', -1);
         $values = array(  'player_id' => $p_id,
                       'player_name' => $this->game->getPlayerName($p_id),
                       'reason_string' => $reason,
                       'loan' => 'loan',);
         $values = $this->updateArrForNotify($values, $origin, $key);
         $this->game->notifyAllPlayers( "loanPaid", clienttranslate( '${reason_string} buys ${player_name}\'s ${loan}' ), $values);
+        $this->game->Log->payOffLoan($p_id);
         $this->game->Score->updatePlayerScore($p_id);
     }
 
