@@ -239,20 +239,6 @@ class HSDBuilding extends APP_GameClass
 
     // INCOME
     function buildingIncomeForPlayer($p_id){
-        $income_b_id = $this->getBuildingIncomeForPlayer($p_id);
-        foreach ($income_b_id as $b_id =>$income) {
-            $name = $income['name'];
-            $b_key = $income['key'];
-            $income = array_diff_key($income, array_flip(['name','key']));
-            if (array_key_exists('loan', $income) && $income['loan'] == -1){
-                $this->game->Resource->freePayOffLoan($p_id, $name, 'building', $b_key);
-            } else {
-                $this->game->Resource->updateAndNotifyIncomeGroup($p_id, $income, $name, 'building', $b_key);
-            }
-        }
-    }
-
-    function getBuildingIncomeForPlayer($p_id){
         $p_bld = $this->getAllPlayerBuildings($p_id);
         $player_workers = $this->game->getCollectionFromDB( "SELECT * FROM `workers` WHERE `player_id` = '$p_id'");
         $income_b_id = array();
@@ -261,19 +247,14 @@ class HSDBuilding extends APP_GameClass
             $b_info = $this->game->building_info[$b_id];
             $income_b_id[$b_id] = array ('name' => $b_info['name'], 'key' =>$b_key);
             if ($b_id == BLD_BANK){
-                $loans = $this->game->Resource->getPlayerResourceAmount($p_id, 'loan');
-                if ($loans ==0){
-                    $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], 'silver', 2);
-                } else {
-                    $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], 'loan', -1);
-                }
+                $this->game->Resource->payLoanOrRecieveSilver($p_id, $b_info['name'], 'building', $b_key);
+                // this may not be ideal if getBuildingIncomeForPlayer is called outside of buildingIncomeForPlayer.
             } else if ($b_id == BLD_RODEO){
                 $rodeoIncome = min(count($player_workers), 5);
                 $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], 'silver', $rodeoIncome);
-            } else if (array_key_exists('inc', $b_info)) {
-                foreach ($b_info['inc'] as $type => $amt){
+            } else {
+                foreach ((array_key_exists('inc', $b_info)?$b_info['inc']:array()) as $type => $amt)
                     $income_b_id[$b_id] = $this->game->Resource->updateKeyOrCreate($income_b_id[$b_id], $type, $amt);
-                }
             }
         }
         $riverPortWorkers = 0;
@@ -298,7 +279,12 @@ class HSDBuilding extends APP_GameClass
                 }
             }
         }
-        return $income_b_id;
+        foreach ($income_b_id as $b_id =>$income) {
+            $name = $income['name'];
+            $b_key = $income['key'];
+            $income = array_diff_key($income, array_flip(['name','key']));
+            $this->game->Resource->updateAndNotifyIncomeGroup($p_id, $income, $name, 'building' ,$b_key);
+        }
     }
 
 }

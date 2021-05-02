@@ -54,7 +54,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stPayWorkers",
         "args" => "argPayWorkers",
-        "possibleactions" => array( "takeLoan",  "trade", "done", "actionCancel" ),
+        "possibleactions" => array( "takeLoan",  "trade", "done" ),
         "transitions" => array( "auction" => STATE_BEGIN_AUCTION)
     ),
 

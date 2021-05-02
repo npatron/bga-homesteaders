@@ -839,6 +839,9 @@ function (dojo, declare) {
                     this.destroyIncomeBreadcrumb();
                     this.income_arr=[];
                     this.disableTradeIfPossible();
+                    if (dojo.query('#button_unpass').length ==1){
+                        this.fadeOutAndDestroy('button_unpass');
+                    }                 
                 case 'payAuction':
                 case 'bonusChoice':
                     this.disableTradeIfPossible();
@@ -2706,7 +2709,7 @@ function (dojo, declare) {
                     this.allowTrade = false;
                     if (this.currentState == "allocateWorkers"){
                         this.addActionButton('button_unpass', _('undo'), 'onUnPass', null, false, 'red');
-                        dojo.place('button_unpass', 'generalactions', 'first');
+                        dojo.place('button_unpass', 'pagemaintitletext', 'after');
                     }
                 }, function( is_error) { } );
         },
