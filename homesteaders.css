@@ -653,7 +653,7 @@ div#sell_board{
 }
 [id^=tr][id$=_food]:not([id^=trade]), 
 [id^=tr][id$=_gold]:not([id^=trade]),
-[id^=tr][id$=_cow] :not([id^=trade]){
+[id^=tr][id$=_cow]:not([id^=trade]){
    left: 50.5%;
 }
 #trade_buy_wood, #trade_buy_steel, #trade_buy_copper{
@@ -790,9 +790,6 @@ div#sell_board{
 .building_container .building_tile {
    border-style: dashed;
    border-width: 1px;
-}
-.trade_board .trade_option.selectable, .buy_option.selectable, .sell_option.selectable{
-   border-width: 4px;
 }
 .building_container .building_tile.affordable, 
 .trade_option.affordable, .buy_option.affordable, .sell_option.affordable{

@@ -1973,19 +1973,27 @@ function (dojo, declare) {
         enableTradeIfPossible: function() {
             if (!this.tradeEnabled){
                 let b_zone = `building_zone_${this.player_color[this.player_id]}`;
-                dojo.place(BUY_BOARD_ID, b_zone, 'first');
-                dojo.place(SELL_BOARD_ID, b_zone, 'first');
+                dojo.place(this.format_block('jptpl_buy_sell_board',{}), b_zone, 'first');
+                for(let i = 0; i <12; i++) {
+                    let buy_sell = (i<6?'buy':'sell');
+                    let id = `tr${buy_sell.substr(0,3)}_${Object.keys(TRADE_MAP).find(key => TRADE_MAP[key] === i)}`;
+                    dojo.place(`<div id="${id}" class="${buy_sell}_option selectable"></div>`, `${buy_sell}_board`, 'last');
+                    dojo.connect($(id),'onclick', this, 'onSelectTradeAction');
+                }
+                
                 this.tradeEnabled = true;
-                dojo.query('#trade_top').style('display','none');
             }
         },
 
         disableTradeIfPossible: function() {
             if (this.tradeEnabled){
                 this.tradeEnabled = false;
-                dojo.place(BUY_BOARD_ID, `trade_top`, 'first');
-                dojo.place(SELL_BOARD_ID, `trade_top`, 'first');
-                dojo.query('#trade_top').style('display','grid');
+                if(dojo.query(`#${BUY_BOARD_ID}`).length >0){
+                    dojo.destroy($(BUY_BOARD_ID));
+                }
+                if(dojo.query(`#${SELL_BOARD_ID}`).length >0){
+                    dojo.destroy($(SELL_BOARD_ID));
+                }
             }
         },
 
