@@ -841,7 +841,7 @@ function (dojo, declare) {
                     this.disableTradeIfPossible();
                     if (dojo.query('#button_unpass').length ==1){
                         this.fadeOutAndDestroy('button_unpass');
-                    }                 
+                    }
                 case 'payAuction':
                 case 'bonusChoice':
                     this.disableTradeIfPossible();
@@ -913,6 +913,9 @@ function (dojo, declare) {
             this.addTradeActionButton();
             this.setOffsetForIncome();
             this.destroyPaymentBreadcrumb();
+            if (dojo.query('#button_unpass').length ==1){
+                this.fadeOutAndDestroy('button_unpass');
+            }
         },
         // -non-active-
         onUpdateActionButtons_allocateWorkers_notActive(args){
@@ -2598,6 +2601,9 @@ function (dojo, declare) {
                 this.setOffsetForIncome();
                 this.showPay = true;
                 this.undoPay = true;
+                if (dojo.query('#button_unpass').length ==1){
+                    this.fadeOutAndDestroy('button_unpass');
+                }
             }); 
             // no checkAction! (because player is not active)
         },
@@ -2683,7 +2689,25 @@ function (dojo, declare) {
         
         /***** PAY WORKERS or PAY AUCTION PHASE *****/
         donePay: function( ){
-            if (this.allowTrade || this.checkAction( 'done')){
+            if (this.allowTrade){
+                if (!this.validPay()){
+                    this.showMessage( _("You can't afford to pay, make trades or take loans"), 'error' );
+                    return;
+                }
+                let args = {gold: this.goldAmount, lock: true};
+                if (this.transactionLog.length >0){ // makeTrades first.
+                    this.ajaxcall( "/" + this.game_name + "/" +  this.game_name + "/trade.html", { 
+                        lock: true, 
+                        allowTrade:true,
+                        trade_action: this.transactionLog.join(',')
+                     }, this, function( result ) {
+                        this.clearTransactionLog();
+                        this.ajaxCallDonePay(args);
+                     }, function( is_error) {});    
+                } else { // if no trades, just pay.
+                    this.ajaxCallDonePay(args);
+                }
+            } else if (this.checkAction( 'done')){
                 if (!this.validPay()){
                     this.showMessage( _("You can't afford to pay, make trades or take loans"), 'error' );
                     return;
@@ -2716,7 +2740,6 @@ function (dojo, declare) {
                     this.disableTradeIfPossible();
                     this.allowTrade = false;
                     if (this.currentState == "allocateWorkers"){
-                        this.addActionButton('button_unpass', _('undo'), 'onUnPass', null, false, 'red');
                         dojo.place('button_unpass', 'pagemaintitletext', 'after');
                     }
                 }, function( is_error) { } );
