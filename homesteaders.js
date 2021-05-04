@@ -1926,7 +1926,7 @@ function (dojo, declare) {
             this.addActionButton( 'btn_take_loan', _('Take Debt'), 'onMoreLoan', null, false, 'gray' );
             this.addActionButton( TRADE_BUTTON_ID, _("Show Trade"),'tradeActionButton', null, false, 'gray' );
             this.addActionButton( CONFIRM_TRADE_BTN_ID, _("Confirm Trade"),'confirmTradeButton', null, false, 'blue' );
-            dojo.addClass(CONFIRM_TRADE_BTN_ID, 'noshow');
+            dojo.style(CONFIRM_TRADE_BTN_ID, 'display', 'none');
             dojo.style(TRADE_BOARD_ID, 'order', 2);
             this.updateTradeAffordability();
             this.resetTradeValues();
@@ -1985,6 +1985,7 @@ function (dojo, declare) {
                 }
                 
                 this.tradeEnabled = true;
+                this.updateTradeAffordability();
             }
         },
 
@@ -2491,10 +2492,10 @@ function (dojo, declare) {
         updateConfirmTradeButton: function( show){
             switch(show){
                 case TRADE_BUTTON_SHOW:
-                    dojo.query(`#${CONFIRM_TRADE_BTN_ID}`).removeClass('noshow');
+                    dojo.style(CONFIRM_TRADE_BTN_ID, 'display', 'inline-block');
                     break;
                 case TRADE_BUTTON_HIDE:
-                    dojo.query(`#${CONFIRM_TRADE_BTN_ID}`).addClass('noshow');
+                    dojo.style(CONFIRM_TRADE_BTN_ID, 'display', 'none');
                     break;
             }
         },
