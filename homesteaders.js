@@ -153,7 +153,7 @@ function (dojo, declare) {
 
     const BID_VAL_ARR = [3,4,5,6,7,9,12,16,21];//note: starts at 0.
     const ASSET_COLORS = {0:'res', 1:'com', 2:'ind', 3:'spe', 4:'any', 6:'any',
-                          11:'a1',12:'a2',13:'a3', 14:'a4'};
+                          10:'a4', 11:'a1',12:'a2',13:'a3', 14:'a4'};
     const VP_TOKENS = ['vp0', 'vp2', 'vp3', 'vp4','vp6','vp8','vp10'];
 
     // map of tpl id's  used to place the player_zones in turn order.
@@ -1105,8 +1105,8 @@ function (dojo, declare) {
                 dojo.query(`#${TILE_CONTAINER_ID[BLD_LOC_OFFER]}`).addClass('noshow');
             } else {
                 this.roundCounter.setValue(round_number);
+                this.showCurrentAuctions(auction_tiles, round_number);
             }
-            this.showCurrentAuctions(auction_tiles, round_number);
         },
 
         /**
@@ -1152,14 +1152,19 @@ function (dojo, declare) {
          * @param {Array} auctions 
          * @param {Number} current_round 
          */
-        showCurrentAuctions: function (auctions){
+        showCurrentAuctions: function (auctions, round_number= null){
             this.current_auction = 0;
+            if (round_number){// not null.
+                if (round_number == 11){
+                    this.current_auction = 1; 
+                    return;
+                }
+            }
             for (let i in auctions){
                 const auction = auctions[i];
                 this.moveObject(`${TPL_AUC_TILE}_${auction.a_id}`, `${TPL_AUC_ZONE}${auction.location}`)
                 if (this.current_auction == 0) 
                     this.current_auction = auction.location;
-
             }
         },
 
@@ -4097,7 +4102,7 @@ function (dojo, declare) {
         },
 
         notif_score: function( notif ){
-            //console.log('notif_score');
+            //console.log('notif_score', notif);
             const p_id = notif.args.player_id;
             this.scoreCtrl[p_id].setValue(0);
             for(let b_key in notif.args.building){
