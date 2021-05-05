@@ -2059,6 +2059,6 @@ div#auction_tile_30 {
    -moz-transform: scale(.25, .25);
    transform: scale(.25, .25); 
    position: absolute;
-   left: 95px;
+   right: -10px;
    top: -76px;
 }

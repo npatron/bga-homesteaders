@@ -1377,7 +1377,7 @@ function (dojo, declare) {
                 }
                 full_desc = on_build_desc +'<br>'+ full_desc;
             }
-            if (b_info.vp_b){
+            if ('vp_b' in b_info){
                 const END = _("End: ${vp} per ${type}");
                 switch(b_info.vp_b){
                     case 0: //VP_B_RESIDENTIAL
@@ -3363,7 +3363,7 @@ function (dojo, declare) {
                 if (this.building_info[b_id].vp){
                     static += this.building_info[b_id].vp;
                 }
-                if (this.building_info[b_id].vp_b){
+                if ('vp_b' in this.building_info[b_id]){
                     if (this.building_info[b_id].vp_b == VP_B_WRK_TRK){
                         vp_b[VP_B_WORKER] ++;
                         vp_b[VP_B_TRACK] ++;

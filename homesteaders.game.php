@@ -960,5 +960,5 @@ class homesteaders extends Table
 //
 
 
-    }    
+    } 
 }
