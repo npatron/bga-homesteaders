@@ -28,10 +28,15 @@
    src: url(https://fonts.googleapis.com/css2?family=Old+Standard+TT);
 }
 
-.font, .biggerFont {
+.biggerFont {
    font-family: 'Old Standard TT';
    font-style: normal;
    font-size: 20px;
+}
+.font {
+   font-family: 'Old Standard TT';
+   font-style: normal;
+   font-size: 16px;
 }
 .caps {
    font-variant: small-caps;
@@ -561,6 +566,11 @@ div#trade_board {
 .tt_container .selectable{
    pointer-events: auto;
 }
+div[id$=trade_market_wood_food]:not(.selectable), 
+div[id$=trade_market_food_steel]:not(.selectable),
+div#trade_bank_trade_silver:not(.selectable){
+   pointer-events: none;
+}
 
 .tt_container div[id$=trade_market_wood_food]{
    width: auto;
@@ -638,7 +648,7 @@ div#sell_board{
    border-radius: 6px;
 }
 [id^=tr][id$=_wood], [id^=tr][id$=_food]{
-   top: 21%;
+   top: 20.5%;
 }
 [id^=tr][id$=_steel], [id^=tr][id$=_gold]{
    top: 40.5%;
@@ -791,6 +801,9 @@ div#sell_board{
    border-style: dashed;
    border-width: 1px;
 }
+.trade_board .trade_option.selectable, .buy_option.selectable, .sell_option.selectable{
+   border-width: 4px;
+}
 .building_container .building_tile.affordable, 
 .trade_option.affordable, .buy_option.affordable, .sell_option.affordable{
    border-color:green;
@@ -942,19 +955,16 @@ div#sell_board{
 }
 .score_flex_item {
    flex: 1 0 17%;
-   display: flex;
-   flex-direction: column;
-   border-style: groove;
-   border-width: 0px;
-}
-.score_flex_item.score_top {
-   border-bottom-width: 2px;
-}
-.score_flex_item.score_bot {
-   border-bottom-width: 0px;
-}
-.score_flex_item:not(.score_right) {
-   border-right-width: 2px;
+   display: inline-flex;
+   flex-direction: row-reverse;
+   /* border-style: groove; */
+   /* border-width: 0px; */
+   background-color: rgba(153, 153, 153, .25);
+   border-radius: 42px;
+   align-items: center;
+   justify-content: center;
+   margin: 3px;
+   padding: 2px;
 }
 .scorenumber {
    position: relative;
@@ -1038,11 +1048,17 @@ div#sell_board{
    flex-wrap: wrap;
 }
 .player_resource_group{
-   display: flex;
-   flex-grow: 1;
    min-width: 70px;
    max-width: 90px;
    min-height: 45px;
+   display: inline-flex;
+   flex-direction: row-reverse;
+   background-color: rgba(153, 153, 153, .25);
+   border-radius: 42px;
+   align-items: center;
+   justify-content: center;
+   margin: 3px;
+   padding: 2px;
 }
 .player_numbers{
    margin: auto;
@@ -1052,14 +1068,18 @@ div#sell_board{
    flex-wrap: wrap;
 } 
 .this_player_resource_group{
-   display: flex;
    flex-grow: 1;
    min-width: 70px;
    max-width: 90px;
    min-height: 45px;
-   border-right-style: solid;
-   border-right-color: black;
-   border-right-width: 1px;
+   display: inline-flex;
+   flex-direction: row-reverse;
+   background-color: rgba(153, 153, 153, .25);
+   border-radius: 42px;
+   align-items: center;
+   justify-content: center;
+   margin: 3px;
+   padding: 2px;
 }
 .this_player_resource_group:last-child{
    border-right: none;
