@@ -3183,7 +3183,7 @@ function (dojo, declare) {
                 const building_key = Number(building_divId.split("_")[2]);
                 let args = {building_key: building_key, goldAsCow:this.goldAsCow, goldAsCopper:this.goldAsCopper, lock: true};
                 if (this.transactionLog.length >0){ // makeTrades first.
-                    this.ajaxcall( "/" + this.game_name + "/" +  this.game_name + "/trade.html", { 
+                    this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/trade.html", { 
                         lock: true, 
                         trade_action: this.transactionLog.join(',')
                      }, this, function( result ) {
@@ -3689,38 +3689,34 @@ function (dojo, declare) {
                 if (log && args && !args.processed) {
                     args.processed = true;
                     
-                    if (!this.isSpectator)
+                    if (!this.isSpectator){
                         args.You = this.divYou(); // will replace ${You} with colored version
-                    
-                    // begin -> resource args
-                    // only one type of resource.
-                    if (args.reason_string && (args.origin == "building" || args.origin == "auction")){
-                        let color = ASSET_COLORS[Number(args.type)];
-                        args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string, color:color});
-                    } else {
-                        
-                        if (args.reason_string){
-                            if (args.reason_string.token) { // player_tokens (bid/train)
-                                const color = this.player_color[args.reason_string.player_id];
-                                args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
-                            } else if (args.reason_string.worker) { // worker token
-                                args.reason_string = this.getOneResourceHtml('worker', 1, false);
-                            } else if (args.reason_string.track) { // track 
-                                args.reason_string = this.tkn_html.track;
-                            }
-                        }    
+                    }
+                    if (args.reason_string){
+                        if (args.origin == "building" ){
+                            let color = ASSET_COLORS[Number(args.b_type??0)];
+                            args.reason_string = this.format_block('jstpl_color_number_log', {string:_('auction '), color:color, number:args.key});
+                        } else if (args.origin == "auction"){
+                            let color = ASSET_COLORS[Number(args.key??0)+10];
+                            args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string, color:color});
+                        } else if (args.reason_string == 'token') { // player_tokens (bid/train)
+                            let color = this.player_color[args.player_id];
+                            args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.origin});
+                        } else if (args.reason_string == 'worker') { // worker token
+                            args.reason_string = this.tkn_html.worker;
+                        } else if (args.reason_string == 'track') { // track 
+                            args.reason_string = this.tkn_html.track;
+                        }   
                     }
 
+                    // begin -> resource args
+                    // only one type of resource.
                     if (args.type){
-                        if (typeof (args.type) == "string"){ // not an array just type as string
-                            args.typeStr = args.type;
+                        if (args.amount == null){
                             args.amount = 1;
-                            args.type = this.getOneResourceHtml(args.type, 1, false);
-                        } else { // array with {type,amount} values
-                            args.typeStr = args.type.type;
-                            args.amount = args.type.amount;
-                            args.type = this.getOneResourceHtml(args.typeStr, args.amount, false);
                         }
+                        args.typeStr = args.type;
+                        args.type = this.getOneResourceHtml(args.type, args.amount, false);
                     }
                     // multiple types of resources
                     if (args.tradeAway){
@@ -3739,25 +3735,19 @@ function (dojo, declare) {
 
                     // begin -> specific token args 
                     if (args.arrow){
-                        args.arrow = this.format_block('jstpl_resource_inline', {type: 'arrow'});
+                        args.arrow = this.tkn_html.arrow;
                     }
-                    if (args.track && typeof args.track == 'string'){
+                    if (args.track){
                         args.track = this.tkn_html.track;
                     }
-                    if (args.loan && typeof args.loan == 'string'){
+                    if (args.loan){
                         args.loan = this.tkn_html.loan;
                     }
-                    if (args.worker && typeof args.worker == 'string'){
-                        args.worker = this.getOneResourceHtml('worker', 1, false);
+                    if (args.worker){
+                        args.worker = this.tkn_html.worker;
                     }
-                    // handles player_tokens
-                    if (args.token){
-                        if (args.color) {
-                            var color = args.color;
-                        } else {
-                            var color = this.player_color[args.player_id];
-                        }
-                        args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.token});
+                    if (args.train){
+                        args.train = this.format_block('jstpl_player_token_log', {"color" : this.player_color[args.player_id], "type" :'train'});
                     }
                     // end -> specific token args
 
@@ -3767,13 +3757,9 @@ function (dojo, declare) {
                         args.onOff_val = (args.onOff == 'on'?true:false);
                         args.onOff = this.format_block('jstpl_color_log', {color:'', string:args.onOff});
                     }
-                    // format text with font (no color) this changes the chat log, so disabling it...
-                    /*if (args.text && typeof args.text == 'string'){
-                        args.text = this.format_block('jstpl_color_log', {color:'', string:args.text});
-                    }*/
                     // formats args.building_name to have the building Color by type
-                    if (args.building_name && args.type){
-                        let color = ASSET_COLORS[Number(args.type)]??'';
+                    if (args.building_name && args.b_type){
+                        let color = ASSET_COLORS[Number(args.b_type)]??'';
                         args.building_name = this.format_block('jstpl_color_log', {string:args.building_name, color:color});
                     }
                     if (args.bidVal && typeof(args.bidVal) == 'string'){
@@ -3783,14 +3769,12 @@ function (dojo, declare) {
                     // this will always set `args.auction` (allowing it to be used in the Title)
                     if (args.auction){
                         let color = ASSET_COLORS[Number(args.key)+10]??'';
-                        args.auction = this.format_block('jstpl_color_log', {string:args.auction, color:color});
+                        args.auction = this.format_block('jstpl_color_number_log', {string:_("auction "), color:color, number:args.key});
                     } else {
                         let color = ASSET_COLORS[Number(this.current_auction)+10]??'';
                         args.auction = this.format_block('jstpl_color_number_log', {color:color, string:_("auction "), number:this.current_auction});
                     }
-                    // end -> add font only args
-
-                                     
+                    // end -> add font only args              
                 }
             } catch (e) {
                 console.error(log,args,"Exception thrown", e.stack);
