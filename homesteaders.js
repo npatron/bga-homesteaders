@@ -3694,6 +3694,23 @@ function (dojo, declare) {
                     
                     // begin -> resource args
                     // only one type of resource.
+                    if (args.reason_string && (args.origin == "building" || args.origin == "auction")){
+                        let color = ASSET_COLORS[Number(args.type)];
+                        args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string, color:color});
+                    } else {
+                        
+                        if (args.reason_string){
+                            if (args.reason_string.token) { // player_tokens (bid/train)
+                                const color = this.player_color[args.reason_string.player_id];
+                                args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
+                            } else if (args.reason_string.worker) { // worker token
+                                args.reason_string = this.getOneResourceHtml('worker', 1, false);
+                            } else if (args.reason_string.track) { // track 
+                                args.reason_string = this.tkn_html.track;
+                            }
+                        }    
+                    }
+
                     if (args.type){
                         if (typeof (args.type) == "string"){ // not an array just type as string
                             args.typeStr = args.type;
@@ -3734,18 +3751,13 @@ function (dojo, declare) {
                         args.worker = this.getOneResourceHtml('worker', 1, false);
                     }
                     // handles player_tokens
-                    if (args.token && typeof (args.null != "string")){
-                        if (args.token.color) {
-                            var color = args.token.color;
+                    if (args.token){
+                        if (args.color) {
+                            var color = args.color;
                         } else {
-                            var color = this.player_color[args.token.player_id];
+                            var color = this.player_color[args.player_id];
                         }
-                        if (args.token.type) {
-                            var type = args.token.type;
-                        } else {
-                            var type = args.token.token;
-                        }
-                        args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : type});
+                        args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.token});
                     }
                     // end -> specific token args
 
@@ -3760,38 +3772,25 @@ function (dojo, declare) {
                         args.text = this.format_block('jstpl_color_log', {color:'', string:args.text});
                     }*/
                     // formats args.building_name to have the building Color by type
-                    if (args.building_name && typeof (args.building_name) != "string"){
-                        let color = ASSET_COLORS[Number(args.building_name.type)];
-                        args.building_name = this.format_block('jstpl_color_log', {string:args.building_name.str, color:color});
+                    if (args.building_name && args.type){
+                        let color = ASSET_COLORS[Number(args.type)]??'';
+                        args.building_name = this.format_block('jstpl_color_log', {string:args.building_name, color:color});
                     }
                     if (args.bidVal && typeof(args.bidVal) == 'string'){
-                        let color = ASSET_COLORS[Number(args.auction.key)+10];
+                        let color = ASSET_COLORS[Number(args.key)+10]??'';
                         args.bidVal = this.format_block('jstpl_color_log', {string:args.bidVal, color:color});
                     }
                     // this will always set `args.auction` (allowing it to be used in the Title)
-                    if (args.auction && typeof (args.auction) != 'string'){
-                        let color = ASSET_COLORS[Number(args.auction.key)+10];
-                        args.auction = this.format_block('jstpl_color_log', {string:args.auction.str, color:color});
+                    if (args.auction){
+                        let color = ASSET_COLORS[Number(args.key)+10]??'';
+                        args.auction = this.format_block('jstpl_color_log', {string:args.auction, color:color});
                     } else {
-                        let color = ASSET_COLORS[Number(this.current_auction)+10];
-                        args.auction = this.format_block('jstpl_color_number_log', {color:color, string:_("AUCTION "), number:this.current_auction});
+                        let color = ASSET_COLORS[Number(this.current_auction)+10]??'';
+                        args.auction = this.format_block('jstpl_color_number_log', {color:color, string:_("auction "), number:this.current_auction});
                     }
                     // end -> add font only args
 
-                    // handles Building & Auctions, player_tokens, worker, or track
-                    if (args.reason_string && typeof (args.reason_string) != "string"){
-                        if (args.reason_string.type){ //Building & Auctions
-                            let color = ASSET_COLORS[Number(args.reason_string.type)];
-                            args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string.str, color:color});
-                        } else if (args.reason_string.token) { // player_tokens (bid/train)
-                            const color = this.player_color[args.reason_string.player_id];
-                            args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
-                        } else if (args.reason_string.worker) { // worker token
-                            args.reason_string = this.getOneResourceHtml('worker', 1, false);
-                        } else if (args.reason_string.track) { // track 
-                            args.reason_string = this.tkn_html.track;
-                        }
-                    }                     
+                                     
                 }
             } catch (e) {
                 console.error(log,args,"Exception thrown", e.stack);
