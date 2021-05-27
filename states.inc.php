@@ -46,7 +46,6 @@ $machinestates = array(
         "transitions" => array( "auction" => STATE_PAY_WORKERS )
     ),
 
-    // removing this and handling it in allocateWorkers.
     STATE_PAY_WORKERS => array(
         "name" => "payWorkers",
         "description" => clienttranslate('Some players must choose how to pay workers'),

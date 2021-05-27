@@ -228,6 +228,28 @@ function (dojo, declare) {
             this.goldAsCopper = false;
             this.goldAsCow = false;
             this.undoPay = false;
+
+             // Load production bug report handler
+            dojo.subscribe("loadBug", this, function loadBug(n) {
+                function fetchNextUrl() {
+                var url = n.args.urls.shift();
+                console.log("Fetching URL", url);
+                dojo.xhrGet({
+                    url: url,
+                    load: function (success) {
+                    console.log("Success for URL", url, success);
+                    if (n.args.urls.length > 0) {
+                        fetchNextUrl();
+                    } else {
+                        console.log("Done, reloading page");
+                        window.location.reload();
+                    }
+                    },
+                });
+                }
+                console.log("Notif: load bug", n.args);
+                fetchNextUrl();
+            });
         },
         
         /*
@@ -923,7 +945,7 @@ function (dojo, declare) {
                 this.allowTrade = true;
                 this.silverCost = this.getPlayerWorkerCount(this.player_id);
                 this.goldAmount = 0;
-                this.addPaymentButtons(true);
+                this.addPaymentButtons();
                 this.addTradeActionButton();
                 this.setOffsetForPaymentButtons();
             } 
@@ -936,7 +958,7 @@ function (dojo, declare) {
         onUpdateActionButtons_payWorkers: function(){
             this.silverCost = this.getPlayerWorkerCount(this.player_id);
             this.goldAmount = 0;
-            this.addPaymentButtons(true);
+            this.addPaymentButtons();
             this.addTradeActionButton();
             this.setOffsetForPaymentButtons();
         },
@@ -960,7 +982,7 @@ function (dojo, declare) {
         },
         onUpdateActionButtons_getRailBonus: function(args){
             if (args.can_undo){
-                this.addActionButton( 'btn_undo_pass', _('undo'), 'onUndoBidPass', null, false, 'red');
+                this.addActionButton( 'btn_undo_pass', _('Undo'), 'onUndoBidPass', null, false, 'red');
             }
             this.last_selected.bonus  ="";
             for(let i in args.rail_options){
@@ -972,7 +994,6 @@ function (dojo, declare) {
                 } else {
                     this.addActionButton( `btn_bonus_${type}`, this.tkn_html[type], 'selectBonusButton', null, false, 'gray');
                 }
-                
             }
             this.addActionButton( 'btn_choose_bonus', _('Choose Bonus'), 'doneSelectingBonus');
             dojo.addClass('btn_choose_bonus', 'noshow');
@@ -1153,19 +1174,21 @@ function (dojo, declare) {
          * @param {Number} current_round 
          */
         showCurrentAuctions: function (auctions, round_number= null){
-            this.current_auction = 0;
             if (round_number){// not null.
-                if (round_number == 11){
-                    this.current_auction = 1; 
+                if (round_number == 11 || auctions.length == 0){
+                    this.current_auction = 1;
                     return;
                 }
             }
+            let first_avail_auction = 3;
             for (let i in auctions){
                 const auction = auctions[i];
                 this.moveObject(`${TPL_AUC_TILE}_${auction.a_id}`, `${TPL_AUC_ZONE}${auction.location}`)
-                if (this.current_auction == 0) 
-                    this.current_auction = auction.location;
+                if (first_avail_auction > auction.location){
+                    first_avail_auction = auction.location;
+                }
             }
+            this.current_auction = first_avail_auction;
         },
 
         /**
@@ -2278,6 +2301,7 @@ function (dojo, declare) {
             }
             return can_afford;
         },
+        
 
         /**
          * show building cost and breadcrumb for building with b_id.
@@ -3064,7 +3088,6 @@ function (dojo, declare) {
             //console.log("isBuildingAffordable", b_id);
             if (this.building_info[b_id].cost == null) return 1;// no cost, can afford.
             if (this.building_info[b_id].cost.length == 0) return 1;// no cost, can afford.
-            
             const p_id = this.player_id;
             let cost = this.building_info[b_id].cost;
             let off_gold = this.getOffsetValue('gold');
@@ -3098,18 +3121,11 @@ function (dojo, declare) {
                     break;
                 }
             }
-            if (this.hasBuilding[p_id][BLD_RIVER_PORT] && gold > 0){
-                if (adv_cost > gold){ //buy gold for each missing one.
-                    trade_cost += (adv_cost - gold);
-                }
-            } else {
+            trade_cost += (adv_cost - gold);
+            if (!(this.hasBuilding[p_id][BLD_RIVER_PORT])){
                 trade_cost += adv_cost;
-                if (adv_cost > gold){
-                    trade_cost += (adv_cost - gold);
-                }
             }
             let trade_avail = this.board_resourceCounters[p_id].trade.getValue() + this.getOffsetValue('trade') + this.getIncomeOffset('trade');
-            //console.log(this.building_info[b_id].name, 'trade_Cost', trade_cost, 'trade_avail', trade_avail);
             if (trade_cost <= 0)// no trades required.
                 return 1;
             if (trade_avail >= trade_cost) 
