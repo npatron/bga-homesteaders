@@ -1417,6 +1417,15 @@ div#sell_board{
    width: 31px;
    background-size: 115px 63px; 
 }
+.log_big_loan {
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: 51%;
+   background-size: 150px 60px;
+   height: 60px;
+   width: 49px;
+   position: relative;
+   margin: auto;
+}
 .log_vp0 {
    background-size: 171px 51px;
    background-position: 55% 3%;

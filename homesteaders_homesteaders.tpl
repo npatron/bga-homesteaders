@@ -21,7 +21,6 @@
     <div class="break" style="order:3;"></div>
         <div id="player_resources_{COLOR}" class="this_player_resources">
             <span id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</span>
-            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
             <span id="silver_group" class="this_player_resource_group"><!-- horiz -->
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silver_num" class="player_numbers vert"><!-- vertical -->
@@ -132,10 +131,9 @@
                     <span id="copper_new" class="player_copper_new new_text noshow">0</span>
                 </span>
             </span>
-            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
         <div id="token_zone_{COLOR}" class="player_token_zone">
-
+            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
@@ -146,19 +144,21 @@
         </span>
         <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red noshow"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
         <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
-        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
-            <span id='auc_future' class="font">{FUTURE_AUCTION}</span>
-        </a>
         <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
             <span id="bld_main" class="font">{BUILDING_STOCK}</span>
         </a>
-        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
-            <span id="bld_discard" class="font">{BUILDING_DISCARD}</span>
+        <a href="#" id="tgl_future_auc" class="bgabutton bgabutton_gray">
+            <span id='auc_future' class="font">{FUTURE_AUCTION}</span>
         </a>
         <a href="#" id="tgl_future_bld" class="bgabutton bgabutton_gray">
             <span id="bld_future" class="font">{FUTURE_BUILDING}</span>
         </a>
-        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue noshow"><span id='confirmTrade' class="font">{CONFIRM_TRADE}</span></a>
+        <a href="#" id="tgl_past_bld" class="bgabutton bgabutton_gray">
+            <span id="bld_discard" class="font">{BUILDING_DISCARD}</span>
+        </a>
+        <a href="#" id="confirm_trade_btn" class="bgabutton bgabutton_blue noshow">
+            <span id='confirmTrade' class="font">{CONFIRM_TRADE}</span>
+        </a>
     </div>
 
     <div id="board_area" class="full_size">
@@ -222,7 +222,6 @@
     <div id="player_zone_{COLOR}" class="whiteblock border_{COLOR} player_zone" style="margin-top:4px;">
         <div id="player_resources_{COLOR}" class="player_resources">
             <div id="player_name_{COLOR}" class="boardheader biggerFont" style="color: {COLOR};">{NAME}</div>
-            <div id="worker_zone_{COLOR}" class="worker_zone"></div> 
             <span id="silver_group_{COLOR}" class="player_resource_group">
                 <span id="silvericon_{COLOR}" class="score_token player_silver score"></span>
                 <span id="silvercount_{COLOR}" class="player_silver_text player_text">0</span>
@@ -263,7 +262,9 @@
                 <span id="coppericon_{COLOR}" class="score_token player_copper score"></span>
                 <span id="coppercount_{COLOR}" class="player_copper_text player_text">0</span>
             </span>
-            
+        </div>
+        <div id="token_zone_{COLOR}" class="player_token_zone">
+            <div id="worker_zone_{COLOR}" class="worker_zone" style='order:10;'></div> 
         </div>
         <div id="building_zone_{COLOR}" class="building_zone"> </div>
     </div>
@@ -301,8 +302,8 @@ var jstpl_player_board = '\<div class="cp_board">\
     <div class="score_group"><div class="score_flex">\
         <div id="silver_p${id}" class="score_flex_item score_top score_left"><div id="silvericon_p${id}" class="score_token score_silver score"></div><div id="silvercount_${id}" class="score_silver_text score_text">0</div></div>\
         <div id="trade_p${id}" class="score_flex_item score_top"><div id="tradeicon_p${id}" class="score_token score_trade score"></div><div id="tradecount_${id}" class="score_trade_text score_text">0</div></div>\
-        <div id="loan_p${id}" class="score_flex_item score_bot"><div id="loanicon_p${id}" class="score_loan score score"></div><div id="loancount_${id}" class="score_loan_text score_text">0</div></div>\
         <div id="vp_p${id}" class="score_flex_item score_bot score_left"><div id="vpicon_p${id}" class="score_token score_vp score"></div><div id="vpcount_${id}" class="score_vp_text score_text">0</div></div>\
+        <div id="loan_p${id}" class="score_flex_item score_bot"><div id="loanicon_p${id}" class="score_loan score score"></div><div id="loancount_${id}" class="score_loan_text score_text">0</div></div>\
         <div id="wood_p${id}" class="score_flex_item score_top"><div id="woodicon_p${id}" class="score_token score_wood score"></div><div id="woodcount_${id}" class="score_wood_text score_text">0</div></div>\
         <div id="food_p${id}" class="score_flex_item score_top"><div id="foodicon_p${id}" class="score_token score_food score"></div><div id="foodcount_${id}" class="score_food_text score_text">0</div></div>\
         <div id="steel_p${id}" class="score_flex_item score_top score_right"><div id="steelicon_p${id}" class="score_token score_steel score"></div><div id="steelcount_${id}" class="score_steel_text score_text">0</div></div>\

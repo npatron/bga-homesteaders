@@ -115,6 +115,11 @@ class HSDBuilding extends APP_GameClass
         return false;
     }
 
+    function getKeyOfPlayersBuilding($p_id, $b_id){
+        $sql = "SELECT building_key FROM `buildings` WHERE `player_id`='".$p_id."' AND `building_id`='$b_id'";
+        return $this->game->getUniqueValueFromDB($sql);
+    }
+
     function updateBuildingsForRound($round_number){
         //rd 1 setup buildings
         if($round_number == 1){
@@ -203,16 +208,21 @@ class HSDBuilding extends APP_GameClass
                         'player_name' => $this->game->getPlayerName($p_id),
                         'building' => $building,
                         'i18n' => array( 'building_name' ), 
-                        'building_name' => array('str'=>$b_name, 'type'=>$this->getBuildingTypeFromKey($b_key)));
+                        'b_type' => $this->getBuildingTypeFromKey($b_key),
+                        'building_name' => $b_name,
+                        'preserve' => [ 2 => 'b_type']);
         if (count($b_cost)>0) {
-            $message .= ' ${arrow} ${resources}';
+            $message = clienttranslate('${player_name} builds ${building_name} ${arrow} ${resources}');
             $values['resources'] = $b_cost;
-            $values['arrow'] = "arrow";
+            $values['arrow'] = "->";
         }
+        $this->game->DbQuery( $sql );
         $this->game->notifyAllPlayers( "buildBuilding", $message, $values);
         $this->game->Log->buyBuilding($p_id, $b_key, $b_cost, $this->game->Score->dbGetScore($p_id));
         
-        $this->game->DbQuery( $sql );
+        if ($this->game->Building->doesPlayerOwnBuilding($p_id, BLD_FORGE) && $b_id != BLD_FORGE){
+            $this->game->Resource->updateAndNotifyIncome($p_id, 'vp', 1, $this->game->building_info[BLD_FORGE]['name'], 'building', $this->getKeyOfPlayersBuilding($p_id, BLD_FORGE));
+        }
         $this->game->setGameStateValue('last_building', $b_key);
     }
 

@@ -203,8 +203,10 @@ class homesteaders extends Table
     */
     function getGameProgression()
     {
-        $game_progress =  ($this->getGameStateValue('round_number')  -1 ) * 9;
-        $game_progress += ($this->getGameStateValue('current_auction')-1) * 3;
+        $game_progress =  ((int)$this->getGameStateValue('round_number')  -1 ) * 9;
+        $number_auctions = (int)$this->getGameStateValue('number_auctions');
+        $current_auction = (int)$this->getGameStateValue('current_auction');
+        $game_progress += floor(($current_auction * 10) / $number_auctions);
         return $game_progress;
     }
 
@@ -267,7 +269,7 @@ class homesteaders extends Table
         $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, clienttranslate('Hire Worker'));
         $this->Log->updateResource($cur_p_id, "trade", -1);
         $this->Log->updateResource($cur_p_id, "food", -1);
-        $this->Resource->addWorker($cur_p_id, 'hire');
+        $this->Resource->addWorkerAndNotify($cur_p_id, 'hire');
     }
 
     public function playerSelectWorkerDestination($w_key, $b_key, $building_slot) 
@@ -381,7 +383,7 @@ class homesteaders extends Table
             $this->Resource->setPaid($cur_p_id);
             $workers = $this->Resource->getPlayerResourceAmount($cur_p_id,'workers');
             $cost = max($workers - (5*$gold), 0);
-            $this->Resource->pay($cur_p_id, $cost, $gold, "workers");
+            $this->Resource->pay($cur_p_id, $cost, $gold, "worker");
         }
         if (!$early){
             $this->gamestate->setPlayerNonMultiactive($cur_p_id, "auction" );
@@ -439,7 +441,7 @@ class homesteaders extends Table
         $act_p_id = $this->getActivePlayerId();
         $b_key = $this->getGameStateValue('last_building');
         $b_name = $this->Building->getBuildingNameFromKey($b_key);
-        $this->Resource->addWorker($act_p_id, $b_name, 'building', $b_key);
+        $this->Resource->addWorkerAndNotify($act_p_id, $b_name, 'building', $b_key);
         $this->gamestate->nextState( 'auction_bonus' );
     }
 
@@ -455,13 +457,13 @@ class homesteaders extends Table
         $this->checkAction( "auctionBonus" );
         $act_p_id = $this->getActivePlayerId();
         $auction_bonus = $this->getGameStateValue( 'auction_bonus');
+        $auc_no = $this->getGameStateValue( 'current_auction');
         if ($auction_bonus == AUC_BONUS_WORKER) {
-            $this->Resource->addWorker($act_p_id, clienttranslate('Auction Bonus'));
+            $this->Resource->addWorkerAndNotify($act_p_id, sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no);
             $this->gamestate->nextState( 'done' );
         } else if ($auction_bonus == AUC_BONUS_WORKER_RAIL_ADV){
-            $this->Resource->addWorker($act_p_id, clienttranslate('Auction Bonus'));
             $this->setGameStateValue( 'phase', PHASE_AUC_BONUS);
-            $auc_no = $this->getGameStateValue( 'current_auction');
+            $this->Resource->addWorkerAndNotify($act_p_id, sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no);
             $this->Resource->getRailAdv( $act_p_id, sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no );
             $this->gamestate->nextState( 'railBonus' );
         } else {

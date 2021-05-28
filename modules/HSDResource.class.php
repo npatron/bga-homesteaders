@@ -185,11 +185,6 @@ class HSDResource extends APP_GameClass
      */
     function addWorkerAndNotify($p_id, $reason_string, $origin="", $key=0){
         $w_key = $this->addWorker($p_id);
-        if($this->game->Building->doesPlayerOwnBuilding($p_id, BLD_HOTEL)){
-            $this->updateAndNotifyIncome($p_id, 'silver', 1, 
-                        $this->game->Building->getBuildingNameFromId(BLD_HOTEL), 'building', 
-                        $this->game->Building->getKeyOfPlayersBuilding($p_id, BLD_HOTEL));
-        }
         if ($reason_string == 'hire'){
             $this->game->notifyAllPlayers( "gainWorker", clienttranslate( '${player_name} hires a ${worker}' ), array(
                 'player_id' => $p_id,
@@ -468,7 +463,7 @@ class HSDResource extends APP_GameClass
         if ($key != 0){
             $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string, 'auction', $key);
         } else {
-            $this->updateAndNotifyPaymentGroup($p_id, $cost, array('worker'=>$reason_string));
+            $this->updateAndNotifyPaymentGroup($p_id, $cost, $reason_string);
         }
         $this->game->Score->updatePlayerScore($p_id);
     }

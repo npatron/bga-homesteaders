@@ -161,14 +161,14 @@ class HSDBid extends APP_GameClass
         // then update bid for this 
         $auc = ceil($bid_loc/10);
         $amt = $this->bid_cost_array[$bid_loc%10];
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} Bids ${amount} for ${auction}'), array (
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${bid} Bids ${bidVal} for ${auction}'), array (
                 'i18n' => array('auction'),
                 'player_id' => $p_id,
-                'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
-                'amount' => $amt,
-                'auction' => clienttranslate('auction '.$auc),
+                'bid' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
+                'bidVal' => $amt,
+                'auction' => sprintf( clienttranslate('AUCTION %s'), $auc),
                 'key'=> $auc,
-                'preserve' => [ 2 => 'key' ],
+                'preserve' => [ 2 => 'key', 3=> 'player_id' ],
                 'bid_location'=> $bid_loc) );
         $this->game->DbQuery( "UPDATE `bids` SET `bid_loc`='$bid_loc', `outbid`='0' WHERE `player_id`='$p_id'");
         $this->game->Log->makeBid($p_id);
@@ -248,12 +248,12 @@ class HSDBid extends APP_GameClass
     function makeDummyBid($bid_loc){
         $auc = ceil($bid_loc/10);
         $amt = $this->bid_cost_array[$bid_loc%10];
-		$this->game->notifyAllPlayers("moveBid", clienttranslate( 'Dummy ${bid} Bids ${amount} for ${auction}'), array (
+		$this->game->notifyAllPlayers("moveBid", clienttranslate( 'Dummy ${bid} Bids ${bidVal} for ${auction}'), array (
                 'i18n' => array('auction'),
                 'player_id' => DUMMY_BID,
                 'bid' => 'bid',
-                'amount' => $amt,
-                'auction' => clienttranslate('auction '.$auc),
+                'bidVal' => $amt,
+                'auction' => sprintf( clienttranslate('AUCTION %s'), $auc),
                 'key' => $auc,
                 'preserve' => [ 2 => 'player_id', 3=> 'key' ],
                 'bid_location'=> $bid_loc) );
@@ -277,7 +277,7 @@ class HSDBid extends APP_GameClass
                 'cost' =>$cost ));    
         } else {
             $this->game->DBQuery("UPDATE `bids` SET `bid_loc`=$new_val WHERE `player_id`=".DUMMY_OPT);
-            $this->game->notifyAllPlayers("moveBid", '${bid} ${arrow} ${cost}', array (
+            $this->game->notifyAllPlayers("moveBid", clienttranslate('${bid} ${arrow} ${cost}'), array (
             'player_id' => DUMMY_OPT,
             'token' => 'bid',
             'arrow' => 'arrow',
