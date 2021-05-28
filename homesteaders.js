@@ -174,6 +174,7 @@ function (dojo, declare) {
     const WORKER_TOKEN_ZONE = [];
     const TRAIN_TOKEN_ID = [];//indexed by p_id
     const BID_TOKEN_ID = [];
+    const BID_ZONE_ID  = []; 
 
     // player_info
     const PLAYER_COLOR            = [];
@@ -510,7 +511,7 @@ function (dojo, declare) {
                 console.log(track, PLAYER_COLOR[track.p_id], TRACK_TOKEN_ZONE[track.p_id]);
                 dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: PLAYER_COLOR[track.p_id]}), TRACK_TOKEN_ZONE[track.p_id], 'last');
             }
-            this.addTooltipHtmlToClass("token_track", `<div style="text-align:center;">${this.replaceTooltipStrings(RESOURCE_INFO['track']['tt'])}</div>`);
+            this.addTooltipHtmlToClass("token_track", `<div style="text-align:center;">${this.replaceTooltipStrings(_(RESOURCE_INFO['track']['tt']))}</div>`);
         },
 
         /**
@@ -702,7 +703,7 @@ function (dojo, declare) {
                     dojo.connect($(bonus_options[i].id),'onclick', this, 'onSelectBonusOption');
                     let type = bonus_options[i].id.split('_')[3];
                     if (type in resource_info)
-                        this.addTooltipHtml(resource_info[type].tt);
+                        this.addTooltipHtml(_(resource_info[type].tt));
                 } 
             }
         },
@@ -4032,7 +4033,7 @@ function (dojo, declare) {
             dojo.place(this.format_block( 'jptpl_track', 
                     {id: Number(notif.args.track_key), color: PLAYER_COLOR[Number(notif.args.player_id)]}),
                     TRACK_TOKEN_ZONE[p_id]);
-            this.addTooltipHtml(`token_track_${notif.args.track_key}`, `<div style="text-align:center;">${this.replaceTooltipStrings(RESOURCE_INFO['track']['tt'])}</div>`);
+            this.addTooltipHtml(`token_track_${notif.args.track_key}`, `<div style="text-align:center;">${this.replaceTooltipStrings(_(RESOURCE_INFO['track']['tt']))}</div>`);
             if (notif.args.tradeAway_arr){
                 var destination = this.getTargetFromNotifArgs(notif);
                 for(let type in notif.args.tradeAway_arr){
