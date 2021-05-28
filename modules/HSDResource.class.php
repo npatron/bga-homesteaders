@@ -491,7 +491,7 @@ class HSDResource extends APP_GameClass
         } else {
             $values = array('player_id' => $p_id,   'player_name' => $p_name,
                         'tradeAway' => $cost_arr,   'tradeFor' => $income_arr,
-                        'arrow' => 'arrow',         'reason_string' => $reason_string,);
+                        'arrow' => '->',         'reason_string' => $reason_string,);
             $values = $this->updateArrForNotify($values, $origin, $key);
             $this->game->notifyAllPlayers( "trade", clienttranslate('${player_name} trades ${tradeAway} ${arrow} ${tradeFor} from ${reason_string}'), $values);
             foreach($cost_arr as $type=>$amt){
@@ -576,7 +576,7 @@ class HSDResource extends APP_GameClass
                     'building_name'=> $this->game->Building->getBuildingNameFromId($b_id),   
                     'arrow' => '->', 
                     'b_type'=> $this->game->Building->getBuildingTypeFromId($b_id),
-                    'preserve'=>[2=>'b_type']));
+                    'preserve'=> [2=>'b_type']));
         }
         $this->game->Log->tradeResource($p_id, $tradeAway, $tradeFor);
         foreach($tradeAway as $type=>$amt){

@@ -76,7 +76,7 @@ class HSDBuilding extends APP_GameClass
     function getBuildingTypeFromId($b_id){
         $sql = "SELECT `building_type` FROM `buildings` WHERE `building_id`='".$b_id."'";
         $building_type = $this->game->getObjectListFromDB( $sql );
-        return (reset($building_type));
+        return (reset($building_type)['building_type']);
     }
 
     function getBuildingTypeFromKey($b_key){

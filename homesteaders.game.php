@@ -666,7 +666,7 @@ class homesteaders extends Table
         foreach($resources as $p_id => $player){
             if ($this->Resource->getPaid($p_id)) continue;
             if ($player['silver'] >= $player['workers'] && $player['gold'] == 0 && $player['trade'] == 0){
-                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], array('worker' => 'worker'));
+                $this->Resource->updateAndNotifyPayment($p_id, 'silver', $player['workers'], 'worker');
             } else { // ask this player to choose payment.
                 $pendingPlayers[] = $p_id;
                 $this->giveExtraTime($p_id);

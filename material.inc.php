@@ -114,24 +114,24 @@ $this->resource_info = array(
     'name'   => clienttranslate("Gold"),
     'db_int' => GOLD,
     'trade_val' => array('silver'=> 4),
-    'tt'     => clienttranslate('${big_gold}<br>Gold:<br>Required to build some buildings<br>Can be used to pay Workers / Auction costs(as 5 ${silver})<br>End: Worth ${vp2}'),
+    'tt'     => clienttranslate('${big_gold}<br>Gold:<br>Required to build some buildings<br>Can be used to pay Workers / Auction costs(as 5 ${silver})<br>${end}: Worth ${vp2}'),
   ),
   'copper' => array(
     'name'   => clienttranslate("Copper"),
     'db_int' => COPPER,
     'trade_val' => array('gold'=> 1),
-    'tt'     => clienttranslate('${big_copper}<br>Copper:<br>Required to build some buildings<br>End: Worth ${vp2}'),
+    'tt'     => clienttranslate('${big_copper}<br>Copper:<br>Required to build some buildings<br>${end}: Worth ${vp2}'),
   ),
   'cow' => array(
     'name'   => clienttranslate("Livestock"),
     'db_int' => COW,
     'trade_val' => array('gold'=> 1),
-    'tt'     => clienttranslate('${big_cow}<br>Livestock:<br>Required to build some buildings<br>End: Worth ${vp2}'),
+    'tt'     => clienttranslate('${big_cow}<br>Livestock:<br>Required to build some buildings<br>${end}: Worth ${vp2}'),
   ),
   'loan' => array(
     'name'   => clienttranslate("Debt"),
     'db_int' => LOAN,
-    'tt'     => clienttranslate('${big_loan}<br>Debt:<br>Costs 5 ${silver} (or 1 ${gold}) to pay off<br>End: Penalty for unpaid ${loan}:<br>${loan} ${arrow} lose ${vp}<br>${loan}${loan} ${arrow} lose ${vp3}<br>${loan}${loan}${loan} ${arrow} lose ${vp6}<br>${loan}${loan}${loan}${loan} ${arrow} lose ${vp10}<br> (etc...)'),
+    'tt'     => clienttranslate('${big_loan}<br>Debt:<br>Costs 5 ${silver} (or 1 ${gold}) to pay off<br>${end}: Penalty for unpaid ${loan}:<br>${loan} ${arrow} lose ${vp}<br>${loan}${loan} ${arrow} lose ${vp3}<br>${loan}${loan}${loan} ${arrow} lose ${vp6}<br>${loan}${loan}${loan}${loan} ${arrow} lose ${vp10}<br> (etc...)'),
   ),
   'trade' => array(
     'name'   => clienttranslate("Trade Token"),
@@ -141,7 +141,7 @@ $this->resource_info = array(
   'vp' => array(
     'name'   => clienttranslate("VP Token"),
     'db_int' => VP,
-    'tt'     => clienttranslate('${big_vp}<br>VP Token:<br>End: Worth 1 VP'),
+    'tt'     => clienttranslate('${big_vp}<br>VP Token:<br>${end}: Worth 1 VP'),
   ),
 );
 
