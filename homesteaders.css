@@ -1354,6 +1354,7 @@ div#sell_board{
 .log_container {
    display: inline-flex;
    flex-direction: row-reverse;
+   pointer-events: none;
 }
 .token_inline{
    background-image: url('img/drawn_tokens_2.png');

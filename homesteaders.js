@@ -2058,8 +2058,9 @@ function (dojo, declare) {
                 });
                 this.tradeEnabled = true;
                 if (HAS_BUILDING[this.player_id][BLD_MARKET]){
+                    dojo.place(dojo.create('br'),'generalactions','last');
                     let mkt_zone = dojo.create('div', {id:MARKET_ZONE_ID, style:'display: inline-flex;justify-content:center;'});
-                    dojo.place(mkt_zone, MARKET_ZONE_ID, 'after');
+                    dojo.place(mkt_zone, 'generalactions', 'last');
                     let mkt_text = dojo.create('span', {class:"biggerfont", id:MARKET_TEXT_ID});
                     dojo.place(mkt_text, MARKET_ZONE_ID, 'first');
                     mkt_text.innerText = _("Market:");
@@ -2071,11 +2072,11 @@ function (dojo, declare) {
                         this.addActionButton( mkt_btn_id, `${tradeAwayTokens} ${TOKEN_HTML.arrow} ${tradeForTokens}`, `onMarketTrade_${type}`, null, false, 'blue');
                         dojo.place(mkt_btn_id, MARKET_ZONE_ID, 'last');
                     } );
-                    
                 }
                 if (HAS_BUILDING[this.player_id][BLD_BANK]){
+                    dojo.place(dojo.create('br'),'generalactions','last');
                     let bank_zone = dojo.create('div', {id:BANK_ZONE_ID, style:'display: inline-flex;justify-content:center;'});
-                    dojo.place(bank_zone, SELL_ZONE_ID, 'after');
+                    dojo.place(bank_zone, 'generalactions', 'last');
                     let bank_text = dojo.create('span', {class:"biggerfont", id:BANK_TEXT_ID});
                     dojo.place(bank_text, BANK_ZONE_ID, 'first');
                     bank_text.innerText = _("Bank:");
@@ -2095,6 +2096,14 @@ function (dojo, declare) {
                 dojo.query('#generalactions br:nth-last-of-type(2)').forEach(dojo.destroy);
                 dojo.query(`#${SELL_ZONE_ID}`).forEach(dojo.destroy);
                 dojo.query('#generalactions br:nth-last-of-type(1)').forEach(dojo.destroy);
+                if (HAS_BUILDING[this.player_id][BLD_MARKET]){
+                    dojo.query(`#${MARKET_ZONE_ID}`).forEach(dojo.destroy);
+                    dojo.query('#generalactions br:nth-last-of-type(1)').forEach(dojo.destroy);
+                }
+                if (HAS_BUILDING[this.player_id][BLD_BANK]){
+                    dojo.query(`#${BANK_TEXT_ID}`).forEach(dojo.destroy);
+                    dojo.query('#generalactions br:nth-last-of-type(1)').forEach(dojo.destroy);
+                }
             }
         },
 
@@ -3069,49 +3078,58 @@ function (dojo, declare) {
                 //console.log('type', type);
                 // buy
                 let node_loc = `#trade_buy_${type}`;
-                let node2_loc= `#trbuy_buy_${type}`;
+                let btn_id   = `#btn_buy_${type}`;
                 if (this.canAddTrade(this.getBuyChange(type))){
-                    this.updateAffordability(node_loc, AFFORDABLE);
-                    this.updateAffordability(node2_loc, AFFORDABLE);
+                    this.updateAffordability(node_loc,     AFFORDABLE);
+                    this.updateButtonAffordability(btn_id, AFFORDABLE);
                 } else {// can not afford
-                    this.updateAffordability(node_loc, UNAFFORDABLE);
-                    this.updateAffordability(node2_loc, UNAFFORDABLE);
+                    this.updateAffordability(node_loc,     UNAFFORDABLE);
+                    this.updateButtonAffordability(btn_id, UNAFFORDABLE);
                 }
                 // sell
                 node_loc = `#trade_sell_${type}`;
-                node2_loc= `#trsel_sell_${type}`;
+                btn_id   = `#btn_sell_${type}`;
                 if (this.canAddTrade(this.getSellChange(type))){
-                    this.updateAffordability(node_loc, AFFORDABLE);
-                    this.updateAffordability(node2_loc, AFFORDABLE);
+                    this.updateAffordability(node_loc,     AFFORDABLE);
+                    this.updateButtonAffordability(btn_id, AFFORDABLE);
                 } else {// can not afford
-                    this.updateAffordability(node_loc, UNAFFORDABLE);
-                    this.updateAffordability(node2_loc, UNAFFORDABLE);
+                    this.updateAffordability(node_loc,     UNAFFORDABLE);
+                    this.updateButtonAffordability(btn_id, UNAFFORDABLE);
                 }
             }
             // market
             if (HAS_BUILDING[this.player_id][BLD_MARKET]){
                 // food
                 let node_loc = `#${PLAYER_BUILDING_ZONE_ID[this.player_id]} .market_food`;
+                let btn_id = `#btn_market_food`;
                 if (this.canAddTrade(this.getMarketChange('food'))){
-                    this.updateAffordability(node_loc, AFFORDABLE);
+                    this.updateAffordability(node_loc,     AFFORDABLE);
+                    this.updateButtonAffordability(btn_id, AFFORDABLE);
                 } else {// can not afford
-                    this.updateAffordability(node_loc, UNAFFORDABLE);
+                    this.updateAffordability(node_loc,     UNAFFORDABLE);
+                    this.updateButtonAffordability(btn_id, UNAFFORDABLE);
                 }
                 // steel
                 node_loc = `#${PLAYER_BUILDING_ZONE_ID[this.player_id]} .market_steel`;
+                btn_id = `#btn_market_steel`;
                 if (this.canAddTrade(this.getMarketChange('steel'))){
-                    this.updateAffordability(node_loc, AFFORDABLE);
+                    this.updateAffordability(node_loc,     AFFORDABLE);
+                    this.updateButtonAffordability(btn_id, AFFORDABLE);
                 } else {// can not afford
-                    this.updateAffordability(node_loc, UNAFFORDABLE);
+                    this.updateAffordability(node_loc,     UNAFFORDABLE);
+                    this.updateButtonAffordability(btn_id, UNAFFORDABLE);
                 }   
             }
             // bank 
             if (HAS_BUILDING[this.player_id][BLD_BANK]){
                 let node_loc =  `#${BANK_DIVID}`;
+                let btn_id   = `#btn_trade_bank`;
                 if (this.canAddTrade({trade:-1})){ // can afford
                     this.updateAffordability(node_loc, AFFORDABLE);
+                    this.updateButtonAffordability(btn_id, AFFORDABLE);
                 } else {// can not afford
                     this.updateAffordability(node_loc, UNAFFORDABLE);
+                    this.updateButtonAffordability(btn_id, UNAFFORDABLE);
                 }
             }
         },
@@ -3146,6 +3164,21 @@ function (dojo, declare) {
                         .removeClass(AFFORDABILITY_CLASSES[AFFORDABLE])
                         .removeClass(AFFORDABILITY_CLASSES[UNAFFORDABLE])
                         .removeClass(AFFORDABILITY_CLASSES[TRADEABLE]);
+            }
+        },
+
+        updateButtonAffordability(button_id, afford_val){
+            switch(afford_val){
+                case AFFORDABLE:
+                    dojo.query(button_id)
+                           .addClass('bgabutton_blue')
+                        .removeClass('bgabutton_gray');
+                    break;
+                case UNAFFORDABLE:
+                    dojo.query(button_id)
+                        .removeClass('bgabutton_blue')
+                          .addClass('bgabutton_gray');
+                    break;
             }
         },
 
