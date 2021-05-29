@@ -965,8 +965,8 @@ div#sell_board{
    border-radius: 42px;
    align-items: center;
    justify-content: center;
-   margin: 3px;
-   padding: 2px;
+   margin: 1%;
+   padding: 1%;
 }
 .scorenumber {
    position: relative;
