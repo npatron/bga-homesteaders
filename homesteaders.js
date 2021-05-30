@@ -3904,7 +3904,75 @@ function (dojo, declare) {
                     if (!this.isSpectator){
                         args.You = this.divYou(); // will replace ${You} with colored version
                     }
-                    if (args.reason_string){
+                    let copyArgs = this.copyArray(args);
+                    console.log(log, copyArgs , args);
+                    // begin legacy (extra) so existing logs will mostly work, (can remove in July)
+                    if (args.track && typeof args.track == 'string'){
+                        args.track = TOKEN_HTML.track;
+                    }
+                    if (args.resources && !args.resource_arr){
+                        args.resource_arr = args.resources;
+                        args.resources = this.getResourceArrayHtml(args.resource_arr);
+                    }
+                    if (args.token){
+                        let color = '';
+                        let type = '';
+                        if ( typeof(args.token) != "string"){
+                            if (args.token.color) {
+                                color = args.token.color;
+                            } else {
+                                color = PLAYER_COLOR[args.token.player_id];
+                            }
+                            if (args.token.type) {
+                                type = args.token.type;
+                            }
+                        }
+                        if (args.color) {
+                            color = args.color;
+                        } else {
+                            type = args.token.token;
+                            color = PLAYER_COLOR[args.player_id];
+                        }
+                        args.token = this.format_block('jstpl_player_token_log', {"color" : color, "type" : type});
+                    }
+                    if (args.building_name && typeof (args.building_name) != "string"){
+                        args.b_type = args.building_name.type;
+                        args.building_name = args.building_name.str;
+                    }
+                    if (args.auction && typeof (args.auction) != 'string'){
+                        args.key = Number(args.auction.key);
+                        args.auction = args.auction.str;
+                    }
+                    if (args.tradeFor && typeof (args.tradeFor) != 'string'){
+                        args.tradeFor_arr = args.tradeFor;
+                    }
+                    if (args.tradeAway && typeof (args.tradeAway) != 'string'){
+                        args.tradeAway_arr = args.tradeAway;
+                    }
+                    if (args.type && typeof (args.type) != 'string'){
+                        if (args.type.amount == null){
+                            args.amount = 1;
+                        } else {
+                            args.amount = args.type.amount;
+                        }
+                        args.type = args.type.type;
+                    }
+
+                    // legacy, so existing logs will mostly work, (can remove in July)
+                    if (args.reason_string && typeof (args.reason_string) != "string"){
+                        if (args.reason_string.type){ //Building & Auctions
+                            let color = ASSET_COLORS[Number(args.reason_string.type)];
+                            args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string.str, color:color});
+                        } else if (args.reason_string.token) { // player_tokens (bid/train)
+                            const color = PLAYER_COLOR[args.reason_string.player_id];
+                            args.reason_string = this.format_block('jstpl_player_token_log', {"color" : color, "type" : args.reason_string.token});
+                        } else if (args.reason_string.worker) { // worker token
+                            args.reason_string = this.getOneResourceHtml('worker', 1, false);
+                        } else if (args.reason_string.track) { // track 
+                            args.reason_string = TOKEN_HTML.track;
+                        }
+                        // end legacy translators.
+                    } else if (args.reason_string){
                         if (args.origin == "building" ){
                             let color = ASSET_COLORS[Number(args.b_type??0)];
                             args.reason_string = this.format_block('jstpl_color_log', {string:args.reason_string, color:color});
@@ -3931,13 +3999,22 @@ function (dojo, declare) {
                         args.typeStr = args.type;
                         args.type = this.getOneResourceHtml(args.type, args.amount, false);
                     }
-                    // multiple types of resources
+                    // multiple types of resources 
+                    // legacy
+                    if (typeof(args.tradeAway) != 'string' && !args.tradeAway_arr){
+                        args.tradeAway_arr = args.tradeAway;
+                    }
                     if (args.tradeAway && args.tradeAway_arr){
                         args.tradeAway = this.getResourceArrayHtml(args.tradeAway_arr);
+                    }
+                    // legacy
+                    if (typeof(args.tradeFor) != 'string' && !args.tradeFor_arr){
+                        args.tradeFor_arr = args.tradeFor;
                     }
                     if (args.tradeFor && args.tradeFor_arr){
                         args.tradeFor = this.getResourceArrayHtml(args.tradeFor_arr);
                     }
+                    
                     // trade 
                     if (args.resource && args.tradeFor_arr && args.tradeAway_arr){
                         let tradeAway = this.getResourceArrayHtml(args.tradeAway_arr);
@@ -3971,10 +4048,7 @@ function (dojo, declare) {
                         let color = PLAYER_COLOR[args.player_id];
                         args.bid = this.format_block('jstpl_player_token_log', {"color" : color, "type" : 'bid'});
                     }
-                    /*if (args.amount){
-                        let color = PLAYER_COLOR[args.player_id];
-                        args.amount = this.format_block('jstpl_color_log', {"color" : color, "string" :args.amount});
-                    }*/
+                    
                     // end -> specific token args
 
                     /* formats args.building_name to have the building Color by type, 
@@ -3998,6 +4072,11 @@ function (dojo, declare) {
                     } else {
                         let color = ASSET_COLORS[Number(this.current_auction)+10]??'';
                         args.auction = this.format_block('jstpl_color_number_log', {color:color, string:_("AUCTION "), number:this.current_auction});
+                    }
+                    // legacy
+                    if (args.amount){
+                        let color = PLAYER_COLOR[args.player_id];
+                        args.amount = this.format_block('jstpl_color_log', {"color" : color, "string" :args.amount});
                     }
                     // end -> add font only args              
                 }
