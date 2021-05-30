@@ -1374,8 +1374,6 @@ div#sell_board{
 .log_token:not(:last-child), .log_container .token_inline:not(:last-child) {
    margin-left: -10px;
  }
- .log_container .token_inline:not(:last-child)
-
  .log_wood.log_token:not(:last-child), .log_container .log_wood.token_inline:not(:last-child) {
    margin-left: -3px;
  }
