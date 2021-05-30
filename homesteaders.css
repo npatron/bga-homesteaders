@@ -292,6 +292,10 @@ button:disabled {
 	display: inline-block;
 	text-align: left;
 }
+.break {
+   flex-basis: 100%;
+   height: 0;
+}
 
 .breadcrumbs {
    display: flex;
@@ -957,14 +961,12 @@ div#sell_board{
    flex: 1 0 17%;
    display: inline-flex;
    flex-direction: row-reverse;
-   /* border-style: groove; */
-   /* border-width: 0px; */
    background-color: rgba(153, 153, 153, .25);
    border-radius: 42px;
    align-items: center;
    justify-content: center;
-   margin: 3px;
-   padding: 2px;
+   margin: 1%;
+   padding: 1%;
 }
 .scorenumber {
    position: relative;
@@ -995,7 +997,7 @@ div#sell_board{
 }
 .score_food {
    background-size: 325px 100px;
-   background-position: -56px -1px;
+   background-position: -55px -2px;
    width: 25px;
    height: 29px;
 }
@@ -1206,7 +1208,7 @@ div#sell_board{
 }
 .player_gold, .log_big_gold{
    background-size: 435px 130.5px;
-   background-position: -27px -3.5px;
+   background-position: -26px -3.5px;
    width: 41px;
    height: 40px;
 }
@@ -1354,6 +1356,7 @@ div#sell_board{
 .log_container {
    display: inline-flex;
    flex-direction: row-reverse;
+   pointer-events: none;
 }
 .token_inline{
    background-image: url('img/drawn_tokens_2.png');
@@ -1373,6 +1376,9 @@ div#sell_board{
  }
  .log_wood.log_token:not(:last-child), .log_container .log_wood.token_inline:not(:last-child) {
    margin-left: -3px;
+ }
+ .log_vp .token_inline:not(:last-child){
+    margin-left: 0px;
  }
  .tt_container .log_token:not(:last-child), #breadcrumb_bldCost .log_token:not(:last-child), 
  .tt_container .token_inline:not(:last-child), #breadcrumb_bldCost .log_token:not(:last-child) {
@@ -1416,6 +1422,15 @@ div#sell_board{
    height: 21px;
    width: 31px;
    background-size: 115px 63px; 
+}
+.log_big_loan {
+   background-image: url('img/rail_debt_85x102.png');
+   background-position: 51%;
+   background-size: 150px 60px;
+   height: 60px;
+   width: 49px;
+   position: relative;
+   margin: auto;
 }
 .log_vp0 {
    background-size: 171px 51px;
@@ -1661,6 +1676,9 @@ div#sell_board{
    height: 35px;
    width: 30px;
    max-width: 30px;
+}
+.worker_slot:not(.selectable){
+   pointer-events: none;
 }
 .w_slot {
    display: flex;
