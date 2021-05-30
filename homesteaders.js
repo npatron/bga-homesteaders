@@ -2079,7 +2079,7 @@ function (dojo, declare) {
          * 
          */
         enableTradeIfPossible: function() {
-            console.log('enableTradeIfPossible');
+            //console.log('enableTradeIfPossible');
             if (!this.tradeEnabled){
                 this.tradeEnabled = true;
 
@@ -3905,7 +3905,7 @@ function (dojo, declare) {
                         args.You = this.divYou(); // will replace ${You} with colored version
                     }
                     let copyArgs = this.copyArray(args);
-                    console.log(log, copyArgs , args);
+                    //console.log(log, copyArgs , args);
                     // begin legacy (extra) so existing logs will mostly work, (can remove in July)
                     if (args.track && typeof args.track == 'string'){
                         args.track = TOKEN_HTML.track;
@@ -4020,7 +4020,6 @@ function (dojo, declare) {
                         let tradeAway = this.getResourceArrayHtml(args.tradeAway_arr);
                         let tradeFor  = this.getResourceArrayHtml(args.tradeFor_arr);
                         let arrow = TOKEN_HTML.arrow;
-                        console.log(args, [tradeAway, tradeFor,arrow]);
                         args.resource = tradeAway + " " + arrow + " " + tradeFor;
                     } 
                     if (args.resources && args.resource_arr){
