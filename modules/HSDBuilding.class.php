@@ -210,11 +210,11 @@ class HSDBuilding extends APP_GameClass
                         'i18n' => array( 'building_name' ), 
                         'b_type' => $this->getBuildingTypeFromKey($b_key),
                         'building_name' => $b_name,
+                        'arrow' => '->', 
                         'preserve' => [ 2 => 'b_type']);
         if (count($b_cost)>0) {
-            $message = clienttranslate('${player_name} builds ${building_name} ${arrow} ${resources}');
-            $values['resources'] = $b_cost;
-            $values['arrow'] = "->";
+            $values['resource_arr'] = $b_cost;
+            $values['preserve'][3] = 'resource_arr';
         }
         $this->game->DbQuery( $sql );
         $this->game->notifyAllPlayers( "buildBuilding", $message, $values);

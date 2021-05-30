@@ -220,7 +220,6 @@ class HSDBid extends APP_GameClass
     }
 
     function zombiePass($p_id){
-        $token_arr = array('token'=> 'bid', 'player_id'=>$p_id);
 		$this->game->notifyAllPlayers("moveBid", clienttranslate( '${player_name} passes ${bid}'), array (
                 'player_id' => $p_id,
                 'player_name' => $this->game->loadPlayersBasicInfos()[$p_id]['player_name'],
@@ -279,7 +278,7 @@ class HSDBid extends APP_GameClass
             $this->game->DBQuery("UPDATE `bids` SET `bid_loc`=$new_val WHERE `player_id`=".DUMMY_OPT);
             $this->game->notifyAllPlayers("moveBid", clienttranslate('${bid} ${arrow} ${cost}'), array (
             'player_id' => DUMMY_OPT,
-            'token' => 'bid',
+            'bid' => clienttranslate('dummy'),
             'arrow' => 'arrow',
             'bid_location'=> $new_val,
             'preserve' => [ 2 => 'player_id'],

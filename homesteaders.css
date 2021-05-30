@@ -1372,8 +1372,10 @@ div#sell_board{
    filter: drop-shadow(0px 0px 1px #000000);
 }
 .log_token:not(:last-child), .log_container .token_inline:not(:last-child) {
-   margin-left: -5px;
+   margin-left: -10px;
  }
+ .log_container .token_inline:not(:last-child)
+
  .log_wood.log_token:not(:last-child), .log_container .log_wood.token_inline:not(:last-child) {
    margin-left: -3px;
  }

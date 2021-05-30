@@ -283,7 +283,6 @@ class homesteaders extends Table
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
             'building_key' => $b_key,
-            'building_name' => array('type'=> $this->Building->getBuildingTypeFromKey($b_key) ,'str'=>$this->Building->getBuildingNameFromKey($b_key)),
             'building_slot' => $building_slot, 
             'worker' => 'worker',
             'player_name' => $this->getCurrentPlayerName(),
