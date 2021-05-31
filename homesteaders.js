@@ -4072,11 +4072,6 @@ function (dojo, declare) {
                         let color = ASSET_COLORS[Number(this.current_auction)+10]??'';
                         args.auction = this.format_block('jstpl_color_number_log', {color:color, string:_("AUCTION "), number:this.current_auction});
                     }
-                    // legacy
-                    if (args.amount){
-                        let color = PLAYER_COLOR[args.player_id];
-                        args.amount = this.format_block('jstpl_color_log', {"color" : color, "string" :args.amount});
-                    }
                     // end -> add font only args              
                 }
             } catch (e) {
@@ -4273,7 +4268,7 @@ function (dojo, declare) {
             const p_id = notif.args.player_id;
             for(let i = 0; i < notif.args.amount; i++){
                 this.slideTemporaryObject( TOKEN_HTML[String(notif.args.typeStr)], 'limbo', start , PLAYER_SCORE_ZONE_ID[p_id] , 500 , 100*i );
-            if (p_id == this.player_id || this.show_player_info){
+                if (p_id == this.player_id || this.show_player_info){
                     if (VP_TOKENS.includes(notif.args.typeStr)){
                         this.incResCounter(p_id, 'vp',Number(notif.args.typeStr.charAt(2)));
                     } else{ // normal case
