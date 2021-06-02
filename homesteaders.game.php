@@ -216,11 +216,11 @@ class homesteaders extends Table
 ////////////    
 
     function getPlayerName($p_id){
-        return($this->loadPlayersBasicInfos()[$p_id]['player_name']);
+        return (string)($this->loadPlayersBasicInfos()[$p_id]['player_name']);
     }
 
     function getPlayerColorName($p_id){
-        return $this->getUniqueValueFromDB( "SELECT `color_name` FROM `player` WHERE `player_id`=$p_id" );
+        return (string)$this->getUniqueValueFromDB( "SELECT `color_name` FROM `player` WHERE `player_id`=$p_id" );
     }
 
     function getShowPlayerInfo(){
@@ -250,12 +250,14 @@ class homesteaders extends Table
     public function playerTrade( $tradeAction_csv, $notActive =false )
     {
         // allow out of turn trade, only when flag is passed during allocateWorkers State.
-        if (!($notActive && $this->gamestate->state()['name'] === "allocateWorkers"))
+        if (!($notActive && $this->gamestate->state()['name'] === "allocateWorkers")){
             $this->checkAction( 'trade' );
+        }
+        $p_id = $this->getCurrentPlayerId();
         $tradeAction_arr = explode(',', $tradeAction_csv);
         foreach( $tradeAction_arr as $key=>$val ){
             $tradeAction = $this->trade_map[$val];
-            $this->Resource->trade($this->getCurrentPlayerId(), $tradeAction);
+            $this->Resource->trade($p_id, $tradeAction);
         }
     }
 
@@ -267,8 +269,6 @@ class homesteaders extends Table
         if (!$this->Resource->canPlayerAfford($cur_p_id, $worker_cost))
             throw new BgaUserException( clienttranslate("You cannot afford to hire a worker"));
         $this->Resource->updateAndNotifyPaymentGroup($cur_p_id, $worker_cost, clienttranslate('Hire Worker'));
-        $this->Log->updateResource($cur_p_id, "trade", -1);
-        $this->Log->updateResource($cur_p_id, "food", -1);
         $this->Resource->addWorkerAndNotify($cur_p_id, 'hire');
     }
 
@@ -283,9 +283,7 @@ class homesteaders extends Table
             'player_id' => $cur_p_id,
             'worker_key' => $w_key,
             'building_key' => $b_key,
-            'building_slot' => $building_slot, 
-            'worker' => 'worker',
-            'player_name' => $this->getCurrentPlayerName(),
+            'building_slot' => $building_slot,
         ) );
         $sql = "UPDATE `workers` SET `building_key`= '".$b_key."', `building_slot`='".$building_slot."' WHERE `worker_key`='".$w_key."'";
         $this->DbQuery( $sql );
@@ -325,7 +323,6 @@ class homesteaders extends Table
         if ($this->Building->doesPlayerOwnBuilding($act_p_id, BLD_FORGE) && 
             $this->Building->getBuildingIdFromKey($selected_building) != BLD_FORGE){
             $this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 1, array('type'=>TYPE_INDUSTRIAL, 'str'=>"Forge") );
-            $this->Log->updateResource($act_p_id, 'vp', 1);
         }
         $building_bonus = $this->Building->getOnBuildBonusForBuildingKey($selected_building);
         $this->setGameStateValue('building_bonus', $building_bonus);
@@ -773,7 +770,6 @@ class homesteaders extends Table
         switch($bonus){
             case BUILD_BONUS_TRADE_TRADE:
                 $this->Resource->updateAndNotifyIncome($active_p_id, 'trade', 2, $b_name, 'building', $b_key);
-                $this->Log->updateResource($active_p_id, 'trade', 2);
                 $this->gamestate->nextState("auction_bonus");
             break;
             case BUILD_BONUS_PAY_LOAN:
@@ -782,7 +778,6 @@ class homesteaders extends Table
             break;
             case BUILD_BONUS_TRADE:
                 $this->Resource->updateAndNotifyIncome($active_p_id, 'trade', 1, $b_name, 'building', $b_key);
-                $this->Log->updateResource($active_p_id, 'trade', 1);
                 $this->gamestate->nextState("auction_bonus");
             break;
             case BUILD_BONUS_RAIL_ADVANCE:

@@ -980,9 +980,10 @@ function (dojo, declare) {
             dojo.query( `#${TPL_BLD_ZONE}${PLAYER_COLOR[this.player_id]} .worker_slot` ).addClass( 'selectable' );
 
             this.addActionButton( BTN_ID_DONE,_('Confirm'), 'donePlacingWorkers' );
-            this.addActionButton( BTN_ID_HIRE_WORKER, _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
             this.addActionButton( BTN_ID_CANCEL, _('Cancel'), 'cancelUndoTransactions', null, false, 'red');
+            dojo.place(dojo.create('br'),'generalactions','last');
             this.tradeEnabled = false;
+            this.addActionButton( BTN_ID_HIRE_WORKER, _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
             this.addTradeActionButton();
             this.setOffsetForIncome();
             this.destroyPaymentBreadcrumb();
@@ -1121,10 +1122,11 @@ function (dojo, declare) {
         },
         onUpdateActionButtons_endGameActions: function () {
             this.addActionButton( BTN_ID_DONE,          _('Done'),                    'doneEndgameActions');    
+            this.addActionButton( BTN_ID_CANCEL, _('Cancel'), 'cancelUndoTransactions', null, false, 'red');
+            dojo.place(dojo.create('br'),'generalactions','last');
             this.addActionButton( BTN_ID_PAY_LOAN_SILVER, dojo.string.substitute(_('Pay Loan ${type}'), {type:TOKEN_HTML.silver}), 'payLoanSilver', null, false, 'gray');
             this.addActionButton( BTN_ID_PAY_LOAN_GOLD,   dojo.string.substitute(_('Pay Loan ${type}'), {type:TOKEN_HTML.gold}),'payLoanGold',   null, false, 'gray');
             this.addActionButton( BTN_ID_HIRE_WORKER, _('Hire New Worker'), 'hireWorkerButton', null, false, 'gray' );
-            this.addActionButton( BTN_ID_CANCEL, _('Cancel'), 'cancelUndoTransactions', null, false, 'red');
             this.addTradeActionButton();
         },
 
@@ -2083,34 +2085,31 @@ function (dojo, declare) {
             if (!this.tradeEnabled){
                 this.tradeEnabled = true;
 
-                let trade_zone = dojo.create('div', {id:TRADE_ZONE_ID, style:'display: inline-flex;flex-direction: column;'});
                 dojo.place(dojo.create('br'),'generalactions','last');
+                let trade_zone = dojo.create('div', {id:TRADE_ZONE_ID, style:'display: inline-flex;flex-direction: column;'});
                 dojo.place(trade_zone, 'generalactions', 'last');
-                let zone_style = 'display: flex; justify-content:flex-start; min-width: 1000px;';
+                let zone_style = 'display: flex; justify-content: center; flex-wrap: wrap;';
                 let buy_zone = dojo.create('div', {id:BUY_ZONE_ID, style:zone_style});
                 dojo.place(buy_zone, TRADE_ZONE_ID, 'first');
-                let buy_text = dojo.create('span', {class:"biggerfont", id:BUY_TEXT_ID, style:"width: 100px;"});
+                let buy_text = dojo.create('span', {class:"biggerfont", id:BUY_TEXT_ID});
                 dojo.place(buy_text, BUY_ZONE_ID, 'first');
                 buy_text.innerText = _("Buy:");
                 let sell_zone = dojo.create('div', {id:SELL_ZONE_ID, style:zone_style});
                 dojo.place(sell_zone, TRADE_ZONE_ID, 'last');
-                let sell_text = dojo.create('span', {class:"biggerfont", id:SELL_TEXT_ID, style:"width: 100px;"});
+                let sell_text = dojo.create('span', {class:"biggerfont", id:SELL_TEXT_ID});
                 dojo.place(sell_text, SELL_ZONE_ID, 'first');
                 sell_text.innerText =_("Sell:");
                     
                 let types = ['wood','food','steel','gold','cow','copper'];
-                let width = {'wood':100, 'food':115,'steel':125, 'gold':140, 'cow':110, 'copper':115};
                 types.forEach(type=> {
                     let tradeAwayTokens = this.getResourceArrayHtml(this.getBuyAway(type));
                     let tradeForTokens = this.getResourceArrayHtml(this.getBuyFor(type));
                     this.addActionButton( `btn_buy_${type}`, `${tradeAwayTokens} ${TOKEN_HTML.arrow} ${tradeForTokens}`, 'onBuyResource', null, false, 'blue');
                     dojo.place(`btn_buy_${type}`, BUY_ZONE_ID, 'last');
-                    dojo.style(`btn_buy_${type}`, 'width', `${width[type]}px`);
                     tradeAwayTokens = this.getResourceArrayHtml(this.getSellAway(type));
                     tradeForTokens = this.getResourceArrayHtml(this.getSellFor(type));
                     this.addActionButton( `btn_sell_${type}`, `${tradeAwayTokens} ${TOKEN_HTML.arrow} ${tradeForTokens}`, 'onSellResource', null, false, 'blue');
                     dojo.place(`btn_sell_${type}`, SELL_ZONE_ID, 'last');
-                    dojo.style(`btn_sell_${type}`, 'width', `${width[type]}px`);
                 });
                 if (HAS_BUILDING[this.player_id][BLD_MARKET] || HAS_BUILDING[this.player_id][BLD_BANK]){
                     let special_zone = dojo.create('div', {id:SPECIAL_ZONE_ID, style:zone_style});
@@ -2121,14 +2120,12 @@ function (dojo, declare) {
                     dojo.place(mkt_text, SPECIAL_ZONE_ID, 'first');
                     mkt_text.innerText = _("Market:");
                     let types = ['food','steel'];
-                    let width = {'food':100, 'steel':115};
                     types.forEach((type) => {
                         tradeAwayTokens = this.getResourceArrayHtml(this.getMarketAway(type));
                         tradeForTokens = this.getResourceArrayHtml(this.getMarketFor(type));
                         let mkt_btn_id = `btn_market_${type}`;
                         this.addActionButton( mkt_btn_id, `${tradeAwayTokens} ${TOKEN_HTML.arrow} ${tradeForTokens}`, `onMarketTrade_${type}`, null, false, 'blue');
                         dojo.place(mkt_btn_id, SPECIAL_ZONE_ID, 'last');
-                        dojo.style(mkt_btn_id, 'width', `${width[type]}px`);
                     } );
                 }
                 if (HAS_BUILDING[this.player_id][BLD_BANK]){
@@ -2139,7 +2136,6 @@ function (dojo, declare) {
                     tradeForTokens = this.getResourceArrayHtml({'silver':1});
                     this.addActionButton( BTN_ID_TRADE_BANK, `${tradeAwayTokens} ${TOKEN_HTML.arrow} ${tradeForTokens}`, `onClickOnBankTrade`, null, false, 'blue');
                     dojo.place(BTN_ID_TRADE_BANK, SPECIAL_ZONE_ID, 'last');
-                    dojo.style(BTN_ID_TRADE_BANK, 'width', `100px`);
                 }
             }
             this.updateTradeAffordability();
