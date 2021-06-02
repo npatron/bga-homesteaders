@@ -791,7 +791,7 @@ class homesteaders extends Table
                 $this->gamestate->nextState('rail_bonus');
             break;
             case BUILD_BONUS_TRACK_AND_BUILD:
-                $this->Resource->addTrack($active_p_id, $b_name, 'building', $b_key);
+                $this->Resource->addTrackAndNotify($active_p_id, $b_name, 'building', $b_key);
                 $this->gamestate->nextState('train_station_build');
             break;
             case BUILD_BONUS_WORKER:
@@ -959,11 +959,10 @@ class homesteaders extends Table
 //        // Please add your future database scheme changes here
 //
 //
+    }
 
 
-    } 
-
-/*
+  /*
    * loadBug: in studio, type loadBug(20762) into the table chat to load a bug report from production
    * client side JavaScript will fetch each URL below in sequence, then refresh the page
    */
