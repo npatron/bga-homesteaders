@@ -142,8 +142,10 @@
         <span id="top_texts">
             <span id="round_text" class="font caps">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
         </span>
+        <!-- removing trade buttons, adding them to actions bar.
         <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red noshow"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
-        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
+        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a> 
+        -->
         <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
             <span id="bld_main" class="font">{BUILDING_STOCK}</span>
         </a>

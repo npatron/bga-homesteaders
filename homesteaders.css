@@ -211,17 +211,6 @@
 /*============*
  * Button css *
  *============*/
- 
-#undo_last_trade_btn{
-   height: 17px;
-   width: 180px;
-   order: 8;
-}
-#undo_trades_btn{
-   height: 17px;
-   width: 180px;
-   order: 8;
-}
 a#tgl_main_bld{
    height: 17px;
    width: 180px;
