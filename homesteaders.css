@@ -348,6 +348,22 @@ button:disabled {
    border-left-color: #b5552b;
 }
 
+.trade_x {
+   position: absolute;
+   color: black;
+   text-align: center;
+   background-color: red;
+   border: 2px solid #060606;
+   border-radius: 13px;
+   margin: 3px;
+   top: 10px;
+   right: -29px;
+   z-index: 5;
+   font-size: medium;
+   width: 20px;
+   cursor: pointer;
+}
+
 /*====================*
  * Bid Slot Locations *
  *    (on board)      *
