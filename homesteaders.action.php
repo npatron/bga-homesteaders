@@ -102,9 +102,15 @@ class action_homesteaders extends APP_GameAction
     self::ajaxResponse( );
   }
 
-  public function actionCancel() {
+  public function actionCancelAllocateWorkers() {
     self::setAjaxMode();
-    $this->game->playerActionCancel();
+    $this->game->playerActionCancelAllocateWorkers();
+    self::ajaxResponse();
+  }
+
+  public function actionCancelEndgame() {
+    self::setAjaxMode();
+    $this->game->playerActionCancelEndgame();
     self::ajaxResponse();
   }
 

@@ -502,13 +502,19 @@ class homesteaders extends Table
         $this->gamestate->nextState( $next_state );
     }
 
-    public function playerActionCancel() {
+    public function playerActionCancelAllocateWorkers() {
         $this->gamestate->checkPossibleAction('actionCancel');
         $p_id = $this->getCurrentPlayerId();
         $this->gamestate->setPlayersMultiactive(array ($p_id), 'error', false);
         $this->Log->cancelWorkerIncomePhase($p_id);
         $this->Resource->setIncomePaid($p_id, 0);
         $this->Resource->setPaid($p_id, 0);
+    }
+
+    public function playerActionCancelEndgame() {
+        $this->gamestate->checkPossibleAction('actionCancel');
+        $p_id = $this->getCurrentPlayerId();
+        $this->gamestate->setPlayersMultiactive(array ($p_id), 'error', false);
     }
 
     public function playerCancelBidPass () {

@@ -349,18 +349,18 @@ button:disabled {
 }
 
 .trade_x {
+   background-image: url('img/drawn_tokens.png');
+   background-position: 48% 100%;
+   background-size: 200px 81px;
+   background-color: #813818;
+   border-radius: 4px;
    position: absolute;
    color: black;
-   text-align: center;
-   background-color: red;
-   border: 2px solid #060606;
-   border-radius: 13px;
    margin: 3px;
-   top: 10px;
-   right: -29px;
-   z-index: 5;
-   font-size: medium;
-   width: 20px;
+   top: -3px;
+   left: 30px;
+   width: 16px;
+   height: 15px;
    cursor: pointer;
 }
 
@@ -977,7 +977,7 @@ div#sell_board{
    position: relative;
 }
 .score_token {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    position: relative;
    margin: auto;
    filter: drop-shadow(0px 0px 1px #000000);
@@ -1130,7 +1130,7 @@ div#sell_board{
    flex-direction: column;
 }
 .buy{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1000px 300px;
    background-position: -312px -216px;
    height: 20px;
@@ -1138,7 +1138,7 @@ div#sell_board{
    grid-row: 1 / 2;
 }
 .sell{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1000px 300px;
    background-position: -312px -264px;
    height: 20px;
@@ -1174,7 +1174,7 @@ div#sell_board{
    filter: drop-shadow(0px 0px 1px #000000);
  }
 .take_loan {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1000px 300px;
    background-position: -312px -216px;
    height: 20px;
@@ -1364,13 +1364,13 @@ div#sell_board{
    pointer-events: none;
 }
 .token_inline{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    position: relative;
    display: inline-block;
    pointer-events: none;
 }
 .log_token {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    position: relative;
    overflow: hidden;
    flex-direction: row-reverse;
@@ -1582,7 +1582,7 @@ div#sell_board{
  * Worker Tokens *
  *===============*/
 .token_worker {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 677px 207px;
    height: 35px;
    width: 24px;
@@ -1699,7 +1699,7 @@ div#sell_board{
    max-height: 33px;
 }
 .tt_container .worker_slot{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1100%;
    background-position: 38% 98%;
    width: 33px;
@@ -1711,7 +1711,7 @@ div#sell_board{
    display: inline-flex;
 }
 .dijitTooltipContainer .worker_slot {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1100%;
    background-position: 38% 98%;
    width: 20px;
