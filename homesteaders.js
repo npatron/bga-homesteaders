@@ -3136,6 +3136,7 @@ function (dojo, declare) {
                     this.disableTradeIfPossible();
                     this.allowTrade = false;
                     if (this.currentState == "allocateWorkers"){
+                        dojo.query(`#generalactions br`).forEach(dojo.destroy);
                         dojo.place(BTN_ID_UNDO_PASS, 'pagemaintitletext', 'after');
                     }
                 }, function( is_error) { } );
