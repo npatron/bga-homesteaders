@@ -211,17 +211,6 @@
 /*============*
  * Button css *
  *============*/
- 
-#undo_last_trade_btn{
-   height: 17px;
-   width: 180px;
-   order: 8;
-}
-#undo_trades_btn{
-   height: 17px;
-   width: 180px;
-   order: 8;
-}
 a#tgl_main_bld{
    height: 17px;
    width: 180px;
@@ -357,6 +346,22 @@ button:disabled {
    
 .breadcrumbs_element.font:after {
    border-left-color: #b5552b;
+}
+
+.trade_x {
+   background-image: url('img/drawn_tokens.png');
+   background-position: 48% 100%;
+   background-size: 200px 81px;
+   background-color: #813818;
+   border-radius: 4px;
+   position: absolute;
+   color: black;
+   margin: 3px;
+   top: -3px;
+   left: 30px;
+   width: 16px;
+   height: 15px;
+   cursor: pointer;
 }
 
 /*====================*
@@ -578,8 +583,7 @@ div#trade_bank_trade_silver:not(.selectable){
 
 .tt_container div[id$=trade_market_wood_food]{
    width: auto;
-   min-width: 79px;
-   max-width: 83px;
+   max-width: 68px;
    height: 26px;
    position: unset;
    margin-left: auto;
@@ -595,8 +599,7 @@ div[id$=trade_market_wood_food]{
 }
 .tt_container div[id$=trade_market_food_steel]{
    width: auto;
-   min-width: 95px;
-   max-width: 100px;
+   max-width: 84px;
    height: 20px;
    position: unset;
    margin-left: auto;
@@ -778,6 +781,8 @@ div#sell_board{
    border-style: dotted;
    border-color: blue;
    border-width: 3px;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
    box-sizing: border-box;
    cursor:pointer;
 }
@@ -972,7 +977,7 @@ div#sell_board{
    position: relative;
 }
 .score_token {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    position: relative;
    margin: auto;
    filter: drop-shadow(0px 0px 1px #000000);
@@ -1125,7 +1130,7 @@ div#sell_board{
    flex-direction: column;
 }
 .buy{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1000px 300px;
    background-position: -312px -216px;
    height: 20px;
@@ -1133,7 +1138,7 @@ div#sell_board{
    grid-row: 1 / 2;
 }
 .sell{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1000px 300px;
    background-position: -312px -264px;
    height: 20px;
@@ -1169,7 +1174,7 @@ div#sell_board{
    filter: drop-shadow(0px 0px 1px #000000);
  }
 .take_loan {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1000px 300px;
    background-position: -312px -216px;
    height: 20px;
@@ -1359,13 +1364,13 @@ div#sell_board{
    pointer-events: none;
 }
 .token_inline{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    position: relative;
    display: inline-block;
    pointer-events: none;
 }
 .log_token {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    position: relative;
    overflow: hidden;
    flex-direction: row-reverse;
@@ -1528,15 +1533,22 @@ div#sell_board{
    width: 40px;
    height: 40px;
 }
-.log_arrow{
+.log_big_arrow{
    background-size: 689.7px 206.9px;
-   background-position: -249.6px -83.45px;
+   background-position: -249.6px -79px;
    width: 22.76px;
    height: 20px;
 }
+.log_arrow{
+   background-size: 344.85px 103.45px;
+   background-position: -124.8px -41.725px;
+   width: 11px;
+   height: 10px;
+   bottom: 4px;
+}
 .log_inc_arrow{
    background-size: 517px 155px;
-   background-position: -187px -83px;
+   background-position: -187px -80px;
    width: 15px;
    height: 15px;
    filter: drop-shadow(0px 0px 1px #000000);
@@ -1577,7 +1589,7 @@ div#sell_board{
  * Worker Tokens *
  *===============*/
 .token_worker {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 677px 207px;
    height: 35px;
    width: 24px;
@@ -1587,6 +1599,15 @@ div#sell_board{
    position: relative;
    display: inline-block;
    margin: auto;
+}
+.worker_slot .token_worker {
+   top: -6px;
+}
+.tt_container .worker_slot .token_worker {
+   top: unset;
+}
+.worker_slot:not(.selectable) .token_worker {
+   left: 2px;
 }
 
 /*======*
@@ -1676,8 +1697,8 @@ div#sell_board{
  *=======================*/
 .worker_slot{
    position: absolute;
-   height: 35px;
-   width: 30px;
+   height: 29px;
+   width: 29px;
    max-width: 30px;
 }
 .worker_slot:not(.selectable){
@@ -1694,7 +1715,7 @@ div#sell_board{
    max-height: 33px;
 }
 .tt_container .worker_slot{
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1100%;
    background-position: 38% 98%;
    width: 33px;
@@ -1706,7 +1727,7 @@ div#sell_board{
    display: inline-flex;
 }
 .dijitTooltipContainer .worker_slot {
-   background-image: url('img/drawn_tokens_2.png');
+   background-image: url('img/drawn_tokens.png');
    background-size: 1100%;
    background-position: 38% 98%;
    width: 20px;
@@ -1718,68 +1739,68 @@ div#sell_board{
    display: inline-flex;
 }
 .slot_1_1 {
-   bottom: 10px;
-   left: 14px;
+   bottom: 6%;
+   left: 10%;
 }
 .slot_1_2 {
-   bottom: 8px;
-   left: 68px;
+   bottom: 6%;
+   left: 50%;
 }
 .slot_2_1 {
-   bottom: 9px;
-   left: 14px;
+   bottom: 6%;
+   left: 10%;
 }
 .slot_2_2 {
-   bottom: 9px;
-   left: 70px;
+   bottom: 6%;
+   left: 50%;
 }
 .slot_3_1 {
-   bottom: 10px;
-   left: 14px;
+   bottom: 6%;
+   left: 10%;
 }
 .slot_3_2 {
-   bottom: 10px;
-   left: 65px;
+   bottom: 6%;
+   left: 50%;
 }
 .slot_4_1 {
-   bottom: 9px;
-   left: 14px;
+   bottom: 6%;
+   left: 10%;
 }
 .slot_4_2 {
-   bottom: 8px;
-   left: 64px;
+   bottom: 6%;
+   left: 50%;
 }
 .slot_6_1 {
-   bottom: 45px;
-   left: 22px;
+   bottom: 24%;
+   left: 14%;
 }
 .slot_6_2 {
-   bottom: 11px;
-   left: 37px;
+   bottom: 7%;
+   left: 24%;
 }
 .slot_7_1 {
-   bottom: 11px;
-   left: 51px;
+   bottom: 7%;
+   left: 35%;
 }
 .slot_8_1 {
-   bottom: 15px;
-   left: 39px;
+   bottom: 7%;
+   left: 27%;
 }
 .slot_12_1 {
-   bottom: 14px;
-   left: 33px;
+   bottom: 7%;
+   left: 22%;
 }
 .slot_15_1 {
-   bottom: 14px;
-   left: 39px;
+   bottom: 7%;
+   left: 27%;
 }
 .slot_16_1 {
-   bottom: 12px;
-   left: 35px;
+   bottom: 7%;
+   left: 24%;
 }
 .slot_17_3 {
-   bottom: 13px;
-   left: 28px;
+   bottom: 7%;
+   left: 21%;
    width: 70px;
    display: grid;
    grid-template-columns: 20px 20px;
@@ -1803,30 +1824,31 @@ div#sell_board{
 .w_slot [id^="slot_"][id$="_3"] .token_worker{
    left: 24px;
    position: absolute;
+   top:unset;
 }
 .w_slot [id^="slot_"][id$="_3"] .token_worker:nth-child(4){
    left: 50px;
    position: absolute;
 }
 .slot_23_1 {
-   bottom: 48px;
-   left: 39px;
+   bottom: 24%;
+   left: 27%;
 }
 .slot_23_2 {
-   bottom: 10px;
-   left: 39px;
+   bottom: 6%;
+   left: 27%;
 }
 .slot_24_1 {
-   bottom: 13px;
-   left: 39px;
+   bottom: 7%;
+   left: 26%;
 }
 .slot_36_1 {
-   bottom: 8px;
-   left: 5px;
+   bottom: 6%;
+   left: 50%;
 }
 .slot_36_2 {
-   bottom: 8px;
-   left: 64px;
+   bottom: 6%;
+   left: 50%;
 }
 
 /*=====================*

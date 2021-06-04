@@ -102,7 +102,7 @@ $this->resource_info = array(
     'db_int' => FOOD,
     'trade_val' => array('silver'=> 2),
     'market' => array('wood'=>1),
-    'tt'     => clienttranslate('${big_food}<br>Food:<br>Required to build some buildings<br>Used to Hire new ${worker}'),
+    'tt'     => clienttranslate('${big_food}<br>Food:<br>Required to build some buildings<br>Used to Recruit new ${worker}'),
   ),
   'steel' => array(
     'name'   => clienttranslate("Steel"),
@@ -137,7 +137,7 @@ $this->resource_info = array(
   'trade' => array(
     'name'   => clienttranslate("Trade Token"),
     'db_int' => TRADE,
-    'tt'     => clienttranslate('${big_trade}<br>Trade Token:<br> Required for any trade<br>Used to Hire new ${worker}'),
+    'tt'     => clienttranslate('${big_trade}<br>Trade Token:<br> Required for any trade<br>Used to Recruit new ${worker}'),
   ),
   'vp' => array(
     'name'   => clienttranslate("VP Token"),

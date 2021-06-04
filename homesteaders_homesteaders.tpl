@@ -142,8 +142,10 @@
         <span id="top_texts">
             <span id="round_text" class="font caps">{ROUND_STRING}<span id="round_number" class="biggerFont">{ROUND_NUMBER}  </span>  </span>
         </span>
+        <!-- removing trade buttons, adding them to actions bar.
         <a href="#" id="undo_last_trade_btn" class="bgabutton bgabutton_red noshow"><span id='undoLastTrade' class="font">{UNDO_LAST_TRADE}</span></a>
-        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a>
+        <a href="#" id="undo_trades_btn" class="bgabutton bgabutton_red noshow"><span id='undoTrade' class="font">{UNDO_TRADE}</span></a> 
+        -->
         <a href="#" id="tgl_main_bld" class="bgabutton bgabutton_gray">
             <span id="bld_main" class="font">{BUILDING_STOCK}</span>
         </a>
@@ -326,7 +328,7 @@ var jptpl_track_log = '<span title="${type}" class="log_inline_${type}"></span>'
 var jptpl_x_loan= '<span title="pay dept" class="crossout log_inline_loan"></span>';
 var jptpl_buy_sell_board='<div id="buy_board" class="buy_board"></div><div id="sell_board" class="sell_board"></div>';
 
-var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element">${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 9px;"></span>${for}</span>'
+var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element"><button id="x_${id}" class="trade_x"></button>${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 9px;"></span>${for}</span>'
 var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'
 var jptpl_breadcrumb_income = '<span id="breadcrumb_income_${id}" class="breadcrumbs_element font" style="${style}">${text}</span><span id="breadcrumb_income_tokens_${id}" class="breadcrumbs_element" style="${style}">${income}</span>'
 var jptpl_breadcrumb_building = '<span id="breadcrumb_building" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_bldCost" class="breadcrumbs_element">${cost}</span>'
