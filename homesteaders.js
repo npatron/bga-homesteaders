@@ -152,6 +152,7 @@ function (dojo, declare) {
     const BTN_ID_MORE_GOLD   = 'btn_more_gold';
     const BTN_ID_LESS_GOLD   = 'btn_less_gold';
     const BTN_ID_PAY_DONE    = 'btn_pay_done';
+    const DONE_PAY_METHOD    = 'donePay';
 
     const PAY_GOLD_TEXT    = 'pay_gold';
     const PAY_GOLD_TOKEN   = 'pay_gold_tkn';
@@ -1736,7 +1737,7 @@ function (dojo, declare) {
         /***** COMMON ACTIONS (multiple states) *****/
         addPaymentButtons: function( ){
             if (!this.showPay) return;
-            this.addActionButton( BTN_ID_PAY_DONE, dojo.string.substitute(PAY_TEMPLATE, {amt:this.format_block("jstpl_pay_button", {})}), DONE_PAY_METHOD);
+            this.addActionButton( BTN_ID_PAY_DONE, dojo.string.substitute(_("Pay: ${amt}"), {amt:this.format_block("jstpl_pay_button", {})}), DONE_PAY_METHOD);
             
             SILVER_COUNTER.create(PAY_SILVER_TEXT);
             SILVER_COUNTER.setValue(this.silverCost);
@@ -2051,9 +2052,9 @@ function (dojo, declare) {
                     switch (button_id){
                         case BTN_ID_PAY_DONE:
                             if (andTrade) {
-                                var button_text = dojo.string.substitute(PAY_TEMPLATE, {amt:this.format_block("jstpl_pay_button", {})});
+                                var button_text = dojo.string.substitute(_("Pay: ${amt}"), {amt:this.format_block("jstpl_pay_button", {})});
                             } else {
-                                var button_text = dojo.string.substitute(CONFIRM_PAY_TEMPLATE, {amt:this.format_block("jstpl_pay_button", {})});
+                                var button_text = dojo.string.substitute(_("Confirm Trades & Pay: ${amt}"), {amt:this.format_block("jstpl_pay_button", {})});
                             }
                             var button_method = DONE_PAY_METHOD;
                             dojo.query(`#${button_id}`).forEach(dojo.destroy);
@@ -2075,14 +2076,6 @@ function (dojo, declare) {
                             }
                             console.log(this.silverCost, this.goldAmount);
                             return;
-                        case BTN_ID_CONFIRM_WORKERS:
-                            if (andTrade) {
-                                var button_text = this.replaceTooltipStrings(WORKER_DONE_TEMPLATE_1);
-                            } else {
-                                var button_text = this.replaceTooltipStrings(WORKER_DONE_TEMPLATE_2);
-                            }
-                            var button_method = CONFIRM_WORKERS_METHOD;
-                        break;
                         case BTN_ID_DONE:
                             if (andTrade) {
                                 var button_text = _("Pass");
@@ -2164,7 +2157,7 @@ function (dojo, declare) {
         addTradeActionButton: function( ){
             this.addActionButton( BTN_ID_TRADE,      _("Show Trade"), 'tradeActionButton', null, false, 'gray' );
             this.addActionButton( BTN_ID_TAKE_LOAN,  _("Take Debt"),  'onMoreLoan', null, false, 'gray' );
-            this.addActionButton( UNDO_TRADE_BTN_ID, _("Undo All Trade/Dept"), 'undoTransactionsButton', null, false, 'red' );
+            this.addActionButton( UNDO_TRADE_BTN_ID, _("Undo All Trade & Debt"), 'undoTransactionsButton', null, false, 'red' );
             dojo.addClass(UNDO_TRADE_BTN_ID, 'disabled');
 
             this.addActionButton( CONFIRM_TRADE_BTN_ID, _("Confirm Trade"), 'confirmTradeButton', null, false, 'blue' );
@@ -2498,7 +2491,7 @@ function (dojo, declare) {
             if(this.canAddTrade({'loan':1, 'silver':2})){
                 this.updateTrade({'loan':1, 'silver':2});
                 // add breadcrumb
-                this.createTradeBreadcrumb(TRANSACTION_LOG.length, "Take Dept", {loan:1}, {silver:2}, true);
+                this.createTradeBreadcrumb(TRANSACTION_LOG.length, _("Take Debt"), {loan:1}, {silver:2}, true);
 
                 TRANSACTION_COST.push({'loan':1, 'silver':2});
                 TRANSACTION_LOG.push(TRADE_MAP.loan);
@@ -3931,7 +3924,7 @@ function (dojo, declare) {
                 // add breadcrumb
                 let tradeAway = {'silver':-5};
                 let tradeFor = {'loan':-1};
-                this.createTradeBreadcrumb(TRANSACTION_LOG.length, _("Pay Dept"), tradeAway, tradeFor);
+                this.createTradeBreadcrumb(TRANSACTION_LOG.length, _("Pay Debt"), tradeAway, tradeFor);
 
                 TRANSACTION_COST.push(tradeChange);
                 TRANSACTION_LOG.push(TRADE_MAP.payloan_silver);
@@ -3948,7 +3941,7 @@ function (dojo, declare) {
                 // add breadcrumb
                 let tradeAway = {'gold':-1};
                 let tradeFor = {'loan':-1};
-                this.createTradeBreadcrumb(TRANSACTION_LOG.length, _("Pay Dept"), tradeAway, tradeFor);
+                this.createTradeBreadcrumb(TRANSACTION_LOG.length, _("Pay Debt"), tradeAway, tradeFor);
 
                 TRANSACTION_COST.push(tradeChange);
                 TRANSACTION_LOG.push(TRADE_MAP.payloan_gold);

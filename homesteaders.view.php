@@ -46,8 +46,6 @@
         $this->tpl['ROUND_NUMBER'] = $round_number;
         $this->tpl['MAIN_BUILDING']    = self::_('Current Building Stock');
         $this->tpl['CONFIRM_TRADE']    = self::_("Confirm Trade");
-        //$this->tpl['UNDO_TRADE']       = self::_("Undo All Trade/Dept");
-        //$this->tpl['UNDO_LAST_TRADE']  = self::_("Undo Last Trade/Dept");
         $this->tpl['FUTURE_AUCTION']   = self::_("Show Upcoming Auctions");
         $this->tpl['BUILDING_STOCK']   = self::_("Hide Current Buildings");
         $this->tpl['BUILDING_DISCARD'] = self::_("Show Building Discard");
