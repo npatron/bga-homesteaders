@@ -123,7 +123,7 @@ function (dojo, declare) {
     const COW_VP_METHOD  = 'cowFor4VP';
     
     const BTN_ID_COPPER_VP = 'btn_copper_vp';
-    const COPPER_VP_ARR    = {resource1:'${copper}', resource2:'${vp4}'};
+    const COPPER_VP_ARR    = {resource1:'${copper}', resource2:'${vp4}', arrow:'${arrow}'};
     const COPPER_VP_METHOD = 'copperFor4VP';
     
     const BTN_ID_GOLD_VP = 'btn_gold_vp';
@@ -139,11 +139,9 @@ function (dojo, declare) {
     const BTN_ID_DO_NOT_BUILD = 'btn_do_not_build'; // pass build
     const BTN_ID_PASS_BONUS   = 'btn_pass_bonus';   // pass on bonus
     const BTN_ID_CHOOSE_BONUS = 'btn_choose_bonus'; //rail bonus
-    const CHOOSE_BONUS_STRING = _('Choose Bonus');
 
     /*** transition back ***/
     const BTN_ID_UNDO_PASS    = 'btn_undo_pass';
-    const UNDO_STRING         = _('Undo');
     const BTN_ID_CANCEL       = 'btn_cancel_button';
     const BTN_ID_REDO_AUCTION = 'btn_redo_build_phase';
     /*** non-transition actions ***/
@@ -1154,7 +1152,7 @@ function (dojo, declare) {
         },
         // -non-active-
         onUpdateActionButtons_endGameActions_notActive: function (args) {
-            this.addActionButton(BTN_ID_UNDO_PASS, UNDO_STRING, 'onUnPass_endGameActions', null, false, 'red');
+            this.addActionButton(BTN_ID_UNDO_PASS, _("Undo"), 'onUnPass_endGameActions', null, false, 'red');
         },
 
 
