@@ -1028,7 +1028,7 @@ function (dojo, declare) {
                 this.setOffsetForPaymentButtons();
             } 
             if (dojo.query(`#${BTN_ID_UNDO_PASS}`).length !=1){
-                this.addActionButton(BTN_ID_UNDO_PASS, _("Undo"), 'onUnPass', null, false, 'red');
+                this.addActionButton(BTN_ID_UNDO_PASS, _("Undo"), 'onUnPass_allocateWorkers', null, false, 'red');
                 dojo.place(BTN_ID_UNDO_PASS, 'generalactions', 'first');
             }
         },
