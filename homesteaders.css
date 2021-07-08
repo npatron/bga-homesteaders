@@ -557,7 +557,7 @@ div#train_bonus_5_vp{
  * Trade Board                 *
  *=============================*/
 div#trade_board {
-   background-image: url('img/trade_2.jpg');
+   background-image: url('img/trade.jpg');
    position: relative;
    width: 580px;
    height: 200px;
@@ -627,32 +627,6 @@ div#trade_bank_trade_silver{
    position: unset;
    margin-left: auto;
    margin-right: auto;
-}
-
-div#buy_board{
-   background-image: url('img/trade_2.jpg');
-   position: relative;
-   width: 290px;
-   height: 200px;
-   background-size: 580px auto;
-   background-repeat: no-repeat;
-   margin: auto;
-   box-shadow: -3px -3px 3px grey inset;
-   grid-column: span 2;
-   border-radius: 6px;
-}
-div#sell_board{
-   background-image: url('img/trade_2.jpg');
-   position: relative;
-   width: 290px;
-   height: 200px;
-   background-size: 580px auto;
-   background-position-x: -290px;
-   background-repeat: no-repeat;
-   margin: auto;
-   box-shadow: -3px -3px 3px grey inset;
-   grid-column: span 2;
-   border-radius: 6px;
 }
 [id^=tr][id$=_wood], [id^=tr][id$=_food]{
    top: 20.5%;

@@ -326,7 +326,6 @@ var jstpl_resource_log = '<span title = "${type}" class="log_${type} log_token">
 var jstpl_player_token_log = '<span title = "${type}_${color}" class="${type}_${color} log_${type}"></span>';
 var jptpl_track_log = '<span title="${type}" class="log_inline_${type}"></span>';
 var jptpl_x_loan= '<span title="pay dept" class="crossout log_inline_loan"></span>';
-var jptpl_buy_sell_board='<div id="buy_board" class="buy_board"></div><div id="sell_board" class="sell_board"></div>';
 
 var jptpl_breadcrumb_trade = '<span id="breadcrumb_${id}" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_${id}_1" class="breadcrumbs_element"><button id="x_${id}" class="trade_x"></button>${away}<span title ="for" class="log_arrow token_inline" style="position: relative; top: 9px;"></span>${for}</span>'
 var jptpl_breadcrumb_payment = '<span id="breadcrumb_payment" class="breadcrumbs_element font">${text}</span><span id="breadcrumb_payment_tokens" class="breadcrumbs_element">${cost}</span>'

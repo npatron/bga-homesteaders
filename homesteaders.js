@@ -368,7 +368,6 @@ function (dojo, declare) {
                 PLAYER_COLOR[DUMMY_BID] = this.getAvailableColor();
                 PLAYER_COLOR[DUMMY_OPT] = PLAYER_COLOR[0];
             }
-            this.omitImages();
             
             // Auctions: 
             this.number_auctions = gamedatas.number_auctions;
@@ -466,13 +465,6 @@ function (dojo, declare) {
                     return player_color_option[i];
                 }
             }
-        },
-
-        /**
-         * temporary solution to speed up loading, may want to remove for release.
-         */
-        omitImages: function() {
-            this.dontPreloadImage( 'exp_building_144x196.png' );
         },
 
         /**
