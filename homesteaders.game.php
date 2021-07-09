@@ -290,6 +290,7 @@ class homesteaders extends Table
     }
 
     public function playerDonePlacingWorkers (){
+        $this->checkAction('placeWorker');
         $p_id = $this->getCurrentPlayerId();
         $this->Log->donePlacing($p_id);
         $this->Resource->collectIncome($p_id);
@@ -368,8 +369,9 @@ class homesteaders extends Table
      * @var early represents if this is being called while still in allocate workers state (as flow is different)
      */
     public function payWorkers($gold, $early=false) {
-        if (!$early){
-            $this->checkAction( "done" );
+        $checkResult = $this->checkAction( "done", !$early);
+        if (!$checkResult){
+            $this->gamestate->checkPossibleAction("done"); // make sure state does have "done", even if not active.
         }
         if ($gold <0){ 
             throw new BgaUserException ( clienttranslate("cannot have negative gold value"));

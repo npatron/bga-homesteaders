@@ -323,7 +323,7 @@ class HSDResource extends APP_GameClass
             $amt = 5;
         }
         if (!$this->canPlayerAfford($p_id, array($type=>$amt))){
-            throw new BgaUserException( sprintf(clienttranslate("You do not have enough %s"), clienttranslate($this->game->resource_info[$type]['name'])) );
+            throw new BgaUserException( sprintf(clienttranslate("You do not have enough %s"), $this->game->resource_info[$type]['name']) );
         }
         if (!$this->canPlayerAfford($p_id, array('loan'=>1))){
             throw new BgaUserException( clienttranslate("You have no DEBT to pay" ) );
