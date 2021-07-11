@@ -146,6 +146,7 @@ function (dojo, declare) {
     const BTN_ID_REDO_AUCTION = 'btn_redo_build_phase';
     /*** non-transition actions ***/
     const BTN_ID_HIRE_WORKER = 'btn_hire_worker';
+    const HIRE_WORKER_METHOD = 'hireWorkerButton';
     const BTN_ID_TAKE_LOAN   = 'btn_take_loan';
     const BTN_ID_MORE_GOLD   = 'btn_more_gold';
     const BTN_ID_LESS_GOLD   = 'btn_less_gold';
@@ -994,7 +995,7 @@ function (dojo, declare) {
             this.addActionButton( BTN_ID_CANCEL, _("Cancel"), 'cancelUndoTransactions', null, false, 'red');
             dojo.place(dojo.create('br'),'generalactions','last');
             this.tradeEnabled = false;
-            this.addActionButton( BTN_ID_HIRE_WORKER, _("Hire New Worker"), 'hireWorkerButton', null, false, 'gray' );
+            this.addActionButton( BTN_ID_HIRE_WORKER, this.replaceTooltipStrings(_("Hire New ${worker}")), HIRE_WORKER_METHOD, null, false, 'gray' );
             this.addTradeActionButton();
             this.setOffsetForIncome();
             this.destroyPaymentBreadcrumb();
@@ -1131,7 +1132,7 @@ function (dojo, declare) {
             dojo.place(dojo.create('br'),'generalactions','last');
             this.addActionButton( BTN_ID_PAY_LOAN_SILVER, dojo.string.substitute(_("Pay Loan ${type}"), {type:TOKEN_HTML.silver}), 'payLoanSilver', null, false, 'gray');
             this.addActionButton( BTN_ID_PAY_LOAN_GOLD,   dojo.string.substitute(_("Pay Loan ${type}"), {type:TOKEN_HTML.gold}),   'payLoanGold',   null, false, 'gray');
-            this.addActionButton( BTN_ID_HIRE_WORKER, this.replaceTooltipStrings(_("Hire New ${worker}")), 'hireWorkerButton', null, false, 'gray' );
+            this.addActionButton( BTN_ID_HIRE_WORKER, this.replaceTooltipStrings(_("Hire New ${worker}")), HIRE_WORKER_METHOD, null, false, 'gray' );
             this.addTradeActionButton();
         },
         // -non-active-
@@ -2033,7 +2034,8 @@ function (dojo, declare) {
         },
 
         setupTransitionButton: function( andTrade ){
-            let transitions = [BTN_ID_PAY_DONE, BTN_ID_CONFIRM_WORKERS, BTN_ID_DONE, BTN_ID_BUILD, BTN_ID_FOOD_VP, BTN_ID_GOLD_VP, BTN_ID_COW_VP, BTN_ID_COPPER_VP, BTN_ID_WOOD_TRACK];
+            let transitions = [BTN_ID_PAY_DONE, BTN_ID_CONFIRM_WORKERS, BTN_ID_DONE, BTN_ID_BUILD, BTN_ID_HIRE_WORKER,
+                               BTN_ID_FOOD_VP, BTN_ID_GOLD_VP, BTN_ID_COW_VP, BTN_ID_COPPER_VP, BTN_ID_WOOD_TRACK];
             transitions.forEach(button_id=> {
                 if (dojo.query(`#${button_id}`).length == 1){
                     switch (button_id){
@@ -2061,16 +2063,8 @@ function (dojo, declare) {
                                 dojo.style( $(PAY_GOLD_TOKEN), 'display', 'inline-block');
                                 dojo.style( $(BTN_ID_LESS_GOLD), 'display', 'inline-block');
                             }
-                            console.log(this.silverCost, this.goldCost);
-                            return;
-                        case BTN_ID_DONE:
-                            if (andTrade) {
-                                var button_text = _("Pass");
-                            } else {
-                                var button_text = _("Confirm Trades and Pass");
-                            }
-                            var button_method = ENDGAME_DONE_METHOD;
-                        break;
+                            //console.log(this.silverCost, this.goldCost);
+                        return;
                         case BTN_ID_CONFIRM_WORKERS:
                             if (andTrade) {
                                 var button_text = this.replaceTooltipStrings(_("Confirm ${worker} Placement"));
@@ -2078,6 +2072,14 @@ function (dojo, declare) {
                                 var button_text = this.replaceTooltipStrings(_("Confirm Trades & ${worker} Placement"));
                             }
                             var button_method = DONE_WORKERS_METHOD;
+                        break;
+                        case BTN_ID_DONE:
+                            if (andTrade) {
+                                var button_text = _("Pass");
+                            } else {
+                                var button_text = _("Confirm Trades and Pass");
+                            }
+                            var button_method = ENDGAME_DONE_METHOD;
                         break;
                         case BTN_ID_BUILD:
                             let b_name = '';
@@ -2092,6 +2094,17 @@ function (dojo, declare) {
                             }
                             var button_method = BUILD_BUILDING_METHOD;
                         break;
+                        case BTN_ID_HIRE_WORKER:
+                            if (andTrade) {
+                                var button_text = this.replaceTooltipStrings(_("Hire New ${worker}"));
+                            } else {
+                                var button_text = this.replaceTooltipStrings(_("Confirm Trades & Hire New ${worker}"));
+                            }
+                            var button_method = HIRE_WORKER_METHOD;
+                            dojo.query(`#${button_id}`).forEach(dojo.destroy);
+                            this.addActionButton( button_id, button_text, button_method, null, false, 'gray' );
+                            dojo.place(button_id, 'btn_trade', 'before');
+                        return;
                         case BTN_ID_FOOD_VP:
                             if (andTrade) {
                                 var button_text = this.replaceTooltipStrings(dojo.string.substitute(_("${resource1} ${arrow} ${resource2}"), FOOD_VP_ARR));
@@ -2383,7 +2396,6 @@ function (dojo, declare) {
                     type = evt.target.id.split('_')[2];
                 } else { return; }
             }
-            //console.log(type);
             // when buying, trade costs trade_val, so make it negative.
             let tradeChange = this.getBuyChange(type) 
             if(this.canAddTrade(tradeChange)){
@@ -2902,10 +2914,21 @@ function (dojo, declare) {
 
         /***** PLACE WORKERS PHASE *****/
         hireWorkerButton: function() {
-            if( this.checkAction( 'hireWorker')){
-                this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/hireWorker.html", {lock: true}, this, 
-                function( result ) {}, function( is_error) { } );                
-            }
+            if( this.checkAction( 'hireWorker')){ 
+                if (TRANSACTION_LOG.length >0){ // make Trades first.
+                    this.ajaxcall( "/" + this.game_name + "/" +  this.game_name + "/trade.html", { 
+                        lock: true, allowTrade:true, trade_action: TRANSACTION_LOG.join(',')
+                    }, this, function( result ) {
+                        this.clearTransactionLog();
+                        this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/hireWorker.html", {lock: true}, this, 
+                            function( result ) {}, function( is_error) { } );
+                    }, function( is_error) {});    
+                } else { // if no trades, just Hire.
+                    this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/hireWorker.html", {lock: true}, this, 
+                        function( result ) {}, function( is_error) { } );
+                }
+            } 
+            
         },
         
         donePlacingWorkers: function( ){
@@ -4526,11 +4549,11 @@ function (dojo, declare) {
             //console.log(notif);
             if (this.show_player_info) return;// already showing player resources.
             this.show_player_info = true;
-            for(let p_id in notif.args.resources){
+            for(let p_id in notif.args.resource_arr){
                 if (this.isSpectator || (this.player_id != p_id)){
                     dojo.place( this.format_block('jstpl_player_board', {id: p_id} ), PLAYER_SCORE_ZONE_ID[p_id] );
                     dojo.query(`#player_resources_${PLAYER_COLOR[p_id]} .player_resource_group`).removeClass('noshow');
-                    this.setupOnePlayerResources(notif.args.resources[p_id]);
+                    this.setupOnePlayerResources(notif.args.resource_arr[p_id]);
                 }
                 this.calculateAndUpdateScore(p_id);
             }
