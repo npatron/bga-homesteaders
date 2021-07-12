@@ -57,7 +57,8 @@ function (dojo, declare) {
     const LOAN     = 12;
     const RESOURCES = {'wood':1, 'steel':2, 'gold':3, 'copper':4, 'food':5, 'cow':6,
         'trade':7, 'track':8, 'worker':9, 'vp':10, 'silver':11, 'loan':12};
-    const RESOURCE_ORDER = ['vp','loan','cow','copper','gold','steel','food','wood','silver','trade'];
+    const RESOURCE_ORDER = ['vp0', 'vp', 'vp2', 'vp3', 'vp4', 'vp6', 'vp8','vp10', 
+                            'loan','cow','copper','gold','steel','food','wood','silver','trade'];
 
     const ZONE_PENDING = -1;
     const ZONE_PASSED = -2;
@@ -772,7 +773,7 @@ function (dojo, declare) {
             TOKEN_HTML.track = this.getOneResourceHtml('track', 1, true);
             TOKEN_HTML.loan = this.format_block( 'jptpl_track_log', {type:'loan'}, );
             TOKEN_HTML.end = this.format_block('jstpl_color_log', {'string':_("End"), 'color':ASSET_COLORS[6]}); 
-            
+            this.token_html = TOKEN_HTML;
             types = {'and':_("AND"), 'or':_("OR"), 'dot':"•"};
             for(let i in types){
                 TOKEN_HTML[i] = this.format_block('jptpl_tt_break', {text:types[i], type:'dot'==i?'dot':'break'});
@@ -4130,12 +4131,19 @@ function (dojo, declare) {
                     }
                     
                     // trade 
-                    if (args.resource && args.tradeFor_arr && args.tradeAway_arr){
+                    // multiple types of resources 
+                    if (args.tradeAway && args.tradeAway_arr){
+                        args.tradeAway = this.getResourceArrayHtml(args.tradeAway_arr);
+                    }
+                    if (args.tradeFor && args.tradeFor_arr){
+                        args.tradeFor = this.getResourceArrayHtml(args.tradeFor_arr);
+                    }
+                    if (args.resource && args.tradeFor_arr && args.tradeAway_arr){ // Buy/Sell/Market/Bank
                         let tradeAway = this.getResourceArrayHtml(args.tradeAway_arr);
                         let tradeFor  = this.getResourceArrayHtml(args.tradeFor_arr);
                         args.resource = dojo.string.substitute(_("${tradeAway} ${arrow} ${tradeFor}"),{tradeAway:tradeAway, arrow:TOKEN_HTML.arrow, tradeFor:tradeFor});
                     } 
-                    if (args.resources){
+                    if (args.resources){//income or payment group
                         if (!args.resource_arr){
                             args.resource_arr = args.resources;
                         }
@@ -4447,7 +4455,8 @@ function (dojo, declare) {
         },
 
         notif_trade: function( notif ){
-            //console.log('notif_trade');
+            console.log('notif_trade');
+            console.log(notif);
             const p_id = notif.args.player_id;
             var delay = 0;
             for(let type in notif.args.tradeAway_arr){
