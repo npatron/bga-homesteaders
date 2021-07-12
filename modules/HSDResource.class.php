@@ -435,7 +435,7 @@ class HSDResource extends APP_GameClass
         $has_been_paid = $this->getIncomePaid($p_id);
         if ($has_been_paid==0){    
             $this->setIncomePaid($p_id);
-            $p_tracks = $this->game->getUniqueValueFromDB( "SELECT `track` FROM `resources` WHERE `player_id`='$p_id'" ); 
+            $p_tracks = $this->game->getUniqueValueFromDB( "SELECT COUNT(*) FROM `tracks` WHERE `player_id`='$p_id'" ); 
             $this->game->Building->buildingIncomeForPlayer( $p_id );
             if($p_tracks > 0) {
                 $this->updateAndNotifyIncome($p_id, 'silver', $p_tracks, 'track');
@@ -489,7 +489,6 @@ class HSDResource extends APP_GameClass
             $values = $this->updateArrForNotify($values, $origin, $key); 
             $this->game->notifyAllPlayers( "gainTrack", 
                     clienttranslate('${player_name} trades ${tradeAway} ${arrow} ${track} from ${reason_string}'), $values);
-            $this->updateResource($p_id, 'track', 1);
             $this->game->Log->addTrack($p_id, $track_key);
             foreach ($cost_arr as $type=>$amt){
                 $this->updateResource($p_id, $type, -$amt);

@@ -3992,12 +3992,25 @@ function (dojo, declare) {
         },
 
         ajaxDoneEndgame: function ( ){
-            this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/doneEndgameActions.html", {lock: true}, this, 
+            if (BOARD_RESOURCE_COUNTERS[this.player_id].trade.getValue() >0){
+                this.confirmationDialog( this.replaceTooltipStrings(_('You still have ${trade} to use, Continue?')), 
+                    dojo.hitch( this, function() {
+                        this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/doneEndgameActions.html", {lock: true}, this, 
+                        function( result ) { 
+                            this.disableTradeIfPossible();
+                            this.disableTradeBoardActions();
+                            this.setupUndoTransactionsButtons(); 
+                        }, function( is_error) { } );
+                    } ) );
+                return;
+            } else {
+                this.ajaxcall( "/" + this.game_name + "/" + this.game_name + "/doneEndgameActions.html", {lock: true}, this, 
                 function( result ) { 
                     this.disableTradeIfPossible();
                     this.disableTradeBoardActions();
                     this.setupUndoTransactionsButtons(); 
-                }, function( is_error) { } );
+                }, function( is_error) { } );    
+            }
         },
 
         ///////////////////////////////////////////////////
@@ -4144,7 +4157,7 @@ function (dojo, declare) {
                         args.resource = dojo.string.substitute(_("${tradeAway} ${arrow} ${tradeFor}"),{tradeAway:tradeAway, arrow:TOKEN_HTML.arrow, tradeFor:tradeFor});
                     } 
                     if (args.resources){//income or payment group
-                        if (!args.resource_arr){
+                        if (!args.resource_arr){ // for show player resources (last round)
                             args.resource_arr = args.resources;
                         }
                         args.resources = this.getResourceArrayHtml(args.resource_arr);
@@ -4455,8 +4468,8 @@ function (dojo, declare) {
         },
 
         notif_trade: function( notif ){
-            console.log('notif_trade');
-            console.log(notif);
+            //console.log('notif_trade');
+            //console.log(notif);
             const p_id = notif.args.player_id;
             var delay = 0;
             for(let type in notif.args.tradeAway_arr){
