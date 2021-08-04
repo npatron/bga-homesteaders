@@ -425,7 +425,7 @@ class HSDResource extends APP_GameClass
         $p_resources = $this->game->getObjectFromDB($sql);
         $enough = true;
         foreach( $r_arr as $key => $resource){
-            $enough = $enough && ($p_resources[$key] >= $resource);  
+            $enough = $enough && ($p_resources[$key] >= $resource);
         }
         return $enough;
     }
@@ -475,6 +475,9 @@ class HSDResource extends APP_GameClass
 
     function specialTrade($p_id, $cost_arr, $income_arr, $reason_string, $origin="", $key=0){
         $p_name = $this->game->getPlayerName($p_id);
+        if (!$this->canPlayerAfford($p_id, $cost_arr)){
+            throw new BgaUserException( clienttranslate("Not enough resources. Take loan(s) or trade") );
+        }
         if (array_key_exists('track', $income_arr)){
             $track_key = $this->addTrack($p_id);
             $values = array('player_id' => $p_id,

@@ -974,6 +974,7 @@ function (dojo, declare) {
             } else if (!this.isSpectator) {
                 switch( stateName ) {
                     case 'allocateWorkers':
+                    case 'endGameActions' :
                         var methodName = "onUpdateActionButtons_" + stateName + "_notActive";
                         console.log('Calling ' + methodName, args);
                         this[methodName](args);
@@ -997,7 +998,7 @@ function (dojo, declare) {
             dojo.place(dojo.create('br'),'generalactions','last');
             this.tradeEnabled = false;
             this.addActionButton( BTN_ID_HIRE_WORKER, this.replaceTooltipStrings(_("Hire New ${worker}")), HIRE_WORKER_METHOD, null, false, 'gray' );
-            this.addTradeActionButton();
+            this.addTradeActionButton( false );
             this.setOffsetForIncome();
             this.destroyPaymentBreadcrumb();
             dojo.query(`#${BTN_ID_UNDO_PASS}`).forEach(dojo.destroy); // removes undo button if displayed.
@@ -1009,7 +1010,6 @@ function (dojo, declare) {
                 this.silverCost = this.getPlayerWorkerCount(this.player_id);
                 this.goldCost = 0;
                 this.addPaymentButtons();
-                dojo.place(dojo.create('br'),'generalactions','last');
                 this.addTradeActionButton();
                 this.setOffsetForPaymentButtons();
             } 
@@ -1067,7 +1067,6 @@ function (dojo, declare) {
             this.silverCost = Number(args.auction_cost);
             this.goldCost = 0;
             this.addPaymentButtons();
-            dojo.place(dojo.create('br'),'generalactions','last');
             this.addTradeActionButton();
             this.setOffsetForPaymentButtons();
         },
@@ -1118,7 +1117,6 @@ function (dojo, declare) {
             }
             this.addActionButton( BTN_ID_PASS_BONUS,   _("Do Not Get Bonus"), 'passBonus', null, false, 'red');
             this.addActionButton( BTN_ID_REDO_AUCTION, _("Cancel"), 'cancelTurn', null, false, 'red');
-            dojo.place(dojo.create('br'),'generalactions','last');
             this.addTradeActionButton();
         },
         onUpdateActionButtons_confirmActions: function () {
@@ -1134,7 +1132,7 @@ function (dojo, declare) {
             this.addActionButton( BTN_ID_PAY_LOAN_SILVER, dojo.string.substitute(_("Pay Loan ${type}"), {type:TOKEN_HTML.silver}), 'payLoanSilver', null, false, 'gray');
             this.addActionButton( BTN_ID_PAY_LOAN_GOLD,   dojo.string.substitute(_("Pay Loan ${type}"), {type:TOKEN_HTML.gold}),   'payLoanGold',   null, false, 'gray');
             this.addActionButton( BTN_ID_HIRE_WORKER, this.replaceTooltipStrings(_("Hire New ${worker}")), HIRE_WORKER_METHOD, null, false, 'gray' );
-            this.addTradeActionButton();
+            this.addTradeActionButton( false );
         },
         // -non-active-
         onUpdateActionButtons_endGameActions_notActive: function (args) {
@@ -1298,7 +1296,6 @@ function (dojo, declare) {
             dojo.addClass(BTN_ID_BUILD ,'disabled');
             this.addActionButton( BTN_ID_DO_NOT_BUILD, _("Do Not Build"), 'doNotBuild', null, false, 'red');
             this.addActionButton( BTN_ID_REDO_AUCTION, _("Cancel"), 'cancelTurn', null, false, 'red');
-            dojo.place(dojo.create('br'),'generalactions','last');
             this.can_cancel = true;
             this.addTradeActionButton();
 
@@ -2154,7 +2151,10 @@ function (dojo, declare) {
             });
         },
             
-        addTradeActionButton: function( ){
+        addTradeActionButton: function( addBreak = true ){
+            if (addBreak){
+                dojo.place(dojo.create('br'),'generalactions','last');
+            }
             this.addActionButton( BTN_ID_TRADE,      _("Show Trade"), 'tradeActionButton', null, false, 'gray' );
             this.addActionButton( BTN_ID_TAKE_LOAN,  _("Take Debt"),  'onMoreLoan', null, false, 'gray' );
             this.addActionButton( UNDO_TRADE_BTN_ID, _("Undo All Trade & Debt"), 'undoTransactionsButton', null, false, 'red' );
