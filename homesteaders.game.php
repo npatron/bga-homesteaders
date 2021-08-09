@@ -195,7 +195,7 @@ class homesteaders extends Table
         getGameProgression:
         
         Compute and return the current game progression.
-        The number returned must be an integer beween 0 (=the game just started) and
+        The number returned must be an integer between 0 (=the game just started) and
         100 (= the game is finished or almost finished).
     
         This method is called each time we are in a game state with the "updateGameProgression" property set to true 
@@ -203,11 +203,11 @@ class homesteaders extends Table
     */
     function getGameProgression()
     {
-        $game_progress =  ((int)$this->getGameStateValue('round_number')  -1 ) * 9;
+        $game_progress =  ((int)$this->getGameStateValue('round_number') -1 ) * 9;
         $number_auctions = (int)$this->getGameStateValue('number_auctions');
         $current_auction = (int)$this->getGameStateValue('current_auction');
         $game_progress += floor(($current_auction * 10) / $number_auctions);
-        return $game_progress;
+        return (int)$game_progress;
     }
 
 
@@ -246,7 +246,7 @@ class homesteaders extends Table
         $this->checkAction( "takeLoan" );
         $this->Resource->takeLoan($this->getCurrentPlayerId());
     }
-    
+
     public function playerTrade( $tradeAction_csv, $notActive =false )
     {
         // allow out of turn trade, only when flag is passed during allocateWorkers State.
@@ -345,12 +345,12 @@ class homesteaders extends Table
     }
 
     public function playerPay($gold) {
-        $state = $this->gamestate->state();
-        if ($state['name'] === 'payWorkers'){
+        $state_name = $this->gamestate->state()['name'];
+        if ($state_name === 'payWorkers'){
             $this->payWorkers($gold);
-        } else if ($state['name'] === 'allocateWorkers'){ 
+        } else if ($state_name === 'allocateWorkers'){ 
             $this->payWorkers($gold, true);
-        } else if ($state['name'] === 'payAuction') {
+        } else if ($state_name === 'payAuction') {
             $this->payAuction($gold);
         } else {
             throw new BgaVisibleSystemException ( clienttranslate("player pay called from wrong state") );
@@ -410,6 +410,7 @@ class homesteaders extends Table
     }
 
     public function playerSelectRailBonus($selected_bonus) {
+        $this->checkAction( "chooseBonus" );
         $act_p_id = $this->getActivePlayerId();
         $options = $this->Resource->getRailAdvBonusOptions($act_p_id);
         if (!in_array ($selected_bonus, $options)){
@@ -454,8 +455,8 @@ class homesteaders extends Table
     {
         $this->checkAction( "auctionBonus" );
         $act_p_id = $this->getActivePlayerId();
-        $auction_bonus = $this->getGameStateValue( 'auction_bonus');
-        $auc_no = $this->getGameStateValue( 'current_auction');
+        $auction_bonus = $this->getGameStateValue('auction_bonus');
+        $auc_no = $this->getGameStateValue('current_auction');
         if ($auction_bonus == AUC_BONUS_WORKER) {
             $this->Resource->addWorkerAndNotify($act_p_id, sprintf(clienttranslate("Auction %s"),$auc_no), 'auction', $auc_no);
             $this->gamestate->nextState( 'done' );
@@ -539,15 +540,13 @@ class homesteaders extends Table
     public function playerCancelTransactions()
     {
         $this->checkAction('trade');
-
-        $p_id = $this->getCurrentPlayerId();
-        $transactions = $this->Log->getLastTransactions($p_id);
+        $cur_p_id = $this->getCurrentPlayerId();
+        $transactions = $this->Log->getLastTransactions($cur_p_id);
         if (is_null($transactions)) {
             throw new BgaUserException(clienttranslate("You have nothing to cancel"));
         }
-
         // Undo the turn
-        $this->Log->cancelTransactions($p_id);
+        $this->Log->cancelTransactions($cur_p_id);
     }
 
     /** endBuildRound */
@@ -772,6 +771,7 @@ class homesteaders extends Table
     function stResolveBuilding()
     { 
         $active_p_id = $this->getActivePlayerId();
+        $this->Score->updatePlayerScore($active_p_id);
         $bonus = $this->getGameStateValue('building_bonus');
         $b_key = $this->getGameStateValue('last_building');
         $b_name = $this->Building->getBuildingNameFromKey($b_key);

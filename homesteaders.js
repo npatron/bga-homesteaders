@@ -495,7 +495,7 @@ function (dojo, declare) {
             for (const [key, value] of Object.entries(resource)) {
                 //console.log(resource, key, value);
                 if (key == "p_id" || key == "workers" || key == "track") continue;
-                let translatedString = _(RESOURCE_INFO[key]['tt']);
+                var translatedString = _(RESOURCE_INFO[key]['tt']);
                 let tooltip_html = this.format_block('jptpl_res_tt', {value:this.replaceTooltipStrings(translatedString)});
 
                 let resourceId = `${key}count_${resource.p_id}`;
@@ -560,7 +560,7 @@ function (dojo, declare) {
                 const track = tracks[i];
                 dojo.place(this.format_block( 'jptpl_track', {id: track.r_key, color: PLAYER_COLOR[track.p_id]}), TRACK_TOKEN_ZONE[track.p_id], 'last');
             }
-            let translatedString = _(RESOURCE_INFO['track']['tt']);
+            var translatedString = _(RESOURCE_INFO['track']['tt']);
             this.addTooltipHtmlToClass("token_track", `<div style="text-align:center;">${this.replaceTooltipStrings(translatedString)}</div>`);
         },
 
@@ -656,8 +656,8 @@ function (dojo, declare) {
         setupBidZones: function () {
             BID_ZONE_ID[ZONE_PENDING] = 'pending_bids';
             BID_ZONE_ID[ZONE_PASSED] = 'passed_bids';
-            
             let auc_end = 3;
+
             for (let auc = 1; auc <= auc_end; auc++){
                 BID_ZONE_ID[auc] = [];
                 for (let bid =0; bid < BID_VAL_ARR.length; bid ++){
@@ -2201,8 +2201,8 @@ function (dojo, declare) {
             }
         },
        
-        /** Enable Trade
-         * 
+        /** 
+         * Enable Trade
          */
         enableTradeIfPossible: function() {
             //console.log('enableTradeIfPossible');
@@ -2524,7 +2524,6 @@ function (dojo, declare) {
          */
         onClickOnMarketTrade: function ( evt, type=''){
             //console.log('onClickOnMarketTrade');
-            //console.log(evt);
             dojo.stopEvent( evt );
             if (type == ''){
                 if (evt.target.classList.contains("selectable")) { 
@@ -4131,7 +4130,6 @@ function (dojo, declare) {
                             args.reason_string = TOKEN_HTML.track;
                         }   
                     }
-                   
 
                     // begin -> resource args
                     // only one type of resource.
@@ -4264,7 +4262,7 @@ function (dojo, declare) {
             return aggregateString + `</${html_type}>`;
         },
 
-        getResourceArrayHtml: function( array={}, asSpan=false, style=""){
+        getResourceArrayHtml: function( array ={}, asSpan=false, style=""){
             let html_type = asSpan ? 'span': 'div';
             var aggregateString = `<${html_type} class="log_container" style="${style}">`;
             for (let i in RESOURCE_ORDER){
@@ -4283,12 +4281,6 @@ function (dojo, declare) {
                 }
             }
             return aggregateString + `</${html_type}>`;
-        },
-
-        notif_autoPay: function (notif){
-            if (this.player_id == notif.args.player_id){
-                $('checkbox1').checked = notif.args.onOff_val;
-            }
         },
 
         notif_updateBuildingStocks: function ( notif ){
@@ -4512,14 +4504,14 @@ function (dojo, declare) {
                 if (notif.args.typeStr == 'gold'){
                     this.slideTemporaryObject( notif.args.type , 'limbo', PLAYER_SCORE_ZONE_ID[p_id], 'board', 500, 100);
                     if (p_id == this.player_id || this.show_player_info){
-                        this.incResCounter(p_id, 'gold', -1);
+                        this.incResCounter(p_id, notif.args.typeStr, -1);
                     }
                 } else {
                     for (let i = 0; i < 5; i++){
                         this.slideTemporaryObject( notif.args.type, 'limbo', PLAYER_SCORE_ZONE_ID[p_id], 'board', 500, 100 +(i*100)); 
                     }
                     if (p_id == this.player_id || this.show_player_info){
-                        this.incResCounter(p_id, 'silver', -5);
+                        this.incResCounter(p_id, notif.args.typeStr, -5);
                     }
                 }
             }

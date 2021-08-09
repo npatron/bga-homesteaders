@@ -86,7 +86,7 @@ class HSDBuilding extends APP_GameClass
 
     function getBuildingCostFromKey($b_key, $goldAsCow, $goldAsCopper){
         $b_id = $this->getBuildingIdFromKey($b_key);
-        $cost = $this->game->building_info[$b_id]['cost'];
+        $cost = $this->game->building_info[$b_id]['cost']??array();
         if ($goldAsCopper && array_key_exists('copper', $cost)){
             $cost = $this->game->Resource->updateKeyOrCreate($cost, 'gold', $cost['copper']);
             unset($cost['copper']);
@@ -103,7 +103,7 @@ class HSDBuilding extends APP_GameClass
     }
 
     function getBuildingNameFromId($b_id){
-        return $this->game->building_info[$b_id]['name'];
+        return $this->game->building_info[$b_id]['name']??'';
     }
 
     function doesPlayerOwnBuilding($p_id, $b_id) {
@@ -210,7 +210,6 @@ class HSDBuilding extends APP_GameClass
                         'i18n' => array( 'building_name' ), 
                         'b_type' => $this->getBuildingTypeFromKey($b_key),
                         'building_name' => $b_name,
-                        'arrow' => '->', 
                         'preserve' => [ 2 => 'b_type']);
         if (count($b_cost)>0) {
             $values['resource_arr'] = $b_cost;
@@ -236,11 +235,11 @@ class HSDBuilding extends APP_GameClass
 
     function getOnBuildBonusForBuildingKey($b_key){
         $b_id = $this->getBuildingIdFromKey($b_key);
-        return (array_key_exists('on_b', $this->game->building_info[$b_id])? $this->game->building_info[$b_id]['on_b']:0);
+        return (int)(array_key_exists('on_b', $this->game->building_info[$b_id])?$this->game->building_info[$b_id]['on_b']:BUILD_BONUS_NONE);
     }
 
     function getBuildingScoreFromKey($b_key){
-        return ($this->getBuildingScoreFromId($this->getBuildingIdFromKey($b_key)));
+        return (int)($this->getBuildingScoreFromId($this->getBuildingIdFromKey($b_key)));
     }
 
     function getBuildingScoreFromId($b_id) {
