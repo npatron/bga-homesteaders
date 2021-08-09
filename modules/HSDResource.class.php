@@ -275,7 +275,17 @@ class HSDResource extends APP_GameClass
             $values['preserve'][4] = 'origin';
             $values['preserve'][5] = 'key';
         } else if ($origin === 'train'){
-
+            $values['origin'] = $origin;
+            if (!array_key_exists('preserve', $values)){
+                $values['preserve'] = [];
+            }
+            $values['preserve'][3] = 'player_id';
+        } else if ($origin === 'bid'){
+            $values['origin'] = $origin;
+            if (!array_key_exists('preserve', $values)){
+                $values['preserve'] = [];
+            }
+            $values['preserve'][3] = 'player_id';
         }
         return $values;
     }
@@ -473,6 +483,8 @@ class HSDResource extends APP_GameClass
         $this->game->Score->updatePlayerScore($p_id);
     }
 
+    // allows 1 notification for trades for auction trades, 
+    // (for tracks or vp2, vp4, vp6 etc).
     function specialTrade($p_id, $cost_arr, $income_arr, $reason_string, $origin="", $key=0){
         $p_name = $this->game->getPlayerName($p_id);
         if (!$this->canPlayerAfford($p_id, $cost_arr)){
@@ -663,12 +675,36 @@ class HSDResource extends APP_GameClass
                     'tradeAway'=>$tradeAway);
     }
 
-    /**updates an array by setting  */
+    /**
+     * returns an updated array $arr by adding $amt to existing $key, 
+     * or creating $key (with value $amt) (if not exists)
+     * @var arr array to update and return
+     * @var key position in array to update
+     * @var amt integer number to add or update value to
+     */
     function updateKeyOrCreate($arr, $key, $amt = 1){
         if (array_key_exists($key, $arr)){
             $arr[$key] += $amt;
         } else {
             $arr[$key] =  $amt;
+        }
+        return $arr;
+    }
+
+    /**
+     * replacing cost using building replacement abilities
+     * River_Port -> gold as cow/copper.
+     * Lumber_Mill -> lumber+vp as steel.
+     * $type must be key in material.inc.php->costReplace or this will fail.
+     */ 
+    function costReplace($arr, $type, $amt){
+        $cost_replace = $this->game->costReplace[$type];
+        foreach($cost_replace as $r_type=>$r_amt){
+            $arr[$type] -= $amt;
+            if ($arr[$type]==0){
+                unset($arr[$type]);
+            }
+            $arr = $this->updateKeyOrCreate($arr, $r_type, ($r_amt * $amt));
         }
         return $arr;
     }

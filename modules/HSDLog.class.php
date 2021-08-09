@@ -209,7 +209,8 @@ class HSDLog extends APP_GameClass
     $this->insert($p_id, 0, 'loan');
   }
 
-  public function makeBid($p_id){
+  public function makeBid($p_id)
+  {
     $this->insert($p_id, 0, 'bid');
   }
 
@@ -318,7 +319,7 @@ class HSDLog extends APP_GameClass
    */
   public function cancelWorkerIncomePhase($p_id)
   {
-    $logs = $this->getLastActions($p_id, ['updateResource','donePlacing', 'loanPaid'], 'donePlacing');
+    $logs = $this->getLastActions($p_id, ['updateResource', 'loan', 'loanPaid', 'donePlacing'], 'donePlacing');
     $transactions = $this->cancelLogs($p_id, $logs);
     $this->game->notifyAllPlayers('cancel', clienttranslate('${player_name} un-does income'), array(
       'player_name' => $this->game->getPlayerName($p_id),
