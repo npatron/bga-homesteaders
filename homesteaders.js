@@ -4028,7 +4028,6 @@ function (dojo, declare) {
         setupNotifications: function(cancel_move_ids)
         {
             var notifs = [
-                ['autoPay', 50],
                 ['buildBuilding', 1000],
                 ['cancel', 500],
                 ['clearAllBids', 250],
