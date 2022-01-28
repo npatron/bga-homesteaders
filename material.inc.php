@@ -74,6 +74,14 @@ $this->translation_strings = array(
   23=> clienttranslate('Hide Building Discard'),
 );
 
+$this->stage_strings = array(
+  0                     => '',
+  STAGE_SETTLEMENT      => clienttranslate('Settlement'),
+  STAGE_SETTLEMENT_TOWN => clienttranslate('Settlement / Town'),
+  STAGE_TOWN            => clienttranslate('Town'),
+  STAGE_CITY            => clienttranslate('City'),
+);
+
 $this->resource_info = array(
   'silver' => array(
     'name'   => clienttranslate("Silver"),

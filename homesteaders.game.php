@@ -185,6 +185,7 @@ class homesteaders extends Table
             'resource_info' => $this->resource_info,
             'round_number' => $this->getGameStateValue( 'round_number' ),
             'show_player_info' => $this->getShowPlayerInfo(),
+            'stage_strings' => $this->stage_strings,
             'translation_strings' => $this->translation_strings,
             'tracks' => $this->getCollectionFromDb("SELECT `rail_key` r_key, `player_id` p_id FROM `tracks` "),
             'workers' => $this->getCollectionFromDb( "SELECT `worker_key` w_key, `player_id` p_id, `building_key` b_key, `building_slot` b_slot FROM `workers`" ),
@@ -321,10 +322,6 @@ class homesteaders extends Table
         $this->checkAction( "buildBuilding" );
         $act_p_id = $this->getActivePlayerId();
         $this->Building->buildBuilding($act_p_id, $selected_building, $goldAsCow, $goldAsCopper);
-        if ($this->Building->doesPlayerOwnBuilding($act_p_id, BLD_FORGE) && 
-            $this->Building->getBuildingIdFromKey($selected_building) != BLD_FORGE){
-            $this->Resource->updateAndNotifyIncome($act_p_id, 'vp', 1, array('type'=>TYPE_INDUSTRIAL, 'str'=>"Forge") );
-        }
         $building_bonus = $this->Building->getOnBuildBonusForBuildingKey($selected_building);
         $this->setGameStateValue('building_bonus', $building_bonus);
         $bonus = $this->Auction->getCurrentAuctionBonus();

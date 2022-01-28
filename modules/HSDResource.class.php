@@ -666,7 +666,7 @@ class HSDResource extends APP_GameClass
                             'building_name'=> $this->game->Building->getBuildingNameFromId($b_id),
                             'resource' => $this->game->resource_info[$tradeType]['name'],  
                             'b_type'=> $this->game->Building->getBuildingTypeFromId($b_id),
-                            'preserve'=> [2=>'b_type', 3=>'tradeAway_arr', 4=>'tradeFor_arr']);
+                            'preserve'=> [2=>'b_type', 3=>'tradeAway_arr', 4=>'tradeFor_arr'], );
         }
         return array('transaction'=> 'trade', 
                     'message'=> $message, 

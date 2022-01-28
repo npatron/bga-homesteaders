@@ -273,6 +273,7 @@ function (dojo, declare) {
     const RESOURCE_INFO = [];
     const BUILDING_INFO = [];
     const ASSET_STRINGS = [];
+    const STAGE_STRINGS = [];
 
     return declare("bgagame.homesteaders", ebg.core.gamegui, {
         addMoveToLog: override_addMoveToLog,
@@ -348,6 +349,7 @@ function (dojo, declare) {
             this.fillArray(RESOURCE_INFO, gamedatas.resource_info);
             this.fillArray(BUILDING_INFO, gamedatas.building_info);
             this.fillArray(ASSET_STRINGS, gamedatas.translation_strings);
+            this.fillArray(STAGE_STRINGS, gamedatas.stage_strings);
             
             this.setupResourceTokens();
             // Setting up player boards
@@ -1347,6 +1349,7 @@ function (dojo, declare) {
             return this.format_block('jptpl_bld_tt', {
                 msg: msg,
                 type:  ASSET_COLORS[b_info.type],
+                stage: _(STAGE_STRINGS[b_info.stage]),
                 name: _(b_info.name),
                 vp:   vp,
                 COST: _('cost:'),
@@ -1366,11 +1369,11 @@ function (dojo, declare) {
                 var title = `<span class="font caps bold a1">${round_string} </span><hr>`;
             } else { //order by phase in other auctions
                 if ((a_id-1)%10 <4){
-                    var phase = _("Settlement");
+                    var phase = _(STAGE_STRINGS[1]);
                 } else if ((a_id-1)%10 >7){
-                    var phase = _("City");
+                    var phase = _(STAGE_STRINGS[4]);
                 } else {
-                    var phase = _("Town");
+                    var phase = _(STAGE_STRINGS[3]);
                 }
                 var title = `<span class="font caps bold a${auction_no}">${phase}</span><hr>`;
             }
@@ -2391,8 +2394,6 @@ function (dojo, declare) {
             dojo.stopEvent( evt );
             if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
             if (type == ""){ // didn't come from onSelectTradeAction.
-                if ( !this.allowTrade && !this.checkAction( 'trade' ) ) { return; }
-                dojo.stopEvent( evt );
                 if (evt.target.classList.contains('bgabutton')){
                     type = evt.target.id.split('_')[2];
                 } else { return; }

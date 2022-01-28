@@ -1675,9 +1675,7 @@ div#trade_bank_trade_silver{
    width: 29px;
    max-width: 30px;
 }
-.worker_slot:not(.selectable){
-   pointer-events: none;
-}
+
 .w_slot {
    display: flex;
    justify-content: center;
