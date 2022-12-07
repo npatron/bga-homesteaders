@@ -49,6 +49,20 @@ class HSDAuction extends APP_GameClass
                 $values[] = "('".($i+29)."','".$city_position[$i]      ."','".AUC_LOC_3."')";
             }   
         }
+        if ($playerCount>4){
+            shuffle($settlement_position);
+            shuffle($town_position);
+            shuffle($city_position);
+            for ($i = 0; $i <4; $i++){
+                $values[] = "('".($i+31)."','".$settlement_position[$i]."','".AUC_LOC_4."')";
+            }
+            for ($i = 0; $i <4; $i++){
+                $values[] = "('".($i+35)."','".$town_position[$i]      ."','".AUC_LOC_4."')";
+            }
+            for ($i = 0; $i <2; $i++){
+                $values[] = "('".($i+39)."','".$city_position[$i]      ."','".AUC_LOC_4."')";
+            }   
+        }
         $sql .= implode( ',', $values ); 
         $this->game->DbQuery( $sql );
     }
@@ -60,7 +74,7 @@ class HSDAuction extends APP_GameClass
 
     function getCurrentRoundAuctions($round_number= null){
         $round_number = (is_null($round_number)?$this->game->getGameStateValue('round_number'):$round_number);
-        $sql = "SELECT `auction_id` a_id, `location` FROM `auctions` WHERE `location` IN (1,2,3) AND `position`='$round_number'"; 
+        $sql = "SELECT `auction_id` a_id, `location` FROM `auctions` WHERE `location` IN (1,2,3,4) AND `position`='$round_number'"; 
         return ($this->game->getCollectionFromDb( $sql ));
     }
 
@@ -92,8 +106,8 @@ class HSDAuction extends APP_GameClass
         return array_key_exists('build', $this->game->auction_info[$this->getCurrentAuctionId()]);
     }
 
-    function doesCurrentAuctionHaveAuctionBonus(){
-        return array_key_exists('bonus', $this->game->auction_info[$this->getCurrentAuctionId()]);
+    function doesCurrentAuctionHaveAuctionBonus() {
+        return ($this->getCurrentAuctionBonus() !=AUC_BONUS_NONE);
     }
 
     /**
@@ -106,14 +120,28 @@ class HSDAuction extends APP_GameClass
     }
 
     function setupCurrentAuctionBonus(){
-        $next_state = "bonusChoice";
+        $next_state = "bonusChoice"; // default state where player chooses stuff
         $bonus = $this->getCurrentAuctionBonus();
         switch($bonus){
             case AUC_BONUS_NONE:
-                $next_state = 'endBuild';
+            case AUC_BONUS_NO_AUCTION:
+                $next_state = 'done';
+            break;
+            case AUC_BONUS_TRACK_RAIL_ADV:
+                $this->game->Resource->addTrackAndNotify($this->game->getActivePlayerId(), clienttranslate('Auction Reward'), 'auction', 4);
+                $this->game->Resource->getRailAdv($this->game->getActivePlayerId(), clienttranslate('Auction Reward'), 'auction', 4);
+                $next_state = 'rail_bonus';
+            break;
+            case AUC_BONUS_3VP_SELL_FREE:
+                $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp3', 1, clienttranslate('Auction Reward'), 'auction', $this->game->getGameStateValue('current_auction'));
             break;
             case AUC_BONUS_6VP_AND_FOOD_VP:
                 $this->game->Resource->updateAndNotifyIncome($this->game->getActivePlayerId(), 'vp6', 1, clienttranslate('Auction Reward'), 'auction', $this->game->getGameStateValue('current_auction'));
+            break;
+            case AUC_BONUS_4DEPT_FREE:
+                $this->game->Resource->pay4Loans($this->game->getActivePlayerId(), clienttranslate('Auction Reward'), 'auction', $this->game->getGameStateValue('current_auction'));
+                $next_state = 'done';
+            break;
             default:
                 // all others are handled by player actions, so go to that state.
                 $this->game->setGameStateValue( 'auction_bonus', $bonus);
@@ -128,6 +156,12 @@ class HSDAuction extends APP_GameClass
     function getCurrentAuctionBuildTypeOptions(){
         $a_id = $this->getCurrentAuctionId(); 
         // if exists, otherwise return array();
-        return (array_key_exists('build', $this->game->auction_info[$a_id])?$this->game->auction_info[$a_id]['build']:array());
+        return ($this->game->auction_info[$a_id]['build']??array());
+    }
+
+    function setCurrentAuctionBuildType(){
+        $b_type_options = $this->getCurrentAuctionBuildTypeOptions();
+        $b_type_int = $this->game->Building->buildTypeArrayIntoInt($b_type_options);
+        $this->game->setGameStateValue('build_type_int', $b_type_int);
     }
 }
