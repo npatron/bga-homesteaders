@@ -67,7 +67,7 @@ $this->trade_map = array(
   6=>'sell_wood', 7=>'sell_food', 8=>'sell_steel', 9=>'sell_gold', 10=>'sell_copper',11=>'sell_cow', 
   12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan', 
   16=>'payLoan_silver', 17=>'payLoan_gold',18=>'payLoan_3silver', 19=>'payLoan_food',
-  20=>'sellfree_wood', 21=>'sellfree_food', 22=>'sellfree_steel', 23=>'sellfree_gold', 24=>'sellfree_copper', 25=>'sellfree_cow',);
+  20=>'sellfree_wood', 21=>'sellfree_food', 22=>'sellfree_steel', 23=>'sellfree_gold', 24=>'sellfree_copper', 25=>'sellfree_cowhi',);
 
 $this->translation_strings = array(
   TYPE_RESIDENTIAL=> clienttranslate('Residential'), 
@@ -120,8 +120,8 @@ $this->translation_strings = array(
 );
 
 $this->auction_bonus_strings = array(
-  AUC_BONUS_WORKER               => clienttranslate('May hire a ${worker} (for free)'),
-  AUC_BONUS_WORKER_RAIL_ADV      => clienttranslate('May hire a ${worker} (for free) ${and} ${adv_track}'),
+  AUC_BONUS_WORKER               => clienttranslate('May recruit a ${worker} (for free)'),
+  AUC_BONUS_WORKER_RAIL_ADV      => clienttranslate('May recruit a ${worker} (for free) ${and} ${adv_track}'),
   AUC_BONUS_WOOD_FOR_TRACK       => clienttranslate('May trade ${wood} for ${track}(once)'),
   AUC_BONUS_COPPER_FOR_VP        => clienttranslate('May trade ${copper} for ${vp4}(once)'),
   AUC_BONUS_COW_FOR_VP           => clienttranslate('May trade ${cow} for ${vp4}(once)'),
@@ -819,7 +819,7 @@ $this->event_info = array(
   EVENT_FORTUNE_SEEKER => array(
     'name'  => clienttranslate('Fortune Seeker'),
     'stage' => STAGE_TOWN,
-    'tt'    => clienttranslate('The player(s) with the fewest ${worker} may hire a ${worker} (for free)'),
+    'tt'    => clienttranslate('The player(s) with the fewest ${worker} may recruit a ${worker} (for free)'),
     'all_b' => 1,
   ),
   EVENT_INDUSTRIALIZATION => array(

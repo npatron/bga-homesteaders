@@ -1387,6 +1387,40 @@ class homesteaders extends Table
             }
             self::DbQuery("UPDATE `player` SET `use_silver`='0'");
         }
+
+        if ( $from_version <= 2102040920 ){
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'receive_inc'");
+            if(is_null($result)){
+                self::DbQuery("ALTER TABLE player ADD receive_inc INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+            }
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'has_paid'");
+            if(is_null($result)){
+                self::DbQuery("ALTER TABLE player ADD has_paid INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+            }
+            $result = self::getCollectionFromDB("SELECT `player_id`, `paid` FROM `resources` WHERE paid='1'");
+            foreach($result as $p_id => $res){
+                self::DbQuery("UPDATE `player` SET `has_paid`='1' WHERE `player_id`='$p_id'");
+            }
+
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'waiting'");
+            if(is_null($result)){
+                self::DbQuery("ALTER TABLE player ADD waiting INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+            }
+            $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `buildings` LIKE 'state'");
+            if(is_null($result)){
+                self::DbQuery("ALTER TABLE buildings ADD state INT(3) UNSIGNED NOT NULL DEFAULT '0';");
+            }
+
+            self::DbQuery("CREATE TABLE IF NOT EXISTS `events` (
+                `event_id` INT(2) UNSIGNED NOT NULL COMMENT 'Identity of Event',
+                `position` INT(2) UNSIGNED NOT NULL COMMENT 'position of Event (1-10)',
+                `location` INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-sett, 2-town, 3-city',
+                PRIMARY KEY (`event_id`)
+              ) ENGINE=InnoDB;");
+
+            // update TABLE `global`, fixing new/old global values 
+            // and adding new rows for new global values
+        }
         // Example:
 //        if( $from_version <= 1404301345 )
 //        {

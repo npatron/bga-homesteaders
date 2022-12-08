@@ -49,15 +49,15 @@ class HSDResource extends APP_GameClass
 
     // payment toggles, (for income)
     function getIncomePaid($p_id){
-        return $this->game->getUniqueValueFromDB( "SELECT `recieve_inc` FROM `player` WHERE `player_id`='$p_id'" ); 
+        return $this->game->getUniqueValueFromDB( "SELECT `receive_inc` FROM `player` WHERE `player_id`='$p_id'" ); 
     }
 
     function setIncomePaid($p_id, $val=1){
-        $this->game->DbQuery( "UPDATE `player` SET `recieve_inc`='$val' WHERE `player_id`='$p_id'");
+        $this->game->DbQuery( "UPDATE `player` SET `receive_inc`='$val' WHERE `player_id`='$p_id'");
     }
 
     function clearIncomePaid(){
-        $this->game->DbQuery( "UPDATE `player` SET `recieve_inc`='0' ");
+        $this->game->DbQuery( "UPDATE `player` SET `receive_inc`='0' ");
     }
 
     ///// COST related Functions /////
