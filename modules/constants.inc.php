@@ -20,54 +20,54 @@
   define("STATE_PAY_WORKERS",        23);
 
   // event phase
-  define("STATE_EVT_PRE_AUCTION",    30);
-  define("STATE_EVT_TRADE",          31);
-  define("STATE_EVT_BONUS",          32);
-  define("STATE_EVT_PAY",            33);
-  define("STATE_EVT_POST_TRADE",     34);
-  define("STATE_EVT_BONUS_RAIL",     35);
+  define("STATE_EVT_PRE_AUCTION",    24);
+  define("STATE_EVT_TRADE",          25);
+  define("STATE_EVT_BONUS",          26);
+  define("STATE_EVT_PAY",            27);
+  define("STATE_EVT_POST_TRADE",     28);
+  define("STATE_EVT_BONUS_RAIL",     29);
   
   // Bidding phase
-  define("STATE_BEGIN_AUCTION",      40);
-  define("STATE_2_PLAYER_DUMMY_BID", 41);
-  define("STATE_PLAYER_BID",         42);
-  define("STATE_PASS_RAIL_BONUS",    43);
-  define("STATE_NEXT_BID",           44);
-  define("STATE_EVT_PASS_BONUS",     45);
+  define("STATE_BEGIN_AUCTION",      30);
+  define("STATE_2_PLAYER_DUMMY_BID", 31);
+  define("STATE_PLAYER_BID",         32);
+  define("STATE_PASS_RAIL_BONUS",    33);
+  define("STATE_NEXT_BID",           34);
+  define("STATE_EVT_PASS_BONUS",     35);
 
   // resolve Auction Lots
-  define("STATE_NEXT_LOT", 50);
-  define("STATE_PAY_LOT",  51);/* <- undoTurn goes here*/
-  define("STATE_CHOOSE_LOT_ACTION",  52);
+  define("STATE_NEXT_LOT", 40);
+  define("STATE_PAY_LOT",  41);/* <- undoTurn goes here*/
+  define("STATE_CHOOSE_LOT_ACTION",  45);
   // lot_build building_build 
-  define("STATE_CHOOSE_BUILDING",    54);
-  define("STATE_TRAIN_STATION_BUILD",55);
+  define("STATE_CHOOSE_BUILDING",    42);
+  define("STATE_RESOLVE_BUILD",      43);
+  define("STATE_TRAIN_STATION_BUILD",44);
   // 1) resolve build bonuses
-  define("STATE_RESOLVE_BUILD",      56);
-  define("STATE_BUILD_BONUS",        57);
-  define("STATE_BUILD_RAIL_BONUS",   58);
+  define("STATE_BUILD_RAIL_BONUS",   49);
+  define("STATE_BUILD_BONUS",        51);
   
   // 2) event specific bonus or builds 
-  define("STATE_EVT_SETUP_BONUS",   60);
+  define("STATE_EVT_SETUP_BONUS",   52);
   // 2a) event on build
-  define("STATE_EVT_CHOICE",        62);
-  define("STATE_EVT_BUILD_AGAIN",   63);//note: no additional builds from events in stage with train station.
+  define("STATE_EVT_CHOICE",        53);
+  define("STATE_EVT_BUILD_AGAIN",   54);//note: no additional builds from events in stage with train station.
   // 2b) resolve build bonuses
-  define("STATE_EVT_RESOLVE_BUILD", 64);
-  define("STATE_EVT_BUILD_BONUS",   65);
-  define("STATE_EVT_RAIL_BONUS",    66);
+  define("STATE_EVT_RESOLVE_BUILD", 55);
+  define("STATE_EVT_BUILD_BONUS",   56);
+  define("STATE_EVT_RAIL_BONUS",    57);
   
   // 3) auction bonuses (not tied to build)
-  define("STATE_AUC_SETUP_BONUS", 70);
-  define("STATE_AUC_RAIL_BONUS",  71);
-  define("STATE_AUC_CHOOSE_BONUS",72);
+  define("STATE_AUC_SETUP_BONUS",   50);
+  define("STATE_AUC_RAIL_BONUS",    71);
+  define("STATE_AUC_CHOOSE_BONUS",  72);
 
-  define("STATE_CONFIRM_LOT",     78);
-  define("STATE_END_CURRENT_LOT", 79);
+  define("STATE_CONFIRM_LOT",       78);
+  define("STATE_END_CURRENT_LOT",   79);
 
-  define("STATE_END_ROUND",          89);
-  define("STATE_ENDGAME_ACTIONS",    90);
-  define("STATE_UPDATE_SCORES",      91);
+  define("STATE_END_ROUND",          59);
+  define("STATE_ENDGAME_ACTIONS",    60);
+  define("STATE_UPDATE_SCORES",      61);
 
   define("STATE_END_GAME",           99);
   // END OF STATES

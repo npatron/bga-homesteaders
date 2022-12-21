@@ -44,16 +44,18 @@ class homesteaders extends Table
         self::initGameStateLabels( array(
             "round_number"      => 10, // current round of game
             "first_player"      => 11, // player id of player with first player token
-            "number_auctions"   => 12, // max number of auctions for this player count
-            "current_auction"   => 13, // which lot/auction is currently being resolved
-            "last_bidder"       => 14, // last player who has bid, used to know when bids is done
-            "players_passed"    => 15, // count of players who have passed, used to know when bids is done
-            "building_bonus"    => 16, // used to determine build bonuses
-            "last_building"     => 17, // building key of last built building, used for logging
-            "b_order"           => 18, // for sorting player buildings
-            "build_type_int"    => 19, // allowed building types for build
-            "lot_state"         => 20, // possible/remaining player actions in lot
-            "next_player"       => 21, // player id of next player that must act
+            "phase"             => 12, // current phase of game
+            "number_auctions"   => 13, // max number of auctions for this player count
+            "current_auction"   => 14, // which lot/auction is currently being resolved
+            "last_bidder"       => 15, // last player who has bid, used to know when bids is done
+            "players_passed"    => 16, // count of players who have passed, used to know when bids is done
+            "auction_bonus"     => 17, // used to determine auction bonuses 
+            "building_bonus"    => 18, // used to determine build bonuses
+            "last_building"     => 19, // building key of last built building, used for logging
+            "b_order"           => 20, // for sorting player buildings
+            "build_type_int"    => 21, // allowed building types for build
+            "lot_state"         => 22, // possible/remaining player actions in lot
+            "next_player"       => 23, // player id of next player that must act
             "show_player_info"  => SHOW_PLAYER_INFO,
             "rail_no_build"     => RAIL_NO_BUILD,
             "new_beginning_bld" => NEW_BEGINNING_BLD,
@@ -121,13 +123,16 @@ class homesteaders extends Table
         // Init global values with their initial values
         $this->setGameStateInitialValue( 'round_number', 1 );
         $this->setGameStateInitialValue( 'first_player', 0 );
+        $this->setGameStateInitialValue( 'phase',        0 );
         $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
         $this->setGameStateInitialValue( 'current_auction', 1 );
         $this->setGameStateInitialValue( 'last_bidder',    0 );
         $this->setGameStateInitialValue( 'players_passed', 0 );
+        $this->setGameStateInitialValue( 'auction_bonus',  0 );
         $this->setGameStateInitialValue( 'building_bonus', 0 );
         $this->setGameStateInitialValue( 'last_building',  0 );
         $this->setGameStateInitialValue( 'b_order' ,       0 );
+        $this->setGameStateInitialValue( 'build_type_int', 0 );
         $this->setGameStateInitialValue( 'lot_state',      0 );
         $this->setGameStateInitialValue( 'next_player',    0 );
         
@@ -1388,14 +1393,14 @@ class homesteaders extends Table
             self::DbQuery("UPDATE `player` SET `use_silver`='0'");
         }
 
-        if ( $from_version <= 2102040920 ){
+        if ( $from_version <= 2201201828 ){
             $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'receive_inc'");
             if(is_null($result)){
-                self::DbQuery("ALTER TABLE player ADD receive_inc INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+                self::DbQuery("ALTER TABLE player ADD `receive_inc` INT(1) UNSIGNED NOT NULL DEFAULT '0';");
             }
             $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'has_paid'");
             if(is_null($result)){
-                self::DbQuery("ALTER TABLE player ADD has_paid INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+                self::DbQuery("ALTER TABLE player ADD `has_paid` INT(1) UNSIGNED NOT NULL DEFAULT '0';");
             }
             $result = self::getCollectionFromDB("SELECT `player_id`, `paid` FROM `resources` WHERE paid='1'");
             foreach($result as $p_id => $res){
@@ -1404,11 +1409,11 @@ class homesteaders extends Table
 
             $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'waiting'");
             if(is_null($result)){
-                self::DbQuery("ALTER TABLE player ADD waiting INT(1) UNSIGNED NOT NULL DEFAULT '0';");
+                self::DbQuery("ALTER TABLE player ADD `waiting` INT(1) UNSIGNED NOT NULL DEFAULT '0';");
             }
             $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `buildings` LIKE 'state'");
             if(is_null($result)){
-                self::DbQuery("ALTER TABLE buildings ADD state INT(3) UNSIGNED NOT NULL DEFAULT '0';");
+                self::DbQuery("ALTER TABLE buildings ADD `state` INT(3) UNSIGNED NOT NULL DEFAULT '0';");
             }
 
             self::DbQuery("CREATE TABLE IF NOT EXISTS `events` (
