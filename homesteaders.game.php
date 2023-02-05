@@ -367,6 +367,13 @@ class homesteaders extends Table
     public function playerWait ()
     {
         $this->checkAction( 'wait' );
+        $cur_p_id = $this->getCurrentPlayerId();
+        $next_player = $this->getGameStateValue('next_player');
+        if ($cur_p_id == $next_player){
+            throw new BgaUserException( clienttranslate("You are next to act, and cannot wait."));
+        }
+        $this->setWaiting($cur_p_id);
+        $this->setPlayerNonMultiactiveInWaitStep( $cur_p_id , 'done' );
     }
 
     /***  place workers phase ***/
@@ -1031,14 +1038,14 @@ class homesteaders extends Table
         $this->Resource->clearPaid();
         $this->Resource->clearIncomePaid();
         $this->Building->updateBuildingsForRound($round_number);
-        $this->gamestate->nextState( );
+        $this->gamestate->nextState( '' );
     }
 
     function stPlaceWorkers() {
         $this->Log->allowTradesAllPlayers(); // this will also add extra player time.
         $first_player =$this->getGameStateValue('first_player');
-        // sets 'waiting_on_player' to first_player, (as they can't wait)
-        $this->setGameStateValue('waiting_on_player', $first_player);
+        // sets 'next_player' to first_player, (as they can't wait)
+        $this->setGameStateValue('next_player', $first_player);
         $this->gamestate->setAllPlayersMultiactive( );
     }
 
