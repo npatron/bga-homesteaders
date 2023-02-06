@@ -896,13 +896,18 @@ class homesteaders extends Table
 
     function argPayWorkers()
     {
-        return array('args'=>$this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`"), 
-                     'paid'=>$this->getCollectionFromDB("SELECT `player_id`, `has_paid` FROM `player`"));
+        $cur_p_id = $this->getCurrentPlayerId();
+        $is_waiting = $this->isPlayerWaiting($cur_p_id);
+        $next_player = $this->getGameStateValue('next_player');
+        return array('is_waiting' => $is_waiting,
+                     'next_player'=>$next_player,
+                     'args' => $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`"), 
+                     'paid' => $this->getCollectionFromDB("SELECT `player_id`, `has_paid` FROM `player`"));
     }
 
     function argDummyValidBids() {
         return array('valid_bids'=>$this->Bid->getDummyBidOptions(), 
-                     'event'=>$this->Event->getEvent());
+                     'event' => $this->Event->getEvent());
     }
 
     function argEventBonus() {

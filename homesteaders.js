@@ -126,6 +126,10 @@ function (dojo, declare) {
             id: BTN_ID_CONFIRM_WORKERS, method:METHOD_CONFIRM_WORKERS, 
             default:MESSAGE_CONFIRM_WORKERS, confirm: MESSAGE_CONFIRM_WORKERS_TRADES
         };
+
+    const BTN_ID_WAIT = 'btn_wait';
+    const MESSAGE_WAIT = 'Wait for player order';
+    const METHOD_WAIT = 'waitForPlayerOrder';
     
     /* ***** common buttons ***** */
         const BTN_ID_UNDO_PASS    = 'btn_undo_pass';
@@ -1325,13 +1329,17 @@ function (dojo, declare) {
         ///////////////////////////////////////////////////
         //// onUpdateActionButtons
 
-        onUpdateActionButtons_allocateWorkers: function(){
+        onUpdateActionButtons_allocateWorkers: function(args){
+            this.active_p_id = args.active_p_id;
             LAST_SELECTED['worker'] ="";
             // show workers that are selectable
             dojo.query( `#player_zone_${PLAYER_COLOR[this.player_id]} .token_worker` ).addClass('selectable');
             // also make building_slots selectable.
             dojo.query( `#${TPL_BLD_ZONE}${PLAYER_COLOR[this.player_id]} .worker_slot` ).addClass( 'selectable' );
 
+            if (this.player_id !== args.next_player ) {
+                this.addActionButton( BTN_ID_WAIT, this.replaceTooltipStrings(_(MESSAGE_WAIT)), METHOD_WAIT );
+            }
             this.addActionButton( BTN_ID_CONFIRM_WORKERS, this.replaceTooltipStrings(_(MESSAGE_CONFIRM_WORKERS)), METHOD_CONFIRM_WORKERS );
             this.addActionButton( BTN_ID_CANCEL, _(MESSAGE_CANCEL_TURN), 'cancelUndoTransactions', null, false, 'red');
             dojo.place(dojo.create('br'),'generalactions','last');
@@ -1350,6 +1358,9 @@ function (dojo, declare) {
         },
         // -non-active-
         onUpdateActionButtons_allocateWorkers_notActive(args){
+            if (args.is_waiting){
+                return;
+            }
             if ((args.paid[this.player_id].has_paid==0 || this.undoPay) && this.showPay){
                 this.allowTrade = true;
                 this.silverCost = this.getPlayerWorkerCount(this.player_id);
@@ -3845,6 +3856,21 @@ function (dojo, declare) {
             }
         },
 
+        waitForPlayerOrder: function() {
+            this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/wait.html", 
+            { lock: true }, 
+            this, function( result ) { 
+                this.clearSelectable('worker', true); 
+                this.clearSelectable('worker_slot', false);
+                this.disableTradeBoardActions();
+                this.destroyIncomeBreadcrumb();
+                INCOME_ARRAY.length=0;
+                this.disableTradeIfPossible();
+                this.clearOffset();
+                this.showPay = true;
+            }, function( is_error) { })
+        },
+
         ajaxDonePlacingWorkers: function(){
             let warehouse_num = RESOURCES[this.warehouse];
             this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/donePlacingWorkers.html", 
@@ -5981,6 +6007,7 @@ function (dojo, declare) {
                 targetArray[i]=fromArray[i];
             }
         },
+
         /**
          * make all positive values in array negative, and all negative values positive.
          * @param {object} array 
@@ -5992,6 +6019,7 @@ function (dojo, declare) {
             }
             return new_array;
         },
+
         /**
          * allows adding to array by key, without having to have exisiting value.
          * @param {object} arr to edit
