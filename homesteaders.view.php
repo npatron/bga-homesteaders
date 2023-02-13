@@ -42,9 +42,8 @@
         /*********** Place your code below:  ************/
         
         $template = self::getGameName() . "_" . self::getGameName();
-        $this->tpl['ROUND_STRING'] = self::_("Round: ");
-        $round_number = $this->game->getGameStateValue('round_number');
-        $this->tpl['ROUND_NUMBER'] = $round_number;
+        $this->tpl['ROUND_STRING']     = self::_("Round: ");
+        $this->tpl['ROUND_NUMBER']     = $this->game->getGameStateValue('round_number');
         $this->tpl['MAIN_BUILDING']    = self::_('Current Building Stock');
         $this->tpl['CONFIRM_TRADE']    = self::_("Confirm Trade");
         $this->tpl['UNDO_TRADE']       = self::_("Undo All Trade/Dept");
@@ -52,7 +51,7 @@
         $this->tpl['BUILDING_DISCARD'] = self::_("Building Discard");
         $this->tpl['FUTURE_BUILDING']  = self::_('Upcoming Buildings');
         $this->tpl['EVENTS']           = self::_("Events");
-        $this->tpl['EVENTS_DISCARD']          = self::_("Events Discard");
+        $this->tpl['EVENTS_DISCARD']   = self::_("Events Discard");
 
         $this->tpl['FUTURE_AUCTION_TOGGLE']   = self::_("Show Upcoming Auctions");
         $this->tpl['BUILDING_STOCK_TOGGLE']   = self::_("Hide Current Buildings");

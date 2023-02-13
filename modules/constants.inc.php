@@ -147,6 +147,7 @@
   define("TYPE_COMMERCIAL",  1);
   define("TYPE_INDUSTRIAL",  2);
   define("TYPE_SPECIAL",     3);
+  define("TYPE_ANY",         4);
 
   //resources
   define("NONE",     0);
@@ -286,3 +287,73 @@
   define("BID_A4_B16", 38);
   define("BID_A4_B21", 39);
   // A4 bids are 31-39 (5 players only)
+
+  define("MESSAGE_ADVANCE_TRACK", 7);
+  define("MESSAGE_ALREADY_BUILT", 9);
+  define("MESSAGE_UNAFFORDABLE", 10);
+  define("MESSAGE_TRADEABLE", 11);
+  define("MESSAGE_AFFORDABLE", 12);
+
+  define("MESSAGE_CHOOSE_DIFFERENT_BUILDING", 31)
+  define("MESSAGE_BUILD", 31);
+  define("MESSAGE_BUILD_CONFIRM", 31);
+  define("MESSAGE_AUCTION_BONUS", 32);
+  define("MESSAGE_EVENT_BONUS", 33);
+
+  define("MESSAGE_FINAL_ROUND", 50);
+  define("MESSAGE_CANCEL", 51);
+  define("MESSAGE_CONFIRM_WORKERS", 52);
+  define("MESSAGE_CONFIRM_WORKERS_TRADES", 53);
+  define("MESSAGE_UNDO_PASS", 54);
+  define("MESSAGE_UNDO_INCOME", 55);
+  define("MESSAGE_WAIT", 56);
+  define("MESSAGE_DONE", 57);
+  define("MESSAGE_CONFIRM", 58);
+  define("MESSAGE_CONFIRM_DONE", 59);
+
+  define("MESSAGE_CONFIRM_PASS", 60);
+  define("MESSAGE_CONFIRM_BID", 61);
+  define("MESSAGE_CONFIRM_DUMMY_BID", 62);
+  define("MESSAGE_PASS", 63);
+  define("MESSAGE_TRADE_HIDE", 64);
+  define("MESSAGE_TRADE_SHOW", 65);
+  define("MESSAGE_CONFIRM_TRADE", 66);
+  define("MESSAGE_TRADE_UNDO", 67);
+  define("MESSAGE_TRADE_UNDO_EVENT", 66);
+  define("MESSAGE_DEBT_TAKE", 68);
+  define("MESSAGE_DEBT_PAY", 69);
+
+  define("MESSAGE_X_FOR_Y", 70);
+  define("MESSAGE_X_FOR_Y_CONFIRM", 71);
+
+  define("MESSAGE_HIRE", 72);
+  define("MESSAGE_HIRE_FREE", 73);
+  define("MESSAGE_PASS_BONUS", 74);
+  define("MESSAGE_BONUS_CHOOSE", 75);
+  define("MESSAGE_EVENT_SILVER_RAIL_ADVANCE", 76);
+  define("MESSAGE_EVENT_SILVER_RAIL_ADVANCE_CONFIRM", 77);
+  define("MESSAGE_EVENT_STEEL_BUILD", 78);
+  define("MESSAGE_EVENT_STEEL_BUILD_CONFIRM", 79);
+  define("MESSAGE_EVENT_DONE", 80);
+  define("MESSAGE_EVENT_DONE_CONFIRM", 81);
+  define("MESSAGE_START_SELL", 82);
+  define("MESSAGE_DO_NOT_BUILD", 83);
+  define("MESSAGE_DO_NOT_BUILD_ALT", 84);
+  define("MESSAGE_PAY_LOAN_3_SILVER", 85);
+  define("MESSAGE_PAY_OFF_LESS_LOAN", 86);
+  define("MESSAGE_PAY_AMT", 87);
+  define("MESSAGE_USE_MORE_GOLD", 88);
+  define("MESSAGE_USE_LESS_GOLD", 89);
+  define("MESSAGE_MORE_WOOD_STEEL", 90);
+  define("MESSAGE_LESS_WOOD_STEEL", 91);
+  define("MESSAGE_GOLD_AS_TYPE", 91);
+  
+  define("MESSAGE_PAY_DEBT_SILVER", 92);
+  define("MESSAGE_PAY_DEBT_GOLD", 93);
+  define("MESSAGE_PAY_DEBT_FOOD", 94);
+  define("MESSAGE_BUILD_DISCOUNT", 95);
+  define("MESSAGE_DISCOUNT_RESOURCE", 96);
+  define("MESSAGE_SELECT_BUILDING", 97);
+  define("MESSAGE_TRADE_BUTTON_TEMPLATE", 98);
+
+  
