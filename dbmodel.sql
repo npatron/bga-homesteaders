@@ -19,13 +19,13 @@
 --       you have to restart a game to see your changes in database.
 
 -- This color name is used to create css classes
-ALTER TABLE `player` ADD `color_name` VARCHAR(16) NOT NULL DEFAULT ' ';
-ALTER TABLE `player` ADD `rail_adv`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
+ALTER TABLE `player` ADD `color_name`  VARCHAR(16) NOT NULL DEFAULT ' ';
+ALTER TABLE `player` ADD `rail_adv`    INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rail_adv 0-5';
 ALTER TABLE `player` ADD `receive_inc` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'has recieved Income 0-No, 1-Yes';
-ALTER TABLE `player` ADD `has_paid`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'has paid pending cost 0-No, 1-Yes';
-ALTER TABLE `player` ADD `waiting`    INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'waiting for other players 0-No, 1-Yes';
-ALTER TABLE `player` ADD `cost`       INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'pending cost (in silver)';
-ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `has_paid`    INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'has paid pending cost 0-No, 1-Yes';
+ALTER TABLE `player` ADD `waiting`     INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'waiting for other players 0-No, 1-Yes';
+ALTER TABLE `player` ADD `cost`        INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'pending cost (in silver)';
+ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT '0';
 
 CREATE TABLE IF NOT EXISTS `bids` (
   `player_id` INT(8) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
 CREATE TABLE IF NOT EXISTS `auctions` (
   `auction_id`       INT(2) UNSIGNED NOT NULL COMMENT 'Identity of Auction tile',
   `position`         INT(2) UNSIGNED NOT NULL COMMENT 'position of Auction in Deck (1-10)',
-  `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3, 4-Auction-4',
+  `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-4 ->Auction 1-4',
   PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB;
 
@@ -95,11 +95,11 @@ CREATE TABLE IF NOT EXISTS `resources` (
 
 CREATE TABLE IF NOT EXISTS `log` (
   `log_id`    INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `round`     INT(11) NOT NULL,
-  `player_id` INT(11) NOT NULL,
-  `move_id`   INT(11) NOT NULL,
+  `round`     INT(11) UNSIGNED NOT NULL,
+  `player_id` INT(11) UNSIGNED NOT NULL,
+  `move_id`   INT(11) UNSIGNED NOT NULL,
   `action`    VARCHAR(16) NOT NULL,
-  `piece_id`  INT(11),
+  `piece_id`  INT(11) UNSIGNED,
   `action_arg` JSON,
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
