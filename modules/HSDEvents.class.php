@@ -27,18 +27,18 @@ class HSDEvents extends APP_GameClass
         shuffle($city);
         for($i=0; $i <4; $i++){
             // put 4 settlement events into events table (at positions 1-4)
-            $evt_set_id = $settlement[$i];
-            $pos_set = 1 + $i;
-            $values[] = "($evt_set_id, $pos_set, 1)";
+            $event_id_sett = $settlement[$i];
+            $position_sett = 1 + $i;
+            $values[] = "($event_id_sett, $position_sett, 1)";
             // put 4 town events into events table (at positions 5-8)
-            $evt_town_id = $town[$i];
-            $pos_town = 5 + $i;
-            $values[] = "($evt_town_id, $pos_town, 2)";
+            $event_id_town = $town[$i];
+            $position_town = 5 + $i;
+            $values[] = "($event_id_town, $position_town, 2)";
             // put 2 city events into events deck (at positions 9-10)
             if ($i < 2){
-                $evt_city_id = $city[$i];
-                $pos_city = 9+$i;
-                $values[] = "($evt_city_id, $pos_city, 3)";
+                $event_id_city = $city[$i];
+                $position_city = 9+$i;
+                $values[] = "($event_id_city, $position_city, 3)";
             }
         }
         $sql = "INSERT INTO `events` (`event_id`, `position`, `location`) VALUES ";

@@ -14,7 +14,7 @@ class HSDBuilding extends APP_GameClass
     /** SETUP BUILDINGS on game start, IN DB */
     function createBuildings($players){
         $this->game->DbQuery("DELETE FROM `buildings`");
-        $sql = "INSERT INTO `buildings` (building_id, building_type, stage, `location`, player_id, worker_slot) VALUES ";
+        $sql = "INSERT INTO `buildings` (`building_id`, `building_type`, `stage`, `location`, `player_id`, `worker_slot`) VALUES ";
         $values=array();
         foreach( $players as $p_id => $player ) // homestead (assigned to each player by player_id)
             $values[] = $this->getHomesteadAsValue($p_id);
@@ -50,7 +50,9 @@ class HSDBuilding extends APP_GameClass
         $type = $bld['type'];
         $value = "('$b_id', '$type', '$stage', 0, 0, '$slot')";
         $endValue = $value;
+        // check if multiple should be added.
         $iStart = ($this->game->getPlayersNumber()==2? 2:1);
+        // in 2p only add multiple if 'amt'== 3;
         for ($i = $iStart; $i< $bld['amt']; $i++){
             $endValue .= ", ". $value;
         }
