@@ -52,7 +52,7 @@ class HSDScore extends APP_GameClass
         $row7 = array(sprintf(clienttranslate('# of %s from %s'), $vp_html,$copper_html));
         $row8 = array(sprintf(clienttranslate('# of %s from %s'), $vp_html,$loan_html));
         $row9 = array(sprintf(clienttranslate('Total # of %s'), $vp_html,$cow_html));
-        foreach($players as $p_id=>$player){
+        foreach($players as $p_id=> $player){
             $p_score = $this->calculateEndgameScore($p_id);
             $row1[] = array( 'str' => '${player_name}',
                              'args' => array( 'player_name' => $player['player_name'] ),
@@ -88,7 +88,7 @@ class HSDScore extends APP_GameClass
         // Building VP's
         $bld_vp_arr = $this->getPlayerVPsFromBuildings($p_id);
         $bld_bonus_score = $bld_vp_arr['vp'];
-        $bld_score =     $bld_bonus_score['static']; //$this->dbGetScore($p_id);
+        $bld_score =     $bld_bonus_score['static']; 
         $this->game->setStat($bld_score, 'building_vp', $p_id);
         $bonus = $bld_bonus_score['bonus'];
         $this->game->setStat($bonus, 'building_bonus_vp', $p_id);
@@ -127,7 +127,7 @@ class HSDScore extends APP_GameClass
             'loan'  => $loans,
         );
         $total = 0;
-        foreach ($allScores as $type =>$val){
+        foreach ($allScores as $type => $val){
             $total += $val;
         }
         $allScores['total'] = $total;
@@ -153,7 +153,7 @@ class HSDScore extends APP_GameClass
     {
         $resources = $this->game->getObjectFromDB("SELECT `gold`, `copper`, `cow` from `resources` WHERE `player_id` = '$p_id'");
         $vp = array();
-        foreach($resources as $type=>$amt){
+        foreach($resources as $type=> $amt){
             $vp[$type] = ($amt * 2);
         }
         return $vp;
@@ -195,21 +195,23 @@ class HSDScore extends APP_GameClass
             $counts[$p_buildings[$b_key]['b_type']]++;
         }
         $counts[VP_B_WORKER] = $this->game->getUniqueValueFromDB("SELECT `workers` FROM `resources` WHERE `player_id`='$p_id'");
-        $counts[VP_B_TRACK] = $this->game->getUniqueValueFromDB("SELECT `track` FROM `resources` WHERE `player_id`='$p_id'");
+        $counts[VP_B_TRACK] = $this->game->getUniqueValueFromDB("SELECT COUNT(*) FROM `tracks` WHERE `player_id`='$p_id'");
         $counts[VP_B_BUILDING] = count($p_buildings);
+        $counts[VP_B_PAID_LOAN] = $this->game->Log->getLoansPaidAmount($p_id);
         
-        $this->game->setStat($counts[VP_B_BUILDING],    'buildings', $p_id);
         $this->game->setStat($counts[TYPE_RESIDENTIAL], 'residential', $p_id);
         $this->game->setStat($counts[TYPE_COMMERCIAL],  'industrial', $p_id);
         $this->game->setStat($counts[TYPE_INDUSTRIAL],  'commercial', $p_id);
         $this->game->setStat($counts[TYPE_SPECIAL],     'special', $p_id);
+        $this->game->setStat($counts[VP_B_BUILDING],    'buildings', $p_id);
+        $this->game->setStat($counts[VP_B_PAID_LOAN],   'loans_paid_end', $p_id);
         
         $vps = array('static'=>0,
                      'bonus'=>0,);
         $vps_b = array();
         $vp_b_mult = array(
             TYPE_RESIDENTIAL=> 0, TYPE_COMMERCIAL => 0, TYPE_INDUSTRIAL => 0, TYPE_SPECIAL    => 0,
-            VP_B_WORKER     => 0, VP_B_TRACK      => 0, VP_B_BUILDING   => 0, ); /* VP_LOAN_PAID=>0 //(expansion)*/
+            VP_B_WORKER     => 0, VP_B_TRACK      => 0, VP_B_BUILDING   => 0,  VP_B_PAID_LOAN => 0, );
         foreach($p_buildings as $b_key => $building){
             $b_id   = $p_buildings[$b_key]['b_id']; 
             $b_static_vp = (array_key_exists('vp',$this->game->building_info[$b_id])?$this->game->building_info[$b_id]['vp']:0);
@@ -238,6 +240,8 @@ class HSDScore extends APP_GameClass
         $this->game->setStat($vp_b_mult[VP_B_WORKER] * $counts[VP_B_WORKER], 'bonus_vp_4', $p_id);
         $this->game->setStat($vp_b_mult[VP_B_TRACK] * $counts[VP_B_TRACK], 'bonus_vp_5', $p_id);
         $this->game->setStat($vp_b_mult[VP_B_BUILDING] * $counts[VP_B_BUILDING], 'bonus_vp_6', $p_id);
+        $this->game->setStat($vp_b_mult[VP_B_PAID_LOAN] * $counts[VP_B_PAID_LOAN], 'bonus_vp_7', $p_id);
+
         
         return array('vp'=>$vps, 'vp_b'=>$vps_b);
     }

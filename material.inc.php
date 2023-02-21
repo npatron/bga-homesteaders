@@ -40,38 +40,153 @@ $this->special_resource_map = array(
   'vp8' => array('vp'=>8),
 );
 
+$this->warehouse_map = array(
+  'wood'   => 1,
+  'food'   => 2,
+  'steel'  => 4,
+  'gold'   => 8,
+  'copper' => 16,
+  'cow'    => 32,
+);
+
+$this->costReplace = array(
+  'cow' => array('gold'=> 1),
+  'copper' => array('gold'=> 1),
+  'steel' => array('wood'=> 1, 'vp'=>1),
+);
+
 $this->playerColorNames = array(
-  "ff0000" =>'red', 
-  "008000"=>'green', 
-  "0000ff"=>'blue', 
+  "ff0000"=> 'red', 
+  "008000"=> 'green', 
+  "0000ff"=> 'blue', 
   "ffff00"=> 'yellow', 
   "982fff"=> 'purple');    
 
 $this->trade_map = array(
   0=>'buy_wood', 1=>'buy_food', 2=>'buy_steel', 3=>'buy_gold', 4=>'buy_copper', 5=>'buy_cow',
   6=>'sell_wood', 7=>'sell_food', 8=>'sell_steel', 9=>'sell_gold', 10=>'sell_copper',11=>'sell_cow', 
-  12=>'market_food', 13=>'market_steel', 14=>'bank',
-  15=>'loan', 16=>'payLoan_silver', 17=>'payLoan_gold');
+  12=>'market_food', 13=>'market_steel', 14=>'bank', 15=>'loan', 
+  16=>'payLoan_silver', 17=>'payLoan_gold',18=>'payLoan_3silver', 19=>'payLoan_food',
+  20=>'sellfree_wood', 21=>'sellfree_food', 22=>'sellfree_steel', 23=>'sellfree_gold', 24=>'sellfree_copper', 25=>'sellfree_cowhi',);
 
 $this->translation_strings = array(
-  0=> clienttranslate('Residential'), 
-  1=> clienttranslate('Commercial'), 
-  2=> clienttranslate('Industrial'), 
-  3=> clienttranslate('Special'), 
-  4=> clienttranslate('Any'), 
-  6=> clienttranslate('Building'), 
-  9=> clienttranslate('You have already built this building'),
-  10=> clienttranslate('You can not afford to build this building'),
-  11=> clienttranslate('You can afford to build this building (trades required)'),
-  12=> clienttranslate('You can afford to build this building'),
-  15=> clienttranslate('Show Upcoming Buildings'), 
-  16=> clienttranslate('Show Current Buildings'),
-  17=> clienttranslate('Show Upcoming Auctions'), 
-  18=> clienttranslate('Show Building Discard'),
-  20=> clienttranslate('Hide Upcoming Buildings'), 
-  21=> clienttranslate('Hide Current Buildings'),
-  22=> clienttranslate('Hide Upcoming Auctions'), 
-  23=> clienttranslate('Hide Building Discard'),
+  TYPE_RESIDENTIAL=> clienttranslate('Residential'), 
+  TYPE_COMMERCIAL => clienttranslate('Commercial'), 
+  TYPE_INDUSTRIAL => clienttranslate('Industrial'), 
+  TYPE_SPECIAL    => clienttranslate('Special'), 
+  TYPE_ANY        => clienttranslate('Any'), 
+  VP_B_BUILDING   => clienttranslate('Building'), 
+  MESSAGE_ADVANCE_TRACK => clienttranslate('Advance on Railroad track'),
+  MESSAGE_ALREADY_BUILT=> clienttranslate('You have already built this building'),
+  MESSAGE_UNAFFORDABLE=> clienttranslate('You can not afford to build this building'),
+  MESSAGE_TRADEABLE=> clienttranslate('You can afford to build this building (trades required)'),
+  MESSAGE_AFFORDABLE=> clienttranslate('You can afford to build this building'),
+  
+  15 => clienttranslate('Show Upcoming Buildings'), 
+  16 => clienttranslate('Show Current Buildings'),
+  17 => clienttranslate('Show Upcoming Auctions'), 
+  18 => clienttranslate('Show Building Discard'),
+  19 => clienttranslate('Show Events'),
+  20 => clienttranslate('Show Events Discard'),
+  25 => clienttranslate('Hide Upcoming Buildings'), 
+  26 => clienttranslate('Hide Current Buildings'),
+  27 => clienttranslate('Hide Upcoming Auctions'), 
+  28 => clienttranslate('Hide Building Discard'),
+  29 => clienttranslate('Hide Events'),
+  30 => clienttranslate('Hide Events Discard'),
+  MESSAGE_CHOOSE_DIFFERENT_BUILDING => clienttranslate('Choose different building'),
+  
+  MESSAGE_BUILD => clienttranslate('Build'),
+  MESSAGE_AUCTION_BONUS => clienttranslate('Auction Bonus'),
+  MESSAGE_EVENT_BONUS => clienttranslate('Event Bonus'),
+
+  MESSAGE_FINAL_ROUND  => clienttranslate('Final Income and Scoring Round'),
+  MESSAGE_CANCEL       => clienttranslate('Cancel'),
+  MESSAGE_CONFIRM_WORKERS => clienttranslate('Confirm ${worker} Placement'),
+  MESSAGE_CONFIRM_WORKERS_TRADES => clienttranslate('Confirm Trade(s) & ${worker} Placement'),
+  MESSAGE_UNDO_PASS    => clienttranslate('Undo Pass'),
+  MESSAGE_WAIT         => clienttranslate('Wait for Player order'),
+  MESSAGE_UNDO_INCOME  => clienttranslate('Undo Worker Placement'),
+  MESSAGE_DONE         => clienttranslate('Done'),
+  MESSAGE_CONFIRM      => clienttranslate('Confirm'),
+  MESSAGE_CONFIRM_DONE => clienttranslate('Confirm Trade(s) and Done'),
+  MESSAGE_CONFIRM_PASS => clienttranslate('Confirm Trade(s) and Pass'),
+  MESSAGE_CONFIRM_TRADE=> clienttranslate('Confirm Trade(s)'),
+  MESSAGE_CONFIRM_BID  => clienttranslate('Confirm Bid'),
+  MESSAGE_CONFIRM_DUMMY_BID => clienttranslate('Confirm Dummy Bid'),
+  MESSAGE_PASS         => clienttranslate('Pass'),
+  MESSAGE_TRADE_HIDE   => clienttranslate('Hide Trade'),
+  MESSAGE_TRADE_SHOW   => clienttranslate('Show Trade'),
+  MESSAGE_TRADE_UNDO   => clienttranslate('Undo All Trade(s) & Debt'),
+  MESSAGE_TRADE_UNDO_EVENT => clienttranslate('Undo All Event Trade(s)'),
+  MESSAGE_DEBT_TAKE    => clienttranslate('Take Debt'),
+  MESSAGE_DEBT_PAY     => clienttranslate('Pay Debt'),
+  MESSAGE_X_FOR_Y      => clienttranslate('${resource1} ${arrow} ${resource2}'),
+  MESSAGE_X_FOR_Y_CONFIRM=> clienttranslate('Confirm Trade(s) & ${resource1} ${arrow} ${resource2}'),
+  MESSAGE_HIRE         => clienttranslate('Hire ${worker}'),
+  MESSAGE_HIRE_FREE    => clienttranslate('(FREE) Hire ${worker}'),
+  MESSAGE_PASS_BONUS   => clienttranslate('Do Not Get Bonus'),
+  MESSAGE_BONUS_CHOOSE => clienttranslate('Choose Bonus'),
+  MESSAGE_EVENT_SILVER_RAIL_ADVANCE => clienttranslate('Pay ${silver}${silver} to ${adv_track}'),
+  MESSAGE_EVENT_SILVER_RAIL_ADVANCE_CONFIRM => clienttranslate('Confirm Trade(s) & Pay 2 ${silver} to ${adv_track}'),
+  MESSAGE_EVENT_STEEL_BUILD=> clienttranslate('Pay ${steel} to build ${any}'),
+  MESSAGE_EVENT_DONE   => clienttranslate('Pass on Event'),
+  MESSAGE_EVENT_DONE_CONFIRM=> clienttranslate('Confirm Trades and Done in Event'),
+  MESSAGE_START_SELL   => clienttranslate('Start Sell Event'),
+  MESSAGE_DO_NOT_BUILD => clienttranslate('Do Not Build'),
+  MESSAGE_DO_NOT_BUILD_ALT=> clienttranslate('Do Not Build (Get ${track} instead)'),
+  MESSAGE_PAY_LOAN_3_SILVER=> clienttranslate('pay off ${loan} for ${silver}${silver}${silver}'),
+  MESSAGE_PAY_OFF_LESS_LOAN=> clienttranslate('pay off less ${loan}'),
+  MESSAGE_PAY_AMT => clienttranslate('Pay: ${amt}'),
+  MESSAGE_USE_MORE_GOLD=> clienttranslate('Use More ${gold}'),
+  MESSAGE_USE_LESS_GOLD=> clienttranslate('Use Less ${gold}'),
+  MESSAGE_MORE_WOOD_STEEL=> clienttranslate('More ${wood}${vp} As ${steel}'),
+  MESSAGE_LESS_WOOD_STEEL=> clienttranslate('Less ${wood}${vp} As ${steel}'),
+  MESSAGE_GOLD_AS_TYPE=> clienttranslate('${begin}${gold} As ${type}${end}'),
+  MESSAGE_PAY_DEBT_SILVER=> clienttranslate('Pay Debt ${silver}'),
+  MESSAGE_PAY_DEBT_GOLD =>clienttranslate('Pay Debt ${gold}'),
+  MESSAGE_PAY_DEBT_FOOD =>clienttranslate('pay ${loan} with ${food}'),
+  MESSAGE_BUILD => clienttranslate('Build ${building_name}'),
+  MESSAGE_BUILD_CONFIRM => clienttranslate('Confirm Trade(s) & Build ${building_name}'),
+  MESSAGE_BUILD_DISCOUNT => clienttranslate('Build ${building_name} with discount ${resource}'),
+  MESSAGE_DISCOUNT_RESOURCE => clienttranslate('You must choose a discount resource'),
+  MESSAGE_SELECT_BUILDING => clienttranslate('You must select a building'),
+  MESSAGE_TRADE_BUTTON_TEMPLATE => clienttranslate('${tradeAway} ${arrow} ${tradeFor}'),
+);
+
+$this->vp_strings = array(
+  'vp' => clienttranslate('${vp} tokens:'),
+  'static' => clienttranslate('${vp} from buildings (static)'),
+  'bonus' => clienttranslate('${vp} from buildings (bonus)'),
+  'gold' => clienttranslate('${vp} from ${gold}${cow}${copper}'),
+  'loan' => clienttranslate('${vp} from ${loan}'),
+  'total' => clienttranslate('${vp} Total'),
+  'subtotal' => clienttranslate('${vp} Subtotal'),
+);
+
+$this->auction_bonus_strings = array(
+  AUC_BONUS_WORKER               => clienttranslate('May recruit a ${worker} (for free)'),
+  AUC_BONUS_WORKER_RAIL_ADV      => clienttranslate('May recruit a ${worker} (for free) ${and} ${adv_track}'),
+  AUC_BONUS_WOOD_FOR_TRACK       => clienttranslate('May trade ${wood} for ${track}(once)'),
+  AUC_BONUS_COPPER_FOR_VP        => clienttranslate('May trade ${copper} for ${vp4}(once)'),
+  AUC_BONUS_COW_FOR_VP           => clienttranslate('May trade ${cow} for ${vp4}(once)'),
+  AUC_BONUS_6VP_AND_FOOD_VP      => clienttranslate('Gain ${vp6} ${and} May trade ${food} for ${vp2}(once)'),
+  AUC_BONUS_FOOD_FOR_VP          => clienttranslate('May trade ${food} for ${vp2}(once)'),
+  AUC_BONUS_NO_AUCTION           => clienttranslate('No Auction'),
+  AUC_BONUS_TRACK_RAIL_ADV       => clienttranslate('${track} ${and} ${adv_track}'),
+  AUC_BONUS_4DEPT_FREE           => clienttranslate('May pay off up to 4 ${loan}'),
+  AUC_BONUS_3VP_SELL_FREE        => clienttranslate('${vp3} ${and} May sell any number of resources without spending ${trade}'),
+);
+
+$this->build_bonus_strings = array(
+  BUILD_BONUS_PAY_LOAN          => clienttranslate('When built: Pay off ${loan}'),
+  BUILD_BONUS_TRADE             => clienttranslate('When built: Gain ${trade}'),
+  BUILD_BONUS_WORKER            => clienttranslate('When built: Gain ${worker}'),
+  BUILD_BONUS_RAIL_ADVANCE      => clienttranslate('When built: ${adv_track}'),
+  BUILD_BONUS_TRACK_AND_BUILD   => clienttranslate('When built: Receive ${track}<br>You may also build another building of ${any} type'),
+  BUILD_BONUS_TRADE_TRADE       => clienttranslate('When built: ${trade}${trade}'),
+  BUILD_BONUS_SILVER_WORKERS    => clienttranslate('When built: Receive ${silver} per ${worker}<br>When you gain a ${worker} gain a ${silver}'),
+  BUILD_BONUS_PLACE_RESOURCES   => clienttranslate('When built: place ${wood}${food}${steel}${gold}${copper}${cow} on Warehouse'),
 );
 
 $this->stage_strings = array(
@@ -123,24 +238,24 @@ $this->resource_info = array(
     'name'   => clienttranslate("Gold"),
     'db_int' => GOLD,
     'trade_val' => array('silver'=> 4),
-    'tt'     => clienttranslate('${big_gold}<br>Gold:<br>Required to build some buildings<br>Can be used to pay Workers / Auction costs(as 5 ${silver})<br>${end}: Worth ${vp2}'),
+    'tt'     => clienttranslate('${big_gold}<br>Gold:<br>Required to build some buildings<br>Can be used to pay Workers / Auction costs(as 5 ${silver})<br>End: Worth ${vp2}'),
   ),
   'copper' => array(
     'name'   => clienttranslate("Copper"),
     'db_int' => COPPER,
     'trade_val' => array('gold'=> 1),
-    'tt'     => clienttranslate('${big_copper}<br>Copper:<br>Required to build some buildings<br>${end}: Worth ${vp2}'),
+    'tt'     => clienttranslate('${big_copper}<br>Copper:<br>Required to build some buildings<br>End: Worth ${vp2}'),
   ),
   'cow' => array(
     'name'   => clienttranslate("Livestock"),
     'db_int' => COW,
     'trade_val' => array('gold'=> 1),
-    'tt'     => clienttranslate('${big_cow}<br>Livestock:<br>Required to build some buildings<br>${end}: Worth ${vp2}'),
+    'tt'     => clienttranslate('${big_cow}<br>Livestock:<br>Required to build some buildings<br>End: Worth ${vp2}'),
   ),
   'loan' => array(
     'name'   => clienttranslate("Debt"),
     'db_int' => LOAN,
-    'tt'     => clienttranslate('${big_loan}<br>Debt:<br>Costs 5 ${silver} (or 1 ${gold}) to pay off<br>${end}: Penalty for unpaid ${loan}:<br>${loan} ${arrow} lose ${vp}<br>${loan}${loan} ${arrow} lose ${vp3}<br>${loan}${loan}${loan} ${arrow} lose ${vp6}<br>${loan}${loan}${loan}${loan} ${arrow} lose ${vp10}<br> (etc...)'),
+    'tt'     => clienttranslate('${big_loan}<br>Debt:<br>Costs 5 ${silver} (or 1 ${gold}) to pay off<br>End: Penalty for unpaid ${loan}:<br>${loan} ${arrow} lose ${vp}<br>${loan}${loan} ${arrow} lose ${vp3}<br>${loan}${loan}${loan} ${arrow} lose ${vp6}<br>${loan}${loan}${loan}${loan} ${arrow} lose ${vp10}<br> (etc...)'),
   ),
   'trade' => array(
     'name'   => clienttranslate("Trade Token"),
@@ -150,7 +265,7 @@ $this->resource_info = array(
   'vp' => array(
     'name'   => clienttranslate("VP Token"),
     'db_int' => VP,
-    'tt'     => clienttranslate('${big_vp}<br>VP Token:<br>${end}: Worth 1 VP'),
+    'tt'     => clienttranslate('${big_vp}<br>VP Token:<br>End: Worth 1 VP'),
   ),
 );
 
@@ -468,6 +583,70 @@ $this->building_info = array_merge(
     'vp_b' => VP_B_BUILDING,
     'amt'  => 1,
    ),
+   BLD_LUMBER_MILL => array(
+    'name' => clienttranslate("Lumbermill"),
+    'desc' => clienttranslate('May use ${wood}${vp} in place of ${steel} in building costs'),
+    'stage'=> STAGE_SETTLEMENT,
+    'type' => TYPE_RESIDENTIAL,
+    'cost' => array(),
+    'slot' => 1,
+    's1'   => array('wood'=>1, 'silver'=>1),
+    'vp'   => 3,
+    'amt'  => 2,
+   ),
+   BLD_SALOON => array(
+    'name' => clienttranslate("Saloon"),
+    'stage'=> STAGE_SETTLEMENT_TOWN,
+    'type' => TYPE_COMMERCIAL,
+    'cost' => array(),
+    'on_b' => BUILD_BONUS_TRADE_TRADE,
+    'vp'   => 1,
+    'inc'  => array('silver'=>1),
+    'amt'  => 2,
+   ),
+   BLD_SILVER_MINE => array(
+    'name' => clienttranslate("Silver Mine"),
+    'stage'=> STAGE_SETTLEMENT_TOWN,
+    'type' => TYPE_INDUSTRIAL,
+    'cost' => array('wood'=>1),
+    'on_b' => BUILD_BONUS_RAIL_ADVANCE,
+    'vp'   => 2,
+    'slot' => 1,
+    's1'   => array('silver'=>3),
+    'amt'  => 2,
+   ),
+   BLD_HOTEL => array(
+    'name' => clienttranslate("Hotel"),
+    'desc' => clienttranslate('When you gain ${worker} gain ${silver}'),
+    'stage'=> STAGE_TOWN,
+    'type' => TYPE_RESIDENTIAL,
+    'cost' => array('steel'=>1,'food'=>1),
+    'on_b' => BUILD_BONUS_SILVER_WORKERS,
+    'slot' => 1,
+    's1'   => array('vp2'=>1),
+    'vp'   => 3,
+    'amt'  => 1,
+   ),
+   BLD_WAREHOUSE => array(
+    'name' => clienttranslate("Warehouse"),
+    'stage'=> STAGE_TOWN,
+    'type' => TYPE_COMMERCIAL,
+    'cost' => array('copper'=>1,'steel'=>1,'wood'=>1),
+    'on_b' => BUILD_BONUS_PLACE_RESOURCES,
+    'vp'   => 3,
+    'inc'  => array('special'=> 1), // This will require special handling by the player, & probably a new state just for this.
+    'inc_s'=> clienttranslate('Take one resource from Warehouse'),
+    'amt'  => 1,
+   ),
+   BLD_POST_OFFICE => array(
+    'name' => clienttranslate("Post Office"),
+    'stage'=> STAGE_CITY,
+    'type' => TYPE_SPECIAL,
+    'cost' => array('cow'=>1,'steel'=>1,'wood'=>1),
+    'vp'   => 8,
+    'vp_b' => VP_B_PAID_LOAN,
+    'amt'  => 1,
+   ),
 ));
 
 $this->auction_info = array( 
@@ -570,5 +749,202 @@ $this->auction_info = array(
   ),
   30 => array(
     'bonus' => AUC_BONUS_6VP_AND_FOOD_VP,
+  ),
+  31 => array(
+    'build' => array(TYPE_INDUSTRIAL, TYPE_COMMERCIAL),
+  ),
+  32 => array(
+    'build' => array(TYPE_RESIDENTIAL),
+  ),
+  33 => array(
+    'bonus' => AUC_BONUS_TRACK_RAIL_ADV,
+  ),
+  34 => array(
+    'bonus'=> AUC_BONUS_NO_AUCTION,
+  ),
+  35 => array(
+    'build' => array(TYPE_RESIDENTIAL, TYPE_INDUSTRIAL),
+  ),
+  36 => array(
+    'build' => array(TYPE_COMMERCIAL, TYPE_SPECIAL),
+  ),
+  37 => array(
+    'bonus' => AUC_BONUS_WORKER_RAIL_ADV,
+  ),
+  38 => array(
+    'bonus' => AUC_BONUS_4DEPT_FREE,
+  ),
+  39 => array(
+    'bonus' => AUC_BONUS_3VP_SELL_FREE,
+  ),
+  40 => array(
+    'build' => array(TYPE_RESIDENTIAL, TYPE_COMMERCIAL, TYPE_INDUSTRIAL, TYPE_SPECIAL),
+  ),
+  
+);
+
+  // Events
+  // Settlement Events #1-10
+  // Town Events       #11-20
+  // City Events       #21-25
+$this->event_info = array(
+  EVENT_ABANDONED_STOCKPILE => array(
+    'name'  => clienttranslate('Abandoned Stockpile'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('The winner of ${a1} builds for one resource less (their choice)'),
+    'auc'   => AUC_EVT_ONE,
+    'auc_d' => 1,
+  ),
+  EVENT_BUREAUCRATIC_ERROR => array(
+    'name'  => clienttranslate('Bureaucratic Error'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('${a1} is unavailable this round'),
+    'auc'   => AUC_EVT_ONE,
+    'auc_b' => 1,
+  ),
+  EVENT_CENTRAL_PACIFIC_RR => array(
+    'name'  => clienttranslate('Central Pacific RR'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('Players who pass, get a ${track}'),
+    'pass'  => 1,
+  ),
+  EVENT_EAGER_INVESTORS => array(
+    'name'  => clienttranslate('Eager Investors'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('All players who have a ${vp} get ${silver}${silver}${silver}${silver}'),
+    'all_b' => 1,
+  ),
+  EVENT_EXTRA_LOT => array(
+    'name'  => clienttranslate('Extra Lot'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('${a1} also give: build (${any} Type)'),
+    'auc'   => AUC_EVT_ONE,
+    'auc_b' => 1,
+  ),
+  EVENT_MIGRANT_WORKERS => array(
+    'name'  => clienttranslate('Migrant Workers'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('${a1} also give: ${worker}'),
+    'auc'   => AUC_EVT_ONE,
+    'auc_b' => 1,
+  ),
+  EVENT_RAILROAD_CONTRACTS => array(
+    'name'  => clienttranslate('Railroad Contracts'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('All auctions also give: ${silver}${silver} ${arrow} ${adv_track}'),
+    'auc'   => AUC_EVT_ALL,
+    'auc_b' => 1,
+  ),
+  EVENT_RAPID_EXPANSION => array(
+    'name'  => clienttranslate('Rapid Expansion'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('All auctions with building opportunities also give a second building opportunity of the same type'),
+    'auc'   => AUC_EVT_ALL,
+    'auc_b' => 1,
+  ),
+  EVENT_TRAVELING_TRADERS => array(
+    'name'  => clienttranslate('Traveling Traders'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('All players get a ${trade}'),
+    'all_b' => 1,
+  ),
+  EVENT_UNION_PACIFIC_RR => array(
+    'name'  => clienttranslate('Union Pacific RR'),
+    'stage' => STAGE_SETTLEMENT,
+    'tt'    => clienttranslate('${a1} also give: ${track}'),
+    'auc'   => AUC_EVT_ONE,
+    'auc_b' => 1,
+  ),
+  EVENT_BANK_FAVORS => array(
+    'name'  => clienttranslate('Bank Favors'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('The player(s) with the least ${loan} gets ${adv_track}'),
+    'all_b' => 1,
+  ),
+  EVENT_FORTUNE_SEEKER => array(
+    'name'  => clienttranslate('Fortune Seeker'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('The player(s) with the fewest ${worker} may recruit a ${worker} (for free)'),
+    'all_b' => 1,
+  ),
+  EVENT_INDUSTRIALIZATION => array(
+    'name'  => clienttranslate('Industrialization'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('All auctions also give: ${steel} ${arrow} ${any}'),
+    'auc'   => AUC_EVT_ALL,
+    'auc_b' => 1,
+  ),
+  EVENT_INTEREST => array(
+    'name' => clienttranslate('Interest'),
+    'stage' => STAGE_TOWN,
+    'tt' => clienttranslate('Players must pay ${silver} per ${loan} (${loan} taken to pay the interest does not also need to be paid for)'),
+    'all_b' => 1,
+  ),
+  EVENT_SHARECROPPING => array(
+    'name'  => clienttranslate('Sharecropping'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('players may pay off ${loan} for 1-${food} apiece'),
+    'all_b' => 1,
+  ),
+  EVENT_STATE_FAIR => array(
+    'name'  => clienttranslate('State Fair'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('The player(s) with the most ${copper} plus ${cow}, (at least one) gets a ${gold}'),
+    'all_b' => 1,
+  ),
+  EVENT_TRANSCONTINENTAL_RR => array(
+    'name'  => clienttranslate('Transcontinental Railroad'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('The player(s) who is farthest advanced on the Railroad Development Track gets ${vp3}'),
+    'all_b' => 1,
+  ),
+  EVENT_TIMBER_CULTURE_ACT => array(
+    'name'  => clienttranslate('Timber Culture Act'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('Players get ${vp} for every ${wood} held'),
+    'pre_trd'=> AUC_EVT_ONE,
+    'all_b' => 1,
+  ),
+  EVENT_WARTIME_DEMAND => array(
+    'name'  => clienttranslate('Wartime Demand'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('Players may sell any number of resources without spending ${trade}'),
+    'all_b' => 1,
+  ),
+  EVENT_WESTERN_PACIFIC_RR => array(
+    'name'  => clienttranslate('Western Pacific RR'),
+    'stage' => STAGE_TOWN,
+    'tt'    => clienttranslate('The player(s) with the fewest Buildings get a ${track}'),
+    'all_b' => 1,
+  ),
+  EVENT_COMMERCIAL_DOMINANCE => array(
+    'name'  => clienttranslate('${com} Dominance'),
+    'stage' => STAGE_CITY,
+    'tt'    => clienttranslate('The player(s) with the most ${com} buildings only pays half their Auction bid (round down)'),
+    'auc' => AUC_EVT_ALL,
+  ),
+  EVENT_INDUSTRIAL_DOMINANCE => array(
+    'name'  => clienttranslate('${ind} Dominance'),
+    'stage' => STAGE_CITY,
+    'tt'    => clienttranslate('The player(s) with the most ${ind} buildings gets ${vp} for each resource they recieved in income (${wood}, ${food}, ${steel}, ${gold}, ${copper}, ${cow} produced by buildings and not from trade)'),
+    'all_b' => 1,
+  ),
+  EVENT_NELSON_ACT => array(
+    'name'  => clienttranslate('Nelson Act'),
+    'stage' => STAGE_CITY,
+    'tt'    => clienttranslate('Players who pass may pay off ${loan} for ${silver}${silver}${silver} apiece'),
+    'pass' => 1,
+  ),
+  EVENT_PROPERTY_TAXES => array(
+    'name'  => clienttranslate('Property Taxes'),
+    'stage' => STAGE_CITY,
+    'tt'    => clienttranslate('Players must pay ${silver} per Building they have'),
+    'all_b' => 1,
+  ),
+  EVENT_RESIDENTIAL_DOMINANCE => array(
+    'name'  => clienttranslate('${res} Dominance'),
+    'stage' => STAGE_CITY,
+    'tt'    => clienttranslate('The player(s) with the most ${res} buildings gets ${adv_track}'),
+    'all_b' => 1,
   ),
 );
