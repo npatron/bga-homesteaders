@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
 CREATE TABLE IF NOT EXISTS `auctions` (
   `auction_id`       INT(2) UNSIGNED NOT NULL COMMENT 'Identity of Auction tile',
   `position`         INT(2) UNSIGNED NOT NULL COMMENT 'position of Auction in Deck (1-10)',
-  `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-Auction-1, 2-Auction-2, 3-Auction-3, 4-Auction-4',
+  `location`         INT(1) UNSIGNED NOT NULL COMMENT 'location: 0-discard, 1-4 ->Auction 1-4',
   PRIMARY KEY (`auction_id`)
 ) ENGINE=InnoDB;
 
