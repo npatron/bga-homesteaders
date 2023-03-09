@@ -140,7 +140,8 @@ class homesteaders extends Table
         // set colors
         foreach ($gamePlayers as $player_id => $p) {
             $color = $p['player_color'];
-            $sql = "UPDATE `player` SET `color_name`='".$this->playerColorNames[$color]."' WHERE `player_id`='".$player_id."'";
+            $color_name = $this->playerColorNames[$color];
+            $sql = "UPDATE `player` SET `color_name`='$color_name' WHERE `player_id`='$player_id'";
             self::DbQuery( $sql );
 
             $values[] = "(".$player_id.")";
@@ -166,6 +167,7 @@ class homesteaders extends Table
 
         $this->activeNextPlayer();
         $act_p_id = $this->getActivePlayerId();
+        $this->setGameStateValue('next_player', $act_p_id);
         $this->setGameStateValue('first_player', $act_p_id);
         
         /************ End of the game initialization *****/

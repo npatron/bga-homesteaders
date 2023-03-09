@@ -36,28 +36,28 @@ class HSDResource extends APP_GameClass
 
     // Payment toggles, (for pay states).
     function getPaid($p_id){
-        return $this->game->getUniqueValueFromDB( "SELECT `has_paid` FROM `player` WHERE `player_id`='$p_id'" ); 
+        return $this->game->getUniqueValueFromDB( "SELECT `paid` FROM `resources` WHERE `player_id`='$p_id'" );
     }
 
     function setPaid($p_id, $val=1){
-        $this->game->DbQuery( "UPDATE `player` SET `has_paid`='$val' WHERE `player_id`='$p_id'");
+        $this->game->DbQuery( "UPDATE `resources` SET `paid`='$val' WHERE `player_id`='$p_id'");
     }
 
     function clearPaid(){
-        $this->game->DbQuery( "UPDATE `player` SET `has_paid`='0' ");
+        $this->game->DbQuery( "UPDATE `resources` SET `paid`='0' ");
     }
 
     // payment toggles, (for income)
     function getIncomePaid($p_id){
-        return $this->game->getUniqueValueFromDB( "SELECT `receive_inc` FROM `player` WHERE `player_id`='$p_id'" ); 
+        return $this->game->getUniqueValueFromDB( "SELECT `paid_work` FROM `player` WHERE `player_id`='$p_id'" );
     }
 
     function setIncomePaid($p_id, $val=1){
-        $this->game->DbQuery( "UPDATE `player` SET `receive_inc`='$val' WHERE `player_id`='$p_id'");
+        $this->game->DbQuery( "UPDATE `player` SET `paid_work`='$val' WHERE `player_id`='$p_id'");
     }
 
     function clearIncomePaid(){
-        $this->game->DbQuery( "UPDATE `player` SET `receive_inc`='0' ");
+        $this->game->DbQuery( "UPDATE `player` SET `paid_work`='0' ");
     }
 
     ///// COST related Functions /////
