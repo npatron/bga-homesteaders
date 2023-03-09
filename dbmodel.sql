@@ -31,7 +31,7 @@ ALTER TABLE `player` ADD `cost`        INT(3) UNSIGNED NOT NULL DEFAULT '0' COMM
 ALTER TABLE `gamelog` ADD `cancel` TINYINT(1) NOT NULL DEFAULT 0;
 
 CREATE TABLE IF NOT EXISTS `bids` (
-  `player_id` INT(8) UNSIGNED NOT NULL,
+  `player_id` INT(8) NOT NULL,
   `bid_loc`   INT(2) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Auction slot: 1-9 A1, 11-19 A2, 21-29 A3',
   `outbid`    INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 if not, 1 if outbid',
   PRIMARY KEY (`player_id`)
