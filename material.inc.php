@@ -77,25 +77,29 @@ $this->translation_strings = array(
   TYPE_ANY        => clienttranslate('Any'), 
   VP_B_BUILDING   => clienttranslate('Building'), 
   MESSAGE_ADVANCE_TRACK => clienttranslate('Advance on Railroad track'),
+  // messages for helper tooltips on buildings (in build area)
   MESSAGE_ALREADY_BUILT=> clienttranslate('You have already built this building'),
   MESSAGE_UNAFFORDABLE=> clienttranslate('You can not afford to build this building'),
   MESSAGE_TRADEABLE=> clienttranslate('You can afford to build this building (trades required)'),
   MESSAGE_AFFORDABLE=> clienttranslate('You can afford to build this building'),
   
-  15 => clienttranslate('Show Upcoming Buildings'), 
-  16 => clienttranslate('Show Current Buildings'),
-  17 => clienttranslate('Show Upcoming Auctions'), 
-  18 => clienttranslate('Show Building Discard'),
-  19 => clienttranslate('Show Events'),
-  20 => clienttranslate('Show Events Discard'),
-  25 => clienttranslate('Hide Upcoming Buildings'), 
-  26 => clienttranslate('Hide Current Buildings'),
-  27 => clienttranslate('Hide Upcoming Auctions'), 
-  28 => clienttranslate('Hide Building Discard'),
-  29 => clienttranslate('Hide Events'),
-  30 => clienttranslate('Hide Events Discard'),
-  MESSAGE_CHOOSE_DIFFERENT_BUILDING => clienttranslate('Choose different building'),
+  // show button strings 15-20
+  MESSAGE_SHOW_UPCOMING_BUILDINGS => clienttranslate('Show Upcoming Buildings'), 
+  MESSAGE_SHOW_CURRENT_BUILDINGS => clienttranslate('Show Current Buildings'),
+  MESSAGE_SHOW_UPCOMING_AUCTIONS => clienttranslate('Show Upcoming Auctions'), 
+  MESSAGE_SHOW_BUILDING_DISCARD => clienttranslate('Show Building Discard'),
+  MESSAGE_SHOW_UPCOMING_EVENTS => clienttranslate('Show Events'),
+  MESSAGE_SHOW_EVENTS_DISCARD => clienttranslate('Show Events Discard'),
+  // hide button strings 25-30
+  MESSAGE_HIDE_UPCOMING_BUILDINGS => clienttranslate('Hide Upcoming Buildings'), 
+  MESSAGE_HIDE_CURRENT_BUILDINGS => clienttranslate('Hide Current Buildings'),
+  MESSAGE_HIDE_UPCOMING_AUCTIONS => clienttranslate('Hide Upcoming Auctions'), 
+  MESSAGE_HIDE_BUILDING_DISCARD => clienttranslate('Hide Building Discard'),
+  MESSAGE_HIDE_UPCOMING_EVENTS => clienttranslate('Hide Events'),
+  MESSAGE_HIDE_EVENTS_DISCARD => clienttranslate('Hide Events Discard'),
   
+  // build actions 31 - 35
+  MESSAGE_CHOOSE_DIFFERENT_BUILDING => clienttranslate('Choose Different Building'),
   MESSAGE_BUILD => clienttranslate('Build ${building_name}'),
   MESSAGE_BUILD_CONFIRM => clienttranslate('Confirm Trade(s) & Build ${building_name}'),
   MESSAGE_AUCTION_BONUS => clienttranslate('Auction Bonus'),
@@ -116,6 +120,7 @@ $this->translation_strings = array(
   MESSAGE_CONFIRM_BID  => clienttranslate('Confirm Bid'),
   MESSAGE_CONFIRM_DUMMY_BID => clienttranslate('Confirm Dummy Bid'),
   MESSAGE_PASS         => clienttranslate('Pass'),
+  // trade messages
   MESSAGE_TRADE_HIDE   => clienttranslate('Hide Trade'),
   MESSAGE_TRADE_SHOW   => clienttranslate('Show Trade'),
   MESSAGE_TRADE_UNDO   => clienttranslate('Undo All Trade(s) & Debt'),
@@ -130,16 +135,16 @@ $this->translation_strings = array(
   MESSAGE_PASS_BONUS   => clienttranslate('Do Not Get Bonus'),
   MESSAGE_BONUS_CHOOSE => clienttranslate('Choose Bonus'),
   MESSAGE_EVENT_SILVER_RAIL_ADVANCE => clienttranslate('Pay ${silver}${silver} to ${adv_track}'),
-  MESSAGE_EVENT_SILVER_RAIL_ADVANCE_CONFIRM => clienttranslate('Confirm Trade(s) & Pay 2 ${silver} to ${adv_track}'),
+  MESSAGE_EVENT_SILVER_RAIL_ADVANCE_CONFIRM => clienttranslate('Confirm Trade(s) & Pay ${silver}${silver} to ${adv_track}'),
   MESSAGE_EVENT_STEEL_BUILD=> clienttranslate('Pay ${steel} to build ${any}'),
   MESSAGE_EVENT_DONE   => clienttranslate('Pass to Event'),
   MESSAGE_EVENT_DONE_CONFIRM => clienttranslate('Confirm Trades and Pass to Event'),
   MESSAGE_START_SELL   => clienttranslate('Start Sell Event'),
   MESSAGE_DO_NOT_BUILD => clienttranslate('Do Not Build'),
   MESSAGE_DO_NOT_BUILD_ALT=> clienttranslate('Do Not Build (Get ${track} instead)'),
-  MESSAGE_PAY_LOAN_3_SILVER=> clienttranslate('pay off ${loan} for ${silver}${silver}${silver}'),
-  MESSAGE_PAY_OFF_LESS_LOAN=> clienttranslate('pay off less ${loan}'),
-  
+  MESSAGE_PAY_LOAN_3_SILVER=> clienttranslate('Pay off ${loan} for ${silver}${silver}${silver}'),
+  MESSAGE_PAY_OFF_LESS_LOAN=> clienttranslate('Pay off less ${loan}'),
+  // payment messages
   MESSAGE_PAY_AMT => clienttranslate('Pay: ${amt}'),
   MESSAGE_USE_MORE_GOLD=> clienttranslate('Use More ${gold}'),
   MESSAGE_USE_LESS_GOLD=> clienttranslate('Use Less ${gold}'),
@@ -148,7 +153,7 @@ $this->translation_strings = array(
   MESSAGE_GOLD_AS_TYPE=> clienttranslate('${begin}${gold} As ${type}${end}'),
   MESSAGE_PAY_DEBT_SILVER=> clienttranslate('Pay Debt ${silver}'),
   MESSAGE_PAY_DEBT_GOLD =>clienttranslate('Pay Debt ${gold}'),
-  MESSAGE_PAY_DEBT_FOOD =>clienttranslate('pay ${loan} with ${food}'),
+  MESSAGE_PAY_DEBT_FOOD =>clienttranslate('Pay ${loan} with ${food}'),
 
   MESSAGE_BUILD_DISCOUNT => clienttranslate('Build ${building_name} with discount ${resource}'),
   MESSAGE_DISCOUNT_RESOURCE => clienttranslate('You must choose a discount resource'),
@@ -188,7 +193,7 @@ $this->build_bonus_strings = array(
   BUILD_BONUS_TRACK_AND_BUILD   => clienttranslate('When built: Receive ${track}<br>You may also build another building of ${any} type'),
   BUILD_BONUS_TRADE_TRADE       => clienttranslate('When built: ${trade}${trade}'),
   BUILD_BONUS_SILVER_WORKERS    => clienttranslate('When built: Receive ${silver} per ${worker}<br>When you gain a ${worker} gain a ${silver}'),
-  BUILD_BONUS_PLACE_RESOURCES   => clienttranslate('When built: place ${wood}${food}${steel}${gold}${copper}${cow} on Warehouse'),
+  BUILD_BONUS_PLACE_RESOURCES   => clienttranslate('When built: Place ${wood}${food}${steel}${gold}${copper}${cow} on Warehouse'),
 );
 
 $this->stage_strings = array(
@@ -885,7 +890,7 @@ $this->event_info = array(
   EVENT_SHARECROPPING => array(
     'name'  => clienttranslate('Sharecropping'),
     'stage' => STAGE_TOWN,
-    'tt'    => clienttranslate('players may pay off ${loan} for 1-${food} apiece'),
+    'tt'    => clienttranslate('Players may pay off ${loan} for 1-${food} apiece'),
     'all_b' => 1,
   ),
   EVENT_STATE_FAIR => array(

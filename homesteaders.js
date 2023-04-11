@@ -87,6 +87,7 @@ function (dojo, declare) {
         const EVT_LOC_DISCARD = 5;
 
     // arrays for the map between toggle buttons and show/hide zones 
+            // [upcomingBuildings, currentBuildings, upcomingAuctions, buildingDiscard, upcomingEvents, eventsDiscard];
         const TOGGLE_BTN_ID     = ['tgl_future_bld', 'tgl_main_bld', 'tgl_future_auc', 'tgl_past_bld', 'tgl_events', 'tgl_discard'];
         const TOGGLE_BTN_STR_ID = ['bld_future', 'bld_main', 'auc_future', 'bld_discard', 'evt_main', 'gen_discard'];
         const TILE_CONTAINER_ID = ['future_building_container', 'main_building_container', 'future_auction_container', 'past_building_container', 'events_container', 'discard_container'];
@@ -261,7 +262,7 @@ function (dojo, declare) {
             id: BTN_ID_EVENT_DONE_TRADING, method: METHOD_EVENT_DONE_TRADING, 
             default : MESSAGE_EVENT_DONE, confirm : MESSAGE_EVENT_DONE_CONFIRM 
         };
-            /* * EVENT_STATE_FAIR * */
+            /* * EVENT_STATE_FAIR * note: state-fair is done incorrectly, trades should be open, but in turn order. */
             const BTN_ID_EVENT_DONE_HIDDEN_TRADING = 'btn_done_hidden_trading';
             const METHOD_EVENT_DONE_HIDDEN = 'doneHiddenTradingEvent';
             const OBJECT_EVENT_DONE_HIDDEN = {
@@ -3760,7 +3761,8 @@ function (dojo, declare) {
         
         hideTileZone: function(index){
             if (!dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
-                var translatedString = _(MESSAGE_STRINGS[index+15])
+                // this maps to MESSAGE_SHOW_XXX_YYY which are 15-20 
+                var translatedString = _(MESSAGE_STRINGS[index+15]);  
                 $(TOGGLE_BTN_STR_ID[index]).innerText = translatedString;
                 dojo.addClass(TILE_CONTAINER_ID[index], 'noshow');
             }
@@ -3768,6 +3770,7 @@ function (dojo, declare) {
 
         showTileZone: function(index){
             if(dojo.hasClass(TILE_CONTAINER_ID[index], 'noshow')){
+                // this maps to MESSAGE_HIDE_XXX_YYY which are 25-30 
                 var translatedString = _(MESSAGE_STRINGS[index+25]);
                 $(TOGGLE_BTN_STR_ID[index]).innerText = translatedString;
                 dojo.removeClass(TILE_CONTAINER_ID[index], 'noshow');
