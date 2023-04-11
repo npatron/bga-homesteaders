@@ -96,7 +96,8 @@ $this->translation_strings = array(
   30 => clienttranslate('Hide Events Discard'),
   MESSAGE_CHOOSE_DIFFERENT_BUILDING => clienttranslate('Choose different building'),
   
-  MESSAGE_BUILD => clienttranslate('Build'),
+  MESSAGE_BUILD => clienttranslate('Build ${building_name}'),
+  MESSAGE_BUILD_CONFIRM => clienttranslate('Confirm Trade(s) & Build ${building_name}'),
   MESSAGE_AUCTION_BONUS => clienttranslate('Auction Bonus'),
   MESSAGE_EVENT_BONUS => clienttranslate('Event Bonus'),
 
@@ -123,6 +124,7 @@ $this->translation_strings = array(
   MESSAGE_DEBT_PAY     => clienttranslate('Pay Debt'),
   MESSAGE_X_FOR_Y      => clienttranslate('${resource1} ${arrow} ${resource2}'),
   MESSAGE_X_FOR_Y_CONFIRM=> clienttranslate('Confirm Trade(s) & ${resource1} ${arrow} ${resource2}'),
+
   MESSAGE_HIRE         => clienttranslate('Hire ${worker}'),
   MESSAGE_HIRE_FREE    => clienttranslate('(FREE) Hire ${worker}'),
   MESSAGE_PASS_BONUS   => clienttranslate('Do Not Get Bonus'),
@@ -130,13 +132,14 @@ $this->translation_strings = array(
   MESSAGE_EVENT_SILVER_RAIL_ADVANCE => clienttranslate('Pay ${silver}${silver} to ${adv_track}'),
   MESSAGE_EVENT_SILVER_RAIL_ADVANCE_CONFIRM => clienttranslate('Confirm Trade(s) & Pay 2 ${silver} to ${adv_track}'),
   MESSAGE_EVENT_STEEL_BUILD=> clienttranslate('Pay ${steel} to build ${any}'),
-  MESSAGE_EVENT_DONE   => clienttranslate('Pass on Event'),
-  MESSAGE_EVENT_DONE_CONFIRM=> clienttranslate('Confirm Trades and Done in Event'),
+  MESSAGE_EVENT_DONE   => clienttranslate('Pass to Event'),
+  MESSAGE_EVENT_DONE_CONFIRM => clienttranslate('Confirm Trades and Pass to Event'),
   MESSAGE_START_SELL   => clienttranslate('Start Sell Event'),
   MESSAGE_DO_NOT_BUILD => clienttranslate('Do Not Build'),
   MESSAGE_DO_NOT_BUILD_ALT=> clienttranslate('Do Not Build (Get ${track} instead)'),
   MESSAGE_PAY_LOAN_3_SILVER=> clienttranslate('pay off ${loan} for ${silver}${silver}${silver}'),
   MESSAGE_PAY_OFF_LESS_LOAN=> clienttranslate('pay off less ${loan}'),
+  
   MESSAGE_PAY_AMT => clienttranslate('Pay: ${amt}'),
   MESSAGE_USE_MORE_GOLD=> clienttranslate('Use More ${gold}'),
   MESSAGE_USE_LESS_GOLD=> clienttranslate('Use Less ${gold}'),
@@ -146,8 +149,7 @@ $this->translation_strings = array(
   MESSAGE_PAY_DEBT_SILVER=> clienttranslate('Pay Debt ${silver}'),
   MESSAGE_PAY_DEBT_GOLD =>clienttranslate('Pay Debt ${gold}'),
   MESSAGE_PAY_DEBT_FOOD =>clienttranslate('pay ${loan} with ${food}'),
-  MESSAGE_BUILD => clienttranslate('Build ${building_name}'),
-  MESSAGE_BUILD_CONFIRM => clienttranslate('Confirm Trade(s) & Build ${building_name}'),
+
   MESSAGE_BUILD_DISCOUNT => clienttranslate('Build ${building_name} with discount ${resource}'),
   MESSAGE_DISCOUNT_RESOURCE => clienttranslate('You must choose a discount resource'),
   MESSAGE_SELECT_BUILDING => clienttranslate('You must select a building'),
