@@ -156,7 +156,7 @@ class HSDAuction extends APP_GameClass
     function getCurrentAuctionBuildTypeOptions(){
         $a_id = $this->getCurrentAuctionId(); 
         // if exists, otherwise return array();
-        return ($this->game->auction_info[$a_id]['build']??array());
+        return (array_key_exists('build', $this->game->auction_info[$a_id])?$this->game->auction_info[$a_id]['build']:array());
     }
 
     function setCurrentAuctionBuildType(){

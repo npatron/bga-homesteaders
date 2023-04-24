@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `bids` (
 
 CREATE TABLE IF NOT EXISTS `workers` (
   `worker_key`    INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `player_id`     INT(8) UNSIGNED NOT NULL COMMENT 'Player controlling the worker',
+  `player_id`     INT(8) NOT NULL COMMENT 'Player controlling the worker',
   `building_key`  INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Building working at',
   `building_slot` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Which slot in buiding',
   PRIMARY KEY (`worker_key`)
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `workers` (
 
 CREATE TABLE IF NOT EXISTS `tracks` (
   `rail_key`  INT(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `player_id` INT(8) UNSIGNED NOT NULL COMMENT 'Player owning the track',
+  `player_id` INT(8) NOT NULL COMMENT 'Player owning the track',
   PRIMARY KEY (`rail_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `buildings` (
   `building_type` INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'type: 0-res, 1-com, 2-Ind, 3-Sp',
   `stage`         INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Stage: 0-home, 1-sett, 2-(sett or town), 3-town, 4-city',
   `location`      INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'location: 0-future, 1-building offer, 2-player, 3-discard',
-  `player_id`     INT(8) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
+  `player_id`     INT(8) NOT NULL DEFAULT '0' COMMENT 'Player owning the building',
   `worker_slot`   INT(1) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'worker_slots, 0, 1, 2, 3-double slot',
   `state`         INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'state of building',
   `b_order`       INT(3) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'order built by player',
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `events` (
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `resources` (
-  `player_id`  INT(8) UNSIGNED NOT NULL,
+  `player_id`  INT(8) NOT NULL,
   `silver`     INT(3) UNSIGNED NOT NULL DEFAULT '6',
   `workers`    INT(3) UNSIGNED NOT NULL DEFAULT '1',
   `track`      INT(2) UNSIGNED NOT NULL DEFAULT '0',
