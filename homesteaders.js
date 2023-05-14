@@ -55,8 +55,8 @@ function (dojo, declare) {
     const VP       = 10;
     const SILVER   = 11;
     const LOAN     = 12;
-    const RESOURCES = {'wood':1, 'steel':2, 'gold':3, 'copper':4, 'food':5, 'cow':6,
-        'trade':7, 'track':8, 'worker':9, 'vp':10, 'silver':11, 'loan':12};
+    const RESOURCES = {'wood':WOOD, 'steel':STEEL, 'gold':GOLD, 'copper':COPPER, 'food':FOOD, 'cow':COW,
+        'trade':TRADE, 'track':TRACK, 'worker':WORKER, 'vp':VP, 'silver':SILVER, 'loan':LOAN};
     const RESOURCE_ORDER = ['vp0', 'vp', 'vp2', 'vp3', 'vp4', 'vp6', 'vp8','vp10', 
                             'loan','cow','copper','gold','steel','food','wood','silver','trade'];
 
@@ -119,7 +119,6 @@ function (dojo, declare) {
         const FIRST_PLAYER_ID = 'first_player_tile';
 
         const [MESSAGE_ADVANCE_TRACK, MESSAGE_ALREADY_BUILT, MESSAGE_UNAFFORDABLE, MESSAGE_TRADEABLE, MESSAGE_AFFORDABLE] = [7, 9, 10, 11, 12];
-
         const [MESSAGE_CHOOSE_DIFFERENT_BUILDING, MESSAGE_BUILD, MESSAGE_BUILD_CONFIRM, MESSAGE_AUCTION_BONUS, MESSAGE_EVENT_BONUS] = [31, 32, 33, 34, 35];
 
         const [MESSAGE_FINAL_ROUND, MESSAGE_CANCEL, MESSAGE_CONFIRM_WORKERS, MESSAGE_CONFIRM_WORKERS_TRADES ,MESSAGE_UNDO_PASS]   = [50, 51, 52, 53, 54];
