@@ -56,16 +56,16 @@ class homesteaders extends Table
             "build_type_int"    => 21, // allowed building types for build
             "lot_state"         => 22, // possible/remaining player actions in lot
             "next_player"       => 23, // player id of next player that must act
-            "show_player_info"  => SHOW_PLAYER_INFO,
-            "rail_no_build"     => RAIL_NO_BUILD,
-            "new_beginning_bld" => NEW_BEGINNING_BLD,
-            "new_beginning_evt" => NEW_BEGINNING_EVT,
+            "show_player_info"  => SHOW_PLAYER_INFO, // show/hide all player resources.
+            "rail_no_build"     => RAIL_NO_BUILD, // game setting "when player passes on build, they get a railroad"
+            "new_beginning_bld" => NEW_BEGINNING_BLD, // game setting "use new beginnings buildings"
+            "new_beginning_evt" => NEW_BEGINNING_EVT, // game setting "use new beginnings Events"
         ) );
         
+        $this->Log      = new HSDLog($this);
         $this->Auction  = new HSDAuction($this);
         $this->Bid      = new HSDBid($this);
         $this->Building = new HSDBuilding($this);
-        $this->Log      = new HSDLog($this);
         $this->Event    = new HSDEvents($this);
         $this->Resource = new HSDResource($this);
         $this->Score    = new HSDScore($this);

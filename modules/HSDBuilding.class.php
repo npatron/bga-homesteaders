@@ -14,15 +14,16 @@ class HSDBuilding extends APP_GameClass
     /** SETUP BUILDINGS on game start, IN DB */
     function createBuildings($players){
         $this->game->DbQuery("DELETE FROM `buildings`");
-        $sql = "INSERT INTO `buildings` (`building_id`, `building_type`, `stage`, `location`, `player_id`, `worker_slot`) VALUES ";
+        $sql = "INSERT INTO `buildings` (`building_id`, `building_type`, `stage`, `location`, `player_id`, `worker_slot`) VALUES "; 
         $values=array();
         foreach( $players as $p_id => $player ) // homestead (assigned to each player by player_id)
             $values[] = $this->getHomesteadAsValue($p_id);
         for($b_id = BLD_GRAIN_MILL; $b_id <= BLD_RAIL_YARD; $b_id++) 
             $values[] = $this->getBuildingAsValue($b_id);
-        if($this->game->getGameStateValue('new_beginning_bld') == ENABLED){
-            for($b_id = BLD_LUMBER_MILL; $b_id <= BLD_POST_OFFICE; $b_id++) 
+        if($this->game->getGameStateValue('new_beginning_bld') == ENABLED) {
+            for($b_id = BLD_LUMBER_MILL; $b_id <= BLD_POST_OFFICE; $b_id++) {
                 $values[] = $this->getBuildingAsValue($b_id);
+            }
         }
         $sql .= implode( ',', $values ); 
         $this->game->DbQuery( $sql );
@@ -30,15 +31,15 @@ class HSDBuilding extends APP_GameClass
 
     function getHomesteadAsValue($p_id){
         $player_color = $this->game->getPlayerColorName($p_id);
-        $b_id = BLD_HOMESTEAD_BLUE;
+        $b_id = BLD_HOMESTEAD_PURPLE;
         if ($player_color === 'yellow') {
             $b_id = BLD_HOMESTEAD_YELLOW;
         } else if ($player_color === 'red') {
             $b_id = BLD_HOMESTEAD_RED;
         } else if ($player_color === 'green') {
             $b_id = BLD_HOMESTEAD_GREEN;
-        } else if ($player_color === 'purple') {
-            $b_id = BLD_HOMESTEAD_PURPLE;
+        } else if ($player_color === 'blue') {
+            $b_id = BLD_HOMESTEAD_BLUE;
         } 
         return "('$b_id', 0, 0, 2, '$p_id', 2)";
     }
@@ -251,7 +252,7 @@ class HSDBuilding extends APP_GameClass
         }
 
         $this->game->setGameStateValue('last_building', $b_key);
-        $this->game->setGameStateValue('building_bonus', $this->game->Building->getOnBuildBonusForBuildingId($b_id));
+        $this->game->setGameStateValue('building_bonus', $this->getOnBuildBonusForBuildingId($b_id));
     }
 
     function payForBuilding($p_id, $b_cost){
@@ -321,9 +322,7 @@ class HSDBuilding extends APP_GameClass
         foreach( $p_bld as $b_key => $building ) {
             $b_id = $building['b_id'];
             $b_info = $this->game->building_info[$b_id];
-            if ($b_id == BLD_BANK){
-                //no resources
-            } else if ($b_id == BLD_RODEO){
+            if ($b_id == BLD_BANK || $b_id == BLD_RODEO) {
                 //no resources
             } else if ($b_id == BLD_WAREHOUSE) {
                 $res_count++;
