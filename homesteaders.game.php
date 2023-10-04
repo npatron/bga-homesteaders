@@ -122,7 +122,7 @@ class homesteaders extends Table
         }
         // Init global values with their initial values
         $this->setGameStateInitialValue( 'round_number', 1 );
-        $this->setGameStateInitialValue( 'first_player', 0 );
+        // $this->setGameStateInitialValue( 'first_player', 0 );
         $this->setGameStateInitialValue( 'phase',        0 );
         $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
         $this->setGameStateInitialValue( 'current_auction', 1 );
@@ -134,7 +134,6 @@ class homesteaders extends Table
         $this->setGameStateInitialValue( 'b_order' ,       0 );
         $this->setGameStateInitialValue( 'build_type_int', 0 );
         $this->setGameStateInitialValue( 'lot_state',      0 );
-        $this->setGameStateInitialValue( 'next_player',    0 );
         
         $values = array();
         // set colors
@@ -167,8 +166,8 @@ class homesteaders extends Table
 
         $this->activeNextPlayer();
         $act_p_id = $this->getActivePlayerId();
-        $this->setGameStateValue('next_player', $act_p_id);
-        $this->setGameStateValue('first_player', $act_p_id);
+        $this->setGameStateInitialValue('first_player', $act_p_id );
+        $this->setGameStateInitialValue( 'next_player', $act_p_id );
         
         /************ End of the game initialization *****/
     }
