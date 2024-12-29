@@ -98,10 +98,11 @@ $this->translation_strings = array(
   MESSAGE_HIDE_UPCOMING_EVENTS => clienttranslate('Hide Events'),
   MESSAGE_HIDE_EVENTS_DISCARD => clienttranslate('Hide Events Discard'),
   
-  // build actions 31 - 35
+  // build actions 31 - 36
   MESSAGE_CHOOSE_DIFFERENT_BUILDING => clienttranslate('Choose Different Building'),
   MESSAGE_BUILD => clienttranslate('Build ${building_name}'),
   MESSAGE_BUILD_CONFIRM => clienttranslate('Confirm Trade(s) & Build ${building_name}'),
+  MESSAGE_CHOOSE_BUILD => clienttranslate('Build Building'),
   MESSAGE_AUCTION_BONUS => clienttranslate('Auction Bonus'),
   MESSAGE_EVENT_BONUS => clienttranslate('Event Bonus'),
 
@@ -123,8 +124,8 @@ $this->translation_strings = array(
   // trade messages
   MESSAGE_TRADE_HIDE   => clienttranslate('Hide Trade'),
   MESSAGE_TRADE_SHOW   => clienttranslate('Show Trade'),
+  
   MESSAGE_TRADE_UNDO   => clienttranslate('Undo All Trade(s) & Debt'),
-  MESSAGE_TRADE_UNDO_EVENT => clienttranslate('Undo All Event Trade(s)'),
   MESSAGE_DEBT_TAKE    => clienttranslate('Take Debt'),
   MESSAGE_DEBT_PAY     => clienttranslate('Pay Debt'),
   MESSAGE_X_FOR_Y      => clienttranslate('${resource1} ${arrow} ${resource2}'),
@@ -159,6 +160,7 @@ $this->translation_strings = array(
   MESSAGE_DISCOUNT_RESOURCE => clienttranslate('You must choose a discount resource'),
   MESSAGE_SELECT_BUILDING => clienttranslate('You must select a building'),
   MESSAGE_TRADE_BUTTON_TEMPLATE => clienttranslate('${tradeAway} ${arrow} ${tradeFor}'),
+  MESSAGE_TRADE_UNDO_EVENT => clienttranslate('Undo All Event Trade(s)'),
 );
 
 $this->vp_strings = array(

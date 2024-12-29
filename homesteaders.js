@@ -119,13 +119,13 @@ function (dojo, declare) {
         const FIRST_PLAYER_ID = 'first_player_tile';
 
         const [MESSAGE_ADVANCE_TRACK, MESSAGE_ALREADY_BUILT, MESSAGE_UNAFFORDABLE, MESSAGE_TRADEABLE, MESSAGE_AFFORDABLE] = [7, 9, 10, 11, 12];
-        const [MESSAGE_CHOOSE_DIFFERENT_BUILDING, MESSAGE_BUILD, MESSAGE_BUILD_CONFIRM, MESSAGE_AUCTION_BONUS, MESSAGE_EVENT_BONUS] = [31, 32, 33, 34, 35];
+        const [MESSAGE_CHOOSE_DIFFERENT_BUILDING, MESSAGE_BUILD, MESSAGE_BUILD_CONFIRM, MESSAGE_CHOOSE_BUILD, MESSAGE_AUCTION_BONUS, MESSAGE_EVENT_BONUS] = [31, 32, 33, 34, 35, 36];
 
         const [MESSAGE_FINAL_ROUND, MESSAGE_CANCEL, MESSAGE_CONFIRM_WORKERS, MESSAGE_CONFIRM_WORKERS_TRADES ,MESSAGE_UNDO_PASS]   = [50, 51, 52, 53, 54];
         const [MESSAGE_UNDO_INCOME, MESSAGE_WAIT, MESSAGE_DONE, MESSAGE_CONFIRM, MESSAGE_CONFIRM_DONE] = [55, 56, 57, 58, 59];
 
         const [MESSAGE_CONFIRM_PASS, MESSAGE_CONFIRM_BID, MESSAGE_CONFIRM_DUMMY_BID, MESSAGE_PASS, MESSAGE_TRADE_HIDE] = [60, 61, 62, 63, 64];
-        const [MESSAGE_TRADE_SHOW, MESSAGE_CONFIRM_TRADE, MESSAGE_TRADE_UNDO, MESSAGE_TAKE_DEBT, MESSAGE_DEBT_PAY] = [65, 66, 67, 68, 69];
+        const [MESSAGE_TRADE_SHOW, MESSAGE_CONFIRM_TRADE, MESSAGE_TRADE_UNDO, MESSAGE_TAKE_LOAN, MESSAGE_DEBT_PAY] = [65, 66, 67, 68, 69];
 
         const [MESSAGE_X_FOR_Y, MESSAGE_X_FOR_Y_CONFIRM] = [70, 71];
         const [MESSAGE_HIRE, MESSAGE_HIRE_FREE, MESSAGE_BONUS_PASS] = [72, 73, 74];
@@ -135,7 +135,7 @@ function (dojo, declare) {
         const [MESSAGE_PAY_LOAN_3_SILVER, MESSAGE_PAY_OFF_LESS_LOAN, MESSAGE_PAY_AMT, MESSAGE_USE_MORE_GOLD, MESSAGE_USE_LESS_GOLD] = [85, 86, 87, 88, 89];
 
         const [MESSAGE_MORE_WOOD_STEEL, MESSAGE_LESS_WOOD_STEEL, MESSAGE_GOLD_AS_TYPE, MESSAGE_PAY_DEBT_GOLD, MESSAGE_PAY_DEBT_FOOD] = [90, 91, 92, 93, 94];
-        const [MESSAGE_BUILD_DISCOUNT, MESSAGE_DISCOUNT_RESOURCE, MESSAGE_SELECT_BUILDING, MESSAGE_TRADE_BUTTON_TEMPLATE] = [95, 96, 97, 98];
+        const [MESSAGE_BUILD_DISCOUNT, MESSAGE_DISCOUNT_RESOURCE, MESSAGE_SELECT_BUILDING, MESSAGE_TRADE_BUTTON_TEMPLATE, MESSAGE_TRADE_UNDO_EVENT] = [95, 96, 97, 98];
 
         /* ***** allocate workers ***** */
         const BTN_ID_CONFIRM_WORKERS = 'btn_confirm_workers'; 
@@ -287,13 +287,13 @@ function (dojo, declare) {
             const METHOD_PAY_LESS_LOAN     = 'payLoan3SilverLess';
 
     /* ** Choose Lot Action ** */
-        const BTN_LOT_ACTION_BUILD  = 'btn_build';
+        const BTN_LOT_ACTION_BUILD  = 'btn_lot_build';
         const METHOD_LOT_ACTION_BUILD  = 'lotGoToBuild';
-        const BTN_LOT_ACTION_EVENT  = 'btn_event';
+        const BTN_LOT_ACTION_EVENT  = 'btn_lot_event';
         const METHOD_LOT_ACTION_EVENT  = 'lotGoToEvent';
-        const BTN_LOT_ACTION_AUCTION  = 'btn_auction';
+        const BTN_LOT_ACTION_AUCTION  = 'btn_lot_auction';
         const METHOD_LOT_ACTION_AUCTION  = 'lotGoToAuction';
-        const BTN_LOT_ACTION_PASS  = 'btn_pass';
+        const BTN_LOT_ACTION_PASS  = 'btn_lot_pass';
         const METHOD_LOT_ACTION_PASS  = 'lotGoToConfirm';
 
     /* *** Client state - Sell: Action ** */
@@ -347,7 +347,7 @@ function (dojo, declare) {
             BTN_ID_PAY_DONE, BTN_ID_BUILD_BUILDING, 
         ];
         const TRANSITION_OBJECTS = [
-            OBJECT_DONE, OBJECT_AUCTION_DONE_TRADING,OBJECT_EVENT_DONE_TRADING, 
+            OBJECT_DONE, OBJECT_AUCTION_DONE_TRADING, OBJECT_EVENT_DONE_TRADING, 
             OBJECT_EVENT_DONE_HIDDEN, OBJECT_PASS_EVENT_DONE, OBJECT_CONFIRM_WORKERS,
             OBJECT_EVENT_STEEL_BUILD, OBJECT_EVENT_SILVER_RAIL_ADVANCE,
         ];
@@ -587,6 +587,7 @@ function (dojo, declare) {
             this.fillArray(AUCTION_BONUS_STRINGS, gamedatas.auction_bonus_strings);
             this.fillArray(BUILD_BONUS_STRINGS, gamedatas.build_bonus_strings)
             
+            console.log("MESSAGE_STRINGS", MESSAGE_STRINGS);
             this.setupResourceTokens();
             // Setting up player boards
             for( let p_id in gamedatas.players ) {
@@ -1327,9 +1328,9 @@ function (dojo, declare) {
             // also make building_slots selectable.
             dojo.query( `#${TPL_BLD_ZONE}${PLAYER_COLOR[this.player_id]} .worker_slot` ).addClass( 'selectable' );
 
-            if (this.player_id !== args.next_player ) {
-                this.addActionButton( BTN_ID_WAIT, this.replaceTooltipStrings(_(MESSAGE_STRINGS[MESSAGE_WAIT])), METHOD_WAIT );
-            }
+            // if (this.player_id !== args.next_player ) {
+            //     this.addActionButton( BTN_ID_WAIT, this.replaceTooltipStrings(_(MESSAGE_STRINGS[MESSAGE_WAIT])), METHOD_WAIT );
+            // }
             this.addActionButton( BTN_ID_CONFIRM_WORKERS, this.replaceTooltipStrings(_(MESSAGE_STRINGS[MESSAGE_CONFIRM_WORKERS])), METHOD_CONFIRM_WORKERS );
             this.addActionButton( BTN_ID_CANCEL, _(MESSAGE_STRINGS[MESSAGE_CANCEL]), 'cancelUndoTransactions', null, false, 'red');
             dojo.place(dojo.create('br'),'generalactions','last');
@@ -1348,7 +1349,7 @@ function (dojo, declare) {
         },
         // -non-active-
         onUpdateActionButtons_allocateWorkers_notActive(args){
-            if (args.is_waiting){
+            if (args.waiting && args.waiting[this.player_id] == 1){
                 return;
             }
             if ((args.paid[this.player_id].has_paid==0 || this.undoPay) && this.showPay){
@@ -1467,7 +1468,7 @@ function (dojo, declare) {
         },
         onUpdateActionButtons_chooseLotAction: function(args){
             if ((args.lot_state & LOT_STATE_BUILD) >0){
-                this.addActionButton( BTN_LOT_ACTION_BUILD, _(MESSAGE_STRINGS[MESSAGE_BUILD]), METHOD_LOT_ACTION_BUILD);
+                this.addActionButton( BTN_LOT_ACTION_BUILD, _(MESSAGE_STRINGS[MESSAGE_CHOOSE_BUILD]), METHOD_LOT_ACTION_BUILD);
             }
             if ((args.lot_state & LOT_STATE_EVT_BONUS) >0){
                 this.addActionButton( BTN_LOT_ACTION_EVENT, _(MESSAGE_STRINGS[MESSAGE_EVENT_BONUS]), METHOD_LOT_ACTION_EVENT);
@@ -2049,8 +2050,7 @@ function (dojo, declare) {
             // required to allow js functions to access file wide globals (in this case `TOKEN_HTML`).
             let _this = TOKEN_HTML;
             try{ // this will detect ${var} and replace it with TOKEN_HTML[var];
-                var updatedString = inputString.replaceAll(/\${(.*?)}/g, 
-                function(f){ return _this[f.substr(2, f.length -3)];});
+                var updatedString = inputString.replaceAll(/\${(.*?)}/g, function(f){ return _this[f.substr(2, f.length -3)];});
                 return updatedString;
             } catch (error){
                 console.error(error);
@@ -2573,6 +2573,7 @@ function (dojo, declare) {
         },
 
         createBuildingBreadcrumb: function(){
+            console.log('createBuildingBreadcrumb');
             // defaults are ??? building with no cost. (when no building is selected)
             let b_id = 0;
             let b_name=_("???"); 
@@ -2585,7 +2586,9 @@ function (dojo, declare) {
                 cost = this.getBuildingCost(b_id);
             }
             let b_name_html = this.format_block('jstpl_color_log', {'string':_(b_name), 'color':ASSET_COLORS[b_type]});
-            let b_html = this.format_block( 'jptpl_breadcrumb_building', {text:dojo.string.substitute(_("Build ${building_name}"),{building_name:b_name_html}), cost:this.getResourceArrayHtml(this.invertArray(cost), true, "position: relative; top: 9px;")})
+            let b_html = this.format_block( 'jptpl_breadcrumb_building', 
+                {text:dojo.string.substitute(_("Build ${building_name}"),{building_name:b_name_html}),
+                 cost:this.getResourceArrayHtml(this.invertArray(cost), true, "position: relative; top: 9px;")});
             if (dojo.query('#breadcrumb_building').length==1){
                 this.updateTrade(this.buildingCost, true);
                 dojo.destroy('breadcrumb_bldCost');
@@ -2790,11 +2793,11 @@ function (dojo, declare) {
                 const button_id = transition_group.id;
                 if (dojo.query(`#${button_id}`).length == 1){
                     if (button_id == BTN_ID_ON_PASS_EVENT_DONE){ // for nelson act bug.
-                        var message = (noTrade && !this.loanCount) ? _(transition_group.default) : _(transition_group.confirm);
+                        var message = (noTrade && !this.loanCount) ? MESSAGE_STRINGS[transition_group.default] : MESSAGE_STRINGS[transition_group.confirm];
                     } else {
-                        var message = noTrade ? _(transition_group.default) : _(transition_group.confirm);
+                        var message = noTrade ? _(MESSAGE_STRINGS[transition_group.default]) : _(MESSAGE_STRINGS[transition_group.confirm]);
                     }
-                    const button_text = this.replaceTooltipStrings(message, transition_group.sub);
+                    const button_text = this.replaceTooltipStrings(String(message), transition_group.sub ?? '');
                     const button_method = transition_group.method;
                     dojo.query(`#${button_id}`).forEach(dojo.destroy);
                     this.addActionButton( button_id, button_text, button_method);
@@ -2806,7 +2809,7 @@ function (dojo, declare) {
                 const button_id = transition_group.id;
                 if (dojo.query(`#${button_id}`).length == 1){
                     const message = noTrade ? _(MESSAGE_STRINGS[MESSAGE_X_FOR_Y]) : _(MESSAGE_STRINGS[MESSAGE_X_FOR_Y_CONFIRM]);
-                    const button_text = this.replaceTooltipStrings( dojo.string.substitute(message, transition_group.arr));
+                    const button_text = this.replaceTooltipStrings( dojo.string.substitute(String(message), transition_group.arr));
                     const button_method = transition_group.method;
                     dojo.query(`#${button_id}`).forEach(dojo.destroy);
                     this.addActionButton( button_id, button_text, button_method);
@@ -3276,7 +3279,7 @@ function (dojo, declare) {
                             away:{'trade':-1}, for:{'silver':1}, change:{'trade':-1,'silver':1}};
                 break;
                 case TAKE_LOAN:
-                    transactions = {name:_(MESSAGE_STRINGS[MESSAGE_TAKE_DEBT]), map:TRADE_MAP.loan,
+                    transactions = {name:_(MESSAGE_STRINGS[MESSAGE_TAKE_LOAN]), map:TRADE_MAP.loan,
                             away:{'loan':1}, for:{'silver':2}, change:{'silver':2,'loan':1}};
                 break;
                 case PAY_LOAN_GOLD:
@@ -5504,7 +5507,7 @@ function (dojo, declare) {
                 }                
             }
             this.calculateAndUpdateScore(notif.args.player_id);
-            if (p_id == this.player_id){
+            if (notif.args.player_id == this.player_id){
                 this.updateTradeAffordability();
             }
         },

@@ -310,8 +310,9 @@
   define("MESSAGE_CHOOSE_DIFFERENT_BUILDING", 31);
   define("MESSAGE_BUILD", 32);
   define("MESSAGE_BUILD_CONFIRM", 33);
-  define("MESSAGE_AUCTION_BONUS", 34);
-  define("MESSAGE_EVENT_BONUS", 35);
+  define("MESSAGE_CHOOSE_BUILD", 34);
+  define("MESSAGE_AUCTION_BONUS", 35);
+  define("MESSAGE_EVENT_BONUS", 36);
 
   define("MESSAGE_FINAL_ROUND", 50);
   define("MESSAGE_CANCEL", 51);
@@ -332,13 +333,12 @@
   define("MESSAGE_TRADE_SHOW", 65);
   define("MESSAGE_CONFIRM_TRADE", 66);
   define("MESSAGE_TRADE_UNDO", 67);
-  define("MESSAGE_TRADE_UNDO_EVENT", 66);
   define("MESSAGE_DEBT_TAKE", 68);
   define("MESSAGE_DEBT_PAY", 69);
-
+  
   define("MESSAGE_X_FOR_Y", 70);
   define("MESSAGE_X_FOR_Y_CONFIRM", 71);
-
+  
   define("MESSAGE_HIRE", 72);
   define("MESSAGE_HIRE_FREE", 73);
   define("MESSAGE_PASS_BONUS", 74);
@@ -368,5 +368,6 @@
   define("MESSAGE_DISCOUNT_RESOURCE", 96);
   define("MESSAGE_SELECT_BUILDING", 97);
   define("MESSAGE_TRADE_BUTTON_TEMPLATE", 98);
+  define("MESSAGE_TRADE_UNDO_EVENT", 99);
 
   

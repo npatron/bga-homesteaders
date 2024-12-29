@@ -122,7 +122,6 @@ class homesteaders extends Table
         }
         // Init global values with their initial values
         $this->setGameStateInitialValue( 'round_number', 1 );
-        // $this->setGameStateInitialValue( 'first_player', 0 );
         $this->setGameStateInitialValue( 'phase',        0 );
         $this->setGameStateInitialValue( 'number_auctions', $number_auctions );
         $this->setGameStateInitialValue( 'current_auction', 1 );
@@ -262,6 +261,10 @@ class homesteaders extends Table
 
     function clearAllWaiting(){
         $this->DbQuery( "UPDATE `player` SET `waiting`='0' ");
+    }
+
+    function getWaitingPlayers(){
+        return( $this->getObjectListFromDB( "SELECT `waiting` FROM `player`" ));
     }
 
     function isPlayerWaiting($p_id) {
@@ -897,13 +900,16 @@ class homesteaders extends Table
 
     function argPayWorkers()
     {
-        $cur_p_id = $this->getCurrentPlayerId();
-        $is_waiting = $this->isPlayerWaiting($cur_p_id);
+        // $cur_p_id = $this->getCurrentPlayerId(); // <- this is bad, and blocks table creation
+        // $is_waiting = $this->isPlayerWaiting($cur_p_id);
+        $waiting_players = $this->getWaitingPlayers();
         $next_player = $this->getGameStateValue('next_player');
-        return array('is_waiting' => $is_waiting,
+        return array(
+                    // 'is_waiting' => $is_waiting,
+                     'waiting' => $waiting_players,
                      'next_player'=>$next_player,
                      'args' => $this->getCollectionFromDB("SELECT `player_id`, `workers` FROM `resources`"), 
-                     'paid' => $this->getCollectionFromDB("SELECT `player_id`, `has_paid` FROM `player`"));
+                     'paid' => $this->getCollectionFromDB("SELECT `player_id`, `paid_work` FROM `player`"));
     }
 
     function argDummyValidBids() {
@@ -992,13 +998,13 @@ class homesteaders extends Table
     }
 
     function argsEventPreTrade() {
-        $cur_p_id = $this->getCurrentPlayerId();
+        // $cur_p_id = $this->getCurrentPlayerId();
         $bonus_id = $this->Event->getEvent();
         switch($bonus_id){
             case EVENT_STATE_FAIR:
-                $hidden = $this->Log->getHiddenTrades($cur_p_id);
+                // $hidden = $this->Log->getHiddenTrades($cur_p_id);
                 return array('bonus_id' =>$bonus_id, 
-                             '_private' => $hidden,
+                            //  '_private' => $hidden,
                              'hidden'=> true);
             case EVENT_EAGER_INVESTORS:
             case EVENT_TIMBER_CULTURE_ACT:
