@@ -42,6 +42,53 @@ $game_options = array(
         ),
     ),
 
+    101 => array(
+        'name' => totranslate('Receive Rail Line if No Build'),
+        'values' => array(
+            0 => array(
+                'name' => totranslate('Receive Nothing If Do Not Build'),
+                'tmdisplay' => totranslate('Nothing on No-Build')),
+            1 => array(
+                'name' => totranslate('Receive a Rail Line When Do Not Build (Recommended for 5 player)'),
+                'tmdisplay' => totranslate('Rail Line on No-Build'),
+            ),
+        ),
+    ),
+
+    110 => array(
+        'name' => totranslate('New Beginnings Buildings'),
+        'values' => array(
+            0 => array(
+                'name' => totranslate('Disable Expansion Buildings')),
+            1 => array(//ENABLED
+                'name' => totranslate('Enable Expansion Buildings (required for 5 players)'),
+                'tmdisplay' => totranslate('New Beginnings Buildings'),
+            ),
+        ),
+        'startcondition' => [
+            0=>[
+                [
+                    'type' => 'maxplayers',
+                    'value' => 4,
+                    'message' => totranslate('New Beginnings Buildings are required for 5 player')
+                ],
+            ],
+        ],
+    ),
+    
+    111 => array(
+        'name' => totranslate('Expansion Events'),
+        'values' => array(
+            0 => array(
+                'name' => totranslate('Disable New Beginnings Events'),
+                'tmdisplay' => totranslate('No Events')),
+            1 => array(
+                'name' => totranslate('Enable New Beginnings Events'),
+                'tmdisplay' => totranslate('Use New Beginnings Events'),
+            ),
+        ),
+    ),
+    
 );
 
 $game_preferences = array(
@@ -49,8 +96,13 @@ $game_preferences = array(
 			'name' => totranslate('Show Tile Art'),
 			'needReload' => true, // after user changes this preference game interface would auto-reload
 			'values' => array(
-					0 => array( 'name' => totranslate( 'Show Art' ), 'cssPref' => 'Show Tile Art' ),
-					1 => array( 'name' => totranslate( 'Show Text instead' ), 'cssPref' => 'Show Text Instead' )
+					0 => array( 
+                        'name' => totranslate( 'Show Art' ), 
+                        'cssPref' => totranslate('Show Tile Art') ),
+					1 => array( 
+                        'name' => totranslate( 'Show Text instead' ), 
+                        'cssPref' => totranslate('Show Text Instead') 
+                    ),
 			)
 	)
 );
